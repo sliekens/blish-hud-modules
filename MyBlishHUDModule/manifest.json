@@ -1,0 +1,20 @@
+{
+    "name": "MyBlishHUDModule",
+    "version": "1.0.0",
+    "namespace": "org.site-name.module-name",
+    "package": "MyBlishHUDModule.dll",
+    "manifest_version": 1,
+
+    "description": "Description of your module. Visit https://github.com/blish-hud/manifest.json/blob/master/manifest-v1.md for details about the manifest format.",
+    "dependencies": {
+        "bh.blishhud": ">=1.2.0 <2.0.0"
+    },
+    "url": "https://site-name.org",
+    "contributors": [
+        {
+            "name": "your name",
+            "username": "YourName.1234",
+            "url": "https://github.com/your-name"
+        }
+    ]
+}

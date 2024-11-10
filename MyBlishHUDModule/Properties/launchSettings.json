@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Blish HUD 1.2.0": {
+      "commandName": "Executable",
+      "executablePath": "$(SolutionDir)Blish.HUD/1.2.0/Blish HUD.exe",
+      "commandLineArgs": "--debug --module $(TargetDir)MyBlishHUDModule.bhm"
+    }
+  }
+}

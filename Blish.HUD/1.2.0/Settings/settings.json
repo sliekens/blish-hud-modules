@@ -1,0 +1,281 @@
+{
+  "Entries": [
+    {
+      "T": "Blish_HUD.Settings.SettingCollection, Blish HUD",
+      "Key": "DebugConfiguration",
+      "Value": {
+        "Entries": [
+          {
+            "T": "System.Boolean, mscorlib",
+            "Key": "EnableDebugLogging",
+            "Value": false
+          },
+          {
+            "T": "System.Boolean, mscorlib",
+            "Key": "EnableFPSDisplay",
+            "Value": false
+          },
+          {
+            "T": "System.Boolean, mscorlib",
+            "Key": "EnableAdditionalDebugDisplay",
+            "Value": false
+          }
+        ]
+      }
+    },
+    {
+      "T": "Blish_HUD.Settings.SettingCollection, Blish HUD",
+      "Key": "Gw2WebApiConfiguration",
+      "Value": {
+        "Entries": [
+          {
+            "T": "Blish_HUD.Settings.SettingCollection, Blish HUD",
+            "Key": "ApiKeyRepository",
+            "Value": {
+              "Entries": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "T": "Blish_HUD.Settings.SettingCollection, Blish HUD",
+      "Key": "GraphicsConfiguration",
+      "Value": {
+        "Entries": [
+          {
+            "T": "Blish_HUD.Graphics.FramerateMethod, Blish HUD",
+            "Key": "FramerateLimiter",
+            "Value": 2
+          },
+          {
+            "T": "System.Boolean, mscorlib",
+            "Key": "EnableCharacterPositionBuffer",
+            "Value": true
+          },
+          {
+            "T": "Blish_HUD.Graphics.DpiMethod, Blish HUD",
+            "Key": "DpiScalingMethod",
+            "Value": 0
+          },
+          {
+            "T": "Blish_HUD.Graphics.ManualUISize, Blish HUD",
+            "Key": "UIScalingMethod",
+            "Value": 0
+          }
+        ]
+      }
+    },
+    {
+      "T": "Blish_HUD.Settings.SettingCollection, Blish HUD",
+      "Key": "DynamicHUDConfiguration",
+      "Value": {
+        "Entries": [
+          {
+            "T": "Blish_HUD.Graphics.DynamicHUDMethod, Blish HUD",
+            "Key": "DynamicHUDMenuBar",
+            "Value": 0
+          },
+          {
+            "T": "Blish_HUD.Graphics.DynamicHUDMethod, Blish HUD",
+            "Key": "DynamicHUDWindows",
+            "Value": 0
+          },
+          {
+            "T": "Blish_HUD.Graphics.DynamicHUDMethod, Blish HUD",
+            "Key": "DynamicHUDLoading",
+            "Value": 0
+          }
+        ]
+      }
+    },
+    {
+      "T": "Blish_HUD.Settings.SettingCollection, Blish HUD",
+      "Key": "GameIntegrationConfiguration",
+      "Value": {
+        "Entries": [
+          {
+            "T": "Blish_HUD.Settings.SettingCollection, Blish HUD",
+            "Key": "Gw2InstanceIntegration",
+            "Value": {
+              "Entries": [
+                {
+                  "T": "System.String, mscorlib",
+                  "Key": "Gw2ExecutablePath",
+                  "Value": "S:\\Games\\Guild Wars 2\\Gw2-64.exe"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "T": "Blish_HUD.Settings.SettingCollection, Blish HUD",
+      "Key": "ModuleConfiguration",
+      "Value": {
+        "Entries": [
+          {
+            "T": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[Blish_HUD.Modules.ModuleState, Blish HUD, Version=1.2.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib",
+            "Key": "ModuleStates",
+            "Value": {
+              "org.site-name.module-name": {
+                "Enabled": true,
+                "UserEnabledPermissions": null,
+                "IgnoreDependencies": false,
+                "Settings": {
+                  "Lazy": true,
+                  "Entries": []
+                }
+              }
+            }
+          },
+          {
+            "T": "System.Collections.Generic.List`1[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib",
+            "Key": "ExportedOn",
+            "Value": [
+              "1.2.0"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "T": "Blish_HUD.Settings.SettingCollection, Blish HUD",
+      "Key": "WindowSettings",
+      "Value": {
+        "Entries": [
+          {
+            "T": "Microsoft.Xna.Framework.Point, MonoGame.Framework",
+            "Key": "OverlayService_BlishHUD_38d37290-b5f9-447d-97ea-45b0b50e5f55",
+            "Value": {
+              "X": 1398,
+              "Y": 406
+            }
+          }
+        ]
+      }
+    },
+    {
+      "T": "Blish_HUD.Settings.SettingCollection, Blish HUD",
+      "Key": "OverlayUpdateHandlerConfiguration",
+      "Value": {
+        "Entries": [
+          {
+            "T": "SemVer.Version, SemVer",
+            "Key": "LastAcknowledgedRelease",
+            "Value": "0.0.0"
+          },
+          {
+            "T": "System.Boolean, mscorlib",
+            "Key": "NotifyOfNewRelease",
+            "Value": true
+          }
+        ]
+      }
+    },
+    {
+      "T": "Blish_HUD.Settings.SettingCollection, Blish HUD",
+      "Key": "OverlayConfiguration",
+      "Value": {
+        "Entries": [
+          {
+            "T": "Gw2Sharp.WebApi.Locale, Gw2Sharp",
+            "Key": "AppCulture",
+            "Value": 0
+          },
+          {
+            "T": "System.Boolean, mscorlib",
+            "Key": "StayInTray",
+            "Value": true
+          },
+          {
+            "T": "System.Boolean, mscorlib",
+            "Key": "ShowInTaskbar",
+            "Value": false
+          },
+          {
+            "T": "System.Boolean, mscorlib",
+            "Key": "CloseWindowOnEscape",
+            "Value": true
+          },
+          {
+            "T": "Blish_HUD.Input.KeyBinding, Blish HUD",
+            "Key": "InteractKey",
+            "Value": {
+              "PrimaryKey": 70,
+              "ModifierKeys": 0,
+              "Enabled": true,
+              "IgnoreWhenInTextField": true
+            }
+          },
+          {
+            "T": "Blish_HUD.Input.KeyBinding, Blish HUD",
+            "Key": "HideAllInterface",
+            "Value": {
+              "PrimaryKey": 72,
+              "ModifierKeys": 5,
+              "Enabled": true,
+              "IgnoreWhenInTextField": true
+            }
+          },
+          {
+            "T": "Blish_HUD.Input.KeyBinding, Blish HUD",
+            "Key": "ToggleBlishWindow",
+            "Value": {
+              "PrimaryKey": 66,
+              "ModifierKeys": 5,
+              "Enabled": true,
+              "IgnoreWhenInTextField": true
+            }
+          },
+          {
+            "T": "System.Boolean, mscorlib",
+            "Key": "ShowPreviews",
+            "Value": false
+          },
+          {
+            "T": "System.Boolean, mscorlib",
+            "Key": "GameVolume",
+            "Value": true
+          },
+          {
+            "T": "System.Single, mscorlib",
+            "Key": "Volume",
+            "Value": 0.2
+          },
+          {
+            "T": "System.Boolean, mscorlib",
+            "Key": "MuteIfNoGameAudio",
+            "Value": true
+          },
+          {
+            "T": "Blish_HUD.GameIntegration.AudioIntegration+Devices, Blish HUD",
+            "Key": "OutputDevice",
+            "Value": 1
+          }
+        ]
+      }
+    },
+    {
+      "T": "Blish_HUD.Settings.SettingCollection, Blish HUD",
+      "Key": "ModuleRepoConfiguration",
+      "Value": {
+        "Entries": [
+          {
+            "T": "System.String, mscorlib",
+            "Key": "DefaultPkgsUrl",
+            "Value": "https://pkgs.blishhud.com/"
+          },
+          {
+            "T": "Blish_HUD.Settings.SettingCollection, Blish HUD",
+            "Key": "AcknowledgedUpdates",
+            "Value": {
+              "Entries": []
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
