@@ -10,10 +10,12 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>compile; build</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="GW2SDK" Version="1.4.0" />
         <PackageReference Include="PolySharp" Version="1.14.1">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="System.ComponentModel.Composition" Version="8.0.0" />
+        <PackageReference Include="System.Linq.Async" Version="6.0.1" />
     </ItemGroup>
 </Project>

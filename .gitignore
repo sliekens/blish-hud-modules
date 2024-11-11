@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Blish HUD runtime data
+/Blish.HUD/1.2.0/Settings/

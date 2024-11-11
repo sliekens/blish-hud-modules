@@ -1,18 +1,33 @@
 ﻿using System;
 using System.ComponentModel.Composition;
-using Blish_HUD;
 using Blish_HUD.Modules;
 
 namespace MyBlishHUDModule;
 
 [Export(typeof(Module))]
-public class MyModule : Module
+[method: ImportingConstructor]
+public class MyModule([Import("ModuleParameters")] ModuleParameters parameters) : Module(parameters)
 {
-	private static readonly Logger Logger = Logger.GetLogger<MyModule>();
+	private MyCornerIcon _cornerIcon;
 
-	[ImportingConstructor]
-	public MyModule([Import("ModuleParameters")] ModuleParameters parameters)
-		: base(parameters)
+	private MyMainWindow _mainWindow;
+
+	protected override void Initialize()
 	{
+		_mainWindow = MyMainWindow.Create(ModuleParameters);
+		_cornerIcon = MyCornerIcon.Create(ModuleParameters);
+		_cornerIcon.Click += CornerIcon_Click;
+	}
+
+	private void CornerIcon_Click(object sender, EventArgs e)
+	{
+		_mainWindow.ToggleWindow();
+	}
+
+	protected override void Unload()
+	{
+		_cornerIcon.Click -= CornerIcon_Click;
+		_cornerIcon.Dispose();
+		_mainWindow.Dispose();
 	}
 }

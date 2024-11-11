@@ -1,9 +1,14 @@
 {
-  "profiles": {
-    "Blish HUD 1.2.0": {
-      "commandName": "Executable",
-      "executablePath": "$(SolutionDir)Blish.HUD/1.2.0/Blish HUD.exe",
-      "commandLineArgs": "--debug --module $(TargetDir)MyBlishHUDModule.bhm"
+    "profiles": {
+        "Blish HUD 1.2.0": {
+            "commandName": "Executable",
+            "executablePath": "$(SolutionDir)Blish.HUD/1.2.0/Blish HUD.exe",
+            "commandLineArgs": "--debug --module $(TargetDir)MyBlishHUDModule.bhm"
+        },
+        "Blish HUD 1.2.0 (powershell)": {
+            "commandName": "Executable",
+            "executablePath": "$(SolutionDir)Blish.HUD/1.2.0/Blish HUD.exe",
+            "commandLineArgs": "--debug --process WindowsTerminal --module $(TargetDir)MyBlishHUDModule.bhm"
+        }
     }
-  }
 }
