@@ -2,7 +2,7 @@
 using Blish_HUD.Controls;
 using Blish_HUD.Modules;
 
-namespace MyBlishHUDModule;
+namespace ChatLinksModule;
 
 public sealed class MyCornerIcon : CornerIcon
 {

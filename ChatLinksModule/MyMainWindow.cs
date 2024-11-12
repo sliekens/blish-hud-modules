@@ -3,7 +3,7 @@ using Blish_HUD.Controls;
 using Blish_HUD.Modules;
 using Microsoft.Xna.Framework;
 
-namespace MyBlishHUDModule;
+namespace ChatLinksModule;
 
 public sealed class MyMainWindow : TabbedWindow2
 {

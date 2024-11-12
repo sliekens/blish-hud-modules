@@ -2,7 +2,7 @@
 using System.ComponentModel.Composition;
 using Blish_HUD.Modules;
 
-namespace MyBlishHUDModule;
+namespace ChatLinksModule;
 
 [Export(typeof(Module))]
 [method: ImportingConstructor]

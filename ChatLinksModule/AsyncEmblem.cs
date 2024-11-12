@@ -4,7 +4,7 @@ using Blish_HUD.Content;
 using Blish_HUD.Controls;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace MyBlishHUDModule;
+namespace ChatLinksModule;
 
 internal sealed class AsyncEmblem : IDisposable
 {
