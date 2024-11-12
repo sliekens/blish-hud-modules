@@ -19,9 +19,6 @@ public sealed class CraftingTab : Tab
 		var view = () => CraftingView.Create(parameters);
 		var name = "Crafting";
 		var priority = TabPriority.CraftingTab;
-		return new CraftingTab(icon, view, name, priority)
-		{
-			Enabled = false
-		};
+		return new CraftingTab(icon, view, name, priority);
 	}
 }

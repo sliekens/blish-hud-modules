@@ -19,9 +19,6 @@ public class AchievementsTab : Tab
 		var view = () => AchievementsView.Create(parameters);
 		var name = "Achievements";
 		var priority = TabPriority.AchievementsTab;
-		return new AchievementsTab(icon, view, name, priority)
-		{
-			Enabled = false
-		};
+		return new AchievementsTab(icon, view, name, priority);
 	}
 }
