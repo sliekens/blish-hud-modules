@@ -1,6 +1,9 @@
 ﻿using Blish_HUD.Content;
 using Blish_HUD.Controls;
 using Blish_HUD.Modules;
+using ChatLinksModule.UI.Tabs.Achievements;
+using ChatLinksModule.UI.Tabs.Crafting;
+using ChatLinksModule.UI.Tabs.Items;
 using Microsoft.Xna.Framework;
 
 namespace ChatLinksModule.UI;
@@ -22,7 +25,7 @@ public sealed class MainWindow : TabbedWindow2
         var background = AsyncTexture2D.FromAssetId(155985);
         var windowRegion = new Rectangle(0, 26, 953, 691);
         var contentRegion = new Rectangle(70, 71, 839, 605);
-        return new MainWindow(background, windowRegion, contentRegion, emblem)
+        var window = new MainWindow(background, windowRegion, contentRegion, emblem)
         {
             Parent = Graphics.SpriteScreen,
             Title = "My module",
@@ -31,7 +34,14 @@ public sealed class MainWindow : TabbedWindow2
             Location = new Point(300, 300),
             CanResize = true
         };
+
+        window.Tabs.Add(ItemsTab.Create(parameters));
+		window.Tabs.Add(AchievementsTab.Create(parameters));
+		window.Tabs.Add(CraftingTab.Create(parameters));
+
+		return window;
     }
+
 
     protected override void DisposeControl()
     {

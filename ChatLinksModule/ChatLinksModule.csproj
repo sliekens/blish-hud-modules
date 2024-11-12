@@ -18,4 +18,7 @@
         <PackageReference Include="System.ComponentModel.Composition" Version="8.0.0" />
         <PackageReference Include="System.Linq.Async" Version="6.0.1" />
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="UI\Tabs\Achievements\" />
+    </ItemGroup>
 </Project>
