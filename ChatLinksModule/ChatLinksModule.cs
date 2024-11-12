@@ -1,21 +1,22 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using Blish_HUD.Modules;
+using ChatLinksModule.UI;
 
 namespace ChatLinksModule;
 
 [Export(typeof(Module))]
 [method: ImportingConstructor]
-public class MyModule([Import("ModuleParameters")] ModuleParameters parameters) : Module(parameters)
+public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters parameters) : Module(parameters)
 {
-	private MyCornerIcon _cornerIcon;
+	private MainIcon _cornerIcon;
 
-	private MyMainWindow _mainWindow;
+	private MainWindow _mainWindow;
 
 	protected override void Initialize()
 	{
-		_mainWindow = MyMainWindow.Create(ModuleParameters);
-		_cornerIcon = MyCornerIcon.Create(ModuleParameters);
+		_mainWindow = MainWindow.Create(ModuleParameters);
+		_cornerIcon = MainIcon.Create(ModuleParameters);
 		_cornerIcon.Click += CornerIcon_Click;
 	}
 
