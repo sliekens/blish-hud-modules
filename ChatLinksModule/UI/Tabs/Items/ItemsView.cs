@@ -6,6 +6,8 @@ namespace ChatLinksModule.UI.Tabs.Items;
 
 public class ItemsView : View
 {
+	private TextBox _searchBox;
+
 	private ItemsView()
 	{
 	}
@@ -17,5 +19,16 @@ public class ItemsView : View
 
 	protected override void Build(Container buildPanel)
 	{
+		_searchBox = new TextBox
+		{
+			Parent = buildPanel
+		};
+
+		_searchBox.TextChanged += SearchInput;
+	}
+
+	private async void SearchInput(object sender, System.EventArgs e)
+	{
+		ScreenNotification.ShowNotification(_searchBox.Text);
 	}
 }
