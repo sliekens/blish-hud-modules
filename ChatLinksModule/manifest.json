@@ -5,16 +5,17 @@
     "package": "ChatLinksModule.dll",
     "manifest_version": 1,
 
-    "description": "Description of your module. Visit https://github.com/blish-hud/manifest.json/blob/master/manifest-v1.md for details about the manifest format.",
+    "description": "Chat like a pro",
     "dependencies": {
         "bh.blishhud": ">=1.2.0 <2.0.0"
     },
     "url": "https://site-name.org",
     "contributors": [
         {
-            "name": "your name",
-            "username": "YourName.1234",
-            "url": "https://github.com/your-name"
+            "name": "Steven Liekens",
+            "username": "Steven.6309",
+            "url": "https://github.com/sliekens"
         }
-    ]
+    ],
+    "directories": ["chat-links-data"]
 }
