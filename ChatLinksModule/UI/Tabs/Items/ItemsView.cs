@@ -1,34 +1,38 @@
 ﻿using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
-using Blish_HUD.Modules;
+
+using ChatLinksModule.Storage;
+
+using GuildWars2.Items;
+
+using Microsoft.EntityFrameworkCore;
+
+using Container = Blish_HUD.Controls.Container;
 
 namespace ChatLinksModule.UI.Tabs.Items;
 
-public class ItemsView : View
+public class ItemsView(ChatLinksContext db) : View
 {
-	private TextBox _searchBox;
+    private TextBox _searchBox;
 
-	private ItemsView()
-	{
-	}
+    protected override void Build(Container buildPanel)
+    {
+        _searchBox = new TextBox { Parent = buildPanel };
 
-	public static ItemsView Create(ModuleParameters parameters)
-	{
-		return new ItemsView();
-	}
+        _searchBox.TextChanged += SearchInput;
+    }
 
-	protected override void Build(Container buildPanel)
-	{
-		_searchBox = new TextBox
-		{
-			Parent = buildPanel
-		};
+    private async void SearchInput(object sender, EventArgs e)
+    {
+        ScreenNotification.ShowNotification(_searchBox.Text);
+        string search = _searchBox.Text.Trim();
+        if (search.Length < 3)
+        {
+            return;
+        }
 
-		_searchBox.TextChanged += SearchInput;
-	}
-
-	private async void SearchInput(object sender, System.EventArgs e)
-	{
-		ScreenNotification.ShowNotification(_searchBox.Text);
-	}
+        List<Item> items = await db.Items.AsQueryable()
+            .Where(item => item.Name.Contains(search) || item.Description.Contains(search))
+            .ToListAsync();
+    }
 }
