@@ -5,6 +5,11 @@
             "executablePath": "$(SolutionDir)Blish.HUD/1.2.0/Blish HUD.exe",
             "commandLineArgs": "--debug --module $(TargetDir)$(TargetName).bhm"
         },
+        "Blish HUD 1.2.0 (optimized)": {
+            "commandName": "Executable",
+            "executablePath": "$(SolutionDir)Blish.HUD/1.2.0/Blish HUD.exe",
+            "commandLineArgs": "--module $(TargetDir)$(TargetName).bhm"
+        },
         "Blish HUD 1.2.0 (powershell)": {
             "commandName": "Executable",
             "executablePath": "$(SolutionDir)Blish.HUD/1.2.0/Blish HUD.exe",

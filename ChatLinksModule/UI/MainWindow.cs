@@ -20,7 +20,6 @@ public sealed class MainWindow : TabbedWindow2
         Title = "Chat links";
         Id = "sliekens.chat-links.main-window";
         Location = new Point(300, 300);
-        CanResize = true;
         _emblem = AsyncEmblem.Attach(this, AsyncTexture2D.FromAssetId(2237584));
         TabChanged += OnTabChanged;
     }
