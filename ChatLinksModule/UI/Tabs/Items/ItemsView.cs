@@ -1,8 +1,12 @@
-﻿using Blish_HUD.Controls;
+﻿using System.Diagnostics.CodeAnalysis;
+
+using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
 using Blish_HUD.Input;
 
 using ChatLinksModule.Storage;
+
+using CommunityToolkit.Diagnostics;
 
 using GuildWars2.Items;
 
@@ -18,13 +22,13 @@ public class ItemsView(ChatLinksContext db, ILogger<ItemsView> logger) : View
 {
     private readonly SemaphoreSlim _searchLock = new(1, 1);
 
-    private FlowPanel _itemsPanel;
+    private FlowPanel? _itemsPanel;
 
-    private Container _root;
+    private Container? _root;
 
-    private TextBox _searchBox;
+    private TextBox? _searchBox;
 
-    private ItemWidget _selectedItem;
+    private ItemWidget? _selectedItem;
 
     protected override void Build(Container buildPanel)
     {
@@ -44,15 +48,41 @@ public class ItemsView(ChatLinksContext db, ILogger<ItemsView> logger) : View
         _itemsPanel.Click += ItemClicked;
     }
 
+    [MemberNotNull(
+        nameof(_root),
+        nameof(_searchBox),
+        nameof(_itemsPanel))]
+    private void EnsureInitialized()
+    {
+        if (_root is null)
+        {
+            ThrowHelper.ThrowInvalidOperationException("_root not initialized");
+        }
+
+        if (_searchBox is null)
+        {
+            ThrowHelper.ThrowInvalidOperationException("_searchBox not initialized");
+        }
+
+        if (_itemsPanel is null)
+        {
+            ThrowHelper.ThrowInvalidOperationException("_itemsPanel not initialized");
+        }
+    }
+
     private void ItemClicked(object sender, MouseEventArgs e)
     {
-        ItemCard clickedItem = _itemsPanel.Children.OfType<ItemCard>()
+        EnsureInitialized();
+
+        ItemCard? clickedItem = _itemsPanel.Children.OfType<ItemCard>()
             .SingleOrDefault(entry => entry.AbsoluteBounds.Contains(e.MousePosition));
         ShowWidget(clickedItem?.Item);
     }
 
     private void ShowWidget(Item? item)
     {
+        EnsureInitialized();
+
         _selectedItem?.Dispose();
         _selectedItem = item is not null ? new ItemWidget(item) { Parent = _root, Left = _itemsPanel.Right } : null;
     }
@@ -61,6 +91,8 @@ public class ItemsView(ChatLinksContext db, ILogger<ItemsView> logger) : View
     {
         try
         {
+            EnsureInitialized();
+
             // Avoid blocking UI
             await Task.Yield();
 
@@ -94,8 +126,10 @@ public class ItemsView(ChatLinksContext db, ILogger<ItemsView> logger) : View
     }
 
     private void UpdateSearchResults(IEnumerable<Item> items)
-    { 
-        using var suspendedLayout = _itemsPanel.SuspendLayoutContext();
+    {
+        EnsureInitialized();
+
+        using IDisposable? suspendedLayout = _itemsPanel.SuspendLayoutContext();
         _itemsPanel.ClearChildren();
         foreach (Item item in items)
         {
@@ -105,9 +139,13 @@ public class ItemsView(ChatLinksContext db, ILogger<ItemsView> logger) : View
 
     protected override void Unload()
     {
-        _searchBox.TextChanged -= SearchInput;
-        _searchBox.Dispose();
-        _itemsPanel.Dispose();
+        if (_searchBox is not null)
+        {
+            _searchBox.TextChanged -= SearchInput;
+        }
+
+        _searchBox?.Dispose();
+        _itemsPanel?.Dispose();
         base.Unload();
     }
 }

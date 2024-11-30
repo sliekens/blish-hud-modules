@@ -1,7 +1,5 @@
 ﻿using System.Text.Json;
 
-using Blish_HUD;
-
 using ChatLinksModule.Logging;
 
 using GuildWars2;
@@ -13,23 +11,10 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Logging;
 
-using SQLitePCL;
-
 namespace ChatLinksModule.Storage;
 
-public class ChatLinksContext : DbContext
+public class ChatLinksContext(DbContextOptions options) : DbContext(options)
 {
-    private static readonly Logger Logger = Logger.GetLogger<ChatLinksContext>();
-
-    private static readonly ILoggerFactory MyLoggerFactory = LoggerFactory.Create(builder =>
-    {
-        builder.AddProvider(new LoggingAdapterProvider<ChatLinksContext>());
-    });
-
-    public ChatLinksContext(DbContextOptions options) : base(options)
-    {
-    }
-
     public DbSet<Item> Items => Set<Item>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -39,7 +24,10 @@ public class ChatLinksContext : DbContext
             optionsBuilder.UseSqlite("Data Source=data.db");
         }
 
-        optionsBuilder.UseLoggerFactory(MyLoggerFactory);
+        optionsBuilder.UseLoggerFactory(LoggerFactory.Create(builder =>
+        {
+            builder.AddProvider(new LoggingAdapterProvider<ChatLinksContext>());
+        }));
     }
 
     private static string Serialize<T>(T value)
@@ -47,7 +35,7 @@ public class ChatLinksContext : DbContext
         return JsonSerializer.Serialize(value);
     }
 
-    private static T Deserialize<T>(string value)
+    private static T? Deserialize<T>(string value)
     {
         return JsonSerializer.Deserialize<T>(value);
     }

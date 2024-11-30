@@ -19,6 +19,15 @@
           "System.ServiceModel.Primitives": "4.9.0"
         }
       },
+      "CommunityToolkit.Diagnostics": {
+        "type": "Direct",
+        "requested": "[8.3.2, )",
+        "resolved": "8.3.2",
+        "contentHash": "YyMsBE9lT0pJg2bEDzlfEWdlk6xHExW6jr1dxC7+YUqqVmOGL5nZROpxbXQRTe5TrfIs7BvkVsGULv/hq6tGIA==",
+        "dependencies": {
+          "System.Memory": "4.5.5"
+        }
+      },
       "GW2SDK": {
         "type": "Direct",
         "requested": "[2.0.0-preview.0.15, )",

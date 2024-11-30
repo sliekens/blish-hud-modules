@@ -9,6 +9,7 @@ public class LoggingAdapterProvider<T> : ILoggerProvider
     public void Dispose()
     {
     }
+
     public ILogger CreateLogger(string categoryName)
     {
         return new LoggingAdapter<T>();
@@ -19,8 +20,8 @@ public class LoggingAdapter<T> : ILogger
 {
     private readonly Logger _logger = Logger.GetLogger<T>();
 
-    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception,
-        Func<TState, Exception, string> formatter)
+    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception,
+        Func<TState, Exception?, string> formatter)
     {
         string logMessage = formatter(state, exception);
         switch (logLevel)
@@ -55,7 +56,7 @@ public class LoggingAdapter<T> : ILogger
         return true;
     }
 
-    public IDisposable BeginScope<TState>(TState state) where TState : notnull
+    public IDisposable? BeginScope<TState>(TState state) where TState : notnull
     {
         return null;
     }

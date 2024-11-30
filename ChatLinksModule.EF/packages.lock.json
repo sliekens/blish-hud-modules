@@ -51,6 +51,14 @@
         "resolved": "1.7.1",
         "contentHash": "9jMkkVuNfd48+ElVajLkJTyKP5dXBwMqYfDS3qXz8EMiWaeTZ12AJHDbosDJvQBJRJetPuLQDaLuI6ZgVSI8Mw=="
       },
+      "CommunityToolkit.Diagnostics": {
+        "type": "Transitive",
+        "resolved": "8.3.2",
+        "contentHash": "YyMsBE9lT0pJg2bEDzlfEWdlk6xHExW6jr1dxC7+YUqqVmOGL5nZROpxbXQRTe5TrfIs7BvkVsGULv/hq6tGIA==",
+        "dependencies": {
+          "System.Memory": "4.5.5"
+        }
+      },
       "Gw2Sharp": {
         "type": "Transitive",
         "resolved": "1.7.4",
@@ -504,6 +512,7 @@
       "chatlinksmodule": {
         "type": "Project",
         "dependencies": {
+          "CommunityToolkit.Diagnostics": "[8.3.2, )",
           "GW2SDK": "[2.0.0-preview.0.15, )",
           "Microsoft.EntityFrameworkCore.Sqlite.Core": "[3.1.32, )",
           "Microsoft.Extensions.Http": "[9.0.0, )",

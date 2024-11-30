@@ -8,6 +8,8 @@ using ChatLinksModule.UI.Tabs.Achievements;
 using ChatLinksModule.UI.Tabs.Crafting;
 using ChatLinksModule.UI.Tabs.Items;
 
+using CommunityToolkit.Diagnostics;
+
 using GuildWars2;
 using GuildWars2.Items;
 
@@ -24,10 +26,11 @@ namespace ChatLinksModule;
 [method: ImportingConstructor]
 public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters parameters) : Module(parameters)
 {
-    private MainIcon _cornerIcon;
+    private MainIcon? _cornerIcon;
 
-    private MainWindow _mainWindow;
-    private ServiceProvider _sp;
+    private MainWindow? _mainWindow;
+
+    private ServiceProvider? _sp;
 
     protected override void Initialize()
     {
@@ -59,8 +62,13 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
         Batteries_V2.Init();
     }
 
-    private T Resolve<T>()
+    private T Resolve<T>() where T : notnull
     {
+        if (_sp is null)
+        {
+            ThrowHelper.ThrowInvalidOperationException("Service provider is not initialized.");
+        }
+
         return _sp.GetRequiredService<T>();
     }
 
@@ -73,9 +81,9 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
         _cornerIcon = Resolve<MainIcon>();
         _cornerIcon.Click += CornerIcon_Click;
 
-        await using ChatLinksContext context = _sp.GetRequiredService<ChatLinksContext>();
+        await using ChatLinksContext context = Resolve<ChatLinksContext>();
         await context.Database.MigrateAsync();
-        var reporter = new Progress<string>(report =>
+        Progress<string> reporter = new(report =>
         {
             _cornerIcon.LoadingMessage = report;
         });
@@ -99,10 +107,12 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
             return;
         }
 
-        await foreach (Item item in gw2Client.Items.GetItemsBulk(index, progress: new Progress<BulkProgress>(report =>
-                       {
-                           progress.Report($"Loading items... ({report.ResultCount} of {report.ResultTotal})");
-                       })).ValueOnly())
+        Progress<BulkProgress> bulkProgress = new(report =>
+        {
+            progress.Report($"Loading items... ({report.ResultCount} of {report.ResultTotal})");
+        });
+
+        await foreach (Item item in gw2Client.Items.GetItemsBulk(index, progress: bulkProgress).ValueOnly())
         {
             context.Items.Add(item);
         }
@@ -110,14 +120,18 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
 
     private void CornerIcon_Click(object sender, EventArgs e)
     {
-        _mainWindow.ToggleWindow();
+        _mainWindow?.ToggleWindow();
     }
 
     protected override void Unload()
     {
-        _cornerIcon.Click -= CornerIcon_Click;
-        _cornerIcon.Dispose();
-        _mainWindow.Dispose();
-        _sp.Dispose();
+        if (_cornerIcon is not null)
+        {
+            _cornerIcon.Click -= CornerIcon_Click;
+        }
+
+        _cornerIcon?.Dispose();
+        _mainWindow?.Dispose();
+        _sp?.Dispose();
     }
 }

@@ -11,6 +11,6 @@ public class JsonValueConverter<T>() : ValueConverter<T, string>(
 {
     private static string Serialize(T value) => JsonSerializer.Serialize(value);
 
-    private static T Deserialize(string value) => JsonSerializer.Deserialize<T>(value);
+    private static T Deserialize(string value) => JsonSerializer.Deserialize<T>(value)!;
 }
 
