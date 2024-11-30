@@ -73,7 +73,7 @@ public class ItemsView(ChatLinksContext db, ILogger<ItemsView> logger) : View
                 string search = _searchBox.Text.ToLowerInvariant().Trim();
                 if (search.Length > 3)
                 {
-                    results = await db.Items.AsQueryable()
+                    results = await db.Items
                         .Where(i => i.Name.ToLower().Contains(search))
                         .Take(100)
                         .ToListAsync();
