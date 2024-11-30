@@ -35,11 +35,11 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
     protected override void Initialize()
     {
         ServiceCollection services = new();
-        services.AddSingleton(parameters);
+        services.AddSingleton(ModuleParameters);
         services.AddHttpClient<Gw2Client>();
         services.AddDbContext<ChatLinksContext>(optionsBuilder =>
         {
-            string directory = parameters.DirectoriesManager.GetFullDirectoryPath("chat-links-data");
+            string directory = ModuleParameters.DirectoriesManager.GetFullDirectoryPath("chat-links-data");
             string file = Path.Combine(directory, "data.db");
             string connectionString = $"Data Source={file}";
             optionsBuilder.UseSqlite(connectionString);
