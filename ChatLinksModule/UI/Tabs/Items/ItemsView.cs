@@ -16,9 +16,14 @@ namespace ChatLinksModule.UI.Tabs.Items;
 
 public class ItemsView(ChatLinksContext db, ILogger<ItemsView> logger) : View
 {
+    private readonly SemaphoreSlim _searchLock = new(1, 1);
+
     private FlowPanel _itemsPanel;
+
     private Container _root;
+
     private TextBox _searchBox;
+
     private ItemWidget _selectedItem;
 
     protected override void Build(Container buildPanel)
@@ -56,19 +61,30 @@ public class ItemsView(ChatLinksContext db, ILogger<ItemsView> logger) : View
     {
         try
         {
-            ShowWidget(null);
-            string search = _searchBox.Text.Trim().ToLowerInvariant();
-            if (search.Length < 3)
+            // Avoid blocking UI
+            await Task.Yield();
+
+            // Ensure exclusive access to the DbContext (not thread-safe)
+            await _searchLock.WaitAsync();
+
+            try
             {
-                return;
+                List<Item> results = [];
+                string search = _searchBox.Text.ToLowerInvariant().Trim();
+                if (search.Length > 3)
+                {
+                    results = await db.Items.AsQueryable()
+                        .Where(i => i.Name.ToLower().Contains(search))
+                        .Take(100)
+                        .ToListAsync();
+                }
+
+                UpdateSearchResults(results);
             }
-
-            List<Item> results = await db.Items.AsQueryable()
-                .Where(i => i.Name.ToLower().Contains(search))
-                .Take(100)
-                .ToListAsync();
-
-            UpdateSearchResults(results);
+            finally
+            {
+                _searchLock.Release();
+            }
         }
         catch (Exception reason)
         {
