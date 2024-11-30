@@ -94,7 +94,8 @@ public class ItemsView(ChatLinksContext db, ILogger<ItemsView> logger) : View
     }
 
     private void UpdateSearchResults(IEnumerable<Item> items)
-    {
+    { 
+        using var suspendedLayout = _itemsPanel.SuspendLayoutContext();
         _itemsPanel.ClearChildren();
         foreach (Item item in items)
         {
