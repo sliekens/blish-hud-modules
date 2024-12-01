@@ -76,20 +76,21 @@ public class ItemsTabView(ChatLinksContext db, ILogger<ItemsTabView> logger) : V
 
             using var cancellationTokenSource = new CancellationTokenSource();
             var searching = true;
+            _searchResults.SetLoading(true);
             _searchBox.TextChanged += OnTextChangedAgain;
-
-            // Debounce search
-            await Task.Delay(200, cancellationTokenSource.Token);
-
-            // Ensure exclusive access to the DbContext (not thread-safe)
-            await _searchLock.WaitAsync(cancellationTokenSource.Token);
 
             List<Item> results = [];
             try
             {
+                // Ensure exclusive access to the DbContext (not thread-safe)
+                await _searchLock.WaitAsync(cancellationTokenSource.Token);
+
                 string search = _searchBox.Text.ToLowerInvariant().Trim();
-                if (search.Length > 3)
+                if (search.Length >= 3)
                 {
+                    // Debounce search
+                    await Task.Delay(300, cancellationTokenSource.Token);
+
                     results = await db.Items
                         .Where(i => i.Name.ToLower().Contains(search))
                         .Take(100)
@@ -97,14 +98,14 @@ public class ItemsTabView(ChatLinksContext db, ILogger<ItemsTabView> logger) : V
                 }
 
                 searching = false;
+                _searchResults.SetOptions(results);
+                _searchResults.SetLoading(false);
             }
             finally
             {
                 _searchBox.TextChanged -= OnTextChangedAgain;
                 _searchLock.Release();
             }
-
-            _searchResults.SetOptions(results);
 
             void OnTextChangedAgain(object o, EventArgs e)
             {
