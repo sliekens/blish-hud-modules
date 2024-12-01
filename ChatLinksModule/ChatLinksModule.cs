@@ -93,18 +93,16 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
             _cornerIcon.LoadingMessage = report;
         });
 
-        await SeedItems(context, reporter);
-
-        _cornerIcon.LoadingMessage = "Saving changes...";
-        await context.SaveChangesAsync();
+        await SeedItems(reporter);
 
         _cornerIcon.LoadingMessage = null;
     }
 
 
-    private async Task SeedItems(ChatLinksContext context, IProgress<string> progress)
+    private async Task SeedItems(IProgress<string> progress)
     {
         Gw2Client gw2Client = Resolve<Gw2Client>();
+        ChatLinksContext context = Resolve<ChatLinksContext>();
         HashSet<int> index = await gw2Client.Items.GetItemsIndex().ValueOnly();
         index.ExceptWith(context.Items.AsQueryable().Select(item => item.Id));
         if (index.Count == 0)
@@ -117,10 +115,21 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
             progress.Report($"Loading items... ({report.ResultCount} of {report.ResultTotal})");
         });
 
+        List<Item> batch = [];
         await foreach (Item item in gw2Client.Items.GetItemsBulk(index, progress: bulkProgress).ValueOnly())
         {
-            context.Items.Add(item);
+            batch.Add(item);
+            if (batch.Count != 100)
+            {
+                continue;
+            }
+
+            await context.BulkInsertAsync(batch, o => o.BatchSize = 100);
+            batch.Clear();
         }
+
+        await context.BulkInsertAsync(batch, o => o.BatchSize = 100);
+
     }
 
     private void CornerIcon_Click(object sender, EventArgs e)
