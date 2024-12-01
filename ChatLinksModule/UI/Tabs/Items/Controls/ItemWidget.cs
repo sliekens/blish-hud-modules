@@ -12,6 +12,7 @@ namespace ChatLinksModule.UI.Tabs.Items.Controls;
 public sealed class ItemWidget : FlowPanel
 {
     private readonly TextBox _chatLink;
+
     private readonly Item _item;
 
     private readonly TrackBar _quantity;
@@ -40,7 +41,10 @@ public sealed class ItemWidget : FlowPanel
 
         Label chatLinkLabel = new() { Parent = this, Text = "Chat Link:", AutoSizeWidth = true, AutoSizeHeight = true };
 
-        _chatLink = new TextBox { Parent = this, Text = item.ChatLink, Enabled = false };
+        _chatLink = new TextBox
+        {
+            Parent = this, Text = item.ChatLink
+        };
 
         _send = new StandardButton { Parent = this, Text = "Send to chat", Icon = AsyncTexture2D.FromAssetId(155157) };
 
