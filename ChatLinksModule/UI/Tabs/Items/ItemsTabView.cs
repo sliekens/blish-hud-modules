@@ -74,30 +74,60 @@ public class ItemsTabView(ChatLinksContext db, ILogger<ItemsTabView> logger) : V
         {
             EnsureInitialized();
 
+            using var cancellationTokenSource = new CancellationTokenSource();
+            var searching = true;
+            _searchBox.TextChanged += OnTextChangedAgain;
+
             // Avoid blocking UI
             await Task.Yield();
 
             // Ensure exclusive access to the DbContext (not thread-safe)
-            await _searchLock.WaitAsync();
+            await _searchLock.WaitAsync(cancellationTokenSource.Token);
 
+            List<Item> results = [];
             try
             {
-                List<Item> results = [];
                 string search = _searchBox.Text.ToLowerInvariant().Trim();
                 if (search.Length > 3)
                 {
                     results = await db.Items
                         .Where(i => i.Name.ToLower().Contains(search))
                         .Take(100)
-                        .ToListAsync();
+                        .ToListAsync(cancellationToken: cancellationTokenSource.Token);
                 }
 
-                _searchResults.SetOptions(results);
+                searching = false;
             }
             finally
             {
+                _searchBox.TextChanged -= OnTextChangedAgain;
                 _searchLock.Release();
             }
+
+            _searchResults.SetOptions(results);
+
+            void OnTextChangedAgain(object o, EventArgs e)
+            {
+                // ReSharper disable once AccessToModifiedClosure
+                if (!searching)
+                {
+                    return;
+                }
+
+                try
+                {
+                    // ReSharper disable once AccessToDisposedClosure
+                    cancellationTokenSource.Cancel();
+                }
+                catch (ObjectDisposedException)
+                {
+                    // Expected
+                }
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            logger.LogDebug("Previous search was canceled");
         }
         catch (Exception reason)
         {
