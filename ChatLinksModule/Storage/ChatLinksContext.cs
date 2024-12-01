@@ -149,7 +149,6 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
         itemBuilder.Property(item => item.Flags).HasJsonValueConversion();
         itemBuilder.Property(item => item.Restrictions).HasJsonValueConversion();
 
-
         ValueConverter<IDictionary<Extensible<AttributeName>, int>, string> attributesConverter = new(
             static attr => Serialize(attr.ToDictionary(pair => pair.Key.ToString(), pair => pair.Value)),
             static json => Deserialize<Dictionary<string, int>>(json)
@@ -157,50 +156,82 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
 
         EntityTypeBuilder<Armor> armorBuilder = modelBuilder.Entity<Armor>();
         armorBuilder.Property(armor => armor.WeightClass).HasConversion(new ExtensibleEnumConverter<WeightClass>());
-        armorBuilder.Property(armor => armor.Attributes).HasConversion(attributesConverter);
-        armorBuilder.Property(armor => armor.StatChoices).HasJsonValueConversion();
-        armorBuilder.Property(armor => armor.InfusionSlots).HasJsonValueConversion();
-        armorBuilder.Property(armor => armor.Buff).HasJsonValueConversion();
+        armorBuilder.Property(armor => armor.Defense).HasColumnName("Defense");
+        armorBuilder.Property(armor => armor.DefaultSkinId).HasColumnName("DefaultSkinId");
+        armorBuilder.Property(armor => armor.SuffixItemId).HasColumnName("SuffixItemId");
+        armorBuilder.Property(armor => armor.AttributeCombinationId).HasColumnName("AttributeCombinationId");
+        armorBuilder.Property(armor => armor.Attributes).HasColumnName("Attributes").HasConversion(attributesConverter);
+        armorBuilder.Property(armor => armor.AttributeAdjustment).HasColumnName("AttributeAdjustment");
+        armorBuilder.Property(armor => armor.StatChoices).HasColumnName("StatChoices").HasJsonValueConversion();
+        armorBuilder.Property(armor => armor.InfusionSlots).HasColumnName("InfusionSlots").HasJsonValueConversion();
+        armorBuilder.Property(armor => armor.Buff).HasColumnName("Buff").HasJsonValueConversion();
 
         EntityTypeBuilder<Trinket> trinketBuilder = modelBuilder.Entity<Trinket>();
-        trinketBuilder.Property(trinket => trinket.Attributes).HasConversion(attributesConverter);
-        trinketBuilder.Property(trinket => trinket.StatChoices).HasJsonValueConversion();
-        trinketBuilder.Property(trinket => trinket.InfusionSlots).HasJsonValueConversion();
-        trinketBuilder.Property(trinket => trinket.Buff).HasJsonValueConversion();
+        trinketBuilder.Property(trinket => trinket.SuffixItemId).HasColumnName("SuffixItemId");
+        trinketBuilder.Property(trinket => trinket.AttributeCombinationId).HasColumnName("AttributeCombinationId");
+        trinketBuilder.Property(trinket => trinket.Attributes).HasColumnName("Attributes")
+            .HasConversion(attributesConverter);
+        trinketBuilder.Property(trinket => trinket.AttributeAdjustment).HasColumnName("AttributeAdjustment");
+        trinketBuilder.Property(trinket => trinket.StatChoices).HasColumnName("StatChoices").HasJsonValueConversion();
+        trinketBuilder.Property(trinket => trinket.InfusionSlots).HasColumnName("InfusionSlots")
+            .HasJsonValueConversion();
+        trinketBuilder.Property(trinket => trinket.Buff).HasColumnName("Buff").HasJsonValueConversion();
 
         EntityTypeBuilder<Ring> ringBuilder = modelBuilder.Entity<Ring>();
-        ringBuilder.Property(ring => ring.UpgradesFrom).HasJsonValueConversion();
-        ringBuilder.Property(ring => ring.UpgradesInto).HasJsonValueConversion();
+        ringBuilder.Property(ring => ring.UpgradesFrom).HasColumnName("UpgradesFrom").HasJsonValueConversion();
+        ringBuilder.Property(ring => ring.UpgradesInto).HasColumnName("UpgradesInto").HasJsonValueConversion();
 
         EntityTypeBuilder<Weapon> weaponBuilder = modelBuilder.Entity<Weapon>();
         weaponBuilder.Property(weapon => weapon.DamageType).HasConversion(new ExtensibleEnumConverter<DamageType>());
-        weaponBuilder.Property(weapon => weapon.Attributes).HasConversion(attributesConverter);
-        weaponBuilder.Property(weapon => weapon.StatChoices).HasJsonValueConversion();
-        weaponBuilder.Property(weapon => weapon.InfusionSlots).HasJsonValueConversion();
-        weaponBuilder.Property(weapon => weapon.Buff).HasJsonValueConversion();
+        weaponBuilder.Property(weapon => weapon.Defense).HasColumnName("Defense");
+        weaponBuilder.Property(weapon => weapon.DefaultSkinId).HasColumnName("DefaultSkinId");
+        weaponBuilder.Property(weapon => weapon.SuffixItemId).HasColumnName("SuffixItemId");
+        weaponBuilder.Property(weapon => weapon.SecondarySuffixItemId).HasColumnName("SecondarySuffixItemId");
+        weaponBuilder.Property(weapon => weapon.AttributeCombinationId).HasColumnName("AttributeCombinationId");
+        weaponBuilder.Property(weapon => weapon.Attributes).HasColumnName("Attributes").HasConversion(attributesConverter);
+        weaponBuilder.Property(weapon => weapon.AttributeAdjustment).HasColumnName("AttributeAdjustment");
+        weaponBuilder.Property(weapon => weapon.StatChoices).HasColumnName("StatChoices").HasJsonValueConversion();
+        weaponBuilder.Property(weapon => weapon.InfusionSlots).HasColumnName("InfusionSlots").HasJsonValueConversion();
+        weaponBuilder.Property(weapon => weapon.Buff).HasColumnName("Buff").HasJsonValueConversion();
 
         EntityTypeBuilder<Backpack> backpackBuilder = modelBuilder.Entity<Backpack>();
-        backpackBuilder.Property(backpack => backpack.Attributes).HasConversion(attributesConverter);
-        backpackBuilder.Property(backpack => backpack.StatChoices).HasJsonValueConversion();
-        backpackBuilder.Property(backpack => backpack.InfusionSlots).HasJsonValueConversion();
-        backpackBuilder.Property(backpack => backpack.Buff).HasJsonValueConversion();
-        backpackBuilder.Property(backpack => backpack.UpgradesFrom).HasJsonValueConversion();
-        backpackBuilder.Property(backpack => backpack.UpgradesInto).HasJsonValueConversion();
+        backpackBuilder.Property(backpack => backpack.DefaultSkinId).HasColumnName("DefaultSkinId");
+        backpackBuilder.Property(backpack => backpack.SuffixItemId).HasColumnName("SuffixItemId");
+        backpackBuilder.Property(backpack => backpack.AttributeCombinationId).HasColumnName("AttributeCombinationId");
+        backpackBuilder.Property(backpack => backpack.Attributes).HasColumnName("Attributes")
+            .HasConversion(attributesConverter);
+        backpackBuilder.Property(backpack => backpack.AttributeAdjustment).HasColumnName("AttributeAdjustment");
+        backpackBuilder.Property(backpack => backpack.StatChoices).HasColumnName("StatChoices")
+            .HasJsonValueConversion();
+        backpackBuilder.Property(backpack => backpack.InfusionSlots).HasColumnName("InfusionSlots")
+            .HasJsonValueConversion();
+        backpackBuilder.Property(backpack => backpack.Buff).HasColumnName("Buff").HasJsonValueConversion();
+        backpackBuilder.Property(backpack => backpack.UpgradesFrom).HasColumnName("UpgradesFrom")
+            .HasJsonValueConversion();
+        backpackBuilder.Property(backpack => backpack.UpgradesInto).HasColumnName("UpgradesInto")
+            .HasJsonValueConversion();
 
         EntityTypeBuilder<UpgradeComponent> upgradeComponentBuilder = modelBuilder.Entity<UpgradeComponent>();
+        upgradeComponentBuilder.Property(upgradeComponent => upgradeComponent.AttributeCombinationId)
+            .HasColumnName("AttributeCombinationId");
         upgradeComponentBuilder.Property(upgradeComponent => upgradeComponent.Attributes)
+            .HasColumnName("Attributes")
             .HasConversion(attributesConverter);
+        upgradeComponentBuilder.Property(upgradeComponent => upgradeComponent.AttributeAdjustment)
+            .HasColumnName("AttributeAdjustment");
         upgradeComponentBuilder.Property(upgradeComponent => upgradeComponent.UpgradeComponentFlags)
             .HasConversion(new JsonValueConverter<UpgradeComponentFlags>());
         upgradeComponentBuilder.Property(upgradeComponent => upgradeComponent.InfusionUpgradeFlags)
             .HasConversion(new JsonValueConverter<InfusionSlotFlags>());
-        upgradeComponentBuilder.Property(upgradeComponent => upgradeComponent.Buff).HasJsonValueConversion();
+        upgradeComponentBuilder.Property(upgradeComponent => upgradeComponent.Buff).HasColumnName("Buff")
+            .HasJsonValueConversion();
 
         EntityTypeBuilder<Rune> runeBuilder = modelBuilder.Entity<Rune>();
         runeBuilder.Property(rune => rune.Bonuses).HasJsonValueConversion();
 
         EntityTypeBuilder<CraftingMaterial> craftingMaterialBuilder = modelBuilder.Entity<CraftingMaterial>();
-        craftingMaterialBuilder.Property(craftingMaterial => craftingMaterial.UpgradesInto).HasJsonValueConversion();
+        craftingMaterialBuilder.Property(craftingMaterial => craftingMaterial.UpgradesInto)
+            .HasColumnName("UpgradesInto").HasJsonValueConversion();
 
         EntityTypeBuilder<RecipeSheet> recipeSheetBuilder = modelBuilder.Entity<RecipeSheet>();
         recipeSheetBuilder.Property(recipeSheet => recipeSheet.ExtraRecipeIds).HasJsonValueConversion();
@@ -209,15 +240,22 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
         transmutationBuilder.Property(transmutation => transmutation.SkinIds).HasJsonValueConversion();
 
         EntityTypeBuilder<Food> foodBuilder = modelBuilder.Entity<Food>();
-        foodBuilder.Property(food => food.Effect).HasJsonValueConversion();
+        foodBuilder.Property(food => food.Effect).HasColumnName("Effect").HasJsonValueConversion();
 
         EntityTypeBuilder<GenericConsumable> genericConsumableBuilder = modelBuilder.Entity<GenericConsumable>();
-        genericConsumableBuilder.Property(genericConsumable => genericConsumable.Effect).HasJsonValueConversion();
+        genericConsumableBuilder.Property(genericConsumable => genericConsumable.Effect).HasColumnName("Effect")
+            .HasJsonValueConversion();
+        genericConsumableBuilder.Property(genericConsumable => genericConsumable.GuildUpgradeId)
+            .HasColumnName("GuildUpgradeId");
 
         EntityTypeBuilder<Service> serviceBuilder = modelBuilder.Entity<Service>();
-        serviceBuilder.Property(service => service.Effect).HasJsonValueConversion();
+        serviceBuilder.Property(service => service.Effect).HasColumnName("Effect").HasJsonValueConversion();
+        serviceBuilder.Property(service => service.GuildUpgradeId).HasColumnName("GuildUpgradeId");
+
+        var gizmoBuilder = modelBuilder.Entity<Gizmo>();
+        gizmoBuilder.Property(gizmo => gizmo.GuildUpgradeId).HasColumnName("GuildUpgradeId");
 
         EntityTypeBuilder<Utility> utilityBuilder = modelBuilder.Entity<Utility>();
-        utilityBuilder.Property(utility => utility.Effect).HasJsonValueConversion();
+        utilityBuilder.Property(utility => utility.Effect).HasColumnName("Effect").HasJsonValueConversion();
     }
 }

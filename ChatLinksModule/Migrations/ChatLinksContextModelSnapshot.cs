@@ -74,33 +74,42 @@ namespace ChatLinksModule.Migrations
                     b.HasBaseType("GuildWars2.Items.Item");
 
                     b.Property<double>("AttributeAdjustment")
+                        .HasColumnName("AttributeAdjustment")
                         .HasColumnType("REAL");
 
                     b.Property<int?>("AttributeCombinationId")
+                        .HasColumnName("AttributeCombinationId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Attributes")
                         .IsRequired()
+                        .HasColumnName("Attributes")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Buff")
+                        .HasColumnName("Buff")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("DefaultSkinId")
+                        .HasColumnName("DefaultSkinId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Defense")
+                        .HasColumnName("Defense")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("InfusionSlots")
                         .IsRequired()
+                        .HasColumnName("InfusionSlots")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("StatChoices")
                         .IsRequired()
+                        .HasColumnName("StatChoices")
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("SuffixItemId")
+                        .HasColumnName("SuffixItemId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("WeightClass")
@@ -115,46 +124,48 @@ namespace ChatLinksModule.Migrations
                     b.HasBaseType("GuildWars2.Items.Item");
 
                     b.Property<double>("AttributeAdjustment")
-                        .HasColumnName("Backpack_AttributeAdjustment")
+                        .HasColumnName("AttributeAdjustment")
                         .HasColumnType("REAL");
 
                     b.Property<int?>("AttributeCombinationId")
-                        .HasColumnName("Backpack_AttributeCombinationId")
+                        .HasColumnName("AttributeCombinationId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Attributes")
                         .IsRequired()
-                        .HasColumnName("Backpack_Attributes")
+                        .HasColumnName("Attributes")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Buff")
-                        .HasColumnName("Backpack_Buff")
+                        .HasColumnName("Buff")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("DefaultSkinId")
-                        .HasColumnName("Backpack_DefaultSkinId")
+                        .HasColumnName("DefaultSkinId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("InfusionSlots")
                         .IsRequired()
-                        .HasColumnName("Backpack_InfusionSlots")
+                        .HasColumnName("InfusionSlots")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("StatChoices")
                         .IsRequired()
-                        .HasColumnName("Backpack_StatChoices")
+                        .HasColumnName("StatChoices")
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("SuffixItemId")
-                        .HasColumnName("Backpack_SuffixItemId")
+                        .HasColumnName("SuffixItemId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("UpgradesFrom")
                         .IsRequired()
+                        .HasColumnName("UpgradesFrom")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UpgradesInto")
                         .IsRequired()
+                        .HasColumnName("UpgradesInto")
                         .HasColumnType("TEXT");
 
                     b.HasDiscriminator().HasValue("back");
@@ -193,7 +204,7 @@ namespace ChatLinksModule.Migrations
 
                     b.Property<string>("UpgradesInto")
                         .IsRequired()
-                        .HasColumnName("CraftingMaterial_UpgradesInto")
+                        .HasColumnName("UpgradesInto")
                         .HasColumnType("TEXT");
 
                     b.HasDiscriminator().HasValue("crafting_material");
@@ -211,7 +222,7 @@ namespace ChatLinksModule.Migrations
                     b.HasBaseType("GuildWars2.Items.Item");
 
                     b.Property<int?>("GuildUpgradeId")
-                        .HasColumnName("Gizmo_GuildUpgradeId")
+                        .HasColumnName("GuildUpgradeId")
                         .HasColumnType("INTEGER");
 
                     b.HasDiscriminator().HasValue("gizmo");
@@ -263,34 +274,34 @@ namespace ChatLinksModule.Migrations
                     b.HasBaseType("GuildWars2.Items.Item");
 
                     b.Property<double>("AttributeAdjustment")
-                        .HasColumnName("Trinket_AttributeAdjustment")
+                        .HasColumnName("AttributeAdjustment")
                         .HasColumnType("REAL");
 
                     b.Property<int?>("AttributeCombinationId")
-                        .HasColumnName("Trinket_AttributeCombinationId")
+                        .HasColumnName("AttributeCombinationId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Attributes")
                         .IsRequired()
-                        .HasColumnName("Trinket_Attributes")
+                        .HasColumnName("Attributes")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Buff")
-                        .HasColumnName("Trinket_Buff")
+                        .HasColumnName("Buff")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("InfusionSlots")
                         .IsRequired()
-                        .HasColumnName("Trinket_InfusionSlots")
+                        .HasColumnName("InfusionSlots")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("StatChoices")
                         .IsRequired()
-                        .HasColumnName("Trinket_StatChoices")
+                        .HasColumnName("StatChoices")
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("SuffixItemId")
-                        .HasColumnName("Trinket_SuffixItemId")
+                        .HasColumnName("SuffixItemId")
                         .HasColumnType("INTEGER");
 
                     b.HasDiscriminator().HasValue("trinket");
@@ -308,20 +319,20 @@ namespace ChatLinksModule.Migrations
                     b.HasBaseType("GuildWars2.Items.Item");
 
                     b.Property<double>("AttributeAdjustment")
-                        .HasColumnName("UpgradeComponent_AttributeAdjustment")
+                        .HasColumnName("AttributeAdjustment")
                         .HasColumnType("REAL");
 
                     b.Property<int?>("AttributeCombinationId")
-                        .HasColumnName("UpgradeComponent_AttributeCombinationId")
+                        .HasColumnName("AttributeCombinationId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Attributes")
                         .IsRequired()
-                        .HasColumnName("UpgradeComponent_Attributes")
+                        .HasColumnName("Attributes")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Buff")
-                        .HasColumnName("UpgradeComponent_Buff")
+                        .HasColumnName("Buff")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("InfusionUpgradeFlags")
@@ -344,20 +355,20 @@ namespace ChatLinksModule.Migrations
                     b.HasBaseType("GuildWars2.Items.Item");
 
                     b.Property<double>("AttributeAdjustment")
-                        .HasColumnName("Weapon_AttributeAdjustment")
+                        .HasColumnName("AttributeAdjustment")
                         .HasColumnType("REAL");
 
                     b.Property<int?>("AttributeCombinationId")
-                        .HasColumnName("Weapon_AttributeCombinationId")
+                        .HasColumnName("AttributeCombinationId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Attributes")
                         .IsRequired()
-                        .HasColumnName("Weapon_Attributes")
+                        .HasColumnName("Attributes")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Buff")
-                        .HasColumnName("Weapon_Buff")
+                        .HasColumnName("Buff")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("DamageType")
@@ -365,16 +376,16 @@ namespace ChatLinksModule.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<int>("DefaultSkinId")
-                        .HasColumnName("Weapon_DefaultSkinId")
+                        .HasColumnName("DefaultSkinId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Defense")
-                        .HasColumnName("Weapon_Defense")
+                        .HasColumnName("Defense")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("InfusionSlots")
                         .IsRequired()
-                        .HasColumnName("Weapon_InfusionSlots")
+                        .HasColumnName("InfusionSlots")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("MaxPower")
@@ -384,15 +395,16 @@ namespace ChatLinksModule.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("SecondarySuffixItemId")
+                        .HasColumnName("SecondarySuffixItemId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("StatChoices")
                         .IsRequired()
-                        .HasColumnName("Weapon_StatChoices")
+                        .HasColumnName("StatChoices")
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("SuffixItemId")
-                        .HasColumnName("Weapon_SuffixItemId")
+                        .HasColumnName("SuffixItemId")
                         .HasColumnType("INTEGER");
 
                     b.HasDiscriminator().HasValue("weapon");
@@ -480,6 +492,7 @@ namespace ChatLinksModule.Migrations
                     b.HasBaseType("GuildWars2.Items.Consumable");
 
                     b.Property<string>("Effect")
+                        .HasColumnName("Effect")
                         .HasColumnType("TEXT");
 
                     b.HasDiscriminator().HasValue("food");
@@ -490,10 +503,11 @@ namespace ChatLinksModule.Migrations
                     b.HasBaseType("GuildWars2.Items.Consumable");
 
                     b.Property<string>("Effect")
-                        .HasColumnName("GenericConsumable_Effect")
+                        .HasColumnName("Effect")
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("GuildUpgradeId")
+                        .HasColumnName("GuildUpgradeId")
                         .HasColumnType("INTEGER");
 
                     b.HasDiscriminator().HasValue("generic_consumable");
@@ -525,11 +539,11 @@ namespace ChatLinksModule.Migrations
                     b.HasBaseType("GuildWars2.Items.Consumable");
 
                     b.Property<string>("Effect")
-                        .HasColumnName("Service_Effect")
+                        .HasColumnName("Effect")
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("GuildUpgradeId")
-                        .HasColumnName("Service_GuildUpgradeId")
+                        .HasColumnName("GuildUpgradeId")
                         .HasColumnType("INTEGER");
 
                     b.HasDiscriminator().HasValue("service");
@@ -572,7 +586,7 @@ namespace ChatLinksModule.Migrations
                     b.HasBaseType("GuildWars2.Items.Consumable");
 
                     b.Property<string>("Effect")
-                        .HasColumnName("Utility_Effect")
+                        .HasColumnName("Effect")
                         .HasColumnType("TEXT");
 
                     b.HasDiscriminator().HasValue("utility");
@@ -675,12 +689,12 @@ namespace ChatLinksModule.Migrations
 
                     b.Property<string>("UpgradesFrom")
                         .IsRequired()
-                        .HasColumnName("Ring_UpgradesFrom")
+                        .HasColumnName("UpgradesFrom")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UpgradesInto")
                         .IsRequired()
-                        .HasColumnName("Ring_UpgradesInto")
+                        .HasColumnName("UpgradesInto")
                         .HasColumnType("TEXT");
 
                     b.HasDiscriminator().HasValue("ring");
