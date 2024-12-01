@@ -7,13 +7,13 @@ using Microsoft.Xna.Framework;
 
 using Container = Blish_HUD.Controls.Container;
 
-namespace ChatLinksModule.UI.Tabs.Items.Search;
+namespace ChatLinksModule.UI.Tabs.Items.Controls;
 
-public class ItemCard : Container
+public class ItemChoice : Container
 {
     private readonly ItemHeader _itemHeader;
 
-    public ItemCard(Item item)
+    public ItemChoice(Item item)
     {
         _itemHeader = new ItemHeader(item)
         {

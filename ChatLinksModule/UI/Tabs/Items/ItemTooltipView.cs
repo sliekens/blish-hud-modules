@@ -4,6 +4,8 @@ using Blish_HUD.Content;
 using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
 
+using ChatLinksModule.UI.Tabs.Items.Controls;
+
 using GuildWars2.Items;
 
 using Microsoft.Xna.Framework;

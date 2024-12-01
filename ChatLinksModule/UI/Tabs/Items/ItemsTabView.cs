@@ -5,8 +5,7 @@ using Blish_HUD.Graphics.UI;
 using Blish_HUD.Input;
 
 using ChatLinksModule.Storage;
-using ChatLinksModule.UI.Tabs.Items.Details;
-using ChatLinksModule.UI.Tabs.Items.Search;
+using ChatLinksModule.UI.Tabs.Items.Controls;
 
 using CommunityToolkit.Diagnostics;
 
@@ -24,7 +23,7 @@ public class ItemsTabView(ChatLinksContext db, ILogger<ItemsTabView> logger) : V
 {
     private readonly SemaphoreSlim _searchLock = new(1, 1);
 
-    private FlowPanel? _itemsPanel;
+    private ItemsList? _searchResults;
 
     private Container? _root;
 
@@ -36,24 +35,21 @@ public class ItemsTabView(ChatLinksContext db, ILogger<ItemsTabView> logger) : V
     {
         _root = buildPanel;
         _searchBox = new TextBox { Parent = buildPanel, Width = 450 };
-        _itemsPanel = new FlowPanel
+        _searchResults = new ItemsList
         {
             Parent = buildPanel,
             Size = new Point(450, 500),
-            Top = _searchBox.Bottom,
-            ShowTint = true,
-            ShowBorder = true,
-            CanScroll = true
+            Top = _searchBox.Bottom
         };
 
         _searchBox.TextChanged += SearchInput;
-        _itemsPanel.Click += ItemClicked;
+        _searchResults.Click += ItemClicked;
     }
 
     [MemberNotNull(
         nameof(_root),
         nameof(_searchBox),
-        nameof(_itemsPanel))]
+        nameof(_searchResults))]
     private void EnsureInitialized()
     {
         if (_root is null)
@@ -66,31 +62,10 @@ public class ItemsTabView(ChatLinksContext db, ILogger<ItemsTabView> logger) : V
             ThrowHelper.ThrowInvalidOperationException("_searchBox not initialized");
         }
 
-        if (_itemsPanel is null)
+        if (_searchResults is null)
         {
-            ThrowHelper.ThrowInvalidOperationException("_itemsPanel not initialized");
+            ThrowHelper.ThrowInvalidOperationException("_searchResults not initialized");
         }
-    }
-
-    private void ItemClicked(object sender, MouseEventArgs e)
-    {
-        EnsureInitialized();
-
-        ItemCard? clickedItem = _itemsPanel.Children.OfType<ItemCard>()
-            .SingleOrDefault(entry => entry.AbsoluteBounds.Contains(e.MousePosition));
-        ShowWidget(clickedItem?.Item);
-    }
-
-    private void ShowWidget(Item? item)
-    {
-        EnsureInitialized();
-
-        _selectedItem?.Dispose();
-        _selectedItem = item is not null ? new ItemWidget(item)
-        {
-            Parent = _root, Left = _itemsPanel.Right,
-            Width = _root.Right - _itemsPanel.Right
-        } : null;
     }
 
     private async void SearchInput(object sender, EventArgs e)
@@ -117,7 +92,7 @@ public class ItemsTabView(ChatLinksContext db, ILogger<ItemsTabView> logger) : V
                         .ToListAsync();
                 }
 
-                UpdateSearchResults(results);
+                _searchResults.SetOptions(results);
             }
             finally
             {
@@ -131,16 +106,26 @@ public class ItemsTabView(ChatLinksContext db, ILogger<ItemsTabView> logger) : V
         }
     }
 
-    private void UpdateSearchResults(IEnumerable<Item> items)
+    private void ItemClicked(object sender, MouseEventArgs e)
     {
         EnsureInitialized();
 
-        using IDisposable? suspendedLayout = _itemsPanel.SuspendLayoutContext();
-        _itemsPanel.ClearChildren();
-        foreach (Item item in items)
+        ItemChoice? clickedItem = _searchResults.Children.OfType<ItemChoice>()
+            .SingleOrDefault(entry => entry.AbsoluteBounds.Contains(e.MousePosition));
+        ShowWidget(clickedItem?.Item);
+    }
+
+    private void ShowWidget(Item? item)
+    {
+        EnsureInitialized();
+
+        _selectedItem?.Dispose();
+        _selectedItem = item is not null ? new ItemWidget(item)
         {
-            _ = new ItemCard(item) { Parent = _itemsPanel };
-        }
+            Parent = _root,
+            Left = _searchResults.Right,
+            Width = _root.Right - _searchResults.Right
+        } : null;
     }
 
     protected override void Unload()
@@ -151,7 +136,7 @@ public class ItemsTabView(ChatLinksContext db, ILogger<ItemsTabView> logger) : V
         }
 
         _searchBox?.Dispose();
-        _itemsPanel?.Dispose();
+        _searchResults?.Dispose();
         base.Unload();
     }
 }

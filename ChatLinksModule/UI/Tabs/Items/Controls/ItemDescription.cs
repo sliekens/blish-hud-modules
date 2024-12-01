@@ -1,6 +1,6 @@
 ﻿using Blish_HUD.Controls;
 
-namespace ChatLinksModule.UI.Tabs.Items;
+namespace ChatLinksModule.UI.Tabs.Items.Controls;
 
 public sealed class ItemDescription : Container
 {

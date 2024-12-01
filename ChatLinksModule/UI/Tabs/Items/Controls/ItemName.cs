@@ -4,7 +4,7 @@ using GuildWars2.Items;
 
 using Microsoft.Xna.Framework;
 
-namespace ChatLinksModule.UI.Tabs.Items;
+namespace ChatLinksModule.UI.Tabs.Items.Controls;
 
 public class ItemName : Label
 {

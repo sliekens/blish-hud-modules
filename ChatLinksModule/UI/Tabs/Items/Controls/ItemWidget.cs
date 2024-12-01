@@ -7,7 +7,7 @@ using GuildWars2.Items;
 
 using Microsoft.Xna.Framework;
 
-namespace ChatLinksModule.UI.Tabs.Items.Details;
+namespace ChatLinksModule.UI.Tabs.Items.Controls;
 
 public sealed class ItemWidget : FlowPanel
 {
