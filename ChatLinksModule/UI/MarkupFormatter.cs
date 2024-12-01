@@ -55,16 +55,22 @@ internal static class FormattedLabelBuilderExtensions
     {
         if (MarkupColorName.DefaultColorMap.TryGetValue(color, out var colorCode))
         {
-            return ParseColor(colorCode);
+            color = colorCode;
         }
 
         if (color.StartsWith("#", StringComparison.Ordinal))
         {
             var hex = color[1..];
-            byte r = byte.Parse(hex[..2], NumberStyles.HexNumber);
-            byte g = byte.Parse(hex[2..4], NumberStyles.HexNumber);
-            byte b = byte.Parse(hex[4..6], NumberStyles.HexNumber);
-            return new Color(r, g, b);
+            try
+            {
+                byte r = byte.Parse(hex[..2], NumberStyles.HexNumber);
+                byte g = byte.Parse(hex[2..4], NumberStyles.HexNumber);
+                byte b = byte.Parse(hex[4..6], NumberStyles.HexNumber);
+                return new Color(r, g, b);
+            }
+            catch (FormatException)
+            {
+            }
         }
 
         return Color.White;
