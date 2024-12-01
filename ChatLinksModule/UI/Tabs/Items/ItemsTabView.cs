@@ -78,8 +78,8 @@ public class ItemsTabView(ChatLinksContext db, ILogger<ItemsTabView> logger) : V
             var searching = true;
             _searchBox.TextChanged += OnTextChangedAgain;
 
-            // Avoid blocking UI
-            await Task.Yield();
+            // Debounce search
+            await Task.Delay(200, cancellationTokenSource.Token);
 
             // Ensure exclusive access to the DbContext (not thread-safe)
             await _searchLock.WaitAsync(cancellationTokenSource.Token);
