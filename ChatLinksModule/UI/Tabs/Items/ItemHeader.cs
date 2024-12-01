@@ -1,10 +1,6 @@
-﻿using Blish_HUD;
-using Blish_HUD.Common.UI.Views;
-using Blish_HUD.Content;
-using Blish_HUD.Controls;
+﻿using Blish_HUD.Controls;
 
 using GuildWars2.Items;
-using GuildWars2.Markup;
 
 using Microsoft.Xna.Framework;
 
@@ -12,33 +8,54 @@ namespace ChatLinksModule.UI.Tabs.Items;
 
 public sealed class ItemHeader : FlowPanel
 {
+    private readonly ItemImage image;
+
+    private readonly ItemName name;
+
     public ItemHeader(Item item)
     {
-        WidthSizingMode = SizingMode.AutoSize;
-        HeightSizingMode = SizingMode.AutoSize;
-        Image image = new(AsyncTexture2D.FromAssetId(1972324))
-        {
-            Size = new Point(50, 50), Location = new Point(0, 0), Parent = this, Padding = new Thickness(5f)
-        };
-
-        if (!string.IsNullOrEmpty(item.IconHref))
-        {
-            image.Texture = GameService.Content.GetRenderServiceTexture(item.IconHref);
-        }
-
-        if (!string.IsNullOrEmpty(item.Description))
-        {
-            image.Tooltip = new Tooltip(new BasicTooltipView(MarkupConverter.ToPlainText(item.Description)));
-        }
-
-        ItemName name = new(item)
-        {
-            Parent = this, AutoSizeWidth = true, Height = 50, VerticalAlignment = VerticalAlignment.Middle
-        };
-
-        Item = item;
         FlowDirection = ControlFlowDirection.SingleLeftToRight;
+        ControlPadding = new Vector2(5f, 0);
+        image = new ItemImage(item) { Parent = this };
+        name = new ItemName(item) { Parent = this };
+        Height = 50;
+        Width = 290;
     }
 
-    public Item Item { get; }
+    public new Tooltip Tooltip
+    {
+        get => base.Tooltip;
+        set
+        {
+            base.Tooltip = value;
+            image.Tooltip = value;
+            name.Tooltip = value;
+        }
+    }
+
+    public new int Width
+    {
+        get => base.Width;
+        set
+        {
+            base.Width = value;
+            name.Width = value - image.Width;
+        }
+    }
+
+    public bool Large
+    {
+        set
+        {
+            image.Size = value ? new Point(50, 50) : new Point(35, 35);
+            name.Height = value ? 50 : 35;
+            name.Width = base.Width - image.Width;
+        }
+    }
+
+    public bool ShowShadow
+    {
+        get => name.ShowShadow;
+        set => name.ShowShadow = value;
+    }
 }

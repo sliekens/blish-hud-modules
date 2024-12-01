@@ -10,6 +10,10 @@ public class ItemName : Label
 {
     public ItemName(Item item)
     {
+        WrapText = true;
+        Width = 240;
+        Height = 50;
+        VerticalAlignment = VerticalAlignment.Middle;
         Text = item.Name;
         TextColor = item.Rarity.ToEnum() switch
         {

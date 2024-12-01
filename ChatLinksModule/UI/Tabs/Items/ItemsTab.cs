@@ -5,7 +5,7 @@ namespace ChatLinksModule.UI.Tabs.Items;
 
 public sealed class ItemsTab : Tab
 {
-    public ItemsTab(Func<ItemsView> view)
+    public ItemsTab(Func<ItemsTabView> view)
         : base(AsyncTexture2D.FromAssetId(156699), view, "Items", TabPriority.ItemsTab)
     {
     }

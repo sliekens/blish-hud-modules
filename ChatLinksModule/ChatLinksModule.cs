@@ -48,8 +48,8 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
         services.AddTransient<MainIcon>();
         services.AddTransient<MainWindow>();
         services.AddTransient<ItemsTab>();
-        services.AddTransient<ItemsView>();
-        services.AddTransient<Func<ItemsView>>(sp => sp.GetRequiredService<ItemsView>);
+        services.AddTransient<ItemsTabView>();
+        services.AddTransient<Func<ItemsTabView>>(sp => sp.GetRequiredService<ItemsTabView>);
         services.AddTransient<CraftingTab>();
         services.AddTransient<CraftingView>();
         services.AddTransient<Func<CraftingView>>(sp => sp.GetRequiredService<CraftingView>);

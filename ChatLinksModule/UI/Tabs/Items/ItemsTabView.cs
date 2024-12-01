@@ -5,6 +5,8 @@ using Blish_HUD.Graphics.UI;
 using Blish_HUD.Input;
 
 using ChatLinksModule.Storage;
+using ChatLinksModule.UI.Tabs.Items.Details;
+using ChatLinksModule.UI.Tabs.Items.Search;
 
 using CommunityToolkit.Diagnostics;
 
@@ -18,7 +20,7 @@ using Container = Blish_HUD.Controls.Container;
 
 namespace ChatLinksModule.UI.Tabs.Items;
 
-public class ItemsView(ChatLinksContext db, ILogger<ItemsView> logger) : View
+public class ItemsTabView(ChatLinksContext db, ILogger<ItemsTabView> logger) : View
 {
     private readonly SemaphoreSlim _searchLock = new(1, 1);
 
@@ -84,7 +86,11 @@ public class ItemsView(ChatLinksContext db, ILogger<ItemsView> logger) : View
         EnsureInitialized();
 
         _selectedItem?.Dispose();
-        _selectedItem = item is not null ? new ItemWidget(item) { Parent = _root, Left = _itemsPanel.Right } : null;
+        _selectedItem = item is not null ? new ItemWidget(item)
+        {
+            Parent = _root, Left = _itemsPanel.Right,
+            Width = _root.Right - _itemsPanel.Right
+        } : null;
     }
 
     private async void SearchInput(object sender, EventArgs e)

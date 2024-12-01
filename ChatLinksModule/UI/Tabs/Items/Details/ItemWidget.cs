@@ -5,7 +5,9 @@ using Blish_HUD.Input;
 
 using GuildWars2.Items;
 
-namespace ChatLinksModule.UI.Tabs.Items;
+using Microsoft.Xna.Framework;
+
+namespace ChatLinksModule.UI.Tabs.Items.Details;
 
 public sealed class ItemWidget : FlowPanel
 {
@@ -18,13 +20,19 @@ public sealed class ItemWidget : FlowPanel
 
     public ItemWidget(Item item)
     {
+        FlowDirection = ControlFlowDirection.TopToBottom;
+        OuterControlPadding = new Vector2(5f);
+        Width = 300;
+        Height = 530;
         _item = item;
         ItemHeader header = new(item)
         {
             Parent = this,
-            WidthSizingMode = SizingMode.Fill,
-            HeightSizingMode = SizingMode.AutoSize
+            Tooltip = new Tooltip(new ItemTooltipView(item))
         };
+
+        ShowTint = true;
+        ShowBorder = true;
 
         Label quantityLabel = new() { Parent = this, Text = "Quantity:", AutoSizeWidth = true, AutoSizeHeight = true };
 
@@ -35,10 +43,6 @@ public sealed class ItemWidget : FlowPanel
         _chatLink = new TextBox { Parent = this, Text = item.ChatLink, Enabled = false };
 
         _send = new StandardButton { Parent = this, Text = "Send to chat", Icon = AsyncTexture2D.FromAssetId(155157) };
-
-        FlowDirection = ControlFlowDirection.LeftToRight;
-        WidthSizingMode = SizingMode.AutoSize;
-        HeightSizingMode = SizingMode.AutoSize;
 
         _quantity.ValueChanged += OnQuantityChanged;
         _chatLink.Click += OnChatLinkClick;
