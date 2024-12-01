@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.Composition;
+using System.Diagnostics.Metrics;
 
 using Blish_HUD.Modules;
 
+using ChatLinksModule.Integrations;
 using ChatLinksModule.Storage;
 using ChatLinksModule.UI;
 using ChatLinksModule.UI.Tabs.Achievements;
@@ -15,6 +17,8 @@ using GuildWars2.Items;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+
+using Polly;
 
 using SQLitePCL;
 
@@ -36,7 +40,8 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
     {
         ServiceCollection services = new();
         services.AddSingleton(ModuleParameters);
-        services.AddHttpClient<Gw2Client>();
+        services.AddGw2Client();
+
         services.AddDbContext<ChatLinksContext>(optionsBuilder =>
         {
             string directory = ModuleParameters.DirectoriesManager.GetFullDirectoryPath("chat-links-data");
