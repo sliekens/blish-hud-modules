@@ -104,7 +104,8 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
         Gw2Client gw2Client = Resolve<Gw2Client>();
         ChatLinksContext context = Resolve<ChatLinksContext>();
         HashSet<int> index = await gw2Client.Items.GetItemsIndex().ValueOnly();
-        index.ExceptWith(context.Items.AsQueryable().Select(item => item.Id));
+        var existing = await context.Items.Select(item => item.Id).ToListAsync();
+        index.ExceptWith(existing);
         if (index.Count == 0)
         {
             return;
@@ -118,18 +119,27 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
         List<Item> batch = [];
         await foreach (Item item in gw2Client.Items.GetItemsBulk(index, progress: bulkProgress).ValueOnly())
         {
-            batch.Add(item);
-            if (batch.Count != 100)
+            if (batch.Count == 100)
             {
-                continue;
+                await context.BulkInsertAsync(batch, o =>
+                {
+                    o.BatchSize = 100;
+                    o.InsertKeepIdentity = true;
+                });
+                batch.Clear();
             }
 
-            await context.BulkInsertAsync(batch, o => o.BatchSize = 100);
-            batch.Clear();
+            batch.Add(item);
         }
 
-        await context.BulkInsertAsync(batch, o => o.BatchSize = 100);
-
+        if (batch.Count != 0)
+        {
+            await context.BulkInsertAsync(batch, o =>
+            {
+                o.BatchSize = 100;
+                o.InsertKeepIdentity = true;
+            });
+        }
     }
 
     private void CornerIcon_Click(object sender, EventArgs e)
