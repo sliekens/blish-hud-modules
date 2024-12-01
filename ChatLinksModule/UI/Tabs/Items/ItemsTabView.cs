@@ -23,24 +23,28 @@ public class ItemsTabView(ChatLinksContext db, ILogger<ItemsTabView> logger) : V
 {
     private readonly SemaphoreSlim _searchLock = new(1, 1);
 
-    private ItemsList? _searchResults;
-
     private Container? _root;
 
     private TextBox? _searchBox;
+
+    private ItemsList? _searchResults;
 
     private ItemWidget? _selectedItem;
 
     protected override void Build(Container buildPanel)
     {
         _root = buildPanel;
-        _searchBox = new TextBox { Parent = buildPanel, Width = 450 };
+        _searchBox = new TextBox
+        {
+            Parent = buildPanel, Width = 450, PlaceholderText = "Enter item name or chat link..."
+        };
         _searchResults = new ItemsList
         {
-            Parent = buildPanel,
-            Size = new Point(450, 500),
-            Top = _searchBox.Bottom
+            Parent = buildPanel, Size = new Point(450, 500), Top = _searchBox.Bottom,
+            
         };
+
+        _searchResults.SetOptions(db.Items.OrderByDescending(item => item.Id).Take(100).AsEnumerable());
 
         _searchBox.TextChanged += SearchInput;
         _searchResults.Click += ItemClicked;
@@ -74,8 +78,8 @@ public class ItemsTabView(ChatLinksContext db, ILogger<ItemsTabView> logger) : V
         {
             EnsureInitialized();
 
-            using var cancellationTokenSource = new CancellationTokenSource();
-            var searching = true;
+            using CancellationTokenSource cancellationTokenSource = new();
+            bool searching = true;
             _searchResults.SetLoading(true);
             _searchBox.TextChanged += OnTextChangedAgain;
 
@@ -94,7 +98,7 @@ public class ItemsTabView(ChatLinksContext db, ILogger<ItemsTabView> logger) : V
                     results = await db.Items
                         .Where(i => i.Name.ToLower().Contains(search))
                         .Take(100)
-                        .ToListAsync(cancellationToken: cancellationTokenSource.Token);
+                        .ToListAsync(cancellationTokenSource.Token);
                 }
 
                 searching = false;
@@ -151,12 +155,12 @@ public class ItemsTabView(ChatLinksContext db, ILogger<ItemsTabView> logger) : V
         EnsureInitialized();
 
         _selectedItem?.Dispose();
-        _selectedItem = item is not null ? new ItemWidget(item)
-        {
-            Parent = _root,
-            Left = _searchResults.Right,
-            Width = _root.Right - _searchResults.Right
-        } : null;
+        _selectedItem = item is not null
+            ? new ItemWidget(item)
+            {
+                Parent = _root, Left = _searchResults.Right, Width = _root.Right - _searchResults.Right
+            }
+            : null;
     }
 
     protected override void Unload()
