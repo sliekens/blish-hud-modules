@@ -18,6 +18,11 @@ internal static class Integrations
                 httpClient.Timeout = Timeout.InfiniteTimeSpan;
             });
 
+        httpClientBuilder.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+        {
+            MaxConnectionsPerServer = int.MaxValue
+        });
+
         httpClientBuilder.AddHttpMessageHandler(() =>
         {
             ResiliencePipeline<HttpResponseMessage> pipeline = new ResiliencePipelineBuilder<HttpResponseMessage>()
