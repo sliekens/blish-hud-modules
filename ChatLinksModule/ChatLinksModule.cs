@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.Composition;
-using System.Diagnostics.Metrics;
 
 using Blish_HUD.Modules;
 
