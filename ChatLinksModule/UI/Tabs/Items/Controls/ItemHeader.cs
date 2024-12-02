@@ -22,6 +22,12 @@ public sealed class ItemHeader : FlowPanel
         Width = 290;
     }
 
+    public int Quantity
+    {
+        get => name.Quantity;
+        set => name.Quantity = value;
+    }
+
     public new Tooltip Tooltip
     {
         get => base.Tooltip;

@@ -8,8 +8,13 @@ namespace ChatLinksModule.UI.Tabs.Items.Controls;
 
 public class ItemName : Label
 {
+    private readonly Item _item;
+
+    private int _quantity;
+
     public ItemName(Item item)
     {
+        _item = item;
         WrapText = true;
         Width = 240;
         Height = 50;
@@ -26,5 +31,15 @@ public class ItemName : Label
             Rarity.Ascended => new Color(0xEE, 0x33, 0x88),
             _ => Color.White
         };
+    }
+
+    public int Quantity
+    {
+        get => _quantity;
+        set
+        {
+            _quantity = value;
+            Text = _quantity == 1 ? _item.Name : $"{_quantity} {_item.Name}";
+        }
     }
 }

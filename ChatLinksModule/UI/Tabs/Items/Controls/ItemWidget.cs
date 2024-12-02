@@ -1,23 +1,25 @@
 ﻿using Blish_HUD;
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
+using Blish_HUD.Controls.Extern;
+using Blish_HUD.Controls.Intern;
 using Blish_HUD.Input;
 
 using GuildWars2.Items;
 
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace ChatLinksModule.UI.Tabs.Items.Controls;
 
 public sealed class ItemWidget : FlowPanel
 {
     private readonly TextBox _chatLink;
+    private readonly ItemHeader _header;
 
     private readonly Item _item;
 
     private readonly TrackBar _quantity;
-
-    private readonly StandardButton _send;
 
     public ItemWidget(Item item)
     {
@@ -26,44 +28,46 @@ public sealed class ItemWidget : FlowPanel
         Width = 300;
         Height = 530;
         _item = item;
-        ItemHeader header = new(item)
-        {
-            Parent = this,
-            Tooltip = new Tooltip(new ItemTooltipView(item))
-        };
+        _header = new ItemHeader(item) { Parent = this, Tooltip = new Tooltip(new ItemTooltipView(item)) };
 
         ShowTint = true;
         ShowBorder = true;
 
         Label quantityLabel = new() { Parent = this, Text = "Quantity:", AutoSizeWidth = true, AutoSizeHeight = true };
 
-        _quantity = new TrackBar { Parent = this, Value = 1, MinValue = 1, MaxValue = 255 };
+        _quantity = new TrackBar { Parent = this, Value = 1, MinValue = 1, MaxValue = 250 };
 
         Label chatLinkLabel = new() { Parent = this, Text = "Chat Link:", AutoSizeWidth = true, AutoSizeHeight = true };
 
-        _chatLink = new TextBox
+        _chatLink = new TextBox { Parent = this, Text = item.ChatLink };
+
+        _header.Click += HeaderClicked;
+        _quantity.ValueChanged += QuantityChanged;
+        _chatLink.Click += ChatLinkClicked;
+    }
+
+    private void HeaderClicked(object sender, MouseEventArgs e)
+    {
+        switch (GameService.Input.Keyboard.ActiveModifiers)
         {
-            Parent = this, Text = item.ChatLink
-        };
+            case ModifierKeys.Ctrl:
+                GameService.GameIntegration.Chat.Send(_chatLink.Text);
+                break;
 
-        _send = new StandardButton { Parent = this, Text = "Send to chat", Icon = AsyncTexture2D.FromAssetId(155157) };
-
-        _quantity.ValueChanged += OnQuantityChanged;
-        _chatLink.Click += OnChatLinkClick;
-        _send.Click += OnSendClick;
+            // Shift interferes with ability to activate chat
+            case not ModifierKeys.Shift:
+                GameService.GameIntegration.Chat.Paste(_chatLink.Text);
+                break;
+        }
     }
 
-    private void OnSendClick(object sender, MouseEventArgs e)
+    private void QuantityChanged(object sender, ValueEventArgs<float> e)
     {
-        GameService.GameIntegration.Chat.Send(_chatLink.Text);
-    }
-
-    private void OnQuantityChanged(object sender, ValueEventArgs<float> e)
-    {
+        _header.Quantity = (int)e.Value;
         UpdateChatLink();
     }
 
-    private void OnChatLinkClick(object sender, MouseEventArgs e)
+    private void ChatLinkClicked(object sender, MouseEventArgs e)
     {
         _chatLink.SelectionStart = 0;
         _chatLink.SelectionEnd = _chatLink.Text.Length;
@@ -77,9 +81,8 @@ public sealed class ItemWidget : FlowPanel
 
     protected override void DisposeControl()
     {
-        _send.Click -= OnSendClick;
-        _quantity.ValueChanged -= OnQuantityChanged;
-        _chatLink.Click -= OnChatLinkClick;
+        _quantity.ValueChanged -= QuantityChanged;
+        _chatLink.Click -= ChatLinkClicked;
         base.DisposeControl();
     }
 }
