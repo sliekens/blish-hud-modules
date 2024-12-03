@@ -1,5 +1,5 @@
 {
-    "name": "ChatLinksModule",
+    "name": "chat-links-module",
     "version": "1.0.0",
     "namespace": "sliekens.chat-links",
     "package": "ChatLinksModule.dll",
@@ -9,7 +9,7 @@
     "dependencies": {
         "bh.blishhud": ">=1.2.0 <2.0.0"
     },
-    "url": "https://site-name.org",
+    "url": "https://github.com/sliekens/blish-hud-modules",
     "contributors": [
         {
             "name": "Steven Liekens",
@@ -17,5 +17,5 @@
             "url": "https://github.com/sliekens"
         }
     ],
-    "directories": ["chat-links-data"]
+    "directories": [ "chat-links-data" ]
 }
