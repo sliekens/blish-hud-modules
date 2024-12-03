@@ -13,12 +13,13 @@ internal static class FormattedLabelBuilderExtensions
 {
     private static readonly MarkupLexer Lexer = new();
     private static readonly MarkupParser Parser = new();
+    private static readonly LineBreakNode LineBreak = new();
 
     public static FormattedLabelBuilder AddMarkup(this FormattedLabelBuilder builder, string markup)
     {
         IEnumerable<MarkupToken> tokens = Lexer.Tokenize(markup);
         RootNode syntax = Parser.Parse(tokens);
-        foreach (var part in syntax.Children.SelectMany(builder.CreateParts))
+        foreach (var part in syntax.Children.Append(LineBreak).SelectMany(builder.CreateParts))
         {
             part.SetFontSize(ContentService.FontSize.Size16);
             builder.CreatePart(part);
