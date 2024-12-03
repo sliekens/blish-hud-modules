@@ -98,7 +98,11 @@ public class ItemsTabView(ChatLinksContext db, ILogger<ItemsTabView> logger) : V
                 await _searchLock.WaitAsync(cancellationTokenSource.Token);
 
                 string search = _searchBox.Text.Trim();
-                if (search.Length >= 3)
+                if (search.Length == 0)
+                {
+                    results = await db.Items.OrderByDescending(item => item.Id).Take(100).ToListAsync();
+                }
+                else if (search.Length >= 3)
                 {
                     // Debounce search
                     await Task.Delay(300, cancellationTokenSource.Token);
