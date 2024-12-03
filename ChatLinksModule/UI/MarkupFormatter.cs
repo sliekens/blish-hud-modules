@@ -37,7 +37,7 @@ internal static class FormattedLabelBuilderExtensions
                 ;
                 break;
             case MarkupNodeType.LineBreak:
-                yield return builder.CreatePart("\n");
+                yield return builder.CreatePart("\r\n");
                 break;
             case MarkupNodeType.ColoredText:
                 var coloredText = (ColoredTextNode)node;
