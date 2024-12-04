@@ -19,7 +19,7 @@ internal static class FormattedLabelBuilderExtensions
     {
         IEnumerable<MarkupToken> tokens = Lexer.Tokenize(markup);
         RootNode syntax = Parser.Parse(tokens);
-        foreach (var part in syntax.Children.Append(LineBreak).SelectMany(builder.CreateParts))
+        foreach (var part in syntax.Children.SelectMany(builder.CreateParts))
         {
             part.SetFontSize(ContentService.FontSize.Size16);
             builder.CreatePart(part);
@@ -48,6 +48,8 @@ internal static class FormattedLabelBuilderExtensions
                     part.SetTextColor(color);
                     yield return part;
                 }
+                break;
+            default:
                 break;
         }
     }
