@@ -4,64 +4,39 @@ using GuildWars2.Items;
 
 using Microsoft.Xna.Framework;
 
+using Container = Blish_HUD.Controls.Container;
+
 namespace ChatLinksModule.UI.Tabs.Items.Controls;
 
-public sealed class ItemHeader : FlowPanel
+public sealed class ItemHeader : Container
 {
-    private readonly ItemImage image;
-
-    private readonly ItemName name;
+    private readonly ItemName _name;
 
     public ItemHeader(Item item)
     {
-        FlowDirection = ControlFlowDirection.SingleLeftToRight;
-        ControlPadding = new Vector2(5f, 0);
-        image = new ItemImage(item) { Parent = this };
-        name = new ItemName(item) { Parent = this };
+        ItemImage image = new(item)
+        {
+            Parent = this,
+            Size = new Point(50)
+        };
+
+        _name = new ItemName(item)
+        {
+            Parent = this,
+            Left = 55,
+            Width = 235
+        };
+
         Height = 50;
         Width = 290;
+        Tooltip = new Tooltip(new ItemTooltipView(item));
+        image.Tooltip = Tooltip;
+        _name.Tooltip = Tooltip;
     }
 
     public int Quantity
     {
-        get => name.Quantity;
-        set => name.Quantity = value;
-    }
-
-    public new Tooltip Tooltip
-    {
-        get => base.Tooltip;
-        set
-        {
-            base.Tooltip = value;
-            image.Tooltip = value;
-            name.Tooltip = value;
-        }
-    }
-
-    public new int Width
-    {
-        get => base.Width;
-        set
-        {
-            base.Width = value;
-            name.Width = value - image.Width;
-        }
-    }
-
-    public bool Large
-    {
-        set
-        {
-            image.Size = value ? new Point(50, 50) : new Point(35, 35);
-            name.Height = value ? 50 : 35;
-            name.Width = base.Width - image.Width;
-        }
-    }
-
-    public bool ShowShadow
-    {
-        get => name.ShowShadow;
-        set => name.ShowShadow = value;
+        get => _name.Quantity;
+        set => _name.Quantity = value;
     }
 }

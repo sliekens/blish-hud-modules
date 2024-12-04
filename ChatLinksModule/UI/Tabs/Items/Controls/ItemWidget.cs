@@ -28,7 +28,7 @@ public sealed class ItemWidget : FlowPanel
         Width = 300;
         Height = 530;
         _item = item;
-        _header = new ItemHeader(item) { Parent = this, Tooltip = new Tooltip(new ItemTooltipView(item)) };
+        _header = new ItemHeader(item) { Parent = this };
 
         ShowTint = true;
         ShowBorder = true;

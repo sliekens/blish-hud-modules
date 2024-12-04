@@ -3,7 +3,6 @@ using System.Text.RegularExpressions;
 
 using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
-using Blish_HUD.Input;
 
 using ChatLinksModule.Storage;
 using ChatLinksModule.UI.Tabs.Items.Controls;
@@ -18,6 +17,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 
 using Container = Blish_HUD.Controls.Container;
+using Item = GuildWars2.Items.Item;
 
 namespace ChatLinksModule.UI.Tabs.Items;
 
@@ -40,22 +40,14 @@ public class ItemsTabView(ChatLinksContext db, ILogger<ItemsTabView> logger) : V
         _root = buildPanel;
         _searchBox = new TextBox
         {
-            Parent = buildPanel,
-            Width = 450,
-            PlaceholderText = "Enter item name or chat link..."
+            Parent = buildPanel, Width = 450, PlaceholderText = "Enter item name or chat link..."
         };
-        _searchResults = new ItemsList
-        {
-            Parent = buildPanel,
-            Size = new Point(450, 500),
-            Top = _searchBox.Bottom,
-
-        };
+        _searchResults = new ItemsList { Parent = buildPanel, Size = new Point(450, 500), Top = _searchBox.Bottom };
 
         _searchResults.SetOptions(db.Items.OrderByDescending(item => item.Id).Take(100).AsEnumerable());
 
         _searchBox.TextChanged += SearchInput;
-        _searchResults.Click += ItemClicked;
+        _searchResults.OptionClicked += ItemSelected;
     }
 
     [MemberNotNull(
@@ -109,18 +101,22 @@ public class ItemsTabView(ChatLinksContext db, ILogger<ItemsTabView> logger) : V
 
                     if (Pattern.IsMatch(search))
                     {
-                        var link = ItemLink.Parse(search);
+                        ItemLink link = ItemLink.Parse(search);
                         if (await db.Items.FindAsync(link.ItemId) is { } item)
                         {
                             results.Add(item);
 
                             if (item is Weapon weapon)
                             {
-                                if (weapon.SuffixItemId.HasValue && await db.Items.FindAsync(weapon.SuffixItemId.Value) is { } suffixItem)
+                                if (weapon.SuffixItemId.HasValue &&
+                                    await db.Items.FindAsync(weapon.SuffixItemId.Value) is { } suffixItem)
                                 {
                                     results.Add(suffixItem);
                                 }
-                                if (weapon.SecondarySuffixItemId.HasValue && await db.Items.FindAsync(weapon.SecondarySuffixItemId.Value) is { } secondarySuffixItem)
+
+                                if (weapon.SecondarySuffixItemId.HasValue &&
+                                    await db.Items.FindAsync(weapon.SecondarySuffixItemId.Value) is
+                                        { } secondarySuffixItem)
                                 {
                                     results.Add(secondarySuffixItem);
                                 }
@@ -128,7 +124,8 @@ public class ItemsTabView(ChatLinksContext db, ILogger<ItemsTabView> logger) : V
 
                             if (item is Armor armor)
                             {
-                                if (armor.SuffixItemId.HasValue && await db.Items.FindAsync(armor.SuffixItemId.Value) is { } suffixItem)
+                                if (armor.SuffixItemId.HasValue && await db.Items.FindAsync(armor.SuffixItemId.Value) is
+                                        { } suffixItem)
                                 {
                                     results.Add(suffixItem);
                                 }
@@ -136,7 +133,8 @@ public class ItemsTabView(ChatLinksContext db, ILogger<ItemsTabView> logger) : V
 
                             if (item is Backpack back)
                             {
-                                if (back.SuffixItemId.HasValue && await db.Items.FindAsync(back.SuffixItemId.Value) is { } suffixItem)
+                                if (back.SuffixItemId.HasValue && await db.Items.FindAsync(back.SuffixItemId.Value) is
+                                        { } suffixItem)
                                 {
                                     results.Add(suffixItem);
                                 }
@@ -144,14 +142,13 @@ public class ItemsTabView(ChatLinksContext db, ILogger<ItemsTabView> logger) : V
 
                             if (item is Trinket trinket)
                             {
-                                if (trinket.SuffixItemId.HasValue && await db.Items.FindAsync(trinket.SuffixItemId.Value) is { } suffixItem)
+                                if (trinket.SuffixItemId.HasValue &&
+                                    await db.Items.FindAsync(trinket.SuffixItemId.Value) is { } suffixItem)
                                 {
                                     results.Add(suffixItem);
                                 }
                             }
                         }
-
-
                     }
                     else
                     {
@@ -202,29 +199,17 @@ public class ItemsTabView(ChatLinksContext db, ILogger<ItemsTabView> logger) : V
         }
     }
 
-    private void ItemClicked(object sender, MouseEventArgs e)
-    {
-        EnsureInitialized();
-
-        ItemChoice? clickedItem = _searchResults.Children.OfType<ItemChoice>()
-            .SingleOrDefault(entry => entry.AbsoluteBounds.Contains(e.MousePosition));
-        ShowWidget(clickedItem?.Item);
-    }
-
-    private void ShowWidget(Item? item)
+    private void ItemSelected(object sender, Item item)
     {
         EnsureInitialized();
 
         _selectedItem?.Dispose();
-        _selectedItem = item is not null
-            ? new ItemWidget(item)
-            {
-                Parent = _root,
-                Left = _searchResults.Right,
-                Width = _root.Right - _searchResults.Right
-            }
-            : null;
+        _selectedItem = new ItemWidget(item)
+        {
+            Parent = _root, Left = _searchResults.Right, Width = _root.Right - _searchResults.Right
+        };
     }
+
 
     protected override void Unload()
     {

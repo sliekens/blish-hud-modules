@@ -1,5 +1,6 @@
 ﻿using Blish_HUD;
 using Blish_HUD.Controls;
+using Blish_HUD.Input;
 
 using GuildWars2.Items;
 
@@ -8,9 +9,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ChatLinksModule.UI.Tabs.Items.Controls;
 
-public class ItemsList : FlowPanel
+public sealed class ItemsList : FlowPanel
 {
     private bool _loading;
+
+    public event EventHandler<Item>? OptionClicked;
 
     public ItemsList()
     {
@@ -40,12 +43,22 @@ public class ItemsList : FlowPanel
     {
         while (!Children.IsEmpty)
         {
+            Children[0].Click -= OptionClick;
             Children[0].Dispose();
         }
 
         foreach (Item item in items)
         {
-            _ = new ItemChoice(item) { Parent = this };
+            var option = new ItemsListOption(item) { Parent = this };
+            option.Click += OptionClick;
+        }
+    }
+
+    private void OptionClick(object? sender, MouseEventArgs e)
+    {
+        if (sender is ItemsListOption clickedOption)
+        {
+            OptionClicked?.Invoke(this, clickedOption.Item);
         }
     }
 }
