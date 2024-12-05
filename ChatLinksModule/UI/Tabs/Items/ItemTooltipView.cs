@@ -169,6 +169,11 @@ public class ItemTooltipView(Item item) : View, ITooltipView
 
         static void Binding(Item item, Container parent)
         {
+            if (item is Service)
+            {
+                return;
+            }
+
             if (item.Flags.Soulbound)
             {
                 Label binding = new()
