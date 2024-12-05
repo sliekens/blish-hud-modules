@@ -150,11 +150,6 @@ public class ItemTooltipView(Item item) : View, ITooltipView
 
         static void Binding(Item item, Container parent)
         {
-            if (item.Flags.NoSell || item is Service)
-            {
-                return;
-            }
-
             if (item.Flags.Soulbound)
             {
                 var binding = new Label
