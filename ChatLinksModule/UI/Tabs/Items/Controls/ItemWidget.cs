@@ -27,10 +27,9 @@ public sealed class ItemWidget : FlowPanel
         ShowTint = true;
         ShowBorder = true;
         FlowDirection = ControlFlowDirection.SingleTopToBottom;
-        Padding = new Thickness(50);
-        ControlPadding = new Vector2(5);
-        Width = 300;
-        Height = 530;
+        ControlPadding = new Vector2(10);
+        Width = 350;
+        HeightSizingMode = SizingMode.AutoSize;
         ContentRegion = new Rectangle(5, 5, 290, 520);
 
         _item = item;
@@ -39,7 +38,7 @@ public sealed class ItemWidget : FlowPanel
         {
             FlowDirection = ControlFlowDirection.SingleLeftToRight,
             ControlPadding = new Vector2(5f),
-            Width = 290,
+            Width = Width - 5,
             Height = 50,
             Parent = this
         };
@@ -53,20 +52,30 @@ public sealed class ItemWidget : FlowPanel
         _itemName = new ItemName(item)
         {
             Parent = header,
-            Width = 235,
+            Width = header.Width - 50,
             Height = 50,
             VerticalAlignment = VerticalAlignment.Middle,
             Font = GameService.Content.DefaultFont18,
             WrapText = true
         };
 
+        _itemName.Text = _itemName.Text.Replace(" ", "  ");
+
         Label quantityLabel = new() { Parent = this, Text = "Quantity:", AutoSizeWidth = true, AutoSizeHeight = true };
 
-        _quantity = new TrackBar { Parent = this, Value = 1, MinValue = 1, MaxValue = 250 };
+        _quantity = new TrackBar
+        {
+            Parent = this, Value = 1, MinValue = 1, MaxValue = 250,
+            Width = Width - 10
+        };
 
         Label chatLinkLabel = new() { Parent = this, Text = "Chat Link:", AutoSizeWidth = true, AutoSizeHeight = true };
 
-        _chatLink = new TextBox { Parent = this, Text = item.ChatLink };
+        _chatLink = new TextBox
+        {
+            Parent = this, Text = item.ChatLink,
+            Width = Width
+        };
 
         _itemIcon.Click += HeaderClicked;
         _quantity.ValueChanged += QuantityChanged;

@@ -1,6 +1,5 @@
 ﻿using Blish_HUD;
 using Blish_HUD.Common.UI.Views;
-using Blish_HUD.Content;
 using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
 
@@ -21,7 +20,7 @@ public class ItemTooltipView(Item item) : View, ITooltipView
         var layout = new FlowPanel
         {
             FlowDirection = ControlFlowDirection.SingleTopToBottom,
-            WidthSizingMode = SizingMode.AutoSize,
+            Width = 350,
             HeightSizingMode = SizingMode.AutoSize,
             Parent = buildPanel
         };
@@ -37,17 +36,15 @@ public class ItemTooltipView(Item item) : View, ITooltipView
         //}
 
 
-
-
         static void CreateHeader(Item item, Container parent)
         {
             var header = new FlowPanel
             {
+                Parent = parent,
                 FlowDirection = ControlFlowDirection.SingleLeftToRight,
                 ControlPadding = new Vector2(5f),
-                Width = 290,
-                Height = 50,
-                Parent = parent
+                Width = parent.Width,
+                Height = 50
             };
 
             ItemImage icon = new(item)
@@ -58,12 +55,14 @@ public class ItemTooltipView(Item item) : View, ITooltipView
             ItemName name = new(item)
             {
                 Parent = header,
-                Width = 235,
+                Width = parent.Width - 55,
                 Height = 50,
                 VerticalAlignment = VerticalAlignment.Middle,
                 Font = GameService.Content.DefaultFont18,
                 WrapText = true,
             };
+
+            name.Text = name.Text.Replace(" ", "  ");
         }
 
         static void CreateDescription(Item item, Container parent)
@@ -73,13 +72,20 @@ public class ItemTooltipView(Item item) : View, ITooltipView
                 return;
             }
 
+            var container = new Panel
+            {
+                Parent = parent,
+                WidthSizingMode = SizingMode.AutoSize,
+                HeightSizingMode = SizingMode.AutoSize
+            };
+
             FormattedLabel label = new FormattedLabelBuilder()
-                .Wrap()
-                .SetWidth(350)
-                .AutoSizeHeight()
                 .AddMarkup(item.Description)
+                .SetWidth(parent.Width - 10)
+                .AutoSizeHeight()
+                .Wrap()
                 .Build();
-            label.Parent = parent;
+            label.Parent = container;
         }
     }
 

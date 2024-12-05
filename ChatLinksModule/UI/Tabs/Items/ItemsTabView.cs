@@ -206,7 +206,7 @@ public class ItemsTabView(ChatLinksContext db, ILogger<ItemsTabView> logger) : V
         _selectedItem?.Dispose();
         _selectedItem = new ItemWidget(item)
         {
-            Parent = _root, Left = _searchResults.Right, Width = _root.Right - _searchResults.Right
+            Parent = _root, Left = _searchResults.Right
         };
     }
 
