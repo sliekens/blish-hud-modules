@@ -27,13 +27,7 @@ public class ItemTooltipView(Item item) : View, ITooltipView
 
         CreateHeader(item, layout);
         CreateDescription(item, layout);
-
-        //if (item.Flags.AccountBound)
-        //{
-        //    var boundPart = builder.CreatePart("Account Bound on Acquire");
-        //    boundPart.SetFontSize(ContentService.FontSize.Size16);
-        //    builder.CreatePart(boundPart);
-        //}
+        CreateBinding(item, layout);
 
 
         static void CreateHeader(Item item, Container parent)
@@ -86,6 +80,50 @@ public class ItemTooltipView(Item item) : View, ITooltipView
                 .Wrap()
                 .Build();
             label.Parent = container;
+        }
+
+        static void CreateBinding(Item item, Container parent)
+        {
+            if (item.Flags.Soulbound)
+            {
+                var binding = new Label
+                {
+                    Parent = parent,
+                    Width = parent.Width,
+                    AutoSizeHeight = true,
+                    Text = "Soulbound on Acquire"
+                };
+            }
+            else if (item.Flags.SoulbindOnUse)
+            {
+                var binding = new Label
+                {
+                    Parent = parent,
+                    Width = parent.Width,
+                    AutoSizeHeight = true,
+                    Text = "Soulbound on Use"
+                };
+            }
+            else if (item.Flags.AccountBound)
+            {
+                var binding = new Label
+                {
+                    Parent = parent,
+                    Width = parent.Width,
+                    AutoSizeHeight = true,
+                    Text = "Account Bound on Acquire"
+                };
+            }
+            else if (item.Flags.AccountBindOnUse)
+            {
+                var binding = new Label
+                {
+                    Parent = parent,
+                    Width = parent.Width,
+                    AutoSizeHeight = true,
+                    Text = "Account Bound on Use"
+                };
+            }
         }
     }
 
