@@ -77,7 +77,7 @@ public class ItemTooltipView(Item item) : View, ITooltipView
                     Parent = parent,
                     Width = parent.Width,
                     AutoSizeHeight = true,
-                    Text = $"Weapon Strength: {weapon.MinPower} - {weapon.MaxPower}"
+                    Text = $"Weapon Strength: {weapon.MinPower:N0} - {weapon.MaxPower:N0}"
                 };
             }
         }
@@ -91,7 +91,7 @@ public class ItemTooltipView(Item item) : View, ITooltipView
                     Parent = parent,
                     Width = parent.Width,
                     AutoSizeHeight = true,
-                    Text = $"Defense: {armor.Defense}"
+                    Text = $"Defense: {armor.Defense:N0}"
                 };
             }
             else if (item is Weapon { Defense: > 0 } weapon)
@@ -101,7 +101,7 @@ public class ItemTooltipView(Item item) : View, ITooltipView
                     Parent = parent,
                     Width = parent.Width,
                     AutoSizeHeight = true,
-                    Text = $"Defense: {weapon.Defense}"
+                    Text = $"Defense: {weapon.Defense:N0}"
                 };
             }
         }
@@ -113,7 +113,7 @@ public class ItemTooltipView(Item item) : View, ITooltipView
                 StringBuilder builder = new();
                 foreach (KeyValuePair<Extensible<AttributeName>, int> stat in weapon.Attributes)
                 {
-                    builder.AppendFormat("+{0} {1}\r\n", stat.Value, stat.Key);
+                    builder.AppendFormat("+{0:N0} {1}\r\n", stat.Value, stat.Key);
                 }
 
                 Label attributes = new()
@@ -235,7 +235,7 @@ public class ItemTooltipView(Item item) : View, ITooltipView
 
             if (item.VendorValue.Amount >= 10_000)
             {
-                FormattedLabelPartBuilder? gold = builder.CreatePart(goldAmount.ToString());
+                FormattedLabelPartBuilder? gold = builder.CreatePart(goldAmount.ToString("N0"));
                 gold.SetTextColor(new Color(0xDD, 0xBB, 0x44));
                 gold.SetFontSize(ContentService.FontSize.Size14);
                 gold.SetSuffixImage(AsyncTexture2D.FromAssetId(156904));
@@ -244,14 +244,14 @@ public class ItemTooltipView(Item item) : View, ITooltipView
 
             if (item.VendorValue.Amount >= 100)
             {
-                FormattedLabelPartBuilder? silver = builder.CreatePart(silverAmount.ToString());
+                FormattedLabelPartBuilder? silver = builder.CreatePart(silverAmount.ToString("N0"));
                 silver.SetTextColor(new Color(0xC0, 0xC0, 0xC0));
                 silver.SetFontSize(ContentService.FontSize.Size14);
                 silver.SetSuffixImage(AsyncTexture2D.FromAssetId(156907));
                 builder.CreatePart(silver);
             }
 
-            FormattedLabelPartBuilder? copper = builder.CreatePart(copperAmount.ToString());
+            FormattedLabelPartBuilder? copper = builder.CreatePart(copperAmount.ToString("N0"));
             copper.SetTextColor(new Color(0xCD, 0x7F, 0x32));
             copper.SetFontSize(ContentService.FontSize.Size14);
             copper.SetSuffixImage(AsyncTexture2D.FromAssetId(156902));
