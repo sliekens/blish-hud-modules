@@ -1,4 +1,5 @@
-﻿using Blish_HUD.Controls;
+﻿using Blish_HUD;
+using Blish_HUD.Controls;
 
 using GuildWars2.Items;
 
@@ -12,13 +13,10 @@ public class ItemName : Label
 
     public ItemName(Item item)
     {
-        _item = item;
-        WrapText = true;
-        Width = 240;
-        Height = 50;
-        VerticalAlignment = VerticalAlignment.Middle;
         Text = item.Name;
         TextColor = ItemColors.Rarity(item.Rarity);
+
+        _item = item;
     }
 
     public int Quantity

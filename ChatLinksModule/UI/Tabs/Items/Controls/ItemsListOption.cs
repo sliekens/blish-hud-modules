@@ -15,9 +15,9 @@ public sealed class ItemsListOption : Container
 {
     public Item Item { get; }
 
-    private Image _icon;
+    private ItemImage _icon;
 
-    private Label _name;
+    private ItemName _name;
 
     public ItemsListOption(Item item)
     {
@@ -25,25 +25,22 @@ public sealed class ItemsListOption : Container
         Width = 425;
         Height = 35;
         Tooltip = new Tooltip(new ItemTooltipView(Item));
-        
-        _icon = new Image
+
+        _icon = new ItemImage(item)
         {
-            Texture = !string.IsNullOrEmpty(Item.IconHref)
-                ? GameService.Content.GetRenderServiceTexture(Item.IconHref)
-                : AsyncTexture2D.FromAssetId(1972324),
             Size = new Point(35, 35),
             Tooltip = Tooltip,
             Parent = this
         };
 
-        _name = new Label
+        _name = new ItemName(item)
         {
             Text = Item.Name,
             Left = 40,
             Width = 385,
+            AutoSizeHeight = false,
             Height = 35,
             VerticalAlignment = VerticalAlignment.Middle,
-            TextColor = ItemColors.Rarity(Item.Rarity),
             Tooltip = Tooltip,
             Parent = this
         };

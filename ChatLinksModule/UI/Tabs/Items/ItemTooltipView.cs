@@ -4,6 +4,8 @@ using Blish_HUD.Content;
 using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
 
+using ChatLinksModule.UI.Tabs.Items.Controls;
+
 using GuildWars2.Items;
 
 using Microsoft.Xna.Framework;
@@ -16,35 +18,69 @@ public class ItemTooltipView(Item item) : View, ITooltipView
 {
     protected override void Build(Container buildPanel)
     {
-        FormattedLabelBuilder builder = new FormattedLabelBuilder()
-            .Wrap()
-            .SetWidth(350)
-            .AutoSizeHeight();
-
-        FormattedLabelPartBuilder? namePart = builder.CreatePart(" " + item.Name + "\n");
-        if (!string.IsNullOrEmpty(item.IconHref))
+        var layout = new FlowPanel
         {
-            AsyncTexture2D? icon = GameService.Content.GetRenderServiceTexture(item.IconHref);
-            namePart.SetPrefixImage(icon)
-                .SetPrefixImageSize(new Point(32));
+            FlowDirection = ControlFlowDirection.SingleTopToBottom,
+            WidthSizingMode = SizingMode.AutoSize,
+            HeightSizingMode = SizingMode.AutoSize,
+            Parent = buildPanel
+        };
+
+        CreateHeader(item, layout);
+        CreateDescription(item, layout);
+
+        //if (item.Flags.AccountBound)
+        //{
+        //    var boundPart = builder.CreatePart("Account Bound on Acquire");
+        //    boundPart.SetFontSize(ContentService.FontSize.Size16);
+        //    builder.CreatePart(boundPart);
+        //}
+
+
+
+
+        static void CreateHeader(Item item, Container parent)
+        {
+            var header = new FlowPanel
+            {
+                FlowDirection = ControlFlowDirection.SingleLeftToRight,
+                ControlPadding = new Vector2(5f),
+                Width = 290,
+                Height = 50,
+                Parent = parent
+            };
+
+            ItemImage icon = new(item)
+            {
+                Parent = header
+            };
+
+            ItemName name = new(item)
+            {
+                Parent = header,
+                Width = 235,
+                Height = 50,
+                VerticalAlignment = VerticalAlignment.Middle,
+                Font = GameService.Content.DefaultFont18,
+                WrapText = true,
+            };
         }
 
-        namePart.SetTextColor(ItemColors.Rarity(item.Rarity));
-        builder.CreatePart(namePart);
-
-        if (!string.IsNullOrEmpty(item.Description))
+        static void CreateDescription(Item item, Container parent)
         {
-            builder.AddMarkup(item.Description);
-        }
+            if (string.IsNullOrEmpty(item.Description))
+            {
+                return;
+            }
 
-        if (item.Flags.AccountBound)
-        {
-            var boundPart = builder.CreatePart("Account Bound on Acquire");
-            boundPart.SetFontSize(ContentService.FontSize.Size16);
-            builder.CreatePart(boundPart);
+            FormattedLabel label = new FormattedLabelBuilder()
+                .Wrap()
+                .SetWidth(350)
+                .AutoSizeHeight()
+                .AddMarkup(item.Description)
+                .Build();
+            label.Parent = parent;
         }
-
-        FormattedLabel? label = builder.Build();
-        label.Parent = buildPanel;
     }
+
 }

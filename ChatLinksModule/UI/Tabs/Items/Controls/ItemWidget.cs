@@ -1,8 +1,6 @@
 ﻿using Blish_HUD;
-using Blish_HUD.Content;
 using Blish_HUD.Controls;
-using Blish_HUD.Controls.Extern;
-using Blish_HUD.Controls.Intern;
+using Blish_HUD.GameServices.ArcDps.V2.Models;
 using Blish_HUD.Input;
 
 using GuildWars2.Items;
@@ -15,23 +13,52 @@ namespace ChatLinksModule.UI.Tabs.Items.Controls;
 public sealed class ItemWidget : FlowPanel
 {
     private readonly TextBox _chatLink;
-    private readonly ItemHeader _header;
 
     private readonly Item _item;
+
+    private readonly ItemImage _itemIcon;
+
+    private readonly ItemName _itemName;
 
     private readonly TrackBar _quantity;
 
     public ItemWidget(Item item)
     {
-        FlowDirection = ControlFlowDirection.TopToBottom;
-        OuterControlPadding = new Vector2(5f);
-        Width = 300;
-        Height = 530;
-        _item = item;
-        _header = new ItemHeader(item) { Parent = this };
-
         ShowTint = true;
         ShowBorder = true;
+        FlowDirection = ControlFlowDirection.SingleTopToBottom;
+        Padding = new Thickness(50);
+        ControlPadding = new Vector2(5);
+        Width = 300;
+        Height = 530;
+        ContentRegion = new Rectangle(5, 5, 290, 520);
+
+        _item = item;
+
+        var header = new FlowPanel
+        {
+            FlowDirection = ControlFlowDirection.SingleLeftToRight,
+            ControlPadding = new Vector2(5f),
+            Width = 290,
+            Height = 50,
+            Parent = this
+        };
+
+        _itemIcon = new ItemImage(item)
+        {
+            Parent = header,
+            Tooltip = new Tooltip(new ItemTooltipView(item))
+        };
+
+        _itemName = new ItemName(item)
+        {
+            Parent = header,
+            Width = 235,
+            Height = 50,
+            VerticalAlignment = VerticalAlignment.Middle,
+            Font = GameService.Content.DefaultFont18,
+            WrapText = true
+        };
 
         Label quantityLabel = new() { Parent = this, Text = "Quantity:", AutoSizeWidth = true, AutoSizeHeight = true };
 
@@ -41,7 +68,7 @@ public sealed class ItemWidget : FlowPanel
 
         _chatLink = new TextBox { Parent = this, Text = item.ChatLink };
 
-        _header.Click += HeaderClicked;
+        _itemIcon.Click += HeaderClicked;
         _quantity.ValueChanged += QuantityChanged;
         _chatLink.Click += ChatLinkClicked;
     }
@@ -63,7 +90,7 @@ public sealed class ItemWidget : FlowPanel
 
     private void QuantityChanged(object sender, ValueEventArgs<float> e)
     {
-        _header.Quantity = (int)e.Value;
+        _itemName.Quantity = (int)e.Value;
         UpdateChatLink();
     }
 
