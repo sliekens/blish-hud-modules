@@ -1,4 +1,6 @@
-﻿using Blish_HUD;
+﻿using System.Text;
+
+using Blish_HUD;
 using Blish_HUD.Common.UI.Views;
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
@@ -27,13 +29,15 @@ public class ItemTooltipView(Item item) : View, ITooltipView
             Parent = buildPanel
         };
 
-        CreateHeader(item, layout);
-        CreateDescription(item, layout);
-        CreateBinding(item, layout);
-        CreateVendorValue(item, layout);
+        Header(item, layout);
+        WeaponStrength(item, layout);
+        Defense(item, layout);
+        ItemStats(item, layout);
+        Description(item, layout);
+        Binding(item, layout);
+        VendorValue(item, layout);
 
-
-        static void CreateHeader(Item item, Container parent)
+        static void Header(Item item, Container parent)
         {
             var header = new FlowPanel
             {
@@ -62,7 +66,66 @@ public class ItemTooltipView(Item item) : View, ITooltipView
             name.Text = name.Text.Replace(" ", "  ");
         }
 
-        static void CreateDescription(Item item, Container parent)
+        static void WeaponStrength(Item item, Container parent)
+        {
+            if (item is Weapon weapon)
+            {
+                var weaponStrength = new Label
+                {
+                    Parent = parent,
+                    Width = parent.Width,
+                    AutoSizeHeight = true,
+                    Text = $"Weapon Strength: {weapon.MinPower} - {weapon.MaxPower}"
+                };
+            }
+        }
+
+        static void Defense(Item item, Container parent)
+        {
+            if (item is Armor armor)
+            {
+                var defense = new Label
+                {
+                    Parent = parent,
+                    Width = parent.Width,
+                    AutoSizeHeight = true,
+                    Text = $"Defense: {armor.Defense}"
+                };
+            }
+            else if (item is Weapon { Defense: > 0 } weapon)
+            {
+                var defense = new Label
+                {
+                    Parent = parent,
+                    Width = parent.Width,
+                    AutoSizeHeight = true,
+                    Text = $"Defense: {weapon.Defense}"
+                };
+            }
+        }
+
+        static void ItemStats(Item item, Container parent)
+        {
+            if (item is Weapon { Attributes.Count: > 0 } weapon)
+            {
+                var builder = new StringBuilder();
+                foreach (var stat in weapon.Attributes)
+                {
+                    builder.AppendFormat("+{0} {1}\r\n", stat.Value, stat.Key);
+                }
+
+                var attributes = new Label
+                {
+                    Parent = parent,
+                    Width = parent.Width,
+                    AutoSizeHeight = true,
+                    Text = builder.ToString()
+                };
+            }
+        }
+
+
+        static void Description(Item item, Container parent)
         {
             if (string.IsNullOrEmpty(item.Description))
             {
@@ -85,7 +148,7 @@ public class ItemTooltipView(Item item) : View, ITooltipView
             label.Parent = container;
         }
 
-        static void CreateBinding(Item item, Container parent)
+        static void Binding(Item item, Container parent)
         {
             if (item.Flags.NoSell || item is Service)
             {
@@ -134,7 +197,7 @@ public class ItemTooltipView(Item item) : View, ITooltipView
             }
         }
 
-        static void CreateVendorValue(Item item, Container parent)
+        static void VendorValue(Item item, Container parent)
         {
             if (item.Flags.NoSell || item.VendorValue == Coin.Zero)
             {
