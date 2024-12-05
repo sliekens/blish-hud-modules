@@ -4,14 +4,18 @@ using Blish_HUD;
 using Blish_HUD.Common.UI.Views;
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
+using Blish_HUD.GameServices.ArcDps.V2.Models;
 using Blish_HUD.Graphics.UI;
 
 using ChatLinksModule.UI.Tabs.Items.Controls;
 
 using GuildWars2;
+using GuildWars2.Hero;
 using GuildWars2.Items;
 
 using Microsoft.Xna.Framework;
+
+using static System.Net.Mime.MediaTypeNames;
 
 using Container = Blish_HUD.Controls.Container;
 
@@ -21,7 +25,7 @@ public class ItemTooltipView(Item item) : View, ITooltipView
 {
     protected override void Build(Container buildPanel)
     {
-        var layout = new FlowPanel
+        FlowPanel layout = new()
         {
             FlowDirection = ControlFlowDirection.SingleTopToBottom,
             Width = 350,
@@ -34,12 +38,13 @@ public class ItemTooltipView(Item item) : View, ITooltipView
         Defense(item, layout);
         ItemStats(item, layout);
         Description(item, layout);
+        SelectableStats(item, layout);
         Binding(item, layout);
         VendorValue(item, layout);
 
         static void Header(Item item, Container parent)
         {
-            var header = new FlowPanel
+            FlowPanel header = new()
             {
                 Parent = parent,
                 FlowDirection = ControlFlowDirection.SingleLeftToRight,
@@ -48,10 +53,7 @@ public class ItemTooltipView(Item item) : View, ITooltipView
                 Height = 50
             };
 
-            ItemImage icon = new(item)
-            {
-                Parent = header
-            };
+            ItemImage icon = new(item) { Parent = header };
 
             ItemName name = new(item)
             {
@@ -60,7 +62,7 @@ public class ItemTooltipView(Item item) : View, ITooltipView
                 Height = 50,
                 VerticalAlignment = VerticalAlignment.Middle,
                 Font = GameService.Content.DefaultFont18,
-                WrapText = true,
+                WrapText = true
             };
 
             name.Text = name.Text.Replace(" ", "  ");
@@ -70,7 +72,7 @@ public class ItemTooltipView(Item item) : View, ITooltipView
         {
             if (item is Weapon weapon)
             {
-                var weaponStrength = new Label
+                Label weaponStrength = new()
                 {
                     Parent = parent,
                     Width = parent.Width,
@@ -84,7 +86,7 @@ public class ItemTooltipView(Item item) : View, ITooltipView
         {
             if (item is Armor armor)
             {
-                var defense = new Label
+                Label defense = new()
                 {
                     Parent = parent,
                     Width = parent.Width,
@@ -94,7 +96,7 @@ public class ItemTooltipView(Item item) : View, ITooltipView
             }
             else if (item is Weapon { Defense: > 0 } weapon)
             {
-                var defense = new Label
+                Label defense = new()
                 {
                     Parent = parent,
                     Width = parent.Width,
@@ -108,13 +110,13 @@ public class ItemTooltipView(Item item) : View, ITooltipView
         {
             if (item is Weapon { Attributes.Count: > 0 } weapon)
             {
-                var builder = new StringBuilder();
-                foreach (var stat in weapon.Attributes)
+                StringBuilder builder = new();
+                foreach (KeyValuePair<Extensible<AttributeName>, int> stat in weapon.Attributes)
                 {
                     builder.AppendFormat("+{0} {1}\r\n", stat.Value, stat.Key);
                 }
 
-                var attributes = new Label
+                Label attributes = new()
                 {
                     Parent = parent,
                     Width = parent.Width,
@@ -132,7 +134,7 @@ public class ItemTooltipView(Item item) : View, ITooltipView
                 return;
             }
 
-            var container = new Panel
+            Panel container = new()
             {
                 Parent = parent,
                 WidthSizingMode = SizingMode.AutoSize,
@@ -148,11 +150,28 @@ public class ItemTooltipView(Item item) : View, ITooltipView
             label.Parent = container;
         }
 
+        static void SelectableStats(Item item, Container parent)
+        {
+            if (item is Weapon { StatChoices.Count: > 0 }
+                or Armor { StatChoices.Count: > 0 }
+                or Backpack { StatChoices.Count: > 0 }
+                or Trinket { StatChoices.Count: > 0 })
+            {
+                Label selectableStats = new()
+                {
+                    Parent = parent,
+                    Width = parent.Width,
+                    AutoSizeHeight = true,
+                    Text = "Double-click to select stats."
+                };
+            }
+        }
+
         static void Binding(Item item, Container parent)
         {
             if (item.Flags.Soulbound)
             {
-                var binding = new Label
+                Label binding = new()
                 {
                     Parent = parent,
                     Width = parent.Width,
@@ -162,7 +181,7 @@ public class ItemTooltipView(Item item) : View, ITooltipView
             }
             else if (item.Flags.SoulbindOnUse)
             {
-                var binding = new Label
+                Label binding = new()
                 {
                     Parent = parent,
                     Width = parent.Width,
@@ -172,7 +191,7 @@ public class ItemTooltipView(Item item) : View, ITooltipView
             }
             else if (item.Flags.AccountBound)
             {
-                var binding = new Label
+                Label binding = new()
                 {
                     Parent = parent,
                     Width = parent.Width,
@@ -182,7 +201,7 @@ public class ItemTooltipView(Item item) : View, ITooltipView
             }
             else if (item.Flags.AccountBindOnUse)
             {
-                var binding = new Label
+                Label binding = new()
                 {
                     Parent = parent,
                     Width = parent.Width,
@@ -199,7 +218,7 @@ public class ItemTooltipView(Item item) : View, ITooltipView
                 return;
             }
 
-            var builder = new FormattedLabelBuilder()
+            FormattedLabelBuilder? builder = new FormattedLabelBuilder()
                 .SetWidth(parent.Width)
                 .AutoSizeHeight();
 
@@ -211,7 +230,7 @@ public class ItemTooltipView(Item item) : View, ITooltipView
 
             if (item.VendorValue.Amount >= 10_000)
             {
-                var gold = builder.CreatePart(goldAmount.ToString());
+                FormattedLabelPartBuilder? gold = builder.CreatePart(goldAmount.ToString());
                 gold.SetTextColor(new Color(0xDD, 0xBB, 0x44));
                 gold.SetFontSize(ContentService.FontSize.Size14);
                 gold.SetSuffixImage(AsyncTexture2D.FromAssetId(156904));
@@ -220,20 +239,20 @@ public class ItemTooltipView(Item item) : View, ITooltipView
 
             if (item.VendorValue.Amount >= 100)
             {
-                var silver = builder.CreatePart(silverAmount.ToString());
+                FormattedLabelPartBuilder? silver = builder.CreatePart(silverAmount.ToString());
                 silver.SetTextColor(new Color(0xC0, 0xC0, 0xC0));
                 silver.SetFontSize(ContentService.FontSize.Size14);
                 silver.SetSuffixImage(AsyncTexture2D.FromAssetId(156907));
                 builder.CreatePart(silver);
             }
 
-            var copper = builder.CreatePart(copperAmount.ToString());
+            FormattedLabelPartBuilder? copper = builder.CreatePart(copperAmount.ToString());
             copper.SetTextColor(new Color(0xCD, 0x7F, 0x32));
             copper.SetFontSize(ContentService.FontSize.Size14);
             copper.SetSuffixImage(AsyncTexture2D.FromAssetId(156902));
             builder.CreatePart(copper);
 
-            var label = builder.Build();
+            FormattedLabel? label = builder.Build();
             label.Parent = parent;
             label.Width = parent.Width;
         }
