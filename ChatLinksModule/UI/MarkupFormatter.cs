@@ -13,7 +13,6 @@ internal static class FormattedLabelBuilderExtensions
 {
     private static readonly MarkupLexer Lexer = new();
     private static readonly MarkupParser Parser = new();
-    private static readonly LineBreakNode LineBreak = new();
 
     public static FormattedLabelBuilder AddMarkup(this FormattedLabelBuilder builder, string markup)
     {
