@@ -4,7 +4,6 @@ using Blish_HUD;
 using Blish_HUD.Common.UI.Views;
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
-using Blish_HUD.GameServices.ArcDps.V2.Models;
 using Blish_HUD.Graphics.UI;
 
 using ChatLinksModule.UI.Tabs.Items.Controls;
@@ -14,8 +13,6 @@ using GuildWars2.Hero;
 using GuildWars2.Items;
 
 using Microsoft.Xna.Framework;
-
-using static System.Net.Mime.MediaTypeNames;
 
 using Container = Blish_HUD.Controls.Container;
 
@@ -108,15 +105,35 @@ public class ItemTooltipView(Item item) : View, ITooltipView
 
         static void ItemStats(Item item, Container parent)
         {
-            if (item is Weapon { Attributes.Count: > 0 } weapon)
+            switch (item)
+            {
+                case Weapon { Attributes.Count: > 0 } weapon:
+                    Attributes(weapon.Attributes, parent);
+                    break;
+                case Armor { Attributes.Count: > 0 } armor:
+                    Attributes(armor.Attributes, parent);
+                    break;
+                case Backpack { Attributes.Count: > 0 } backpack:
+                    Attributes(backpack.Attributes, parent);
+                    break;
+                case Trinket { Attributes.Count: > 0 } trinket:
+                    Attributes(trinket.Attributes, parent);
+                    break;
+                case UpgradeComponent { Attributes.Count: > 0 } upgradeComponent:
+                    var label = Attributes(upgradeComponent.Attributes, parent);
+                    label.TextColor = new Color(0x55, 0x99, 0xFF);
+                    break;
+            }
+
+            static Label Attributes(IDictionary<Extensible<AttributeName>, int> attributes, Container parent)
             {
                 StringBuilder builder = new();
-                foreach (KeyValuePair<Extensible<AttributeName>, int> stat in weapon.Attributes)
+                foreach (KeyValuePair<Extensible<AttributeName>, int> stat in attributes)
                 {
                     builder.AppendFormat("+{0:N0} {1}\r\n", stat.Value, stat.Key);
                 }
 
-                Label attributes = new()
+                return new Label()
                 {
                     Parent = parent,
                     Width = parent.Width,
