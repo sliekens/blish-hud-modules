@@ -1,0 +1,6 @@
+<Project>
+    <PropertyGroup>
+        <RootNamespace>SL.$(RootNamespace)</RootNamespace>
+        <AssemblyName>SL.$(AssemblyName)</AssemblyName>
+    </PropertyGroup>
+</Project>
