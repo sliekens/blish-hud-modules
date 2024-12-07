@@ -1,8 +1,8 @@
 {
-    "name": "chat-links-module",
+    "name": "chat-links",
     "version": "1.0.0",
     "namespace": "sliekens.chat-links",
-    "package": "ChatLinks.dll",
+    "package": "SL.ChatLinks.dll",
     "manifest_version": 1,
     "description": "Chat like a pro",
     "dependencies": {
