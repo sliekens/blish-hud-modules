@@ -6,7 +6,7 @@ using GuildWars2.Items;
 
 using Microsoft.Xna.Framework;
 
-namespace SL.ChatLinks.UI.Tabs.Items.Controls;
+namespace SL.Common.Controls.Items;
 
 public sealed class ItemImage : Image
 {

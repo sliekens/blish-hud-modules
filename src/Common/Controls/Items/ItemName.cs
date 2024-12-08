@@ -2,7 +2,7 @@
 
 using GuildWars2.Items;
 
-namespace SL.ChatLinks.UI.Tabs.Items.Controls;
+namespace SL.Common.Controls.Items;
 
 public class ItemName : Label
 {

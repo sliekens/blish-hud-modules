@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\..\Common.props" />
+
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <TargetFramework>net472</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+
+        <PackageReference Include="BlishHUD" Version="1.2.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>compile</IncludeAssets>
+        </PackageReference>
+
+        <PackageReference Include="GW2SDK" Version="2.0.0-preview.0.29" />
+
+        <PackageReference Include="PolySharp" Version="1.15.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+</Project>

@@ -7,7 +7,7 @@ using GuildWars2.Markup;
 
 using Microsoft.Xna.Framework;
 
-namespace SL.ChatLinks.UI;
+namespace SL.Common.Controls;
 
 internal static class FormattedLabelBuilderExtensions
 {

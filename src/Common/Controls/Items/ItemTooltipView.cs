@@ -12,11 +12,9 @@ using GuildWars2.Items;
 
 using Microsoft.Xna.Framework;
 
-using SL.ChatLinks.UI.Tabs.Items.Controls;
-
 using Container = Blish_HUD.Controls.Container;
 
-namespace SL.ChatLinks.UI.Tabs.Items;
+namespace SL.Common.Controls.Items;
 
 public class ItemTooltipView(Item item) : View, ITooltipView
 {

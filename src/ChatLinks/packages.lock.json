@@ -591,6 +591,12 @@
         "type": "Transitive",
         "resolved": "4.5.0",
         "contentHash": "okurQJO6NRE/apDIP23ajJ0hpiNmJ+f0BwOlB/cSqTLQlw5upkf+5+96+iG2Jw40G1fCVCyPz/FhIABUjMR+RQ=="
+      },
+      "SL.Common": {
+        "type": "Project",
+        "dependencies": {
+          "GW2SDK": "[2.0.0-preview.0.29, )"
+        }
       }
     }
   }

@@ -3,7 +3,7 @@ using GuildWars2.Items;
 
 using Microsoft.Xna.Framework;
 
-namespace SL.ChatLinks.UI.Tabs.Items;
+namespace SL.Common.Controls.Items;
 
 public static class ItemColors
 {
