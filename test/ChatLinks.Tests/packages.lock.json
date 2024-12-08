@@ -10,9 +10,9 @@
       },
       "GW2SDK": {
         "type": "Direct",
-        "requested": "[2.0.0-preview.0.15, )",
-        "resolved": "2.0.0-preview.0.15",
-        "contentHash": "RUr2MXW7NyhTCuXBgUgfD4A5O6NUicSF19SlrF1XYspAIwhOKy/0nw2fmWI4Z1rIF35Rg9drgMWtoXSoms3jCg==",
+        "requested": "[2.0.0-preview.0.29, )",
+        "resolved": "2.0.0-preview.0.29",
+        "contentHash": "w4Gt+t/ztbkJ6+nRy9QuHWCEkQarPCIi+DamvHAGM6+dNGEWuUCAJmrQRamxLX9rzLaBfPYOsoAzmo/zesVNSQ==",
         "dependencies": {
           "Microsoft.Bcl.HashCode": "6.0.0",
           "System.Runtime.InteropServices.RuntimeInformation": "4.3.0",
@@ -677,7 +677,7 @@
         "type": "Project",
         "dependencies": {
           "CommunityToolkit.Diagnostics": "[8.3.2, )",
-          "GW2SDK": "[2.0.0-preview.0.15, )",
+          "GW2SDK": "[2.0.0-preview.0.29, )",
           "Microsoft.EntityFrameworkCore.Sqlite.Core": "[3.1.32, )",
           "Microsoft.Extensions.Http": "[3.1.32, )",
           "Newtonsoft.Json": "[13.0.1, )",
@@ -694,7 +694,7 @@
           "BlishHUD": "[1.2.0, )",
           "Newtonsoft.Json": "[13.0.1, )",
           "SL.ChatLinks": "[1.0.0, )",
-          "gw2sdk": "[2.0.0-preview.0.15, )"
+          "gw2sdk": "[2.0.0-preview.0.29, )"
         }
       }
     }

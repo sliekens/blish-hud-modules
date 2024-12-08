@@ -378,15 +378,9 @@ public class ItemTooltipView(Item item) : View, ITooltipView
                 .SetWidth(parent.Width)
                 .AutoSizeHeight();
 
-            int totalCopper = vendorValue.Amount;
-            int goldAmount = totalCopper / 10_000;
-            totalCopper %= 10_000;
-            int silverAmount = totalCopper / 100;
-            int copperAmount = totalCopper % 100;
-
             if (vendorValue.Amount >= 10_000)
             {
-                FormattedLabelPartBuilder? gold = builder.CreatePart(goldAmount.ToString("N0"));
+                FormattedLabelPartBuilder? gold = builder.CreatePart(vendorValue.Gold.ToString("N0"));
                 gold.SetTextColor(new Color(0xDD, 0xBB, 0x44));
                 gold.SetFontSize(ContentService.FontSize.Size14);
                 gold.SetSuffixImage(AsyncTexture2D.FromAssetId(156904));
@@ -395,14 +389,14 @@ public class ItemTooltipView(Item item) : View, ITooltipView
 
             if (vendorValue.Amount >= 100)
             {
-                FormattedLabelPartBuilder? silver = builder.CreatePart(silverAmount.ToString("N0"));
+                FormattedLabelPartBuilder? silver = builder.CreatePart(vendorValue.Silver.ToString("N0"));
                 silver.SetTextColor(new Color(0xC0, 0xC0, 0xC0));
                 silver.SetFontSize(ContentService.FontSize.Size14);
                 silver.SetSuffixImage(AsyncTexture2D.FromAssetId(156907));
                 builder.CreatePart(silver);
             }
 
-            FormattedLabelPartBuilder? copper = builder.CreatePart(copperAmount.ToString("N0"));
+            FormattedLabelPartBuilder? copper = builder.CreatePart(vendorValue.Copper.ToString("N0"));
             copper.SetTextColor(new Color(0xCD, 0x7F, 0x32));
             copper.SetFontSize(ContentService.FontSize.Size14);
             copper.SetSuffixImage(AsyncTexture2D.FromAssetId(156902));

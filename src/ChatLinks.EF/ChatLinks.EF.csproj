@@ -10,7 +10,7 @@
         <PackageReference Include="BlishHUD" Version="1.2.0">
             <ExcludeAssets>build</ExcludeAssets>
         </PackageReference>
-        <PackageReference Include="gw2sdk" Version="2.0.0-preview.0.15" />
+        <PackageReference Include="gw2sdk" Version="2.0.0-preview.0.29" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.32">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -26,9 +26,7 @@
         <ConvertToAbsolutePath Paths="..\ChatLinks">
             <Output TaskParameter="AbsolutePaths" PropertyName="ModuleDirectory" />
         </ConvertToAbsolutePath>
-        <WriteLinesToFile File="$(OutDir)ModuleDirectory.txt" Lines="$(ModuleDirectory)"
-            Overwrite="true" />
-        <WriteLinesToFile File="$(OutDir)DesignDirectory.txt" Lines="$(MSBuildProjectDirectory)"
-            Overwrite="true" />
+        <WriteLinesToFile File="$(OutDir)ModuleDirectory.txt" Lines="$(ModuleDirectory)" Overwrite="true" />
+        <WriteLinesToFile File="$(OutDir)DesignDirectory.txt" Lines="$(MSBuildProjectDirectory)" Overwrite="true" />
     </Target>
 </Project>
