@@ -62,11 +62,22 @@ public sealed class ItemWidget : FlowPanel
 
         _itemName.Text = _itemName.Text.Replace(" ", "  ");
 
+        FormattedLabel link = new FormattedLabelBuilder().SetWidth(Width)
+            .AutoSizeHeight()
+            .Wrap()
+            .CreatePart("API", part => part.SetHyperLink($"https://api.guildwars2.com/v2/items/{item.Id}?v=latest"))
+            .Build();
+
+        link.Parent = this;
+
         Label quantityLabel = new() { Parent = this, Text = "Quantity:", AutoSizeWidth = true, AutoSizeHeight = true };
 
         _quantity = new TrackBar
         {
-            Parent = this, Value = 1, MinValue = 1, MaxValue = 250,
+            Parent = this,
+            Value = 1,
+            MinValue = 1,
+            MaxValue = 250,
             Width = Width - 10
         };
 
@@ -74,7 +85,8 @@ public sealed class ItemWidget : FlowPanel
 
         _chatLink = new TextBox
         {
-            Parent = this, Text = item.ChatLink,
+            Parent = this,
+            Text = item.ChatLink,
             Width = Width
         };
 
