@@ -157,7 +157,7 @@ public class ItemTooltipView(Item item) : View, ITooltipView
                     Width = parent.Width,
                     AutoSizeHeight = true,
                     Text = builder.ToString(),
-                    TextColor = textColor.GetValueOrDefault()
+                    TextColor = textColor.GetValueOrDefault(Color.White)
                 };
             }
         }
