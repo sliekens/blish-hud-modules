@@ -30,9 +30,9 @@
       },
       "GW2SDK": {
         "type": "Direct",
-        "requested": "[2.0.0-preview.0.29, )",
-        "resolved": "2.0.0-preview.0.29",
-        "contentHash": "w4Gt+t/ztbkJ6+nRy9QuHWCEkQarPCIi+DamvHAGM6+dNGEWuUCAJmrQRamxLX9rzLaBfPYOsoAzmo/zesVNSQ==",
+        "requested": "[2.0.0, )",
+        "resolved": "2.0.0",
+        "contentHash": "QrYugV1hVXfvRX60+ZExByGssa0ENhrQ0P3lofRDDzYw2t+tTGYl14fhL1lJxRh5zkYVt1Altsv2JmoaaEnuXw==",
         "dependencies": {
           "Microsoft.Bcl.HashCode": "6.0.0",
           "System.Runtime.InteropServices.RuntimeInformation": "4.3.0",
@@ -94,9 +94,9 @@
       },
       "System.ComponentModel.Composition": {
         "type": "Direct",
-        "requested": "[8.0.0, )",
-        "resolved": "8.0.0",
-        "contentHash": "bGhUX5BTivJ9Wax0qnJy7uGq7dn/TQkEpJ2Fpu1etg8dbPwyDkUzNPc1d3I2/jUr9y4wDI3a1dkSmi8X21Pzbw=="
+        "requested": "[6.0.0, )",
+        "resolved": "6.0.0",
+        "contentHash": "60Qv+F7oxomOjJeTDA5Z4iCyFbQ0B/2Mi5HT+13pxxq0lVnu2ipbWMzFB+RWKr3wWKA8BSncXr9PH/fECwMX5Q=="
       },
       "System.Text.Json": {
         "type": "Direct",
@@ -595,7 +595,8 @@
       "SL.Common": {
         "type": "Project",
         "dependencies": {
-          "GW2SDK": "[2.0.0-preview.0.29, )"
+          "GW2SDK": "[2.0.0, )",
+          "System.ComponentModel.Composition": "[6.0.0, )"
         }
       }
     }

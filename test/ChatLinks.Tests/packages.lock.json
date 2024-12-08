@@ -10,9 +10,9 @@
       },
       "GW2SDK": {
         "type": "Direct",
-        "requested": "[2.0.0-preview.0.29, )",
-        "resolved": "2.0.0-preview.0.29",
-        "contentHash": "w4Gt+t/ztbkJ6+nRy9QuHWCEkQarPCIi+DamvHAGM6+dNGEWuUCAJmrQRamxLX9rzLaBfPYOsoAzmo/zesVNSQ==",
+        "requested": "[2.0.0, )",
+        "resolved": "2.0.0",
+        "contentHash": "QrYugV1hVXfvRX60+ZExByGssa0ENhrQ0P3lofRDDzYw2t+tTGYl14fhL1lJxRh5zkYVt1Altsv2JmoaaEnuXw==",
         "dependencies": {
           "Microsoft.Bcl.HashCode": "6.0.0",
           "System.Runtime.InteropServices.RuntimeInformation": "4.3.0",
@@ -21,11 +21,11 @@
       },
       "Microsoft.NET.Test.Sdk": {
         "type": "Direct",
-        "requested": "[17.11.1, )",
-        "resolved": "17.11.1",
-        "contentHash": "U3Ty4BaGoEu+T2bwSko9tWqWUOU16WzSFkq6U8zve75oRBMSLTBdMAZrVNNz1Tq12aCdDom9fcOcM9QZaFHqFg==",
+        "requested": "[17.12.0, )",
+        "resolved": "17.12.0",
+        "contentHash": "kt/PKBZ91rFCWxVIJZSgVLk+YR+4KxTuHf799ho8WNiK5ZQpJNAEZCAWX86vcKrs+DiYjiibpYKdGZP6+/N17w==",
         "dependencies": {
-          "Microsoft.CodeCoverage": "17.11.1"
+          "Microsoft.CodeCoverage": "17.12.0"
         }
       },
       "Newtonsoft.Json": {
@@ -33,6 +33,12 @@
         "requested": "[13.0.1, )",
         "resolved": "13.0.1",
         "contentHash": "ppPFpBcvxdsfUonNcvITKqLl3bqxWbDCZIzDWHzjpdAHRFfZe0Dw9HmA0+za13IdyrgJwpkDTDA9fHaxOrt20A=="
+      },
+      "System.ComponentModel.Composition": {
+        "type": "Direct",
+        "requested": "[6.0.0, )",
+        "resolved": "6.0.0",
+        "contentHash": "60Qv+F7oxomOjJeTDA5Z4iCyFbQ0B/2Mi5HT+13pxxq0lVnu2ipbWMzFB+RWKr3wWKA8BSncXr9PH/fECwMX5Q=="
       },
       "xunit": {
         "type": "Direct",
@@ -115,8 +121,8 @@
       },
       "Microsoft.CodeCoverage": {
         "type": "Transitive",
-        "resolved": "17.11.1",
-        "contentHash": "nPJqrcA5iX+Y0kqoT3a+pD/8lrW/V7ayqnEJQsTonSoPz59J8bmoQhcSN4G8+UJ64Hkuf0zuxnfuj2lkHOq4cA=="
+        "resolved": "17.12.0",
+        "contentHash": "4svMznBd5JM21JIG2xZKGNanAHNXplxf/kQDFfLHXQ3OnpJkayRK/TjacFjA+EYmoyuNXHo/sOETEfcYtAzIrA=="
       },
       "Microsoft.CSharp": {
         "type": "Transitive",
@@ -475,11 +481,6 @@
         "resolved": "4.7.0",
         "contentHash": "0YFqjhp/mYkDGpU0Ye1GjE53HMp9UVfGN7seGpAMttAC0C40v5gw598jCgpbBLMmCo0E5YRLBv5Z2doypO49ZQ=="
       },
-      "System.ComponentModel.Composition": {
-        "type": "Transitive",
-        "resolved": "8.0.0",
-        "contentHash": "bGhUX5BTivJ9Wax0qnJy7uGq7dn/TQkEpJ2Fpu1etg8dbPwyDkUzNPc1d3I2/jUr9y4wDI3a1dkSmi8X21Pzbw=="
-      },
       "System.Configuration.ConfigurationManager": {
         "type": "Transitive",
         "resolved": "4.6.0",
@@ -677,14 +678,14 @@
         "type": "Project",
         "dependencies": {
           "CommunityToolkit.Diagnostics": "[8.3.2, )",
-          "GW2SDK": "[2.0.0-preview.0.29, )",
+          "GW2SDK": "[2.0.0, )",
           "Microsoft.EntityFrameworkCore.Sqlite.Core": "[3.1.32, )",
           "Microsoft.Extensions.Http": "[3.1.32, )",
           "Newtonsoft.Json": "[13.0.1, )",
           "Polly": "[8.5.0, )",
           "SL.Common": "[1.0.0, )",
           "SQLitePCLRaw.bundle_winsqlite3": "[2.1.10, )",
-          "System.ComponentModel.Composition": "[8.0.0, )",
+          "System.ComponentModel.Composition": "[6.0.0, )",
           "System.Text.Json": "[9.0.0, )",
           "Z.EntityFramework.Extensions.EFCore": "[3.103.6.3, )"
         }
@@ -695,13 +696,15 @@
           "BlishHUD": "[1.2.0, )",
           "Newtonsoft.Json": "[13.0.1, )",
           "SL.ChatLinks": "[1.0.0, )",
-          "gw2sdk": "[2.0.0-preview.0.29, )"
+          "System.ComponentModel.Composition": "[6.0.0, )",
+          "gw2sdk": "[2.0.0, )"
         }
       },
       "SL.Common": {
         "type": "Project",
         "dependencies": {
-          "GW2SDK": "[2.0.0-preview.0.29, )"
+          "GW2SDK": "[2.0.0, )",
+          "System.ComponentModel.Composition": "[6.0.0, )"
         }
       }
     }
