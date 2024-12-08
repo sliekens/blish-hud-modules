@@ -4,21 +4,9 @@ using Microsoft.Extensions.Logging;
 
 namespace SL.ChatLinks.Logging;
 
-public class LoggingAdapterProvider<T> : ILoggerProvider
-{
-    public void Dispose()
-    {
-    }
-
-    public ILogger CreateLogger(string categoryName)
-    {
-        return new LoggingAdapter<T>();
-    }
-}
-
 public class LoggingAdapter<T> : ILogger
 {
-    private readonly Logger _logger = Logger.GetLogger<T>();
+    private static readonly Logger Sink = Logger.GetLogger<T>();
 
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception,
         Func<TState, Exception?, string> formatter)
@@ -27,22 +15,22 @@ public class LoggingAdapter<T> : ILogger
         switch (logLevel)
         {
             case LogLevel.Trace:
-                _logger.Trace(exception, logMessage);
+                Sink.Trace(exception, logMessage);
                 break;
             case LogLevel.Debug:
-                _logger.Debug(exception, logMessage);
+                Sink.Debug(exception, logMessage);
                 break;
             case LogLevel.Information:
-                _logger.Info(exception, logMessage);
+                Sink.Info(exception, logMessage);
                 break;
             case LogLevel.Warning:
-                _logger.Warn(exception, logMessage);
+                Sink.Warn(exception, logMessage);
                 break;
             case LogLevel.Error:
-                _logger.Error(exception, logMessage);
+                Sink.Error(exception, logMessage);
                 break;
             case LogLevel.Critical:
-                _logger.Fatal(exception, logMessage);
+                Sink.Fatal(exception, logMessage);
                 break;
             case LogLevel.None:
                 break;

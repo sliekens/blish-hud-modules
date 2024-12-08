@@ -7,9 +7,6 @@ using GuildWars2.Items;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Microsoft.Extensions.Logging;
-
-using SL.ChatLinks.Logging;
 
 namespace SL.ChatLinks.Storage;
 
@@ -23,11 +20,6 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
         {
             optionsBuilder.UseSqlite("Data Source=data.db");
         }
-
-        optionsBuilder.UseLoggerFactory(LoggerFactory.Create(builder =>
-        {
-            builder.AddProvider(new LoggingAdapterProvider<ChatLinksContext>());
-        }));
     }
 
     private static string Serialize<T>(T value)
@@ -188,7 +180,8 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
         weaponBuilder.Property(weapon => weapon.SuffixItemId).HasColumnName("SuffixItemId");
         weaponBuilder.Property(weapon => weapon.SecondarySuffixItemId).HasColumnName("SecondarySuffixItemId");
         weaponBuilder.Property(weapon => weapon.AttributeCombinationId).HasColumnName("AttributeCombinationId");
-        weaponBuilder.Property(weapon => weapon.Attributes).HasColumnName("Attributes").HasConversion(attributesConverter);
+        weaponBuilder.Property(weapon => weapon.Attributes).HasColumnName("Attributes")
+            .HasConversion(attributesConverter);
         weaponBuilder.Property(weapon => weapon.AttributeAdjustment).HasColumnName("AttributeAdjustment");
         weaponBuilder.Property(weapon => weapon.StatChoices).HasColumnName("StatChoices").HasJsonValueConversion();
         weaponBuilder.Property(weapon => weapon.InfusionSlots).HasColumnName("InfusionSlots").HasJsonValueConversion();
@@ -252,7 +245,7 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
         serviceBuilder.Property(service => service.Effect).HasColumnName("Effect").HasJsonValueConversion();
         serviceBuilder.Property(service => service.GuildUpgradeId).HasColumnName("GuildUpgradeId");
 
-        var gizmoBuilder = modelBuilder.Entity<Gizmo>();
+        EntityTypeBuilder<Gizmo>? gizmoBuilder = modelBuilder.Entity<Gizmo>();
         gizmoBuilder.Property(gizmo => gizmo.GuildUpgradeId).HasColumnName("GuildUpgradeId");
 
         EntityTypeBuilder<Utility> utilityBuilder = modelBuilder.Entity<Utility>();

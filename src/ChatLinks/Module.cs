@@ -9,8 +9,10 @@ using GuildWars2.Items;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 using SL.ChatLinks.Integrations;
+using SL.ChatLinks.Logging;
 using SL.ChatLinks.Storage;
 using SL.ChatLinks.UI;
 using SL.ChatLinks.UI.Tabs.Achievements;
@@ -20,13 +22,11 @@ using SL.ChatLinks.UI.Tabs.Items.Services;
 
 using SQLitePCL;
 
-using Module = Blish_HUD.Modules.Module;
-
 namespace SL.ChatLinks;
 
-[Export(typeof(Module))]
+[Export(typeof(Blish_HUD.Modules.Module))]
 [method: ImportingConstructor]
-public class ChatLinks([Import("ModuleParameters")] ModuleParameters parameters) : Module(parameters)
+public class Module([Import("ModuleParameters")] ModuleParameters parameters) : Blish_HUD.Modules.Module(parameters)
 {
     private MainIcon? _cornerIcon;
 
@@ -60,6 +60,12 @@ public class ChatLinks([Import("ModuleParameters")] ModuleParameters parameters)
         services.AddTransient<AchievementsView>();
         services.AddTransient<Func<AchievementsView>>(sp => sp.GetRequiredService<AchievementsView>);
         services.AddTransient<ItemSearch>();
+
+        services.AddLogging(builder =>
+        {
+            builder.AddProvider(new LoggingAdapterProvider<Module>());
+            builder.SetMinimumLevel(LogLevel.Debug);
+        });
 
         _sp = services.BuildServiceProvider();
 
