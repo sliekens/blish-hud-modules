@@ -1,19 +1,13 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Text.RegularExpressions;
 
 using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
 
 using CommunityToolkit.Diagnostics;
 
-using GuildWars2.Chat;
-using GuildWars2.Items;
-
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 
-using SL.ChatLinks.Storage;
 using SL.ChatLinks.UI.Tabs.Items.Controls;
 using SL.ChatLinks.UI.Tabs.Items.Services;
 
@@ -24,6 +18,7 @@ namespace SL.ChatLinks.UI.Tabs.Items;
 
 public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search) : View
 {
+    private readonly List<Item> _default = [];
     private readonly SemaphoreSlim _searchLock = new(1, 1);
 
     private Container? _root;
@@ -33,8 +28,6 @@ public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search) : Vie
     private ItemsList? _searchResults;
 
     private ItemWidget? _selectedItem;
-
-    private readonly List<Item> _default = [];
 
     protected override void Build(Container buildPanel)
     {
@@ -55,7 +48,7 @@ public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search) : Vie
 
     protected override async Task<bool> Load(IProgress<string> progress)
     {
-        await foreach (var item in search.NewItems(100))
+        await foreach (Item item in search.NewItems(100))
         {
             _default.Add(item);
         }
@@ -87,64 +80,44 @@ public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search) : Vie
 
     private async void SearchInput(object sender, EventArgs e)
     {
+        bool searching = false;
+        using CancellationTokenSource cancellationTokenSource = new();
         try
         {
             EnsureInitialized();
 
-            using CancellationTokenSource cancellationTokenSource = new();
-            bool searching = true;
+            searching = true;
             _searchResults.SetLoading(true);
             _searchBox.TextChanged += OnTextChangedAgain;
 
-            List<Item> results = [];
+            // Ensure exclusive access to the DbContext (not thread-safe)
+            await _searchLock.WaitAsync(cancellationTokenSource.Token);
             try
             {
-                // Ensure exclusive access to the DbContext (not thread-safe)
-                await _searchLock.WaitAsync(cancellationTokenSource.Token);
-
                 string query = _searchBox.Text.Trim();
                 if (query.Length == 0)
                 {
-                    results = _default;
+                    _searchResults.SetOptions(_default);
                 }
                 else if (query.Length >= 3)
                 {
                     // Debounce search
                     await Task.Delay(300, cancellationTokenSource.Token);
 
-                    await foreach (var item in search.Search(query, cancellationTokenSource.Token))
+                    _searchResults.ClearOptions();
+                    await foreach (Item item in search.Search(query, cancellationTokenSource.Token))
                     {
-                        results.Add(item);
+                        _searchResults.AddOption(item);
                     }
+
+                    searching = false;
                 }
 
-                searching = false;
-                _searchResults.SetOptions(results);
                 _searchResults.SetLoading(false);
             }
             finally
             {
-                _searchBox.TextChanged -= OnTextChangedAgain;
                 _searchLock.Release();
-            }
-
-            void OnTextChangedAgain(object o, EventArgs e)
-            {
-                // ReSharper disable once AccessToModifiedClosure
-                if (!searching)
-                {
-                    return;
-                }
-
-                try
-                {
-                    // ReSharper disable once AccessToDisposedClosure
-                    cancellationTokenSource.Cancel();
-                }
-                catch (ObjectDisposedException)
-                {
-                    // Expected
-                }
             }
         }
         catch (OperationCanceledException)
@@ -156,6 +129,32 @@ public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search) : Vie
             logger.LogError(reason, "Failed to search for items");
             ScreenNotification.ShowNotification("Something went wrong", ScreenNotification.NotificationType.Red);
         }
+        finally
+        {
+            if (_searchBox is not null)
+            {
+                _searchBox.TextChanged -= OnTextChangedAgain;
+            }
+        }
+
+        void OnTextChangedAgain(object o, EventArgs e)
+        {
+            // ReSharper disable once AccessToModifiedClosure
+            if (!searching)
+            {
+                return;
+            }
+
+            try
+            {
+                // ReSharper disable once AccessToDisposedClosure
+                cancellationTokenSource.Cancel();
+            }
+            catch (ObjectDisposedException)
+            {
+                // Expected
+            }
+        }
     }
 
     private void ItemSelected(object sender, Item item)
@@ -163,11 +162,7 @@ public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search) : Vie
         EnsureInitialized();
 
         _selectedItem?.Dispose();
-        _selectedItem = new ItemWidget(item)
-        {
-            Parent = _root,
-            Left = _searchResults.Right
-        };
+        _selectedItem = new ItemWidget(item) { Parent = _root, Left = _searchResults.Right };
     }
 
 

@@ -39,18 +39,28 @@ public sealed class ItemsList : FlowPanel
         }
     }
 
-    public void SetOptions(IEnumerable<Item> items)
+    public void ClearOptions()
     {
         while (!Children.IsEmpty)
         {
             Children[0].Click -= OptionClick;
             Children[0].Dispose();
         }
+    }
+
+    public void AddOption(Item item)
+    {
+        var option = new ItemsListOption(item) { Parent = this };
+        option.Click += OptionClick;
+    }
+
+    public void SetOptions(IEnumerable<Item> items)
+    {
+        ClearOptions();
 
         foreach (Item item in items)
         {
-            var option = new ItemsListOption(item) { Parent = this };
-            option.Click += OptionClick;
+            AddOption(item);
         }
     }
 
