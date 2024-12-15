@@ -23,7 +23,7 @@ public sealed class ItemWidget : FlowPanel
 
     private readonly TrackBar _quantity;
 
-    public ItemWidget(Item item)
+    public ItemWidget(Item item, List<UpgradeComponent> upgrades)
     {
         ShowTint = true;
         ShowBorder = true;
@@ -47,7 +47,7 @@ public sealed class ItemWidget : FlowPanel
         _itemIcon = new ItemImage(item)
         {
             Parent = header,
-            Tooltip = new Tooltip(new ItemTooltipView(item))
+            Tooltip = new Tooltip(new ItemTooltipView(item, upgrades))
         };
 
         _itemName = new ItemName(item)

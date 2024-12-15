@@ -11,12 +11,15 @@ namespace SL.ChatLinks.UI.Tabs.Items.Controls;
 
 public sealed class ItemsList : FlowPanel
 {
+    private readonly List<UpgradeComponent> _upgrades;
+
     private bool _loading;
 
     public event EventHandler<Item>? OptionClicked;
 
-    public ItemsList()
+    public ItemsList(List<UpgradeComponent> upgrades)
     {
+        _upgrades = upgrades;
         Size = new Point(450, 500);
         ShowTint = true;
         ShowBorder = true;
@@ -50,7 +53,7 @@ public sealed class ItemsList : FlowPanel
 
     public void AddOption(Item item)
     {
-        var option = new ItemsListOption(item) { Parent = this };
+        var option = new ItemsListOption(item, _upgrades) { Parent = this };
         option.Click += OptionClick;
     }
 

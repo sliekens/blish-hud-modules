@@ -16,11 +16,18 @@ public sealed class ItemSearch(ChatLinksContext context)
 
     private readonly IQueryable<Item> _items = context.Items.AsNoTracking();
 
-    public IAsyncEnumerable<Item> NewItems(int count)
+    public IAsyncEnumerable<Item> NewItems(int limit, int offset)
     {
         return _items
             .OrderByDescending(item => item.Id)
-            .Take(count)
+            .Skip(offset)
+            .Take(limit)
+            .AsAsyncEnumerable();
+    }
+
+    public IAsyncEnumerable<T> OfType<T>() where T : Item
+    {
+        return _items.OfType<T>()
             .AsAsyncEnumerable();
     }
 

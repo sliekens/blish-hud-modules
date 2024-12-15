@@ -13,6 +13,11 @@
             <IncludeAssets>compile</IncludeAssets>
         </PackageReference>
 
+        <PackageReference Include="Gw2Sharp" Version="1.7.4">
+            <IncludeAssets>none</IncludeAssets>
+            <ExcludeAssets>all</ExcludeAssets>
+        </PackageReference>
+
         <PackageReference Include="GW2SDK" Version="2.0.0" />
 
         <PackageReference Include="PolySharp" Version="1.15.0">
@@ -21,6 +26,10 @@
         </PackageReference>
 
         <PackageReference Include="System.ComponentModel.Composition" Version="6.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Microsoft.CSharp" />
     </ItemGroup>
 
 </Project>

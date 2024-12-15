@@ -5,6 +5,8 @@ using Blish_HUD.Graphics.UI;
 
 using CommunityToolkit.Diagnostics;
 
+using GuildWars2.Items;
+
 using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 
@@ -20,6 +22,7 @@ public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search) : Vie
 {
     private readonly List<Item> _default = [];
     private readonly SemaphoreSlim _searchLock = new(1, 1);
+    private readonly List<UpgradeComponent> _upgrades = [];
 
     private Container? _root;
 
@@ -28,6 +31,21 @@ public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search) : Vie
     private ItemsList? _searchResults;
 
     private ItemWidget? _selectedItem;
+
+    protected override async Task<bool> Load(IProgress<string> progress)
+    {
+        await foreach (UpgradeComponent upgrade in search.OfType<UpgradeComponent>())
+        {
+            _upgrades.Add(upgrade);
+        }
+
+        await foreach (Item item in search.NewItems(1000, 0))
+        {
+            _default.Add(item);
+        }
+
+        return true;
+    }
 
     protected override void Build(Container buildPanel)
     {
@@ -38,22 +56,17 @@ public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search) : Vie
             Width = 450,
             PlaceholderText = "Enter item name or chat link..."
         };
-        _searchResults = new ItemsList { Parent = buildPanel, Size = new Point(450, 500), Top = _searchBox.Bottom };
+        _searchResults = new ItemsList(_upgrades)
+        {
+            Parent = buildPanel,
+            Size = new Point(450, 500),
+            Top = _searchBox.Bottom
+        };
 
         _searchResults.SetOptions(_default);
 
         _searchBox.TextChanged += SearchInput;
         _searchResults.OptionClicked += ItemSelected;
-    }
-
-    protected override async Task<bool> Load(IProgress<string> progress)
-    {
-        await foreach (Item item in search.NewItems(100))
-        {
-            _default.Add(item);
-        }
-
-        return true;
     }
 
     [MemberNotNull(
@@ -162,7 +175,11 @@ public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search) : Vie
         EnsureInitialized();
 
         _selectedItem?.Dispose();
-        _selectedItem = new ItemWidget(item) { Parent = _root, Left = _searchResults.Right };
+        _selectedItem = new ItemWidget(item, _upgrades)
+        {
+            Parent = _root,
+            Left = _searchResults.Right
+        };
     }
 
 

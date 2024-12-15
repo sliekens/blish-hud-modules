@@ -18,6 +18,7 @@ public static class ItemColors
             GuildWars2.Items.Rarity.Rare => new Color(0xFF, 0xDD, 0x22),
             GuildWars2.Items.Rarity.Exotic => new Color(0xFF, 0xAA, 0x00),
             GuildWars2.Items.Rarity.Ascended => new Color(0xEE, 0x33, 0x88),
+            GuildWars2.Items.Rarity.Legendary => new Color(0xAA, 0x44, 0xDD),
             _ => Color.White
         };
     }

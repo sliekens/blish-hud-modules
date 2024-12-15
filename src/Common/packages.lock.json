@@ -30,6 +30,15 @@
           "System.Text.Json": "9.0.0"
         }
       },
+      "Gw2Sharp": {
+        "type": "Direct",
+        "requested": "[1.7.4, )",
+        "resolved": "1.7.4",
+        "contentHash": "ECx8C2stHSMMB5UOQjTE6t6qvxHLpWmvCkVGJjxaoqb31gjCL6GcNFOwhIfZEc0N8J3pmeux5+YypfvqFeiONQ==",
+        "dependencies": {
+          "System.Text.Json": "5.0.0"
+        }
+      },
       "PolySharp": {
         "type": "Direct",
         "requested": "[1.15.0, )",
@@ -46,14 +55,6 @@
         "type": "Transitive",
         "resolved": "1.7.1",
         "contentHash": "9jMkkVuNfd48+ElVajLkJTyKP5dXBwMqYfDS3qXz8EMiWaeTZ12AJHDbosDJvQBJRJetPuLQDaLuI6ZgVSI8Mw=="
-      },
-      "Gw2Sharp": {
-        "type": "Transitive",
-        "resolved": "1.7.4",
-        "contentHash": "ECx8C2stHSMMB5UOQjTE6t6qvxHLpWmvCkVGJjxaoqb31gjCL6GcNFOwhIfZEc0N8J3pmeux5+YypfvqFeiONQ==",
-        "dependencies": {
-          "System.Text.Json": "5.0.0"
-        }
       },
       "Microsoft.Bcl.AsyncInterfaces": {
         "type": "Transitive",

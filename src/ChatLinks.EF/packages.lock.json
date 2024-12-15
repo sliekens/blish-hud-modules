@@ -594,6 +594,7 @@
         "dependencies": {
           "CommunityToolkit.Diagnostics": "[8.3.2, )",
           "GW2SDK": "[2.0.0, )",
+          "Gw2Sharp": "[1.7.4, )",
           "Microsoft.EntityFrameworkCore.Sqlite.Core": "[3.1.32, )",
           "Microsoft.Extensions.Http": "[3.1.32, )",
           "Newtonsoft.Json": "[13.0.1, )",
@@ -609,6 +610,7 @@
         "type": "Project",
         "dependencies": {
           "GW2SDK": "[2.0.0, )",
+          "Gw2Sharp": "[1.7.4, )",
           "System.ComponentModel.Composition": "[6.0.0, )"
         }
       }

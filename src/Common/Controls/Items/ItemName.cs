@@ -12,8 +12,12 @@ public class ItemName : Label
 
     public ItemName(Item item)
     {
-        Text = item.Name;
         TextColor = ItemColors.Rarity(item.Rarity);
+        Text = item.Name;
+        if (item.GameTypes.All(type => type.IsDefined() && type.ToEnum() is GameType.Pvp or GameType.PvpLobby))
+        {
+            Text += " (PvP)";
+        }
 
         _item = item;
     }

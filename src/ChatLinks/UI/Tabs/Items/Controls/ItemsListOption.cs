@@ -19,12 +19,12 @@ public sealed class ItemsListOption : Container
 
     private ItemName _name;
 
-    public ItemsListOption(Item item)
+    public ItemsListOption(Item item, List<UpgradeComponent> upgrades)
     {
         Item = item;
         Width = 425;
         Height = 35;
-        Tooltip = new Tooltip(new ItemTooltipView(Item));
+        Tooltip = new Tooltip(new ItemTooltipView(Item, upgrades));
 
         _icon = new ItemImage(item)
         {
@@ -35,7 +35,6 @@ public sealed class ItemsListOption : Container
 
         _name = new ItemName(item)
         {
-            Text = Item.Name,
             Left = 40,
             Width = 385,
             AutoSizeHeight = false,

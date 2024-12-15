@@ -12,11 +12,14 @@ using GuildWars2.Items;
 
 using Microsoft.Xna.Framework;
 
+using Color = Microsoft.Xna.Framework.Color;
 using Container = Blish_HUD.Controls.Container;
+using Currency = GuildWars2.Items.Currency;
+using Item = GuildWars2.Items.Item;
 
 namespace SL.Common.Controls.Items;
 
-public class ItemTooltipView(Item item) : View, ITooltipView
+public class ItemTooltipView(Item item, List<UpgradeComponent> upgrades) : View, ITooltipView
 {
     protected override void Build(Container buildPanel)
     {
@@ -28,20 +31,640 @@ public class ItemTooltipView(Item item) : View, ITooltipView
             Parent = buildPanel
         };
 
-        Header(item, layout);
-        Hint(item, layout);
-        WeaponStrength(item, layout);
-        Defense(item, layout);
-        ItemStats(item, layout);
-        Effect(item, layout);
-        Description(item, layout);
-        SelectableStats(item, layout);
-        TypeName(item, layout);
-        RequiredLevel(item, layout);
-        Binding(item, layout);
-        if (!item.Flags.NoSell)
+        switch (item)
         {
-            VendorValue(item.VendorValue, layout);
+            case Armor armor:
+                PrintArmor(armor, upgrades, layout);
+                break;
+            case Backpack back:
+                PrintBackpack(back, upgrades, layout);
+                break;
+            case Bag bag:
+                PrintBag(bag, upgrades, layout);
+                break;
+            case Consumable consumable:
+                PrintConsumable(consumable, upgrades, layout);
+                break;
+            case GuildWars2.Items.Container container:
+                PrintContainer(container, upgrades, layout);
+                break;
+            case CraftingMaterial craftingMaterial:
+                PrintCraftingMaterial(craftingMaterial, upgrades, layout);
+                break;
+            case GatheringTool gatheringTool:
+                PrintGatheringTool(gatheringTool, upgrades, layout);
+                break;
+            case Trinket trinket:
+                PrintTrinket(trinket, upgrades, layout);
+                break;
+            case Gizmo gizmo:
+                PrintGizmo(gizmo, upgrades, layout);
+                break;
+            case JadeTechModule jadeTechModule:
+                PrintJadeTechModule(jadeTechModule, upgrades, layout);
+                break;
+            case Miniature miniature:
+                PrintMiniature(miniature, upgrades, layout);
+                break;
+            case PowerCore powerCore:
+                PrintPowerCore(powerCore, upgrades, layout);
+                break;
+            case Relic relic:
+                PrintRelic(relic, upgrades, layout);
+                break;
+            case SalvageTool salvageTool:
+                PrintSalvageTool(salvageTool, upgrades, layout);
+                break;
+            case Trophy trophy:
+                PrintTrophy(trophy, upgrades, layout);
+                break;
+            case UpgradeComponent upgradeComponent:
+                PrintUpgradeComponent(upgradeComponent, upgrades, layout);
+                break;
+            case Weapon weapon:
+                PrintWeapon(weapon, upgrades, layout);
+                break;
+            default:
+                Print(item, layout);
+                break;
+        }
+
+        static void PrintArmor(Armor item, List<UpgradeComponent> upgrades, Container layout)
+        {
+            Header(item, layout);
+            Defense(item.Defense, layout);
+            Attributes(item.Attributes, layout);
+
+            ItemUpgradeBuilder upgradeBuilder = new(item.Flags, upgrades);
+            upgradeBuilder.AddSuffixItem(item.SuffixItemId);
+            upgradeBuilder.AddInfusionSlots(item.InfusionSlots);
+            upgradeBuilder.Build(layout);
+
+            ItemSkin(item.DefaultSkinId, layout);
+            ItemRarity(item, layout);
+            PlainText(item.WeightClass.ToString(), layout);
+            switch (item)
+            {
+                case Boots:
+                    PlainText("Foot Armor", layout);
+                    break;
+                case Coat:
+                    PlainText("Chest Armor", layout);
+                    break;
+                case Gloves:
+                    PlainText("Hand Armor", layout);
+                    break;
+                case Helm:
+                case HelmAquatic:
+                    PlainText("Head Armor", layout);
+                    break;
+                case Leggings:
+                    PlainText("Leg Armor", layout);
+                    break;
+                case Shoulders:
+                    PlainText("Shoulder Armor", layout);
+                    break;
+            }
+
+            RequiredLevel(item, layout);
+            Description(item, layout);
+            InBank(item, layout);
+            if (item.StatChoices.Count > 0)
+            {
+                PlainText("Double-click to select stats.", layout);
+            }
+
+            if (item.Flags.Unique)
+            {
+                PlainText("Unique", layout);
+            }
+
+            AccountBound(item, layout);
+            SoulBound(item, layout);
+            VendorValue(item, layout);
+        }
+
+        static void PrintBackpack(Backpack item, List<UpgradeComponent> upgrades, Container layout)
+        {
+            Header(item, layout);
+
+            Attributes(item.Attributes, layout);
+
+            ItemUpgradeBuilder upgradeBuilder = new(item.Flags, upgrades);
+            upgradeBuilder.AddSuffixItem(item.SuffixItemId);
+            upgradeBuilder.AddInfusionSlots(item.InfusionSlots);
+            upgradeBuilder.Build(layout);
+
+            ItemSkin(item.DefaultSkinId, layout);
+
+            ItemRarity(item, layout);
+            PlainText("Back Item", layout);
+            RequiredLevel(item, layout);
+            Description(item, layout);
+
+            InBank(item, layout);
+            if (item.StatChoices.Count > 0)
+            {
+                PlainText("Double-click to select stats.", layout);
+            }
+
+            if (item.Flags.Unique)
+            {
+                PlainText("Unique", layout);
+            }
+
+            AccountBound(item, layout);
+            SoulBound(item, layout);
+            VendorValue(item, layout);
+        }
+
+        static void PrintBag(Bag item, List<UpgradeComponent> upgrades, Container layout)
+        {
+            Header(item, layout);
+            Description(item, layout);
+
+            InBank(item, layout);
+            if (item.Flags.Unique)
+            {
+                PlainText("Unique", layout);
+            }
+
+            AccountBound(item, layout);
+            SoulBound(item, layout);
+            VendorValue(item, layout);
+        }
+
+        static void PrintConsumable(Consumable item, List<UpgradeComponent> upgrades, Container layout)
+        {
+            Header(item, layout);
+            switch (item)
+            {
+                case Currency or Service:
+                    PlainText("Takes effect immediately upon receipt.", layout);
+                    break;
+                default:
+                    PlainText("Double-click to consume.", layout);
+                    break;
+            }
+
+            switch (item)
+            {
+                case Food { Effect: not null } food:
+                    Effect(food.Effect, layout);
+                    break;
+                case Utility { Effect: not null } utility:
+                    Effect(utility.Effect, layout);
+                    break;
+                case Service { Effect: not null } service:
+                    Effect(service.Effect, layout);
+                    break;
+                case GenericConsumable { Effect: not null } generic:
+                    Effect(generic.Effect, layout);
+                    break;
+            }
+
+            Description(item, layout);
+
+            switch (item)
+            {
+                case Currency or Service:
+                    PlainText(string.IsNullOrEmpty(item.Description) ? "nService" : "\r\nnService", layout);
+                    break;
+                case Transmutation transmutation:
+                    ItemSkin(transmutation.SkinIds.First(), layout);
+                    PlainText("\r\nConsumable", layout);
+                    break;
+                case Booze:
+                    PlainText("""
+
+                              Excessive alcohol consumption will result in intoxication.
+
+                              Consumable          
+                              """, layout);
+                    break;
+                default:
+                    PlainText(string.IsNullOrEmpty(item.Description) ? "Consumable" : "\r\nConsumable", layout);
+                    break;
+            }
+
+            RequiredLevel(item, layout);
+            InBank(item, layout);
+            if (item.Flags.Unique)
+            {
+                PlainText("Unique", layout);
+            }
+
+            AccountBound(item, layout);
+            SoulBound(item, layout);
+            VendorValue(item, layout);
+        }
+
+        static void PrintContainer(GuildWars2.Items.Container item, List<UpgradeComponent> upgrades, Container layout)
+        {
+            Header(item, layout);
+            Description(item, layout);
+            PlainText(string.IsNullOrEmpty(item.Description) ? "Consumable" : "\r\nConsumable", layout);
+            InBank(item, layout);
+            if (item.Flags.Unique)
+            {
+                PlainText("Unique", layout);
+            }
+
+            AccountBound(item, layout);
+            SoulBound(item, layout);
+            VendorValue(item, layout);
+        }
+
+        static void PrintCraftingMaterial(CraftingMaterial item, List<UpgradeComponent> upgrades, Container layout)
+        {
+            Header(item, layout);
+            Description(item, layout);
+            InBank(item, layout);
+            if (item.Flags.Unique)
+            {
+                PlainText("Unique", layout);
+            }
+
+            AccountBound(item, layout);
+            SoulBound(item, layout);
+            VendorValue(item, layout);
+        }
+
+        static void PrintGatheringTool(GatheringTool item, List<UpgradeComponent> upgrades, Container layout)
+        {
+            Header(item, layout);
+            Description(item, layout);
+
+            InBank(item, layout);
+            if (item.Flags.Unique)
+            {
+                PlainText("Unique", layout);
+            }
+
+            AccountBound(item, layout);
+            SoulBound(item, layout);
+            VendorValue(item, layout);
+        }
+
+        static void PrintGizmo(Gizmo item, List<UpgradeComponent> upgrades, Container layout)
+        {
+            Header(item, layout);
+            Description(item, layout, item.Level > 0);
+
+            RequiredLevel(item, layout);
+
+            InBank(item, layout);
+            if (item.Flags.Unique)
+            {
+                PlainText("Unique", layout);
+            }
+
+            AccountBound(item, layout);
+            SoulBound(item, layout);
+            VendorValue(item, layout);
+        }
+
+        static void PrintJadeTechModule(JadeTechModule item, List<UpgradeComponent> upgrades, Container layout)
+        {
+            Header(item, layout);
+            Description(item, layout, true);
+
+            ItemRarity(item, layout);
+            PlainText("Module", layout);
+            RequiredLevel(item, layout);
+            PlainText("Required Mastery: Jade Bots", layout);
+
+            InBank(item, layout);
+            if (item.Flags.Unique)
+            {
+                PlainText("Unique", layout);
+            }
+
+            AccountBound(item, layout);
+            SoulBound(item, layout);
+            VendorValue(item, layout);
+        }
+
+        static void PrintMiniature(Miniature item, List<UpgradeComponent> upgrades, Container layout)
+        {
+            Header(item, layout);
+            Description(item, layout);
+
+            Mini(item.MiniatureId, layout);
+
+            PlainText("Mini", layout);
+
+            InBank(item, layout);
+            if (item.Flags.Unique)
+            {
+                PlainText("Unique", layout);
+            }
+
+            AccountBound(item, layout);
+            SoulBound(item, layout);
+            VendorValue(item, layout);
+        }
+
+        static void PrintPowerCore(PowerCore item, List<UpgradeComponent> upgrades, Container layout)
+        {
+            Header(item, layout);
+            Description(item, layout, true);
+
+            ItemRarity(item, layout);
+            PlainText("Power Core", layout);
+            RequiredLevel(item, layout);
+
+            InBank(item, layout);
+            if (item.Flags.Unique)
+            {
+                PlainText("Unique", layout);
+            }
+
+            AccountBound(item, layout);
+            SoulBound(item, layout);
+            VendorValue(item, layout);
+        }
+
+        static void PrintRelic(Relic item, List<UpgradeComponent> upgrades, Container layout)
+        {
+            Header(item, layout);
+            Description(item, layout, true);
+            ItemRarity(item, layout);
+            PlainText("Relic", layout);
+            RequiredLevel(item, layout);
+
+            InBank(item, layout);
+            if (item.Flags.Unique)
+            {
+                PlainText("Unique", layout);
+            }
+
+            AccountBound(item, layout);
+            SoulBound(item, layout);
+            VendorValue(item, layout);
+        }
+
+        static void PrintSalvageTool(SalvageTool item, List<UpgradeComponent> upgrades, Container layout)
+        {
+            Header(item, layout);
+            PlainText(" ", layout);
+            ItemRarity(item, layout);
+            PlainText("Consumable", layout);
+            Description(item, layout);
+
+            InBank(item, layout);
+            if (item.Flags.Unique)
+            {
+                PlainText("Unique", layout);
+            }
+
+            AccountBound(item, layout);
+            SoulBound(item, layout);
+            VendorValue(item, layout);
+        }
+
+        static void PrintTrinket(Trinket item, List<UpgradeComponent> upgrades, Container layout)
+        {
+            Header(item, layout);
+
+            Attributes(item.Attributes, layout);
+
+            ItemUpgradeBuilder upgradeBuilder = new(item.Flags, upgrades);
+            upgradeBuilder.AddSuffixItem(item.SuffixItemId);
+            upgradeBuilder.AddInfusionSlots(item.InfusionSlots);
+            upgradeBuilder.Build(layout);
+
+            ItemRarity(item, layout);
+
+            switch (item)
+            {
+                case Accessory:
+                    PlainText("Accessory", layout);
+                    break;
+                case Amulet:
+                    PlainText("Amulet", layout);
+                    break;
+                case Ring:
+                    PlainText("Ring", layout);
+                    break;
+            }
+
+            RequiredLevel(item, layout);
+            Description(item, layout);
+
+            InBank(item, layout);
+            if (item.StatChoices.Count > 0)
+            {
+                PlainText("Double-click to select stats.", layout);
+            }
+
+            if (item.Flags.Unique)
+            {
+                PlainText("Unique", layout);
+            }
+
+            AccountBound(item, layout);
+            SoulBound(item, layout);
+            VendorValue(item, layout);
+        }
+
+        static void PrintTrophy(Trophy item, List<UpgradeComponent> upgrades, Container layout)
+        {
+            Header(item, layout);
+            Description(item, layout, true);
+            PlainText("Trophy", layout);
+
+            InBank(item, layout);
+            if (item.Flags.Unique)
+            {
+                PlainText("Unique", layout);
+            }
+
+            AccountBound(item, layout);
+            SoulBound(item, layout);
+            VendorValue(item, layout);
+        }
+
+        static void PrintUpgradeComponent(UpgradeComponent item, List<UpgradeComponent> upgrades, Container layout)
+        {
+            Header(item, layout);
+
+            if (item is Rune rune)
+            {
+                StringBuilder bonuses = new();
+                foreach ((string? bonus, int ordinal) in (rune.Bonuses ?? []).Select((value, index) =>
+                             (value, index + 1)))
+                {
+                    bonuses.Append($"\r\n({ordinal:0}): {bonus}");
+                }
+
+                PlainText(bonuses.ToString(), layout, new Color(0x99, 0x99, 0x99));
+            }
+            else if (item.Buff is { Description.Length: > 0 })
+            {
+                FormattedLabel? label = new FormattedLabelBuilder()
+                    .SetWidth(layout.Width)
+                    .AutoSizeHeight()
+                    .Wrap()
+                    .CreatePart("\r\n", part => part.SetFontSize(ContentService.FontSize.Size16))
+                    .AddMarkup(item.Buff!.Description, new Color(0x55, 0x99, 0xFF))
+                    .Build();
+                label.Parent = layout;
+            }
+            else
+            {
+                StringBuilder builder = new();
+                foreach (KeyValuePair<Extensible<AttributeName>, int> stat in item.Attributes)
+                {
+                    builder.Append($"+{stat.Value:N0} {AttributeName(stat.Key)}");
+                }
+
+                PlainText(builder.ToString(), layout, new Color(0x55, 0x99, 0xFF));
+            }
+
+
+            Description(item, layout);
+
+            RequiredLevel(item, layout);
+
+            InBank(item, layout);
+            if (item.Flags.Unique)
+            {
+                PlainText("Unique", layout);
+            }
+
+            AccountBound(item, layout);
+            SoulBound(item, layout);
+            VendorValue(item, layout);
+        }
+
+        static void PrintWeapon(Weapon item, List<UpgradeComponent> upgrades, Container layout)
+        {
+            Header(item, layout);
+            WeaponStrength(item, layout);
+            Defense(item.Defense, layout);
+            Attributes(item.Attributes, layout);
+
+            ItemUpgradeBuilder upgradeBuilder = new(item.Flags, upgrades);
+            upgradeBuilder.AddSuffixItem(item.SuffixItemId);
+            upgradeBuilder.AddSecondarySuffixItemId(item.SecondarySuffixItemId);
+            upgradeBuilder.AddInfusionSlots(item.InfusionSlots);
+            if (item is Greatsword or Hammer or Longbow or Rifle or Shortbow or Staff or Spear or HarpoonGun or Trident)
+            {
+                upgradeBuilder.TwoHanded();
+            }
+
+            upgradeBuilder.Build(layout);
+
+            ItemSkin(item.DefaultSkinId, layout);
+            ItemRarity(item, layout);
+            switch (item)
+            {
+                case Axe:
+                    PlainText("Axe", layout);
+                    break;
+                case Dagger:
+                    PlainText("Dagger", layout);
+                    break;
+                case Focus:
+                    PlainText("Focus", layout);
+                    break;
+                case Greatsword:
+                    PlainText("Greatsword", layout);
+                    break;
+                case Hammer:
+                    PlainText("Hammer", layout);
+                    break;
+                case HarpoonGun:
+                    PlainText("Harpoon Gun", layout);
+                    break;
+                case LargeBundle:
+                    PlainText("Large Bundle", layout);
+                    break;
+                case Longbow:
+                    PlainText("Longbow", layout);
+                    break;
+                case Mace:
+                    PlainText("Mace", layout);
+                    break;
+                case Pistol:
+                    PlainText("Pistol", layout);
+                    break;
+                case Rifle:
+                    PlainText("Rifle", layout);
+                    break;
+                case Scepter:
+                    PlainText("Scepter", layout);
+                    break;
+                case Shield:
+                    PlainText("Shield", layout);
+                    break;
+                case Shortbow:
+                    PlainText("Shortbow", layout);
+                    break;
+                case SmallBundle:
+                    PlainText("Small Bundle", layout);
+                    break;
+                case Spear:
+                    PlainText("Spear", layout);
+                    break;
+                case Staff:
+                    PlainText("Staff", layout);
+                    break;
+                case Sword:
+                    PlainText("Sword", layout);
+                    break;
+                case Torch:
+                    PlainText("Torch", layout);
+                    break;
+                case Toy:
+                    PlainText("Toy", layout);
+                    break;
+                case ToyTwoHanded:
+                    PlainText("Toy", layout);
+                    break;
+                case Trident:
+                    PlainText("Trident", layout);
+                    break;
+                case Warhorn:
+                    PlainText("Warhorn", layout);
+                    break;
+            }
+
+            RequiredLevel(item, layout);
+
+            Description(item, layout);
+
+            InBank(item, layout);
+            if (item.StatChoices.Count > 0)
+            {
+                PlainText("Double-click to select stats.", layout);
+            }
+
+            if (item.Flags.Unique)
+            {
+                PlainText("Unique", layout);
+            }
+
+            AccountBound(item, layout);
+            SoulBound(item, layout);
+            VendorValue(item, layout);
+        }
+
+        static void Print(Item item, Container layout)
+        {
+            Header(item, layout);
+            Description(item, layout);
+
+            InBank(item, layout);
+            if (item.Flags.Unique)
+            {
+                PlainText("Unique", layout);
+            }
+
+            AccountBound(item, layout);
+            SoulBound(item, layout);
+            VendorValue(item, layout);
         }
 
         static void Header(Item item, Container parent)
@@ -70,200 +693,211 @@ public class ItemTooltipView(Item item) : View, ITooltipView
             name.Text = name.Text.Replace(" ", "  ");
         }
 
-        static Control? Hint(Item item, Container parent)
+        static Control? WeaponStrength(Weapon item, Container parent)
         {
-            return item switch
-            {
-                Currency or Service => new Label
-                {
-                    Parent = parent,
-                    Width = parent.Width,
-                    AutoSizeHeight = true,
-                    Text = "Takes effect immediately upon receipt."
-                },
-                Consumable => new Label
-                {
-                    Parent = parent,
-                    Width = parent.Width,
-                    AutoSizeHeight = true,
-                    Text = "Double-click to consume."
-                },
-                _ => null
-            };
-        }
+            FormattedLabelBuilder? builder = new FormattedLabelBuilder()
+                .SetWidth(parent.Width)
+                .AutoSizeHeight()
+                .Wrap();
 
-        static Control? WeaponStrength(Item item, Container parent)
-        {
-            return item switch
+            builder.CreatePart($"Weapon Strength: {item.MinPower:N0} - {item.MaxPower:N0}", static part =>
             {
-                Weapon weapon => new Label
-                {
-                    Parent = parent,
-                    Width = parent.Width,
-                    AutoSizeHeight = true,
-                    Text = $"Weapon Strength: {weapon.MinPower:N0} - {weapon.MaxPower:N0}"
-                },
-                _ => null
-            };
-        }
+                part.SetFontSize(ContentService.FontSize.Size16);
+            });
 
-        static Control? Defense(Item item, Container parent)
-        {
-            return item switch
+            if (item.DamageType.IsDefined())
             {
-                Armor armor => new Label
+                switch (item.DamageType.ToEnum())
                 {
-                    Parent = parent,
-                    Width = parent.Width,
-                    AutoSizeHeight = true,
-                    Text = $"Defense: {armor.Defense:N0}"
-                },
-                Weapon { Defense: > 0 } weapon => new Label
-                {
-                    Parent = parent,
-                    Width = parent.Width,
-                    AutoSizeHeight = true,
-                    Text = $"Defense: {weapon.Defense:N0}"
-                },
-                _ => null
-            };
-        }
-
-        static Control? ItemStats(Item item, Container parent)
-        {
-            return item switch
-            {
-                Weapon { Attributes.Count: > 0 } weapon => Attributes(weapon.Attributes, parent),
-                Armor { Attributes.Count: > 0 } armor => Attributes(armor.Attributes, parent),
-                Backpack { Attributes.Count: > 0 } backpack => Attributes(backpack.Attributes, parent),
-                Trinket { Attributes.Count: > 0 } trinket => Attributes(trinket.Attributes, parent),
-                UpgradeComponent { Attributes.Count: > 0 } upgradeComponent => Attributes(upgradeComponent.Attributes,
-                    parent, new Color(0x55, 0x99, 0xFF)),
-                _ => null
-            };
-
-            static Label Attributes(IDictionary<Extensible<AttributeName>, int> attributes, Container parent,
-                Color? textColor = null)
-            {
-                StringBuilder builder = new();
-                foreach (KeyValuePair<Extensible<AttributeName>, int> stat in attributes)
-                {
-                    builder.AppendFormat("+{0:N0} {1}\r\n", stat.Value, stat.Key);
+                    case DamageType.Choking:
+                        builder.CreatePart(" (Choking)", static part =>
+                        {
+                            part.SetFontSize(ContentService.FontSize.Size16);
+                            part.SetTextColor(new Color(0x99, 0x99, 0x99));
+                        });
+                        break;
+                    case DamageType.Fire:
+                        builder.CreatePart(" (Fire)", static part =>
+                        {
+                            part.SetFontSize(ContentService.FontSize.Size16);
+                            part.SetTextColor(new Color(0x99, 0x99, 0x99));
+                        });
+                        break;
+                    case DamageType.Ice:
+                        builder.CreatePart(" (Ice)", static part =>
+                        {
+                            part.SetFontSize(ContentService.FontSize.Size16);
+                            part.SetTextColor(new Color(0x99, 0x99, 0x99));
+                        });
+                        break;
+                    case DamageType.Lightning:
+                        builder.CreatePart(" (Lightning)", static part =>
+                        {
+                            part.SetFontSize(ContentService.FontSize.Size16);
+                            part.SetTextColor(new Color(0x99, 0x99, 0x99));
+                        });
+                        break;
                 }
-
-                return new Label
-                {
-                    Parent = parent,
-                    Width = parent.Width,
-                    AutoSizeHeight = true,
-                    Text = builder.ToString(),
-                    TextColor = textColor.GetValueOrDefault(Color.White)
-                };
             }
+
+            FormattedLabel? label = builder.Build();
+            label.Parent = parent;
+            return label;
         }
 
-        static Control? Effect(Item item, Container parent)
+        static Control? Defense(int defense, Container parent)
         {
-            return item switch
+            if (defense == 0)
             {
-                GenericConsumable { Effect: { } effect } => Effect(effect, parent),
-                Food { Effect: { } effect } => Effect(effect, parent),
-                Utility { Effect: { } effect } => Effect(effect, parent),
-                Service { Effect: { } effect } => Effect(effect, parent),
-                _ => null
+                return null;
+            }
+
+            return PlainText($"Defense: {defense:N0}", parent);
+        }
+
+        static Control? Attributes(IDictionary<Extensible<AttributeName>, int> attributes, Container parent)
+        {
+            if (attributes.Count == 0)
+            {
+                return null;
+            }
+
+            StringBuilder builder = new();
+            foreach (KeyValuePair<Extensible<AttributeName>, int> stat in attributes)
+            {
+                if (builder.Length > 0)
+                {
+                    builder.AppendLine();
+                }
+
+                builder.AppendFormat($"+{stat.Value:N0} {AttributeName(stat.Key)}");
+            }
+
+            return PlainText(builder.ToString(), parent);
+        }
+
+        static string AttributeName(Extensible<AttributeName> stat)
+        {
+            return stat.IsDefined()
+                ? stat.ToEnum() switch
+                {
+                    GuildWars2.Hero.AttributeName.Power => "Power",
+                    GuildWars2.Hero.AttributeName.Precision => "Precision",
+                    GuildWars2.Hero.AttributeName.Toughness => "Toughness",
+                    GuildWars2.Hero.AttributeName.Vitality => "Vitality",
+                    GuildWars2.Hero.AttributeName.Concentration => "Concentration",
+                    GuildWars2.Hero.AttributeName.ConditionDamage => "Condition Damage",
+                    GuildWars2.Hero.AttributeName.Expertise => "Expertise",
+                    GuildWars2.Hero.AttributeName.Ferocity => "Ferocity",
+                    GuildWars2.Hero.AttributeName.HealingPower => "Healing Power",
+                    GuildWars2.Hero.AttributeName.AgonyResistance => "Agony Resistance",
+                    _ => stat.ToString()
+                }
+                : stat.ToString();
+        }
+
+        static Control Effect(Effect effect, Container parent)
+        {
+            FlowPanel panel = new()
+            {
+                Parent = parent,
+                FlowDirection = ControlFlowDirection.SingleLeftToRight,
+                Width = parent.Width,
+                HeightSizingMode = SizingMode.AutoSize,
+                ControlPadding = new Vector2(5f)
             };
 
-            static Control Effect(Effect effect, Container parent)
+            if (!string.IsNullOrEmpty(effect.IconHref))
             {
-                var panel = new FlowPanel
-                {
-                    Parent = parent,
-                    FlowDirection = ControlFlowDirection.SingleLeftToRight,
-                    Width = parent.Width,
-                    HeightSizingMode = SizingMode.AutoSize,
-                    ControlPadding = new Vector2(5f)
-                };
-
-                if (!string.IsNullOrEmpty(effect.IconHref))
-                {
-                    var icon = new Image
-                    {
-                        Parent = panel,
-                        Texture = GameService.Content.GetRenderServiceTexture(effect.IconHref),
-                        Size = new Point(32)
-                    };
-                }
-
-                var builder = new StringBuilder();
-                builder.Append(effect.Name);
-
-                if (effect.Duration > TimeSpan.Zero)
-                {
-                    builder.AppendFormat(" ({0})", effect.Duration switch
-                    {
-                        { Hours: >= 1 } => $"{effect.Duration.TotalHours} h",
-                        _ => $"{effect.Duration.TotalMinutes} m"
-                    });
-                }
-
-                builder.Append(": ");
-                builder.Append(effect.Description);
-
-                var label = new Label
+                Image icon = new()
                 {
                     Parent = panel,
-                    Width = panel.Width - 30,
-                    AutoSizeHeight = true,
-                    WrapText = true,
-                    Text = builder.ToString(),
-                    TextColor = new Color(0xAA, 0xAA, 0xAA)
+                    Texture = GameService.Content.GetRenderServiceTexture(effect.IconHref),
+                    Size = new Point(32)
                 };
-
-                return panel;
             }
+
+            StringBuilder builder = new();
+            builder.Append(effect.Name);
+
+            if (effect.Duration > TimeSpan.Zero)
+            {
+                builder.AppendFormat(" ({0})", effect.Duration switch
+                {
+                    { Hours: >= 1 } => $"{effect.Duration.TotalHours} h",
+                    _ => $"{effect.Duration.TotalMinutes} m"
+                });
+            }
+
+            builder.Append(": ");
+            builder.Append(effect.Description);
+
+            Label label = new()
+            {
+                Parent = panel,
+                Width = panel.Width - 30,
+                AutoSizeHeight = true,
+                WrapText = true,
+                Text = builder.ToString(),
+                TextColor = new Color(0xAA, 0xAA, 0xAA),
+                Font = GameService.Content.DefaultFont16
+            };
+
+            return panel;
         }
 
-        static Control? Description(Item item, Container parent)
+        static Control? Description(Item item, Container parent, bool finalNewLine = false)
         {
             if (string.IsNullOrEmpty(item.Description))
             {
                 return null;
             }
 
-            Panel container = new()
-            {
-                Parent = parent,
-                WidthSizingMode = SizingMode.AutoSize,
-                HeightSizingMode = SizingMode.AutoSize
-            };
+            Panel container = new() { Parent = parent, Width = parent.Width, HeightSizingMode = SizingMode.AutoSize };
 
-            FormattedLabel label = new FormattedLabelBuilder()
-                .AddMarkup(item.Description)
+            FormattedLabelBuilder builder = new FormattedLabelBuilder()
                 .SetWidth(parent.Width - 10)
                 .AutoSizeHeight()
                 .Wrap()
-                .Build();
+                .AddMarkup(item.Description);
+            if (finalNewLine)
+            {
+                builder.CreatePart("\r\n\r\n", part => part.SetFontSize(ContentService.FontSize.Size16));
+            }
+
+            FormattedLabel label = builder.Build();
             label.Parent = container;
             return label;
         }
 
-        static Control? SelectableStats(Item item, Container parent)
+        static Control? Mini(int miniatureId, Container parent)
         {
-            if (item is Weapon { StatChoices.Count: > 0 }
-                or Armor { StatChoices.Count: > 0 }
-                or Backpack { StatChoices.Count: > 0 }
-                or Trinket { StatChoices.Count: > 0 })
+            // TODO: mini name
+            return PlainText($"""
+
+                              Mini {miniatureId}
+
+                              """, parent);
+        }
+
+        static Control? ItemSkin(int skinId, Container parent)
+        {
+            // TODO: skin name
+            return PlainText($"""
+
+                              Skin
+                              {skinId}
+                              """, parent);
+        }
+
+        static Control? ItemRarity(Item item, Container parent)
+        {
+            if (item.Rarity == Rarity.Basic)
             {
-                return new Label()
-                {
-                    Parent = parent,
-                    Width = parent.Width,
-                    AutoSizeHeight = true,
-                    Text = "Double-click to select stats."
-                };
+                return null;
             }
 
-            return null;
+            return PlainText($"\r\n{item.Rarity}", parent, ItemColors.Rarity(item.Rarity));
         }
 
         static Control? RequiredLevel(Item item, Container parent)
@@ -273,45 +907,35 @@ public class ItemTooltipView(Item item) : View, ITooltipView
                 return null;
             }
 
-            return new Label
-            {
-                Parent = parent,
-                Width = parent.Width,
-                AutoSizeHeight = true,
-                Text = $"Required Level: {item.Level}"
-            };
+            return PlainText($"Required Level: {item.Level}", parent);
         }
 
-        static Control? TypeName(Item item, Container parent)
+        static Control? InBank(Item item, Container parent)
         {
-            return item switch
-            {
-                Miniature => new Label
-                {
-                    Parent = parent,
-                    Width = parent.Width,
-                    AutoSizeHeight = true,
-                    Text = "Mini"
-                },
-                Service => new Label
-                {
-                    Parent = parent,
-                    Width = parent.Width,
-                    AutoSizeHeight = true,
-                    Text = "Service"
-                },
-                Consumable => new Label
-                {
-                    Parent = parent,
-                    Width = parent.Width,
-                    AutoSizeHeight = true,
-                    Text = "Consumable"
-                },
-                _ => null
-            };
+            return null;
         }
 
-        static Control? Binding(Item item, Container parent)
+        static Control? AccountBound(Item item, Container parent)
+        {
+            if (item is Currency or Service)
+            {
+                return null;
+            }
+
+            if (item.Flags.AccountBound)
+            {
+                return PlainText("Account Bound on Acquire", parent);
+            }
+
+            if (item.Flags.AccountBindOnUse)
+            {
+                return PlainText("Account Bound on Use", parent);
+            }
+
+            return null;
+        }
+
+        static Control? SoulBound(Item item, Container parent)
         {
             if (item is Currency or Service)
             {
@@ -320,54 +944,21 @@ public class ItemTooltipView(Item item) : View, ITooltipView
 
             if (item.Flags.Soulbound)
             {
-                return new Label
-                {
-                    Parent = parent,
-                    Width = parent.Width,
-                    AutoSizeHeight = true,
-                    Text = "Soulbound on Acquire"
-                };
+                return PlainText("Soulbound on Acquire", parent);
             }
 
             if (item.Flags.SoulbindOnUse)
             {
-                return new Label
-                {
-                    Parent = parent,
-                    Width = parent.Width,
-                    AutoSizeHeight = true,
-                    Text = "Soulbound on Use"
-                };
-            }
-
-            if (item.Flags.AccountBound)
-            {
-                return new Label
-                {
-                    Parent = parent,
-                    Width = parent.Width,
-                    AutoSizeHeight = true,
-                    Text = "Account Bound on Acquire"
-                };
-            }
-
-            if (item.Flags.AccountBindOnUse)
-            {
-                return new Label
-                {
-                    Parent = parent,
-                    Width = parent.Width,
-                    AutoSizeHeight = true,
-                    Text = "Account Bound on Use"
-                };
+                return PlainText("Soulbound on Use", parent);
             }
 
             return null;
         }
 
-        static Control? VendorValue(Coin vendorValue, Container parent)
+        static Control? VendorValue(Item item, Container parent)
         {
-            if (vendorValue == Coin.Zero)
+            Coin vendorValue = item.VendorValue;
+            if (vendorValue == Coin.Zero || item.Flags.NoSell)
             {
                 return null;
             }
@@ -380,24 +971,29 @@ public class ItemTooltipView(Item item) : View, ITooltipView
             {
                 FormattedLabelPartBuilder? gold = builder.CreatePart(vendorValue.Gold.ToString("N0"));
                 gold.SetTextColor(new Color(0xDD, 0xBB, 0x44));
-                gold.SetFontSize(ContentService.FontSize.Size14);
+                gold.SetFontSize(ContentService.FontSize.Size16);
                 gold.SetSuffixImage(AsyncTexture2D.FromAssetId(156904));
+                gold.SetSuffixImageSize(new Point(20));
                 builder.CreatePart(gold);
+                builder.CreatePart("  ", _ => { });
             }
 
             if (vendorValue.Amount >= 100)
             {
                 FormattedLabelPartBuilder? silver = builder.CreatePart(vendorValue.Silver.ToString("N0"));
                 silver.SetTextColor(new Color(0xC0, 0xC0, 0xC0));
-                silver.SetFontSize(ContentService.FontSize.Size14);
+                silver.SetFontSize(ContentService.FontSize.Size16);
                 silver.SetSuffixImage(AsyncTexture2D.FromAssetId(156907));
+                silver.SetSuffixImageSize(new Point(20));
                 builder.CreatePart(silver);
+                builder.CreatePart("  ", _ => { });
             }
 
             FormattedLabelPartBuilder? copper = builder.CreatePart(vendorValue.Copper.ToString("N0"));
             copper.SetTextColor(new Color(0xCD, 0x7F, 0x32));
-            copper.SetFontSize(ContentService.FontSize.Size14);
+            copper.SetFontSize(ContentService.FontSize.Size16);
             copper.SetSuffixImage(AsyncTexture2D.FromAssetId(156902));
+            copper.SetSuffixImageSize(new Point(20));
             builder.CreatePart(copper);
 
             FormattedLabel? label = builder.Build();
@@ -405,6 +1001,20 @@ public class ItemTooltipView(Item item) : View, ITooltipView
             label.Width = parent.Width;
 
             return label;
+        }
+
+        static Label PlainText(string text, Container parent, Color? textColor = null)
+        {
+            return new Label
+            {
+                Parent = parent,
+                Width = parent.Width,
+                AutoSizeHeight = true,
+                Text = text,
+                TextColor = textColor.GetValueOrDefault(Color.White),
+                Font = GameService.Content.DefaultFont16,
+                WrapText = true
+            };
         }
     }
 }
