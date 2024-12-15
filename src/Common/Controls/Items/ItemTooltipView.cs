@@ -228,7 +228,7 @@ public class ItemTooltipView(Item item, List<UpgradeComponent> upgrades) : View,
             switch (item)
             {
                 case Currency or Service:
-                    PlainText(string.IsNullOrEmpty(item.Description) ? "nService" : "\r\nnService", layout);
+                    PlainText(string.IsNullOrEmpty(item.Description) ? "Service" : "\r\nService", layout);
                     break;
                 case Transmutation transmutation:
                     ItemSkin(transmutation.SkinIds.First(), layout);
