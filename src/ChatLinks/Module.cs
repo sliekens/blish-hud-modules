@@ -31,7 +31,6 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
     private MainIcon? _cornerIcon;
 
     private MainWindow? _mainWindow;
-
     private ServiceProvider? _sp;
 
     protected override void Initialize()
@@ -85,9 +84,6 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
     protected override async Task LoadAsync()
     {
         _mainWindow = Resolve<MainWindow>();
-        _mainWindow.Tabs.Add(Resolve<ItemsTab>());
-        _mainWindow.Tabs.Add(Resolve<AchievementsTab>());
-        _mainWindow.Tabs.Add(Resolve<CraftingTab>());
         _cornerIcon = Resolve<MainIcon>();
         _cornerIcon.Click += CornerIcon_Click;
 

@@ -4,13 +4,15 @@ using Blish_HUD.Controls;
 
 using Microsoft.Xna.Framework;
 
+using SL.ChatLinks.UI.Tabs.Items;
+
 namespace SL.ChatLinks.UI;
 
 public sealed class MainWindow : TabbedWindow2
 {
     private readonly AsyncEmblem _emblem;
 
-    public MainWindow() : base(
+    public MainWindow(ItemsTab items) : base(
         AsyncTexture2D.FromAssetId(155985),
         new Rectangle(0, 26, 953, 691),
         new Rectangle(70, 71, 839, 605)
@@ -21,6 +23,7 @@ public sealed class MainWindow : TabbedWindow2
         Id = "sliekens.chat-links.main-window";
         Location = new Point(300, 300);
         _emblem = AsyncEmblem.Attach(this, AsyncTexture2D.FromAssetId(2237584));
+        Tabs.Add(items);
         TabChanged += OnTabChanged;
     }
 
