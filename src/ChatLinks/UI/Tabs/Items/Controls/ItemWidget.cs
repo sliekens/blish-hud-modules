@@ -91,7 +91,9 @@ public sealed class ItemWidget : FlowPanel
         {
             Parent = quantityGroup,
             Width = 80,
-            Value = 1
+            Value = 1,
+            MinValue = 1,
+            MaxValue = 250
         };
 
         StandardButton minQuantity = new StandardButton

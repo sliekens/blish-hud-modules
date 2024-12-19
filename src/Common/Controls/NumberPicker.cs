@@ -50,6 +50,10 @@ public sealed class NumberPicker : TextInputBase
 
     private Rectangle _upArrowRectangle = Rectangle.Empty;
 
+    private int _minValue = int.MinValue;
+
+    private int _maxValue = int.MaxValue;
+
     public NumberPicker()
     {
         TextChanged += OnTextChanged;
@@ -62,13 +66,63 @@ public sealed class NumberPicker : TextInputBase
         get => int.TryParse(Text, out int value) ? value : 0;
         set
         {
+            if (value < MinValue)
+            {
+                value = MinValue;
+            }
+            else if (value > MaxValue)
+            {
+                value = MaxValue;
+            }
+
             Text = value.ToString(NumberFormatInfo.InvariantInfo);
             CursorIndex = Text.Length;
         }
     }
 
+    public int MinValue
+    {
+        get
+        {
+            return _minValue;
+        }
+        set
+        {
+            _minValue = value;
+            if (Value < value)
+            {
+                Value = value;
+            }
+        }
+    }
+
+    public int MaxValue
+    {
+        get
+        {
+            return _maxValue;
+        }
+        set
+        {
+            _maxValue = value;
+            if (Value > value)
+            {
+                Value = value;
+            }
+        }
+    }
+
     private void OnTextChanged(object sender, EventArgs e)
     {
+        if (Value > MaxValue)
+        {
+            Value = MaxValue;
+        }
+        else if (Value < MinValue)
+        {
+            Value = MinValue;
+        }
+
         Invalidate();
     }
 
