@@ -49,7 +49,11 @@ public sealed class NumberPicker : TextInputBase
     public int Value
     {
         get => int.TryParse(Text, out int value) ? value : 0;
-        set => Text = value.ToString(NumberFormatInfo.InvariantInfo);
+        set
+        {
+            Text = value.ToString(NumberFormatInfo.InvariantInfo);
+            CursorIndex = Text.Length;
+        }
     }
 
     public NumberPicker()
