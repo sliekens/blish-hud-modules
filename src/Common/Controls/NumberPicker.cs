@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Text;
 
 using Blish_HUD;
 using Blish_HUD.Controls;
@@ -114,13 +115,28 @@ public sealed class NumberPicker : TextInputBase
 
     private void OnTextChanged(object sender, EventArgs e)
     {
-        if (Value > MaxValue)
+        var cleaned = new StringBuilder(_text.Length);
+        var input = _text.AsSpan();
+        foreach (char c in input)
         {
-            Value = MaxValue;
+            if (c is >= '0' and <= '9')
+            {
+                cleaned.Append(c);
+            }
         }
-        else if (Value < MinValue)
+
+        _text = cleaned.ToString();
+
+        if (cleaned.Length > 0)
         {
-            Value = MinValue;
+            if (Value > MaxValue)
+            {
+                Value = MaxValue;
+            }
+            else if (Value < MinValue)
+            {
+                Value = MinValue;
+            }
         }
 
         Invalidate();
