@@ -7,35 +7,14 @@ using Blish_HUD.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+
+using MonoGame.Extended.BitmapFonts;
 
 namespace SL.Common.Controls;
 
 public sealed class NumberPicker : TextInputBase
 {
-    private int _horizontalOffset;
-
-    private Rectangle _textBoxRectangle = Rectangle.Empty;
-
-    private Rectangle _textRectangle = Rectangle.Empty;
-
-    private Rectangle _highlightRectangle = Rectangle.Empty;
-
-    private Rectangle _cursorRectangle = Rectangle.Empty;
-
-    private Rectangle _upArrowRectangle = Rectangle.Empty;
-
-    private Rectangle _downArrowRectangle = Rectangle.Empty;
-
-    private bool _highlightUpArrow;
-
-    private bool _highlightDownArrow;
-
-    private string _controlPressed = "none";
-
-    private TimeSpan _incrementInterval = TimeSpan.FromMilliseconds(150);
-
-    private TimeSpan _incrementTimer;
-
     private const int TextPaddingX = 10;
 
     private static readonly Texture2D ArrowButtonSprite = Resources.Texture("arrow-button.png");
@@ -45,6 +24,38 @@ public sealed class NumberPicker : TextInputBase
     private static readonly Texture2D TextBoxSprite = Resources.Texture("textbox.png");
 
     private static readonly SoundEffect ClickSoundEffect = Resources.Sound("click.wav");
+
+    private string _controlPressed = "none";
+
+    private Rectangle _cursorRectangle = Rectangle.Empty;
+
+    private Rectangle _downArrowRectangle = Rectangle.Empty;
+
+    private bool _highlightDownArrow;
+
+    private Rectangle _highlightRectangle = Rectangle.Empty;
+
+    private bool _highlightUpArrow;
+    private int _horizontalOffset;
+
+    private TimeSpan _incrementInterval = TimeSpan.FromMilliseconds(150);
+
+    private TimeSpan _incrementTimer;
+
+    private bool _isDragging;
+
+    private Rectangle _textBoxRectangle = Rectangle.Empty;
+
+    private Rectangle _textRectangle = Rectangle.Empty;
+
+    private Rectangle _upArrowRectangle = Rectangle.Empty;
+
+    public NumberPicker()
+    {
+        TextChanged += OnTextChanged;
+        GameService.Input.Mouse.MouseMoved += OnGlobalMouseMoved;
+        GameService.Input.Mouse.LeftMouseButtonReleased += OnGlobalLeftMouseButtonReleased;
+    }
 
     public int Value
     {
@@ -56,23 +67,55 @@ public sealed class NumberPicker : TextInputBase
         }
     }
 
-    public NumberPicker()
-    {
-        TextChanged += OnTextChanged;
-    }
-
     private void OnTextChanged(object sender, EventArgs e)
     {
         Invalidate();
     }
 
+    private void OnGlobalMouseMoved(object sender, MouseEventArgs e)
+    {
+        if (_isDragging)
+        {
+            var center = AbsoluteBounds.Y + _textBoxRectangle.Center.Y;
+            switch (e.MousePosition.Y - center)
+            {
+                case < -1:
+                    Value++;
+                    HideMousePosition();
+                    break;
+                case > 1:
+                    Value--;
+                    HideMousePosition();
+                    break;
+            }
+        }
+    }
+
+    private void HideMousePosition()
+    {
+        var x = AbsoluteBounds.X + _upArrowRectangle.Left + _upArrowRectangle.Width / 2;
+        var y = AbsoluteBounds.Y + _textBoxRectangle.Center.Y;
+        Mouse.SetPosition(
+            (int)(x * GameService.Graphics.UIScaleMultiplier),
+            (int)(y * GameService.Graphics.UIScaleMultiplier));
+    }
+
+    private void OnGlobalLeftMouseButtonReleased(object sender, MouseEventArgs e)
+    {
+        if (_isDragging)
+        {
+            _isDragging = false;
+        }
+    }
+
     protected override void OnMouseMoved(MouseEventArgs e)
     {
-        var relativePosition = e.MousePosition - AbsoluteBounds.Location;
+        Point relativePosition = e.MousePosition - AbsoluteBounds.Location;
         _highlightUpArrow = _upArrowRectangle.Contains(relativePosition);
         _highlightDownArrow = _downArrowRectangle.Contains(relativePosition);
         base.OnMouseMoved(e);
     }
+
     protected override void OnMouseLeft(MouseEventArgs e)
     {
         _highlightDownArrow = false;
@@ -82,42 +125,47 @@ public sealed class NumberPicker : TextInputBase
 
     protected override void OnLeftMouseButtonPressed(MouseEventArgs e)
     {
-        var relativePosition = e.MousePosition - AbsoluteBounds.Location;
+        Point relativePosition = e.MousePosition - AbsoluteBounds.Location;
         if (_upArrowRectangle.Contains(relativePosition))
         {
-            ClickSoundEffect.Play(0.4f, 0, 0);
             _controlPressed = "up";
+            ClickSoundEffect.Play(0.4f, 0, 0);
             Focused = false;
         }
         else if (_downArrowRectangle.Contains(relativePosition))
         {
-            ClickSoundEffect.Play(0.4f, 0, 0);
             _controlPressed = "down";
+            ClickSoundEffect.Play(0.4f, 0, 0);
             Focused = false;
         }
         else if (_textBoxRectangle.Contains(relativePosition))
         {
             _controlPressed = "none";
+            _isDragging = true;
             base.OnLeftMouseButtonPressed(e);
         }
     }
 
     protected override void OnLeftMouseButtonReleased(MouseEventArgs e)
     {
-        var relativePosition = e.MousePosition - AbsoluteBounds.Location;
-        if (_controlPressed == "up" && _upArrowRectangle.Contains(relativePosition))
+        Point relativePosition = e.MousePosition - AbsoluteBounds.Location;
+        switch (_controlPressed)
         {
-            Focused = false;
-            Value++;
-        }
-        else if (_controlPressed == "down" && _downArrowRectangle.Contains(relativePosition))
-        {
-            Focused = false;
-            Value--;
-        }
-        else if (_textBoxRectangle.Contains(relativePosition))
-        {
-            base.OnLeftMouseButtonReleased(e);
+            case "up" when _upArrowRectangle.Contains(relativePosition):
+                Focused = false;
+                Value++;
+                break;
+            case "down" when _downArrowRectangle.Contains(relativePosition):
+                Focused = false;
+                Value--;
+                break;
+            default:
+                if (_textBoxRectangle.Contains(relativePosition))
+                {
+                    base.OnLeftMouseButtonReleased(e);
+                }
+
+                break;
         }
 
         _controlPressed = "none";
@@ -131,8 +179,7 @@ public sealed class NumberPicker : TextInputBase
 
     public override void DoUpdate(GameTime gameTime)
     {
-
-        var relativePosition = GameService.Input.Mouse.Position - AbsoluteBounds.Location;
+        Point relativePosition = GameService.Input.Mouse.Position - AbsoluteBounds.Location;
         if (_controlPressed == "up" && _upArrowRectangle.Contains(relativePosition))
         {
             _incrementTimer += gameTime.ElapsedGameTime;
@@ -176,7 +223,7 @@ public sealed class NumberPicker : TextInputBase
 
         _cursorRectangle = CursorRectangle();
 
-        var verticalCenter = Height / 2;
+        int verticalCenter = Height / 2;
 
         _upArrowRectangle = new Rectangle(
             new Point(Width - buttonsWidth, verticalCenter - 8),
@@ -186,16 +233,16 @@ public sealed class NumberPicker : TextInputBase
         _downArrowRectangle = new Rectangle(
             new Point(Width - buttonsWidth, verticalCenter),
             new Point(16, 8)
-                );
+        );
 
         Rectangle TextBoxRectangle()
         {
             float textWidth = _font.MeasureString(currentText).Width;
-            float textStart = Width - textWidth - TextPaddingX * 2 - buttonsWidth;
+            float textStart = Width - textWidth - (TextPaddingX * 2) - buttonsWidth;
             return new Rectangle(
                 (int)textStart,
                 0,
-                (int)textWidth + TextPaddingX * 2,
+                (int)textWidth + (TextPaddingX * 2),
                 _size.Y
             );
         }
@@ -206,7 +253,7 @@ public sealed class NumberPicker : TextInputBase
             return new Rectangle(
                 TextPaddingX - _horizontalOffset,
                 verticalPadding,
-                _size.X - TextPaddingX * 2 - buttonsWidth,
+                _size.X - (TextPaddingX * 2) - buttonsWidth,
                 _size.Y - (verticalPadding * 2)
             );
         }
@@ -266,13 +313,16 @@ public sealed class NumberPicker : TextInputBase
                 _textBoxRectangle
             );
 
-            if (_highlightRectangle.IsEmpty)
+            if (!_isDragging)
             {
-                PaintCursor(spriteBatch, _cursorRectangle);
-            }
-            else
-            {
-                PaintHighlight(spriteBatch, _highlightRectangle);
+                if (_highlightRectangle.IsEmpty)
+                {
+                    PaintCursor(spriteBatch, _cursorRectangle);
+                }
+                else
+                {
+                    PaintHighlight(spriteBatch, _highlightRectangle);
+                }
             }
         }
 
@@ -289,7 +339,7 @@ public sealed class NumberPicker : TextInputBase
             0f,
             Vector2.Zero,
             SpriteEffects.FlipVertically
-            );
+        );
 
         spriteBatch.DrawOnCtrl(
             this,
@@ -301,7 +351,7 @@ public sealed class NumberPicker : TextInputBase
             Color.White * AbsoluteOpacity(),
             0f,
             Vector2.Zero
-            );
+        );
     }
 
     protected override void MoveLine(int delta)
@@ -327,14 +377,14 @@ public sealed class NumberPicker : TextInputBase
 
     public override int GetCursorIndexFromPosition(int x, int y)
     {
-        var textStart = Width - _font.MeasureString(Text).Width - TextPaddingX - ArrowButtonSprite.Width;
+        float textStart = Width - _font.MeasureString(Text).Width - TextPaddingX - ArrowButtonSprite.Width;
 
         int charIndex = 0;
 
-        var glyphs = _font.GetGlyphs(_text);
-        foreach (var glyph in glyphs)
+        BitmapFont.StringGlyphEnumerable glyphs = _font.GetGlyphs(_text);
+        foreach (BitmapFontGlyph glyph in glyphs)
         {
-            if (textStart + glyph.Position.X + glyph.FontRegion.Width / 2f > _horizontalOffset + x)
+            if (textStart + glyph.Position.X + (glyph.FontRegion.Width / 2f) > _horizontalOffset + x)
             {
                 break;
             }
@@ -348,6 +398,8 @@ public sealed class NumberPicker : TextInputBase
     protected override void DisposeControl()
     {
         TextChanged -= OnTextChanged;
+        GameService.Input.Mouse.MouseMoved -= OnGlobalMouseMoved;
+        GameService.Input.Mouse.LeftMouseButtonReleased -= OnGlobalLeftMouseButtonReleased;
         base.DisposeControl();
     }
 }
