@@ -254,11 +254,25 @@ public sealed class NumberPicker : TextInputBase
 
     protected override void Paint(SpriteBatch spriteBatch, Rectangle bounds)
     {
-        spriteBatch.DrawOnCtrl(
-            this,
-            TextBoxSprite,
-            _textBoxRectangle
-        );
+        if (Focused)
+        {
+            spriteBatch.DrawOnCtrl(
+                this,
+                TextBoxSprite,
+                _textBoxRectangle
+            );
+
+            if (_highlightRectangle.IsEmpty)
+            {
+                PaintCursor(spriteBatch, _cursorRectangle);
+            }
+            else
+            {
+                PaintHighlight(spriteBatch, _highlightRectangle);
+            }
+        }
+
+        PaintText(spriteBatch, _textRectangle, HorizontalAlignment.Right);
 
         spriteBatch.DrawOnCtrl(
             this,
@@ -284,17 +298,6 @@ public sealed class NumberPicker : TextInputBase
             0f,
             Vector2.Zero
             );
-
-        PaintText(spriteBatch, _textRectangle, HorizontalAlignment.Right);
-
-        if (_highlightRectangle.IsEmpty)
-        {
-            PaintCursor(spriteBatch, _cursorRectangle);
-        }
-        else
-        {
-            PaintHighlight(spriteBatch, _highlightRectangle);
-        }
     }
 
     protected override void MoveLine(int delta)
