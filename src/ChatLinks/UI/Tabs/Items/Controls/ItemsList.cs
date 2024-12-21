@@ -11,13 +11,13 @@ namespace SL.ChatLinks.UI.Tabs.Items.Controls;
 
 public sealed class ItemsList : FlowPanel
 {
-    private readonly List<UpgradeComponent> _upgrades;
+    private readonly IDictionary<int, UpgradeComponent> _upgrades;
 
     private bool _loading;
 
     public event EventHandler<Item>? OptionClicked;
 
-    public ItemsList(List<UpgradeComponent> upgrades)
+    public ItemsList(IDictionary<int, UpgradeComponent> upgrades)
     {
         _upgrades = upgrades;
         Size = new Point(450, 500);

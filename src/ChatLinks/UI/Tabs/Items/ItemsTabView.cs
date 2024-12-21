@@ -22,7 +22,7 @@ public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search) : Vie
 {
     private readonly List<Item> _default = [];
     private readonly SemaphoreSlim _searchLock = new(1, 1);
-    private readonly List<UpgradeComponent> _upgrades = [];
+    private readonly IDictionary<int, UpgradeComponent> _upgrades = new Dictionary<int, UpgradeComponent>();
 
     private Container? _root;
 
@@ -36,7 +36,7 @@ public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search) : Vie
     {
         await foreach (UpgradeComponent upgrade in search.OfType<UpgradeComponent>())
         {
-            _upgrades.Add(upgrade);
+            _upgrades.Add(upgrade.Id, upgrade);
         }
 
         await foreach (Item item in search.NewItems(1000, 0))

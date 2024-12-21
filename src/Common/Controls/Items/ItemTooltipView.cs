@@ -19,7 +19,7 @@ using Item = GuildWars2.Items.Item;
 
 namespace SL.Common.Controls.Items;
 
-public class ItemTooltipView(Item item, List<UpgradeComponent> upgrades) : View, ITooltipView
+public class ItemTooltipView(Item item, IDictionary<int, UpgradeComponent> upgrades) : View, ITooltipView
 {
     protected override void Build(Container buildPanel)
     {
@@ -40,46 +40,46 @@ public class ItemTooltipView(Item item, List<UpgradeComponent> upgrades) : View,
                 PrintBackpack(back, upgrades, layout);
                 break;
             case Bag bag:
-                PrintBag(bag, upgrades, layout);
+                PrintBag(bag, layout);
                 break;
             case Consumable consumable:
-                PrintConsumable(consumable, upgrades, layout);
+                PrintConsumable(consumable, layout);
                 break;
             case GuildWars2.Items.Container container:
-                PrintContainer(container, upgrades, layout);
+                PrintContainer(container, layout);
                 break;
             case CraftingMaterial craftingMaterial:
-                PrintCraftingMaterial(craftingMaterial, upgrades, layout);
+                PrintCraftingMaterial(craftingMaterial, layout);
                 break;
             case GatheringTool gatheringTool:
-                PrintGatheringTool(gatheringTool, upgrades, layout);
+                PrintGatheringTool(gatheringTool, layout);
                 break;
             case Trinket trinket:
                 PrintTrinket(trinket, upgrades, layout);
                 break;
             case Gizmo gizmo:
-                PrintGizmo(gizmo, upgrades, layout);
+                PrintGizmo(gizmo, layout);
                 break;
             case JadeTechModule jadeTechModule:
-                PrintJadeTechModule(jadeTechModule, upgrades, layout);
+                PrintJadeTechModule(jadeTechModule, layout);
                 break;
             case Miniature miniature:
-                PrintMiniature(miniature, upgrades, layout);
+                PrintMiniature(miniature, layout);
                 break;
             case PowerCore powerCore:
-                PrintPowerCore(powerCore, upgrades, layout);
+                PrintPowerCore(powerCore, layout);
                 break;
             case Relic relic:
-                PrintRelic(relic, upgrades, layout);
+                PrintRelic(relic, layout);
                 break;
             case SalvageTool salvageTool:
-                PrintSalvageTool(salvageTool, upgrades, layout);
+                PrintSalvageTool(salvageTool, layout);
                 break;
             case Trophy trophy:
-                PrintTrophy(trophy, upgrades, layout);
+                PrintTrophy(trophy, layout);
                 break;
             case UpgradeComponent upgradeComponent:
-                PrintUpgradeComponent(upgradeComponent, upgrades, layout);
+                PrintUpgradeComponent(upgradeComponent, layout);
                 break;
             case Weapon weapon:
                 PrintWeapon(weapon, upgrades, layout);
@@ -89,7 +89,7 @@ public class ItemTooltipView(Item item, List<UpgradeComponent> upgrades) : View,
                 break;
         }
 
-        static void PrintArmor(Armor item, List<UpgradeComponent> upgrades, Container layout)
+        static void PrintArmor(Armor item, IDictionary<int, UpgradeComponent> upgrades, Container layout)
         {
             Header(item, layout);
             Defense(item.Defense, layout);
@@ -144,7 +144,7 @@ public class ItemTooltipView(Item item, List<UpgradeComponent> upgrades) : View,
             VendorValue(item, layout);
         }
 
-        static void PrintBackpack(Backpack item, List<UpgradeComponent> upgrades, Container layout)
+        static void PrintBackpack(Backpack item, IDictionary<int, UpgradeComponent> upgrades, Container layout)
         {
             Header(item, layout);
 
@@ -178,7 +178,7 @@ public class ItemTooltipView(Item item, List<UpgradeComponent> upgrades) : View,
             VendorValue(item, layout);
         }
 
-        static void PrintBag(Bag item, List<UpgradeComponent> upgrades, Container layout)
+        static void PrintBag(Bag item, Container layout)
         {
             Header(item, layout);
             Description(item, layout);
@@ -194,7 +194,7 @@ public class ItemTooltipView(Item item, List<UpgradeComponent> upgrades) : View,
             VendorValue(item, layout);
         }
 
-        static void PrintConsumable(Consumable item, List<UpgradeComponent> upgrades, Container layout)
+        static void PrintConsumable(Consumable item, Container layout)
         {
             Header(item, layout);
             switch (item)
@@ -259,7 +259,7 @@ public class ItemTooltipView(Item item, List<UpgradeComponent> upgrades) : View,
             VendorValue(item, layout);
         }
 
-        static void PrintContainer(GuildWars2.Items.Container item, List<UpgradeComponent> upgrades, Container layout)
+        static void PrintContainer(GuildWars2.Items.Container item, Container layout)
         {
             Header(item, layout);
             Description(item, layout);
@@ -275,7 +275,7 @@ public class ItemTooltipView(Item item, List<UpgradeComponent> upgrades) : View,
             VendorValue(item, layout);
         }
 
-        static void PrintCraftingMaterial(CraftingMaterial item, List<UpgradeComponent> upgrades, Container layout)
+        static void PrintCraftingMaterial(CraftingMaterial item, Container layout)
         {
             Header(item, layout);
             Description(item, layout);
@@ -290,7 +290,7 @@ public class ItemTooltipView(Item item, List<UpgradeComponent> upgrades) : View,
             VendorValue(item, layout);
         }
 
-        static void PrintGatheringTool(GatheringTool item, List<UpgradeComponent> upgrades, Container layout)
+        static void PrintGatheringTool(GatheringTool item, Container layout)
         {
             Header(item, layout);
             Description(item, layout);
@@ -306,7 +306,7 @@ public class ItemTooltipView(Item item, List<UpgradeComponent> upgrades) : View,
             VendorValue(item, layout);
         }
 
-        static void PrintGizmo(Gizmo item, List<UpgradeComponent> upgrades, Container layout)
+        static void PrintGizmo(Gizmo item, Container layout)
         {
             Header(item, layout);
             Description(item, layout, item.Level > 0);
@@ -324,7 +324,7 @@ public class ItemTooltipView(Item item, List<UpgradeComponent> upgrades) : View,
             VendorValue(item, layout);
         }
 
-        static void PrintJadeTechModule(JadeTechModule item, List<UpgradeComponent> upgrades, Container layout)
+        static void PrintJadeTechModule(JadeTechModule item, Container layout)
         {
             Header(item, layout);
             Description(item, layout, true);
@@ -345,7 +345,7 @@ public class ItemTooltipView(Item item, List<UpgradeComponent> upgrades) : View,
             VendorValue(item, layout);
         }
 
-        static void PrintMiniature(Miniature item, List<UpgradeComponent> upgrades, Container layout)
+        static void PrintMiniature(Miniature item, Container layout)
         {
             Header(item, layout);
             Description(item, layout);
@@ -365,7 +365,7 @@ public class ItemTooltipView(Item item, List<UpgradeComponent> upgrades) : View,
             VendorValue(item, layout);
         }
 
-        static void PrintPowerCore(PowerCore item, List<UpgradeComponent> upgrades, Container layout)
+        static void PrintPowerCore(PowerCore item, Container layout)
         {
             Header(item, layout);
             Description(item, layout, true);
@@ -385,7 +385,7 @@ public class ItemTooltipView(Item item, List<UpgradeComponent> upgrades) : View,
             VendorValue(item, layout);
         }
 
-        static void PrintRelic(Relic item, List<UpgradeComponent> upgrades, Container layout)
+        static void PrintRelic(Relic item, Container layout)
         {
             Header(item, layout);
             Description(item, layout, true);
@@ -404,7 +404,7 @@ public class ItemTooltipView(Item item, List<UpgradeComponent> upgrades) : View,
             VendorValue(item, layout);
         }
 
-        static void PrintSalvageTool(SalvageTool item, List<UpgradeComponent> upgrades, Container layout)
+        static void PrintSalvageTool(SalvageTool item, Container layout)
         {
             Header(item, layout);
             PlainText(" ", layout);
@@ -423,7 +423,7 @@ public class ItemTooltipView(Item item, List<UpgradeComponent> upgrades) : View,
             VendorValue(item, layout);
         }
 
-        static void PrintTrinket(Trinket item, List<UpgradeComponent> upgrades, Container layout)
+        static void PrintTrinket(Trinket item, IDictionary<int, UpgradeComponent> upgrades, Container layout)
         {
             Header(item, layout);
 
@@ -468,7 +468,7 @@ public class ItemTooltipView(Item item, List<UpgradeComponent> upgrades) : View,
             VendorValue(item, layout);
         }
 
-        static void PrintTrophy(Trophy item, List<UpgradeComponent> upgrades, Container layout)
+        static void PrintTrophy(Trophy item, Container layout)
         {
             Header(item, layout);
             Description(item, layout, true);
@@ -485,7 +485,7 @@ public class ItemTooltipView(Item item, List<UpgradeComponent> upgrades) : View,
             VendorValue(item, layout);
         }
 
-        static void PrintUpgradeComponent(UpgradeComponent item, List<UpgradeComponent> upgrades, Container layout)
+        static void PrintUpgradeComponent(UpgradeComponent item, Container layout)
         {
             Header(item, layout);
 
@@ -538,7 +538,7 @@ public class ItemTooltipView(Item item, List<UpgradeComponent> upgrades) : View,
             VendorValue(item, layout);
         }
 
-        static void PrintWeapon(Weapon item, List<UpgradeComponent> upgrades, Container layout)
+        static void PrintWeapon(Weapon item, IDictionary<int, UpgradeComponent> upgrades, Container layout)
         {
             Header(item, layout);
             WeaponStrength(item, layout);

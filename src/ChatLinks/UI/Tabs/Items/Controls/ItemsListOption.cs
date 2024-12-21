@@ -19,7 +19,7 @@ public sealed class ItemsListOption : Container
 
     private ItemName _name;
 
-    public ItemsListOption(Item item, List<UpgradeComponent> upgrades)
+    public ItemsListOption(Item item, IDictionary<int, UpgradeComponent> upgrades)
     {
         Item = item;
         Width = 425;

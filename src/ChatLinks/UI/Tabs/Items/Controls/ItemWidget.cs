@@ -25,6 +25,7 @@ public sealed class ItemWidget : FlowPanel
 	private readonly NumberPicker _numberPicker;
 
 	public ItemWidget(Item item, List<UpgradeComponent> upgrades)
+    public ItemWidget(Item item, IDictionary<int, UpgradeComponent> upgrades)
 	{
 		ShowTint = true;
 		ShowBorder = true;

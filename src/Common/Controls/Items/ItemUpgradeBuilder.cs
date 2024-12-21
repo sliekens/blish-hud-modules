@@ -13,7 +13,7 @@ using Container = Blish_HUD.Controls.Container;
 
 namespace SL.Common.Controls.Items;
 
-internal sealed class ItemUpgradeBuilder(ItemFlags flags, List<UpgradeComponent> upgrades)
+internal sealed class ItemUpgradeBuilder(ItemFlags flags, IDictionary<int, UpgradeComponent> upgrades)
 {
     private static readonly Color UpgradeTextColor = new(0x55, 0x99, 0xFF);
 
@@ -96,10 +96,9 @@ internal sealed class ItemUpgradeBuilder(ItemFlags flags, List<UpgradeComponent>
         return upgrade;
     }
 
-    private static Control? UpgradeSlot(int itemId, List<UpgradeComponent> upgrades, Container parent)
+    private static Control? UpgradeSlot(int itemId, IDictionary<int, UpgradeComponent> upgrades, Container parent)
     {
-        UpgradeComponent? item = upgrades.Find(upgrade => upgrade.Id == itemId);
-        if (item is null)
+        if (!upgrades.TryGetValue(itemId, out UpgradeComponent? item))
         {
             return UnusedUpgradeSlot(parent);
         }
@@ -207,15 +206,14 @@ internal sealed class ItemUpgradeBuilder(ItemFlags flags, List<UpgradeComponent>
         return slotLabel;
     }
 
-    private static Control? InfusionSlot(InfusionSlot slot, List<UpgradeComponent> upgrades, Container parent)
+    private static Control? InfusionSlot(InfusionSlot slot, IDictionary<int, UpgradeComponent> upgrades, Container parent)
     {
         if (!slot.ItemId.HasValue)
         {
             return UnusedInfusionSlot(slot, parent);
         }
 
-        UpgradeComponent? item = upgrades.Find(upgrade => upgrade.Id == slot.ItemId.Value);
-        if (item is null)
+        if (!upgrades.TryGetValue(slot.ItemId.Value, out UpgradeComponent? item))
         {
             return UnusedInfusionSlot(slot, parent);
         }
