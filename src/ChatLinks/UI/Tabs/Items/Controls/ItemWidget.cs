@@ -29,7 +29,9 @@ public sealed class ItemWidget : FlowPanel
 		ShowTint = true;
 		ShowBorder = true;
 		FlowDirection = ControlFlowDirection.SingleTopToBottom;
-		ControlPadding = new Vector2(10);
+        ControlPadding = new Vector2(20);
+        OuterControlPadding = new Vector2(10f);
+        AutoSizePadding = new Point(10);
 		Width = 350;
 		HeightSizingMode = SizingMode.AutoSize;
 		ContentRegion = new Rectangle(5, 5, 290, 520);
@@ -118,7 +120,7 @@ public sealed class ItemWidget : FlowPanel
 		{
 			Parent = this,
 			Text = item.ChatLink,
-			Width = Width
+            Width = 150
 		};
 
 		_itemIcon.Click += HeaderClicked;
