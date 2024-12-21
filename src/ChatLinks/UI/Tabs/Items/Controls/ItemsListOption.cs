@@ -19,14 +19,14 @@ public sealed class ItemsListOption : Container
 
     private ItemName _name;
 
-    public ItemsListOption(Item item, IDictionary<int, UpgradeComponent> upgrades)
+    public ItemsListOption(Item item, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades)
     {
         Item = item;
         Width = 425;
         Height = 35;
-        Tooltip = new Tooltip(new ItemTooltipView(Item, upgrades));
+        Tooltip = new Tooltip(new ItemTooltipView(Item, icons, upgrades));
 
-        _icon = new ItemImage(item)
+        _icon = new ItemImage(item, icons)
         {
             Size = new Point(35, 35),
             Tooltip = Tooltip,

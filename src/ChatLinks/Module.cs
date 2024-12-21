@@ -19,6 +19,7 @@ using SL.ChatLinks.UI.Tabs.Achievements;
 using SL.ChatLinks.UI.Tabs.Crafting;
 using SL.ChatLinks.UI.Tabs.Items;
 using SL.ChatLinks.UI.Tabs.Items.Services;
+using SL.Common.Controls.Items;
 
 using SQLitePCL;
 
@@ -59,6 +60,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         services.AddTransient<AchievementsView>();
         services.AddTransient<Func<AchievementsView>>(sp => sp.GetRequiredService<AchievementsView>);
         services.AddTransient<ItemSearch>();
+        services.AddHttpClient<ItemIcons>();
 
         services.AddLogging(builder =>
         {

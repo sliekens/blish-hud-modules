@@ -12,16 +12,19 @@ using Microsoft.Xna.Framework;
 
 using SL.ChatLinks.UI.Tabs.Items.Controls;
 using SL.ChatLinks.UI.Tabs.Items.Services;
+using SL.Common.Controls.Items;
 
 using Container = Blish_HUD.Controls.Container;
 using Item = GuildWars2.Items.Item;
 
 namespace SL.ChatLinks.UI.Tabs.Items;
 
-public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search) : View
+public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search, ItemIcons icons) : View
 {
     private readonly List<Item> _default = [];
+
     private readonly SemaphoreSlim _searchLock = new(1, 1);
+
     private readonly IDictionary<int, UpgradeComponent> _upgrades = new Dictionary<int, UpgradeComponent>();
 
     private Container? _root;
@@ -56,7 +59,7 @@ public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search) : Vie
             Width = 450,
             PlaceholderText = "Enter item name or chat link..."
         };
-        _searchResults = new ItemsList(_upgrades)
+        _searchResults = new ItemsList(icons, _upgrades)
         {
             Parent = buildPanel,
             Size = new Point(450, 500),
@@ -175,7 +178,7 @@ public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search) : Vie
         EnsureInitialized();
 
         _selectedItem?.Dispose();
-        _selectedItem = new ItemWidget(item, _upgrades)
+        _selectedItem = new ItemWidget(item, _upgrades, icons)
         {
             Parent = _root,
             Left = _searchResults.Right

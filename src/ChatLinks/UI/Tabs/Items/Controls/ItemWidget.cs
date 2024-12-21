@@ -26,6 +26,7 @@ public sealed class ItemWidget : FlowPanel
 
 	public ItemWidget(Item item, List<UpgradeComponent> upgrades)
     public ItemWidget(Item item, IDictionary<int, UpgradeComponent> upgrades)
+    public ItemWidget(Item item, IDictionary<int, UpgradeComponent> upgrades, ItemIcons icons)
 	{
 		ShowTint = true;
 		ShowBorder = true;
@@ -48,10 +49,10 @@ public sealed class ItemWidget : FlowPanel
 			Parent = this
 		};
 
-		_itemIcon = new ItemImage(item)
+        _itemIcon = new ItemImage(item, icons)
 		{
 			Parent = header,
-			Tooltip = new Tooltip(new ItemTooltipView(item, upgrades))
+            Tooltip = new Tooltip(new ItemTooltipView(item, icons, upgrades))
 		};
 
 		_itemName = new ItemName(item)

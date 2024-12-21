@@ -13,7 +13,7 @@ using Container = Blish_HUD.Controls.Container;
 
 namespace SL.Common.Controls.Items;
 
-internal sealed class ItemUpgradeBuilder(ItemFlags flags, IDictionary<int, UpgradeComponent> upgrades)
+internal sealed class ItemUpgradeBuilder(ItemFlags flags, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades)
 {
     private static readonly Color UpgradeTextColor = new(0x55, 0x99, 0xFF);
 
@@ -49,17 +49,17 @@ internal sealed class ItemUpgradeBuilder(ItemFlags flags, IDictionary<int, Upgra
     {
         if (_suffixItemId.HasValue && !flags.NotUpgradeable)
         {
-            UpgradeSlot(_suffixItemId.Value, upgrades, parent);
+            UpgradeSlot(_suffixItemId.Value, icons, upgrades, parent);
         }
 
         if (_twoHanded && _secondarySuffixItemId.HasValue && !flags.NotUpgradeable)
         {
-            UpgradeSlot(_secondarySuffixItemId.Value, upgrades, parent);
+            UpgradeSlot(_secondarySuffixItemId.Value, icons, upgrades, parent);
         }
 
         foreach (InfusionSlot? slot in _infusionSlots.Where(slot => slot.ItemId.HasValue))
         {
-            InfusionSlot(slot, upgrades, parent);
+            InfusionSlot(slot, icons, upgrades, parent);
         }
 
         if (!_suffixItemId.HasValue && !flags.NotUpgradeable)
@@ -87,7 +87,7 @@ internal sealed class ItemUpgradeBuilder(ItemFlags flags, IDictionary<int, Upgra
             .CreatePart("\r\n", _ => { })
             .CreatePart(" Unused Upgrade Slot", part =>
             {
-                part.SetPrefixImage(AsyncTexture2D.FromAssetId(517197));
+                part.SetPrefixImage(Resources.Texture("unused_upgrade_slot.png"));
                 part.SetPrefixImageSize(new Point(16));
                 part.SetFontSize(ContentService.FontSize.Size16);
             })
@@ -96,7 +96,7 @@ internal sealed class ItemUpgradeBuilder(ItemFlags flags, IDictionary<int, Upgra
         return upgrade;
     }
 
-    private static Control? UpgradeSlot(int itemId, IDictionary<int, UpgradeComponent> upgrades, Container parent)
+    private static Control? UpgradeSlot(int itemId, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades, Container parent)
     {
         if (!upgrades.TryGetValue(itemId, out UpgradeComponent? item))
         {
@@ -112,7 +112,7 @@ internal sealed class ItemUpgradeBuilder(ItemFlags flags, IDictionary<int, Upgra
             {
                 if (!string.IsNullOrEmpty(item.IconHref))
                 {
-                    part.SetPrefixImage(GameService.Content.GetRenderServiceTexture(item.IconHref));
+                    part.SetPrefixImage(icons.GetIcon(item));
                     part.SetPrefixImageSize(new Point(16));
                 }
 
@@ -186,7 +186,7 @@ internal sealed class ItemUpgradeBuilder(ItemFlags flags, IDictionary<int, Upgra
         {
             builder.CreatePart(" Unused Infusion Slot", part =>
             {
-                part.SetPrefixImage(AsyncTexture2D.FromAssetId(517202));
+                part.SetPrefixImage(Resources.Texture("unused_infusion_slot.png"));
                 part.SetPrefixImageSize(new Point(16));
                 part.SetFontSize(ContentService.FontSize.Size16);
             });
@@ -195,7 +195,7 @@ internal sealed class ItemUpgradeBuilder(ItemFlags flags, IDictionary<int, Upgra
         {
             builder.CreatePart(" Unused Enrichment Slot", part =>
             {
-                part.SetPrefixImage(AsyncTexture2D.FromAssetId(517204));
+                part.SetPrefixImage(Resources.Texture("unused_enrichment_slot.png"));
                 part.SetPrefixImageSize(new Point(16));
                 part.SetFontSize(ContentService.FontSize.Size16);
             });
@@ -206,7 +206,7 @@ internal sealed class ItemUpgradeBuilder(ItemFlags flags, IDictionary<int, Upgra
         return slotLabel;
     }
 
-    private static Control? InfusionSlot(InfusionSlot slot, IDictionary<int, UpgradeComponent> upgrades, Container parent)
+    private static Control? InfusionSlot(InfusionSlot slot, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades, Container parent)
     {
         if (!slot.ItemId.HasValue)
         {
@@ -227,7 +227,7 @@ internal sealed class ItemUpgradeBuilder(ItemFlags flags, IDictionary<int, Upgra
             {
                 if (!string.IsNullOrEmpty(item.IconHref))
                 {
-                    part.SetPrefixImage(GameService.Content.GetRenderServiceTexture(item.IconHref));
+                    part.SetPrefixImage(icons.GetIcon(item));
                     part.SetPrefixImageSize(new Point(16));
                 }
 
