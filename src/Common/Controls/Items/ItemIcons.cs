@@ -3,6 +3,7 @@ using System.Net.Http;
 
 using Blish_HUD;
 using Blish_HUD.Content;
+using Blish_HUD.Modules;
 
 using GuildWars2.Items;
 
@@ -16,33 +17,30 @@ public class ItemIcons(HttpClient httpClient)
 
     public AsyncTexture2D? GetIcon(Item item)
     {
-        if (item.IconHref == null)
+        if (item.IconHref is null)
         {
             return null;
         }
 
-        AsyncTexture2D cached = GameService.Content.GetRenderServiceTexture(item.IconHref);
-        if (cached is not null)
-        {
-            return cached;
-        }
-
-        return WebCache.GetOrAdd(item.IconHref, url =>
-        {
-            AsyncTexture2D newTexture = new(ContentService.Textures.TransparentPixel);
-            httpClient.GetStreamAsync(url).ContinueWith(task =>
+        AsyncTexture2D? cached = GameService.Content.GetRenderServiceTexture(item.IconHref)
+            ?? WebCache.GetOrAdd(item.IconHref, url =>
             {
-                if (task.Status != TaskStatus.RanToCompletion)
+                AsyncTexture2D newTexture = new();
+                httpClient.GetStreamAsync(url).ContinueWith(task =>
                 {
-                    return;
-                }
+                    if (task.Status != TaskStatus.RanToCompletion)
+                    {
+                        return;
+                    }
 
-                using Stream data = task.Result;
-                Texture2D texture = TextureUtil.FromStreamPremultiplied(data);
-                newTexture.SwapTexture(texture);
+                    using Stream data = task.Result;
+                    Texture2D texture = TextureUtil.FromStreamPremultiplied(data);
+                    newTexture.SwapTexture(texture);
+                });
+
+                return newTexture;
             });
 
-            return newTexture;
-        });
+        return cached.Clone();
     }
 }
