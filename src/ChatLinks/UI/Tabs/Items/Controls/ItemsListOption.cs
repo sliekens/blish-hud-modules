@@ -25,6 +25,7 @@ public sealed class ItemsListOption : Container
         Width = 425;
         Height = 35;
         Tooltip = new Tooltip(new ItemTooltipView(Item, icons, upgrades));
+        Menu = new ItemContextMenu(item);
 
         _icon = new ItemImage(item, icons)
         {

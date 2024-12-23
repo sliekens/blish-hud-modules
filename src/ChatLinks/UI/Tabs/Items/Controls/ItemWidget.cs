@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.ComponentModel;
+using System.Diagnostics;
 
 using Blish_HUD;
 using Blish_HUD.Controls;
@@ -85,6 +86,8 @@ public sealed class ItemWidget : FlowPanel
             Tooltip = new Tooltip(new ItemTooltipView(item, icons, upgrades))
         };
 
+        header.Menu = new ItemContextMenu(item);
+
         _itemName = new ItemName(item)
         {
             Parent = header,
@@ -96,14 +99,6 @@ public sealed class ItemWidget : FlowPanel
         };
 
         _itemName.Text = _itemName.Text.Replace(" ", "  ");
-
-        FormattedLabel link = new FormattedLabelBuilder().SetWidth(Width)
-            .AutoSizeHeight()
-            .Wrap()
-            .CreatePart("API", part => part.SetHyperLink($"https://api.guildwars2.com/v2/items/{item.Id}?v=latest"))
-            .Build();
-
-        link.Parent = this;
 
         if (!item.Flags.NotUpgradeable)
         {
