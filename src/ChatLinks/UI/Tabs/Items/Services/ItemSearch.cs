@@ -16,11 +16,10 @@ public sealed class ItemSearch(ChatLinksContext context)
 
     private readonly IQueryable<Item> _items = context.Items.AsNoTracking();
 
-    public IAsyncEnumerable<Item> NewItems(int limit, int offset)
+    public IAsyncEnumerable<Item> NewItems(int limit)
     {
         return _items
             .OrderByDescending(item => item.Id)
-            .Skip(offset)
             .Take(limit)
             .AsAsyncEnumerable();
     }
@@ -31,7 +30,7 @@ public sealed class ItemSearch(ChatLinksContext context)
             .AsAsyncEnumerable();
     }
 
-    public async IAsyncEnumerable<Item> Search(string query, [EnumeratorCancellation] CancellationToken cancellationToken)
+    public async IAsyncEnumerable<Item> Search(string query, int limit, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         if (ChatLinkPattern.IsMatch(query))
         {
@@ -44,9 +43,11 @@ public sealed class ItemSearch(ChatLinksContext context)
         else
         {
             await foreach (var item in _items
-               .Where(i => i.Name.ToLower().Contains(query.ToLowerInvariant()))
-               .AsAsyncEnumerable()
-               .WithCancellation(cancellationToken))
+                .OrderBy(item => item.Id)
+                .Where(i => i.Name.ToLower().Contains(query.ToLowerInvariant()))
+                .Take(limit)
+                .AsAsyncEnumerable()
+                .WithCancellation(cancellationToken))
             {
                 yield return item;
             }

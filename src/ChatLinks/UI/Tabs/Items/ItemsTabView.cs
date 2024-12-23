@@ -35,6 +35,8 @@ public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search, ItemI
 
     private ItemWidget? _selectedItem;
 
+    private EventHandler? _searchUpdated;
+
     protected override async Task<bool> Load(IProgress<string> progress)
     {
         await foreach (UpgradeComponent upgrade in search.OfType<UpgradeComponent>())
@@ -42,7 +44,7 @@ public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search, ItemI
             _upgrades.Add(upgrade.Id, upgrade);
         }
 
-        await foreach (Item item in search.NewItems(1000, 0))
+        await foreach (Item item in search.NewItems(1000))
         {
             _default.Add(item);
         }
@@ -68,34 +70,72 @@ public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search, ItemI
 
         _searchResults.SetOptions(_default);
 
-        _searchBox.TextChanged += SearchInput;
+        _searchBox.TextChanged += SearchTextChanged;
+        _searchBox.EnterPressed += SearchInput;
+        _searchBox.InputFocusChanged += (sender, args) =>
+        {
+            _searchBox.Text = "";
+        };
+
         _searchResults.OptionClicked += ItemSelected;
     }
 
-    [MemberNotNull(
-        nameof(_root),
-        nameof(_searchBox),
-        nameof(_searchResults))]
-    private void EnsureInitialized()
+    protected override void Unload()
     {
-        if (_root is null)
+        if (_searchBox is not null)
         {
-            ThrowHelper.ThrowInvalidOperationException("_root not initialized");
+            _searchBox.TextChanged -= SearchInput;
         }
 
-        if (_searchBox is null)
-        {
-            ThrowHelper.ThrowInvalidOperationException("_searchBox not initialized");
-        }
+        _searchBox?.Dispose();
+        _searchResults?.Dispose();
+        base.Unload();
+    }
 
-        if (_searchResults is null)
+    private async void SearchTextChanged(object sender, EventArgs e)
+    {
+        try
         {
-            ThrowHelper.ThrowInvalidOperationException("_searchResults not initialized");
+            if (_searchBox is null)
+            {
+                return;
+            }
+
+            if (_searchBox.Focused)
+            {
+                await DoSearch(_searchBox.Text);
+            }
+
+        }
+        catch (Exception reason)
+        {
+            logger.LogError(reason, "Failed to search for items");
+            ScreenNotification.ShowNotification("Something went wrong", ScreenNotification.NotificationType.Red);
         }
     }
 
     private async void SearchInput(object sender, EventArgs e)
     {
+        try
+        {
+            if (_searchBox is null)
+            {
+                return;
+            }
+
+            await DoSearch(_searchBox.Text);
+        }
+        catch (Exception reason)
+        {
+            logger.LogError(reason, "Failed to search for items");
+            ScreenNotification.ShowNotification("Something went wrong", ScreenNotification.NotificationType.Red);
+        }
+    }
+
+    private async Task DoSearch(string text)
+    {
+        _searchUpdated?.Invoke(this, EventArgs.Empty);
+
         bool searching = false;
         using CancellationTokenSource cancellationTokenSource = new();
         try
@@ -103,33 +143,36 @@ public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search, ItemI
             EnsureInitialized();
 
             searching = true;
-            _searchResults.SetLoading(true);
-            _searchBox.TextChanged += OnTextChangedAgain;
+            _searchUpdated += SearchUpdated;
+
+            // Debounce search
+            await Task.Delay(1000, cancellationTokenSource.Token);
 
             // Ensure exclusive access to the DbContext (not thread-safe)
             await _searchLock.WaitAsync(cancellationTokenSource.Token);
             try
             {
-                string query = _searchBox.Text.Trim();
-                if (query.Length == 0)
+                _searchResults.SetLoading(true);
+                string query = text.Trim();
+                switch (query.Length)
                 {
-                    _searchResults.SetOptions(_default);
+                    case 0:
+                        _searchResults.SetOptions(_default);
+                        _searchResults.SetLoading(false);
+                        break;
+                    case >= 3:
+                        {
+                            _searchResults.ClearOptions();
+                            await foreach (Item item in search.Search(query, 100, cancellationTokenSource.Token))
+                            {
+                                _searchResults.AddOption(item);
+                            }
+
+                            searching = false;
+                            _searchResults.SetLoading(false);
+                            break;
+                        }
                 }
-                else if (query.Length >= 3)
-                {
-                    // Debounce search
-                    await Task.Delay(300, cancellationTokenSource.Token);
-
-                    _searchResults.ClearOptions();
-                    await foreach (Item item in search.Search(query, cancellationTokenSource.Token))
-                    {
-                        _searchResults.AddOption(item);
-                    }
-
-                    searching = false;
-                }
-
-                _searchResults.SetLoading(false);
             }
             finally
             {
@@ -140,20 +183,12 @@ public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search, ItemI
         {
             logger.LogDebug("Previous search was canceled");
         }
-        catch (Exception reason)
-        {
-            logger.LogError(reason, "Failed to search for items");
-            ScreenNotification.ShowNotification("Something went wrong", ScreenNotification.NotificationType.Red);
-        }
         finally
         {
-            if (_searchBox is not null)
-            {
-                _searchBox.TextChanged -= OnTextChangedAgain;
-            }
+            _searchUpdated -= SearchUpdated;
         }
 
-        void OnTextChangedAgain(object o, EventArgs e)
+        void SearchUpdated(object o, EventArgs a)
         {
             // ReSharper disable once AccessToModifiedClosure
             if (!searching)
@@ -185,16 +220,25 @@ public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search, ItemI
         };
     }
 
-
-    protected override void Unload()
+    [MemberNotNull(
+        nameof(_root),
+        nameof(_searchBox),
+        nameof(_searchResults))]
+    private void EnsureInitialized()
     {
-        if (_searchBox is not null)
+        if (_root is null)
         {
-            _searchBox.TextChanged -= SearchInput;
+            ThrowHelper.ThrowInvalidOperationException("_root not initialized");
         }
 
-        _searchBox?.Dispose();
-        _searchResults?.Dispose();
-        base.Unload();
+        if (_searchBox is null)
+        {
+            ThrowHelper.ThrowInvalidOperationException("_searchBox not initialized");
+        }
+
+        if (_searchResults is null)
+        {
+            ThrowHelper.ThrowInvalidOperationException("_searchResults not initialized");
+        }
     }
 }
