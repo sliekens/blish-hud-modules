@@ -1,5 +1,4 @@
 ﻿using Blish_HUD;
-using Blish_HUD.Content;
 using Blish_HUD.Controls;
 
 using GuildWars2;
@@ -10,8 +9,7 @@ using Microsoft.Xna.Framework;
 
 using Container = Blish_HUD.Controls.Container;
 
-
-namespace SL.Common.Controls.Items;
+namespace SL.Common.Controls.Items.Upgrades;
 
 internal sealed class ItemUpgradeBuilder(ItemFlags flags, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades)
 {
@@ -96,7 +94,8 @@ internal sealed class ItemUpgradeBuilder(ItemFlags flags, ItemIcons icons, IDict
         return upgrade;
     }
 
-    private static Control? UpgradeSlot(int itemId, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades, Container parent)
+    private static Control? UpgradeSlot(int itemId, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades,
+        Container parent)
     {
         if (!upgrades.TryGetValue(itemId, out UpgradeComponent? item))
         {
@@ -206,7 +205,8 @@ internal sealed class ItemUpgradeBuilder(ItemFlags flags, ItemIcons icons, IDict
         return slotLabel;
     }
 
-    private static Control? InfusionSlot(InfusionSlot slot, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades, Container parent)
+    private static Control? InfusionSlot(InfusionSlot slot, ItemIcons icons,
+        IDictionary<int, UpgradeComponent> upgrades, Container parent)
     {
         if (!slot.ItemId.HasValue)
         {

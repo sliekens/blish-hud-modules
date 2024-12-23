@@ -1,4 +1,6 @@
-﻿using Blish_HUD;
+﻿using System.Collections.Generic;
+
+using Blish_HUD;
 using Blish_HUD.Controls;
 using Blish_HUD.Input;
 
@@ -27,7 +29,6 @@ public sealed class ItemsList : FlowPanel
     {
         _icons = icons;
         _upgrades = upgrades;
-        Size = new Point(450, 500);
         ShowTint = true;
         ShowBorder = true;
         CanScroll = true;
@@ -75,6 +76,12 @@ public sealed class ItemsList : FlowPanel
         foreach (Item item in items)
         {
             AddOption(item);
+        }
+
+        if (CanScroll)
+        {
+            CanScroll = false;
+            CanScroll = true;
         }
     }
 

@@ -12,6 +12,8 @@ using GuildWars2.Items;
 
 using Microsoft.Xna.Framework;
 
+using SL.Common.Controls.Items.Upgrades;
+
 using Color = Microsoft.Xna.Framework.Color;
 using Container = Blish_HUD.Controls.Container;
 using Currency = GuildWars2.Items.Currency;
