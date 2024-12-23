@@ -5,6 +5,7 @@ using GuildWars2.Hero;
 using GuildWars2.Items;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
@@ -134,17 +135,33 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
             .HasValue<JadeBotSkinUnlocker>("jade_bot_skin_unlocker")
             ;
 
-        itemBuilder.Property(item => item.Id).ValueGeneratedNever();
-        itemBuilder.Property(item => item.Rarity).HasConversion(new ExtensibleEnumConverter<Rarity>());
-        itemBuilder.Property(item => item.VendorValue).HasConversion(new CoinConverter());
-        itemBuilder.Property(item => item.GameTypes).HasJsonValueConversion();
-        itemBuilder.Property(item => item.Flags).HasJsonValueConversion();
-        itemBuilder.Property(item => item.Restrictions).HasJsonValueConversion();
-
         ValueConverter<IDictionary<Extensible<AttributeName>, int>, string> attributesConverter = new(
             static attr => Serialize(attr.ToDictionary(pair => pair.Key.ToString(), pair => pair.Value)),
             static json => Deserialize<Dictionary<string, int>>(json)
                 .ToDictionary(pair => new Extensible<AttributeName>(pair.Key), pair => pair.Value));
+
+        ValueComparer<IDictionary<Extensible<AttributeName>, int>> attributesComparer = new DictionaryComparer<Extensible<AttributeName>, int>();
+
+        ValueComparer<Buff> buffComparer = new ValueObjectComparer<Buff>(buff => new Buff
+        {
+            Description = buff.Description,
+            SkillId = buff.SkillId
+        });
+
+        ValueComparer<IReadOnlyList<InfusionSlot>> infusionSlotsComparer = new ListComparer<InfusionSlot>();
+
+        ValueComparer<IReadOnlyCollection<InfusionSlotUpgradeSource>> upgradeSourceComparer = new CollectionComparer<InfusionSlotUpgradeSource>();
+
+        ValueComparer<IReadOnlyCollection<InfusionSlotUpgradePath>> upgradePathComparer = new CollectionComparer<InfusionSlotUpgradePath>();
+
+        itemBuilder.Property(item => item.Id).ValueGeneratedNever();
+        itemBuilder.Property(item => item.Rarity).HasConversion(new ExtensibleEnumConverter<Rarity>());
+        itemBuilder.Property(item => item.VendorValue).HasConversion(new CoinConverter());
+        itemBuilder.Property(item => item.GameTypes)
+            .HasJsonValueConversion()
+            .Metadata.SetValueComparer(new CollectionComparer<Extensible<GameType>>());
+        itemBuilder.Property(item => item.Flags).HasJsonValueConversion();
+        itemBuilder.Property(item => item.Restrictions).HasJsonValueConversion();
 
         EntityTypeBuilder<Armor> armorBuilder = modelBuilder.Entity<Armor>();
         armorBuilder.Property(armor => armor.WeightClass).HasConversion(new ExtensibleEnumConverter<WeightClass>());
@@ -152,26 +169,53 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
         armorBuilder.Property(armor => armor.DefaultSkinId).HasColumnName("DefaultSkinId");
         armorBuilder.Property(armor => armor.SuffixItemId).HasColumnName("SuffixItemId");
         armorBuilder.Property(armor => armor.AttributeCombinationId).HasColumnName("AttributeCombinationId");
-        armorBuilder.Property(armor => armor.Attributes).HasColumnName("Attributes").HasConversion(attributesConverter);
+        armorBuilder.Property(armor => armor.Attributes)
+            .HasColumnName("Attributes")
+            .HasConversion(attributesConverter)
+            .Metadata
+            .SetValueComparer(attributesComparer);
         armorBuilder.Property(armor => armor.AttributeAdjustment).HasColumnName("AttributeAdjustment");
-        armorBuilder.Property(armor => armor.StatChoices).HasColumnName("StatChoices").HasJsonValueConversion();
-        armorBuilder.Property(armor => armor.InfusionSlots).HasColumnName("InfusionSlots").HasJsonValueConversion();
-        armorBuilder.Property(armor => armor.Buff).HasColumnName("Buff").HasJsonValueConversion();
+        armorBuilder.Property(armor => armor.StatChoices)
+            .HasColumnName("StatChoices")
+            .HasJsonValueConversion()
+            .Metadata.SetValueComparer(new ListComparer<int>());
+        armorBuilder.Property(armor => armor.InfusionSlots).HasColumnName("InfusionSlots")
+            .HasJsonValueConversion()
+            .Metadata.SetValueComparer(infusionSlotsComparer);
+        armorBuilder.Property(armor => armor.Buff)
+            .HasColumnName("Buff")
+            .HasJsonValueConversion()
+            .Metadata.SetValueComparer(buffComparer);
 
         EntityTypeBuilder<Trinket> trinketBuilder = modelBuilder.Entity<Trinket>();
         trinketBuilder.Property(trinket => trinket.SuffixItemId).HasColumnName("SuffixItemId");
         trinketBuilder.Property(trinket => trinket.AttributeCombinationId).HasColumnName("AttributeCombinationId");
-        trinketBuilder.Property(trinket => trinket.Attributes).HasColumnName("Attributes")
-            .HasConversion(attributesConverter);
+        trinketBuilder.Property(trinket => trinket.Attributes)
+            .HasColumnName("Attributes")
+            .HasConversion(attributesConverter)
+            .Metadata.SetValueComparer(attributesComparer);
         trinketBuilder.Property(trinket => trinket.AttributeAdjustment).HasColumnName("AttributeAdjustment");
-        trinketBuilder.Property(trinket => trinket.StatChoices).HasColumnName("StatChoices").HasJsonValueConversion();
+        trinketBuilder.Property(trinket => trinket.StatChoices)
+            .HasColumnName("StatChoices")
+            .HasJsonValueConversion()
+            .Metadata.SetValueComparer(new ListComparer<int>());
         trinketBuilder.Property(trinket => trinket.InfusionSlots).HasColumnName("InfusionSlots")
-            .HasJsonValueConversion();
-        trinketBuilder.Property(trinket => trinket.Buff).HasColumnName("Buff").HasJsonValueConversion();
+            .HasJsonValueConversion()
+            .Metadata.SetValueComparer(infusionSlotsComparer);
+        trinketBuilder.Property(trinket => trinket.Buff)
+            .HasColumnName("Buff")
+            .HasJsonValueConversion()
+            .Metadata.SetValueComparer(buffComparer);
 
         EntityTypeBuilder<Ring> ringBuilder = modelBuilder.Entity<Ring>();
-        ringBuilder.Property(ring => ring.UpgradesFrom).HasColumnName("UpgradesFrom").HasJsonValueConversion();
-        ringBuilder.Property(ring => ring.UpgradesInto).HasColumnName("UpgradesInto").HasJsonValueConversion();
+        ringBuilder.Property(ring => ring.UpgradesFrom)
+            .HasColumnName("UpgradesFrom")
+            .HasJsonValueConversion()
+            .Metadata.SetValueComparer(upgradeSourceComparer);
+        ringBuilder.Property(ring => ring.UpgradesInto)
+            .HasColumnName("UpgradesInto")
+            .HasJsonValueConversion()
+            .Metadata.SetValueComparer((upgradePathComparer));
 
         EntityTypeBuilder<Weapon> weaponBuilder = modelBuilder.Entity<Weapon>();
         weaponBuilder.Property(weapon => weapon.DamageType).HasConversion(new ExtensibleEnumConverter<DamageType>());
@@ -180,57 +224,90 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
         weaponBuilder.Property(weapon => weapon.SuffixItemId).HasColumnName("SuffixItemId");
         weaponBuilder.Property(weapon => weapon.SecondarySuffixItemId).HasColumnName("SecondarySuffixItemId");
         weaponBuilder.Property(weapon => weapon.AttributeCombinationId).HasColumnName("AttributeCombinationId");
-        weaponBuilder.Property(weapon => weapon.Attributes).HasColumnName("Attributes")
-            .HasConversion(attributesConverter);
+        weaponBuilder.Property(weapon => weapon.Attributes)
+            .HasColumnName("Attributes")
+            .HasConversion(attributesConverter)
+            .Metadata.SetValueComparer(attributesComparer);
         weaponBuilder.Property(weapon => weapon.AttributeAdjustment).HasColumnName("AttributeAdjustment");
-        weaponBuilder.Property(weapon => weapon.StatChoices).HasColumnName("StatChoices").HasJsonValueConversion();
-        weaponBuilder.Property(weapon => weapon.InfusionSlots).HasColumnName("InfusionSlots").HasJsonValueConversion();
-        weaponBuilder.Property(weapon => weapon.Buff).HasColumnName("Buff").HasJsonValueConversion();
+        weaponBuilder.Property(weapon => weapon.StatChoices)
+            .HasColumnName("StatChoices")
+            .HasJsonValueConversion()
+            .Metadata.SetValueComparer(new ListComparer<int>());
+        weaponBuilder.Property(weapon => weapon.InfusionSlots).HasColumnName("InfusionSlots")
+            .HasJsonValueConversion()
+            .Metadata.SetValueComparer(infusionSlotsComparer);
+        weaponBuilder.Property(weapon => weapon.Buff)
+            .HasColumnName("Buff")
+            .HasJsonValueConversion()
+            .Metadata.SetValueComparer(buffComparer);
 
         EntityTypeBuilder<Backpack> backpackBuilder = modelBuilder.Entity<Backpack>();
         backpackBuilder.Property(backpack => backpack.DefaultSkinId).HasColumnName("DefaultSkinId");
         backpackBuilder.Property(backpack => backpack.SuffixItemId).HasColumnName("SuffixItemId");
         backpackBuilder.Property(backpack => backpack.AttributeCombinationId).HasColumnName("AttributeCombinationId");
-        backpackBuilder.Property(backpack => backpack.Attributes).HasColumnName("Attributes")
-            .HasConversion(attributesConverter);
+        backpackBuilder.Property(backpack => backpack.Attributes)
+            .HasColumnName("Attributes")
+            .HasConversion(attributesConverter)
+            .Metadata.SetValueComparer(attributesComparer);
         backpackBuilder.Property(backpack => backpack.AttributeAdjustment).HasColumnName("AttributeAdjustment");
-        backpackBuilder.Property(backpack => backpack.StatChoices).HasColumnName("StatChoices")
-            .HasJsonValueConversion();
+        backpackBuilder.Property(backpack => backpack.StatChoices)
+            .HasColumnName("StatChoices")
+            .HasJsonValueConversion()
+            .Metadata.SetValueComparer(new ListComparer<int>());
         backpackBuilder.Property(backpack => backpack.InfusionSlots).HasColumnName("InfusionSlots")
-            .HasJsonValueConversion();
-        backpackBuilder.Property(backpack => backpack.Buff).HasColumnName("Buff").HasJsonValueConversion();
-        backpackBuilder.Property(backpack => backpack.UpgradesFrom).HasColumnName("UpgradesFrom")
-            .HasJsonValueConversion();
-        backpackBuilder.Property(backpack => backpack.UpgradesInto).HasColumnName("UpgradesInto")
-            .HasJsonValueConversion();
+            .HasJsonValueConversion()
+            .Metadata.SetValueComparer(infusionSlotsComparer);
+        backpackBuilder.Property(backpack => backpack.Buff)
+            .HasColumnName("Buff")
+            .HasJsonValueConversion()
+            .Metadata.SetValueComparer(buffComparer);
+        backpackBuilder.Property(backpack => backpack.UpgradesFrom)
+            .HasColumnName("UpgradesFrom")
+            .HasJsonValueConversion()
+            .Metadata.SetValueComparer(upgradeSourceComparer);
+        backpackBuilder.Property(backpack => backpack.UpgradesInto)
+            .HasColumnName("UpgradesInto")
+            .HasJsonValueConversion()
+            .Metadata.SetValueComparer((upgradePathComparer));
 
         EntityTypeBuilder<UpgradeComponent> upgradeComponentBuilder = modelBuilder.Entity<UpgradeComponent>();
         upgradeComponentBuilder.Property(upgradeComponent => upgradeComponent.AttributeCombinationId)
             .HasColumnName("AttributeCombinationId");
         upgradeComponentBuilder.Property(upgradeComponent => upgradeComponent.Attributes)
             .HasColumnName("Attributes")
-            .HasConversion(attributesConverter);
+            .HasConversion(attributesConverter)
+            .Metadata.SetValueComparer(attributesComparer);
         upgradeComponentBuilder.Property(upgradeComponent => upgradeComponent.AttributeAdjustment)
             .HasColumnName("AttributeAdjustment");
         upgradeComponentBuilder.Property(upgradeComponent => upgradeComponent.UpgradeComponentFlags)
             .HasConversion(new JsonValueConverter<UpgradeComponentFlags>());
         upgradeComponentBuilder.Property(upgradeComponent => upgradeComponent.InfusionUpgradeFlags)
             .HasConversion(new JsonValueConverter<InfusionSlotFlags>());
-        upgradeComponentBuilder.Property(upgradeComponent => upgradeComponent.Buff).HasColumnName("Buff")
-            .HasJsonValueConversion();
+        upgradeComponentBuilder.Property(upgradeComponent => upgradeComponent.Buff)
+            .HasColumnName("Buff")
+            .HasJsonValueConversion()
+            .Metadata.SetValueComparer(buffComparer);
 
         EntityTypeBuilder<Rune> runeBuilder = modelBuilder.Entity<Rune>();
-        runeBuilder.Property(rune => rune.Bonuses).HasJsonValueConversion();
+        runeBuilder.Property(rune => rune.Bonuses)
+            .HasJsonValueConversion()
+            .Metadata.SetValueComparer(new ListComparer<string>());
 
         EntityTypeBuilder<CraftingMaterial> craftingMaterialBuilder = modelBuilder.Entity<CraftingMaterial>();
         craftingMaterialBuilder.Property(craftingMaterial => craftingMaterial.UpgradesInto)
-            .HasColumnName("UpgradesInto").HasJsonValueConversion();
+            .HasColumnName("UpgradesInto")
+            .HasJsonValueConversion()
+            .Metadata.SetValueComparer((upgradePathComparer));
 
         EntityTypeBuilder<RecipeSheet> recipeSheetBuilder = modelBuilder.Entity<RecipeSheet>();
-        recipeSheetBuilder.Property(recipeSheet => recipeSheet.ExtraRecipeIds).HasJsonValueConversion();
+        recipeSheetBuilder.Property(recipeSheet => recipeSheet.ExtraRecipeIds)
+            .HasJsonValueConversion()
+            .Metadata.SetValueComparer(new CollectionComparer<int>());
 
         EntityTypeBuilder<Transmutation> transmutationBuilder = modelBuilder.Entity<Transmutation>();
-        transmutationBuilder.Property(transmutation => transmutation.SkinIds).HasJsonValueConversion();
+        transmutationBuilder.Property(transmutation => transmutation.SkinIds)
+            .HasJsonValueConversion()
+            .Metadata.SetValueComparer(new CollectionComparer<int>());
 
         EntityTypeBuilder<Food> foodBuilder = modelBuilder.Entity<Food>();
         foodBuilder.Property(food => food.Effect).HasColumnName("Effect").HasJsonValueConversion();
