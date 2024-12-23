@@ -159,7 +159,7 @@ public class UpgradeComponentsList : FlowPanel
             Trident => component.UpgradeComponentFlags.Trident,
             Trinket => component.UpgradeComponentFlags.Trinket,
             Warhorn => component.UpgradeComponentFlags.Warhorn,
-            _ => false
+            _ => true
         };
     }
 
