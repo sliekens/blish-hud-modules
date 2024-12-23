@@ -12,7 +12,7 @@ public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ChatLinksC
         var optionsBuilder = new DbContextOptionsBuilder<ChatLinksContext>();
         optionsBuilder.UseSqlite("Data Source=data.db", sqliteOptionsBuilder =>
         {
-            sqliteOptionsBuilder.MigrationsAssembly("ChatLinks");
+            sqliteOptionsBuilder.MigrationsAssembly("SL.ChatLinks");
         });
 
         return new ChatLinksContext(optionsBuilder.Options);
