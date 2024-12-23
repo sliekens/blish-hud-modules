@@ -11,9 +11,13 @@ namespace SL.Common.Controls.Items.Upgrades;
 
 public sealed class UpgradeSlot(ItemIcons icons) : Container
 {
+    public EventHandler<EventArgs>? Cleared;
+
     private FormattedLabel? _label;
 
     private UpgradeComponent? _upgradeComponent;
+
+    private UpgradeComponent? _defaultUpgradeComponent;
 
     private UpgradeSlotType _slotType;
 
@@ -23,6 +27,21 @@ public sealed class UpgradeSlot(ItemIcons icons) : Container
         set
         {
             _upgradeComponent = value;
+            _label?.Dispose();
+            _label = null;
+            if (value is null)
+            {
+                Cleared?.Invoke(this, EventArgs.Empty);
+            }
+        }
+    }
+
+    public UpgradeComponent? DefaultUpgradeComponent
+    {
+        get => _defaultUpgradeComponent;
+        set
+        {
+            _defaultUpgradeComponent = value;
             _label?.Dispose();
             _label = null;
         }
@@ -43,24 +62,41 @@ public sealed class UpgradeSlot(ItemIcons icons) : Container
     {
         if (_label is null)
         {
-            Format(_upgradeComponent);
+            Format();
         }
 
         base.UpdateContainer(gameTime);
     }
 
-    private void Format(UpgradeComponent? component)
+    protected override void DisposeControl()
+    {
+        _label?.Dispose();
+        base.DisposeControl();
+    }
+
+    private void Format()
     {
         FormattedLabelBuilder builder = new FormattedLabelBuilder()
             .AutoSizeWidth()
             .AutoSizeHeight();
 
-        if (_upgradeComponent is not null)
+        if (UpgradeComponent is not null)
         {
             builder
-                .CreatePart(" " + _upgradeComponent.Name, part =>
+                .CreatePart(" " + UpgradeComponent.Name, part =>
                 {
-                    part.SetPrefixImage(icons.GetIcon(_upgradeComponent));
+                    part.SetPrefixImage(icons.GetIcon(UpgradeComponent));
+                    part.SetPrefixImageSize(new Point(16));
+                    part.SetHoverColor(Color.BurlyWood);
+                    part.SetFontSize(ContentService.FontSize.Size16);
+                });
+        }
+        else if (DefaultUpgradeComponent is not null)
+        {
+            builder
+                .CreatePart(" " + DefaultUpgradeComponent.Name, part =>
+                {
+                    part.SetPrefixImage(icons.GetIcon(DefaultUpgradeComponent));
                     part.SetPrefixImageSize(new Point(16));
                     part.SetHoverColor(Color.BurlyWood);
                     part.SetFontSize(ContentService.FontSize.Size16);
@@ -107,6 +143,19 @@ public sealed class UpgradeSlot(ItemIcons icons) : Container
         {
             _label.Tooltip =
                 new Tooltip(new ItemTooltipView(UpgradeComponent, icons, (Dictionary<int, UpgradeComponent>)[]));
+
+            _label.Menu = new ContextMenuStrip();
+            var remove = _label.Menu.AddMenuItem($"Remove {UpgradeComponent?.Name}");
+            remove.Click += (_, _) =>
+            {
+                UpgradeComponent = null;
+                OnCleared();
+            };
+        }
+        else if (DefaultUpgradeComponent is not null)
+        {
+            _label.Tooltip =
+                new Tooltip(new ItemTooltipView(DefaultUpgradeComponent, icons, (Dictionary<int, UpgradeComponent>)[]));
         }
         else
         {
@@ -114,9 +163,8 @@ public sealed class UpgradeSlot(ItemIcons icons) : Container
         }
     }
 
-    protected override void DisposeControl()
+    private void OnCleared()
     {
-        _label?.Dispose();
-        base.DisposeControl();
+        Cleared?.Invoke(this, EventArgs.Empty);
     }
 }

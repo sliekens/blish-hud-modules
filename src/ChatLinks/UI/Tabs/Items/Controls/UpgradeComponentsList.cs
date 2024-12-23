@@ -106,15 +106,6 @@ public class UpgradeComponentsList : FlowPanel
                 }
             };
         }
-
-        var clearButton = new StandardButton
-        {
-            Parent = this,
-            Width = Width,
-            Text = "Clear"
-        };
-
-        clearButton.Click += ClearButtonClicked;
     }
 
     private bool FilterUpgradeSlot(UpgradeComponent component)
@@ -166,10 +157,5 @@ public class UpgradeComponentsList : FlowPanel
     private void OptionClicked(object sender, Item e)
     {
         UpgradeComponentSelected?.Invoke(this, new UpgradeComponentSelectedArgs((UpgradeComponent)e));
-    }
-
-    private void ClearButtonClicked(object sender, MouseEventArgs e)
-    {
-        UpgradeComponentSelected?.Invoke(this, new UpgradeComponentSelectedArgs(null));
     }
 }
