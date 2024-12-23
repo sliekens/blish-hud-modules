@@ -1,17 +1,17 @@
 {
-    "name": "chat-links",
+    "name": "Chat Links",
     "version": "1.0.0",
     "namespace": "sliekens.chat-links",
     "package": "SL.ChatLinks.dll",
     "manifest_version": 1,
-    "description": "Chat like a pro",
+    "description": "Chat link editor—create your own customized chat links.",
     "dependencies": {
         "bh.blishhud": ">=1.2.0 <2.0.0"
     },
     "url": "https://github.com/sliekens/blish-hud-modules",
     "contributors": [
         {
-            "name": "Steven Liekens",
+            "name": "sliekens",
             "username": "Steven.6309",
             "url": "https://github.com/sliekens"
         }
