@@ -980,7 +980,7 @@ public class ItemTooltipView(Item item, ItemIcons icons, IDictionary<int, Upgrad
                 gold.SetSuffixImage(AsyncTexture2D.FromAssetId(156904));
                 gold.SetSuffixImageSize(new Point(20));
                 builder.CreatePart(gold);
-                builder.CreatePart("  ", _ => { });
+                builder.CreatePart("  ", _ => { }); 
             }
 
             if (vendorValue.Amount >= 100)

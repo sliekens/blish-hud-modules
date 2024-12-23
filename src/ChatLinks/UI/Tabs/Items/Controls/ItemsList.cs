@@ -52,11 +52,17 @@ public sealed class ItemsList : FlowPanel
 
     public void ClearOptions()
     {
-        while (!Children.IsEmpty)
+        Task.Factory.StartNew(state =>
         {
-            Children[0].Click -= OptionClick;
-            Children[0].Dispose();
-        }
+            foreach (var child in (IEnumerable<Control>)state)
+            {
+                child.Click -= OptionClick;
+                child.Dispose();
+            }
+        }, Children.ToList());
+
+        using var suspend = SuspendLayoutContext();
+        ClearChildren();
     }
 
     public void AddOption(Item item)

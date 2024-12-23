@@ -13,4 +13,10 @@ public sealed class ItemImage : Image
         Size = new Point(50, 50);
         Texture = icons.GetIcon(item);
     }
+
+    protected override void DisposeControl()
+    {
+        Texture?.Dispose();
+        base.DisposeControl();
+    }
 }
