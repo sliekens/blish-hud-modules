@@ -254,8 +254,6 @@ public sealed class ItemWidget : FlowPanel
                 || _infusionSlot3?.UpgradeComponent is not null;
             Invalidate();
         }
-
-        base.UpdateContainer(gameTime);
     }
 
     private void UpgradeSlot1Clicked(object sender, MouseEventArgs e)

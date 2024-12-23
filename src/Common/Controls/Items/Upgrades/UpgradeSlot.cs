@@ -64,8 +64,6 @@ public sealed class UpgradeSlot(ItemIcons icons) : Container
         {
             Format();
         }
-
-        base.UpdateContainer(gameTime);
     }
 
     protected override void DisposeControl()

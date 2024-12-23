@@ -39,13 +39,13 @@ public class UpgradeComponentsList : FlowPanel
 
     public override void UpdateContainer(GameTime gameTime)
     {
-        if (!_initialized)
+        if (_initialized)
         {
-            Initialize();
-            _initialized = true;
+            return;
         }
 
-        base.UpdateContainer(gameTime);
+        Initialize();
+        _initialized = true;
     }
 
     private void Initialize()
