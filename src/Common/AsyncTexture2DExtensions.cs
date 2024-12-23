@@ -7,20 +7,20 @@ namespace SL.Common;
 
 public static class AsyncTexture2DExtensions
 {
-    public static AsyncTexture2D Clone(this AsyncTexture2D instance)
+    public static AsyncTexture2D Duplicate(this AsyncTexture2D instance)
     {
         if (instance.HasSwapped)
         {
-            return instance.Texture;
+            return instance.Texture.Duplicate();
         }
 
-        AsyncTexture2D clone = new();
+        AsyncTexture2D duplicate = new();
         instance.TextureSwapped += OnTextureSwapped;
-        return clone;
+        return duplicate;
 
         void OnTextureSwapped(object sender, ValueChangedEventArgs<Texture2D> e)
         {
-            clone.SwapTexture(e.NewValue);
+            duplicate.SwapTexture(e.NewValue.Duplicate());
             instance.TextureSwapped -= OnTextureSwapped;
         }
     }

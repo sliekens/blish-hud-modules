@@ -3,7 +3,6 @@ using System.Net.Http;
 
 using Blish_HUD;
 using Blish_HUD.Content;
-using Blish_HUD.Modules;
 
 using GuildWars2.Items;
 
@@ -41,6 +40,6 @@ public class ItemIcons(HttpClient httpClient)
                 return newTexture;
             });
 
-        return cached.Clone();
+        return cached.Duplicate();
     }
 }
