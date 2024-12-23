@@ -25,6 +25,7 @@ public sealed class MainWindow : TabbedWindow2
         _emblem = AsyncEmblem.Attach(this, AsyncTexture2D.FromAssetId(2237584));
         Tabs.Add(items);
         TabChanged += OnTabChanged;
+        Subtitle = SelectedTab.Name;
     }
 
     private void OnTabChanged(object sender, ValueChangedEventArgs<Tab> args)
