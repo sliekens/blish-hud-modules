@@ -39,6 +39,8 @@ public sealed class ItemWidget : FlowPanel
 
     private readonly UpgradeSlot? _infusionSlot3;
 
+    private readonly Label? _infusionWarning;
+
     private readonly UpgradeComponentsList? _upgradeComponentList1;
 
     private readonly UpgradeComponentsList? _upgradeComponentList2;
@@ -176,6 +178,16 @@ public sealed class ItemWidget : FlowPanel
             }
         }
 
+        _infusionWarning = new Label
+        {
+            Parent = this,
+            Width = Width - 20,
+            AutoSizeHeight = true,
+            WrapText = true,
+            TextColor = Color.Yellow,
+            Text = "Due to technical restrictions, the chat link will show the item's default infusions instead of the selected infusion(s)."
+        };
+
         var quantityGroup = new FlowPanel
         {
             Parent = this,
@@ -231,6 +243,19 @@ public sealed class ItemWidget : FlowPanel
         _chatLink.Click += ChatLinkClicked;
         minQuantity.Click += (_, _) => _numberPicker.Value = 1;
         maxQuantity.Click += (_, _) => _numberPicker.Value = 250;
+    }
+
+    public override void UpdateContainer(GameTime gameTime)
+    {
+        if (_infusionWarning is not null)
+        {
+            _infusionWarning.Visible = _infusionSlot1?.UpgradeComponent is not null
+                || _infusionSlot2?.UpgradeComponent is not null
+                || _infusionSlot3?.UpgradeComponent is not null;
+            Invalidate();
+        }
+
+        base.UpdateContainer(gameTime);
     }
 
     private void UpgradeSlot1Clicked(object sender, MouseEventArgs e)

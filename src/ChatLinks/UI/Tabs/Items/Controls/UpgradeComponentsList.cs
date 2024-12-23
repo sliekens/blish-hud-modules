@@ -50,6 +50,19 @@ public class UpgradeComponentsList : FlowPanel
 
     private void Initialize()
     {
+        var cancel = new StandardButton
+        {
+            Parent = this,
+            Width = Width,
+            Text = "Cancel"
+        };
+
+        cancel.Click += (_, _) =>
+        {
+            Hide();
+            Parent?.Invalidate();
+        };
+
         var groups = _upgrades
             .Where(FilterUpgradeSlot)
             .OrderBy(upgrade => upgrade.Level)
@@ -86,9 +99,7 @@ public class UpgradeComponentsList : FlowPanel
                 CanScroll = false
             };
 
-            list.SuspendLayout();
             list.SetOptions(group);
-            list.ResumeLayout(true);
             list.OptionClicked += OptionClicked;
 
             groupPanel.Resized += (sender, args) =>
