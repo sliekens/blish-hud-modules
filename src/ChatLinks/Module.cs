@@ -1,12 +1,8 @@
-﻿using System;
-using System.ComponentModel.Composition;
+﻿using System.ComponentModel.Composition;
 
 using Blish_HUD.Modules;
 
-using CommunityToolkit.Diagnostics;
-
 using GuildWars2;
-using GuildWars2.Items;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -55,7 +51,13 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         services.AddTransient<MainIcon>();
         services.AddTransient<MainWindow>();
         services.AddTransient<ItemsTab>();
-        services.AddTransient<ItemsTabView>();
+        services.AddTransient(sp =>
+        {
+            ItemsTabView view = ActivatorUtilities.CreateInstance<ItemsTabView>(sp);
+            ItemsTabModel model = ActivatorUtilities.CreateInstance<ItemsTabModel>(sp);
+            view.WithPresenter(ActivatorUtilities.CreateInstance<ItemsTabPresenter>(sp, view, model));
+            return view;
+        });
         services.AddTransient<Func<ItemsTabView>>(sp => sp.GetRequiredService<ItemsTabView>);
         services.AddTransient<CraftingTab>();
         services.AddTransient<CraftingView>();
@@ -79,11 +81,6 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 
     private T Resolve<T>() where T : notnull
     {
-        if (_sp is null)
-        {
-            ThrowHelper.ThrowInvalidOperationException("Service provider is not initialized.");
-        }
-
         return _sp.GetRequiredService<T>();
     }
 

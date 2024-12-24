@@ -1,34 +1,19 @@
-﻿using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
-
-using Blish_HUD.Controls;
+﻿using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
-
-using CommunityToolkit.Diagnostics;
-
-using GuildWars2.Items;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 
 using SL.ChatLinks.UI.Tabs.Items.Controls;
 using SL.ChatLinks.UI.Tabs.Items.Services;
-using SL.Common;
-using SL.Common.Controls.Items;
 
 using Container = Blish_HUD.Controls.Container;
 using Item = GuildWars2.Items.Item;
 
 namespace SL.ChatLinks.UI.Tabs.Items;
 
-public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search, ItemIcons icons) : View
+public class ItemsTabView(ILogger<ItemsTabView> logger) : View<ItemsTabPresenter>, IItemsTabView
 {
-    private readonly List<Item> _default = [];
-
-    private readonly SemaphoreSlim _searchLock = new(1, 1);
-
-    private readonly IDictionary<int, UpgradeComponent> _upgrades = new Dictionary<int, UpgradeComponent>();
-
     private Container? _root;
 
     private TextBox? _searchBox;
@@ -37,21 +22,34 @@ public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search, ItemI
 
     private ItemWidget? _selectedItem;
 
-    private EventHandler? _searchUpdated;
-
-    protected override async Task<bool> Load(IProgress<string> progress)
+    public void SetSearchLoading(bool loading)
     {
-        await foreach (UpgradeComponent upgrade in search.OfType<UpgradeComponent>())
-        {
-            _upgrades.Add(upgrade.Id, upgrade);
-        }
+        _searchResults?.SetLoading(loading);
+    }
 
-        await foreach (Item item in search.NewItems(1000))
-        {
-            _default.Add(item);
-        }
+    public void AddOption(Item item)
+    {
+        _searchResults?.AddOption(item);
+    }
 
-        return true;
+    public void SetOptions(IEnumerable<Item> items)
+    {
+        _searchResults?.SetOptions(items);
+    }
+
+    public void ClearOptions()
+    {
+        _searchResults?.ClearOptions();
+    }
+
+    public void Select(Item item)
+    {
+        _selectedItem?.Dispose();
+        _selectedItem = new ItemWidget(item, Presenter.Icons, Presenter.Model.Upgrades)
+        {
+            Parent = _root,
+            Left = _searchResults!.Right
+        };
     }
 
     protected override void Build(Container buildPanel)
@@ -63,14 +61,12 @@ public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search, ItemI
             Width = 450,
             PlaceholderText = "Enter item name or chat link..."
         };
-        _searchResults = new ItemsList(icons, _upgrades.AsReadOnly())
+        _searchResults = new ItemsList(Presenter.Icons, Presenter.Model.Upgrades)
         {
             Parent = buildPanel,
             Size = new Point(450, 500),
             Top = _searchBox.Bottom
         };
-
-        _searchResults.SetOptions(_default);
 
         _searchBox.TextChanged += SearchTextChanged;
         _searchBox.EnterPressed += SearchInput;
@@ -79,7 +75,10 @@ public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search, ItemI
             _searchBox.Text = "";
         };
 
-        _searchResults.OptionClicked += ItemSelected;
+        _searchResults.OptionClicked += (sender, item) =>
+        {
+            Presenter.ViewOptionSelected(item);
+        };
     }
 
     protected override void Unload()
@@ -105,9 +104,8 @@ public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search, ItemI
 
             if (_searchBox.Focused)
             {
-                await DoSearch(_searchBox.Text);
+                await Presenter.Search(_searchBox.Text);
             }
-
         }
         catch (Exception reason)
         {
@@ -125,122 +123,12 @@ public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search, ItemI
                 return;
             }
 
-            await DoSearch(_searchBox.Text);
+            await Presenter.Search(_searchBox.Text);
         }
         catch (Exception reason)
         {
             logger.LogError(reason, "Failed to search for items");
             ScreenNotification.ShowNotification("Something went wrong", ScreenNotification.NotificationType.Red);
-        }
-    }
-
-    private async Task DoSearch(string text)
-    {
-        _searchUpdated?.Invoke(this, EventArgs.Empty);
-
-        bool searching = false;
-        using CancellationTokenSource cancellationTokenSource = new();
-        try
-        {
-            EnsureInitialized();
-
-            searching = true;
-            _searchUpdated += SearchUpdated;
-
-            // Debounce search
-            await Task.Delay(1000, cancellationTokenSource.Token);
-
-            // Ensure exclusive access to the DbContext (not thread-safe)
-            await _searchLock.WaitAsync(cancellationTokenSource.Token);
-            try
-            {
-                _searchResults.SetLoading(true);
-                string query = text.Trim();
-                switch (query.Length)
-                {
-                    case 0:
-                        _searchResults.SetOptions(_default);
-                        _searchResults.SetLoading(false);
-                        break;
-                    case >= 3:
-                        {
-                            _searchResults.ClearOptions();
-                            await foreach (Item item in search.Search(query, 100, cancellationTokenSource.Token))
-                            {
-                                _searchResults.AddOption(item);
-                            }
-
-                            searching = false;
-                            _searchResults.SetLoading(false);
-                            break;
-                        }
-                }
-            }
-            finally
-            {
-                _searchLock.Release();
-            }
-        }
-        catch (OperationCanceledException)
-        {
-            logger.LogDebug("Previous search was canceled");
-        }
-        finally
-        {
-            _searchUpdated -= SearchUpdated;
-        }
-
-        void SearchUpdated(object o, EventArgs a)
-        {
-            // ReSharper disable once AccessToModifiedClosure
-            if (!searching)
-            {
-                return;
-            }
-
-            try
-            {
-                // ReSharper disable once AccessToDisposedClosure
-                cancellationTokenSource.Cancel();
-            }
-            catch (ObjectDisposedException)
-            {
-                // Expected
-            }
-        }
-    }
-
-    private void ItemSelected(object sender, Item item)
-    {
-        EnsureInitialized();
-
-        _selectedItem?.Dispose();
-        _selectedItem = new ItemWidget(item, _upgrades.AsReadOnly(), icons)
-        {
-            Parent = _root,
-            Left = _searchResults.Right
-        };
-    }
-
-    [MemberNotNull(
-        nameof(_root),
-        nameof(_searchBox),
-        nameof(_searchResults))]
-    private void EnsureInitialized()
-    {
-        if (_root is null)
-        {
-            ThrowHelper.ThrowInvalidOperationException("_root not initialized");
-        }
-
-        if (_searchBox is null)
-        {
-            ThrowHelper.ThrowInvalidOperationException("_searchBox not initialized");
-        }
-
-        if (_searchResults is null)
-        {
-            ThrowHelper.ThrowInvalidOperationException("_searchResults not initialized");
         }
     }
 }

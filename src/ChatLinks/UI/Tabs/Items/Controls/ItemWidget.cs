@@ -52,7 +52,7 @@ public sealed class ItemWidget : FlowPanel
 
     private readonly UpgradeComponentsList? _infusionList3;
 
-    public ItemWidget(Item item, IReadOnlyDictionary<int, UpgradeComponent> upgrades, ItemIcons icons)
+    public ItemWidget(Item item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades)
     {
         ShowTint = true;
         ShowBorder = true;
