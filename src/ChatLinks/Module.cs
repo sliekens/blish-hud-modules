@@ -89,9 +89,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 
     protected override async Task LoadAsync()
     {
-        _mainWindow = Resolve<MainWindow>();
         _cornerIcon = Resolve<MainIcon>();
-        _cornerIcon.Click += CornerIcon_Click;
 
         await using ChatLinksContext context = Resolve<ChatLinksContext>();
         await context.Database.MigrateAsync();
@@ -105,6 +103,8 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         await seeder.Seed(bulkProgress, CancellationToken.None);
 
         _cornerIcon.LoadingMessage = null;
+        _mainWindow = Resolve<MainWindow>();
+        _cornerIcon.Click += CornerIcon_Click;
     }
 
     private void CornerIcon_Click(object sender, EventArgs e)
