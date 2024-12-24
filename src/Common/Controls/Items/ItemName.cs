@@ -8,18 +8,19 @@ public class ItemName : Label
 {
     private readonly Item _item;
 
+    private readonly string _baseName;
+
+    private UpgradeComponent? _suffixItem;
+
     private int _quantity;
 
-    public ItemName(Item item)
+    public ItemName(Item item, IDictionary<int, UpgradeComponent> upgrades)
     {
         TextColor = ItemColors.Rarity(item.Rarity);
-        Text = item.Name;
-        if (item.GameTypes.All(type => type.IsDefined() && type.ToEnum() is GameType.Pvp or GameType.PvpLobby))
-        {
-            Text += " (PvP)";
-        }
-
         _item = item;
+        _baseName ??= item.NameWithoutSuffix(upgrades);
+
+        UpdateText();
     }
 
     public int Quantity
@@ -28,7 +29,34 @@ public class ItemName : Label
         set
         {
             _quantity = value;
-            Text = _quantity == 1 ? _item.Name : $"{_quantity} {_item.Name}";
+            UpdateText();
+        }
+    }
+
+    public UpgradeComponent? SuffixItem
+    {
+        get => _suffixItem;
+        set
+        {
+            _suffixItem = value;
+            UpdateText();
+        }
+    }
+
+    private void UpdateText()
+    {
+        Text = _suffixItem is not null && !_item.Flags.HideSuffix
+            ? $"{_baseName} {_suffixItem.SuffixName}"
+            : _item.Name;
+
+        if (_quantity > 1)
+        {
+            Text = $"{_quantity} {Text}";
+        }
+
+        if (_item.GameTypes.All(type => type.IsDefined() && type.ToEnum() is GameType.Pvp or GameType.PvpLobby))
+        {
+            Text += " (PvP)";
         }
     }
 }

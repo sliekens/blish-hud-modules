@@ -7,6 +7,7 @@ using GuildWars2.Items;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
+using SL.Common;
 using SL.Common.Controls;
 using SL.Common.Controls.Items;
 using SL.Common.Controls.Items.Upgrades;
@@ -85,7 +86,7 @@ public sealed class ItemWidget : FlowPanel
 
         header.Menu = new ItemContextMenu(item);
 
-        _itemName = new ItemName(item)
+        _itemName = new ItemName(item, upgrades)
         {
             Parent = header,
             Width = header.Width - 50,
@@ -99,26 +100,10 @@ public sealed class ItemWidget : FlowPanel
 
         if (!item.Flags.NotUpgradeable)
         {
-            _upgradeSlot1 = CreateUpgradeSlot(UpgradeSlotType.Default, _item switch
-            {
-                Armor { SuffixItemId: not null } armor =>
-                    _upgrades.TryGetValue(armor.SuffixItemId.Value, out var upgradeComponent) ? upgradeComponent : null,
-                Backpack { SuffixItemId: not null } back =>
-                    _upgrades.TryGetValue(back.SuffixItemId.Value, out var upgradeComponent) ? upgradeComponent : null,
-                Trinket { SuffixItemId: not null } trinket =>
-                    _upgrades.TryGetValue(trinket.SuffixItemId.Value, out var upgradeComponent) ? upgradeComponent : null,
-                Weapon { SuffixItemId: not null } weapon =>
-                    _upgrades.TryGetValue(weapon.SuffixItemId.Value, out var upgradeComponent) ? upgradeComponent : null,
-                _ => null
-            });
+            _upgradeSlot1 = CreateUpgradeSlot(UpgradeSlotType.Default, _item.SuffixItem(upgrades));
 
             _upgradeComponentList1 = CreateUpgradeComponentsList(UpgradeSlotType.Default);
-            _upgradeSlot2 = CreateUpgradeSlot(UpgradeSlotType.Default, _item switch
-            {
-                Weapon { SecondarySuffixItemId: not null } weapon =>
-                    _upgrades.TryGetValue(weapon.SecondarySuffixItemId.Value, out var upgradeComponent) ? upgradeComponent : null,
-                _ => null
-            });
+            _upgradeSlot2 = CreateUpgradeSlot(UpgradeSlotType.Default, _item.SecondarySuffixItem(upgrades));
 
             _upgradeComponentList2 = CreateUpgradeComponentsList(UpgradeSlotType.Default);
             _upgradeSlot1.Click += UpgradeSlot1Clicked;
@@ -336,7 +321,7 @@ public sealed class ItemWidget : FlowPanel
         if (_upgradeSlot1.UpgradeComponent != e.Selected)
         {
             _upgradeSlot1.UpgradeComponent = e.Selected;
-            UpdateTooltip();
+            UpdateHeader();
             UpdateChatLink();
         }
         else
@@ -358,7 +343,7 @@ public sealed class ItemWidget : FlowPanel
         if (_upgradeSlot2.UpgradeComponent != e.Selected)
         {
             _upgradeSlot2.UpgradeComponent = e.Selected;
-            UpdateTooltip();
+            UpdateHeader();
             UpdateChatLink();
         }
         else
@@ -380,7 +365,7 @@ public sealed class ItemWidget : FlowPanel
         if (_infusionSlot1.UpgradeComponent != e.Selected)
         {
             _infusionSlot1.UpgradeComponent = e.Selected;
-            UpdateTooltip();
+            UpdateHeader();
             UpdateChatLink();
         }
         else
@@ -402,7 +387,7 @@ public sealed class ItemWidget : FlowPanel
         if (_infusionSlot2.UpgradeComponent != e.Selected)
         {
             _infusionSlot2.UpgradeComponent = e.Selected;
-            UpdateTooltip();
+            UpdateHeader();
             UpdateChatLink();
         }
         else
@@ -424,7 +409,7 @@ public sealed class ItemWidget : FlowPanel
         if (_infusionSlot3.UpgradeComponent != e.Selected)
         {
             _infusionSlot3.UpgradeComponent = e.Selected;
-            UpdateTooltip();
+            UpdateHeader();
             UpdateChatLink();
         }
         else
@@ -439,7 +424,7 @@ public sealed class ItemWidget : FlowPanel
     private void UpgradeSlotCleared(object sender, EventArgs e)
     {
         UpdateChatLink();
-        UpdateTooltip();
+        UpdateHeader();
     }
 
     protected override void OnMouseWheelScrolled(MouseEventArgs e)
@@ -499,28 +484,36 @@ public sealed class ItemWidget : FlowPanel
         _chatLink.SelectionEnd = _chatLink.Text.Length;
     }
 
-    private void UpdateTooltip()
+    private void UpdateHeader()
     {
+        _itemName.SuffixItem = _upgradeSlot1?.UpgradeComponent
+            ?? _upgradeSlot1?.DefaultUpgradeComponent
+            ?? _upgradeSlot2?.UpgradeComponent
+            ?? _upgradeSlot2?.DefaultUpgradeComponent;
         _itemIcon.Tooltip = new Tooltip(new ItemTooltipView(_item switch
         {
             Armor armor => armor with
             {
+                Name = armor.NameWithoutSuffix(_upgrades),
                 SuffixItemId = _upgradeSlot1?.UpgradeComponent?.Id ?? _upgradeSlot1?.DefaultUpgradeComponent?.Id,
                 InfusionSlots = GetSelectedInfusionSlots().ToList()
             },
             Weapon weapon => weapon with
             {
+                Name = weapon.NameWithoutSuffix(_upgrades),
                 SuffixItemId = _upgradeSlot1?.UpgradeComponent?.Id ?? _upgradeSlot1?.DefaultUpgradeComponent?.Id,
                 SecondarySuffixItemId = _upgradeSlot2?.UpgradeComponent?.Id ?? _upgradeSlot2?.DefaultUpgradeComponent?.Id,
                 InfusionSlots = GetSelectedInfusionSlots().ToList()
             },
             Backpack back => back with
             {
+                Name = back.NameWithoutSuffix(_upgrades),
                 SuffixItemId = _upgradeSlot1?.UpgradeComponent?.Id,
                 InfusionSlots = GetSelectedInfusionSlots().ToList()
             },
             Trinket trinket => trinket with
             {
+                Name = trinket.NameWithoutSuffix(_upgrades),
                 SuffixItemId = _upgradeSlot1?.UpgradeComponent?.Id,
                 InfusionSlots = GetSelectedInfusionSlots().ToList()
             },

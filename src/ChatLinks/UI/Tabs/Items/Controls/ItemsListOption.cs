@@ -34,7 +34,7 @@ public sealed class ItemsListOption : Container
             Parent = this
         };
 
-        _name = new ItemName(item)
+        _name = new ItemName(item, upgrades)
         {
             Left = 40,
             Width = 385,
