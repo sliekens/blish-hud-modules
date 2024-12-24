@@ -9,6 +9,9 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
+using SL.ChatLinks.Storage.Comparers;
+using SL.ChatLinks.Storage.Converters;
+
 namespace SL.ChatLinks.Storage;
 
 public class ChatLinksContext(DbContextOptions options) : DbContext(options)

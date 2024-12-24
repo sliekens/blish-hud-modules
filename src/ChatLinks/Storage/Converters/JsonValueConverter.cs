@@ -2,7 +2,7 @@
 
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace SL.ChatLinks.Storage;
+namespace SL.ChatLinks.Storage.Converters;
 
 public class JsonValueConverter<T>() : ValueConverter<T, string>(
     static value => Serialize(value),

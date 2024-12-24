@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace SL.ChatLinks.Storage;
+namespace SL.ChatLinks.Storage.Comparers;
 
 public sealed class DictionaryComparer<TKey, TValue>() : ValueComparer<IDictionary<TKey, TValue>>(
     (left, right) => DictionaryEquals(left, right),

@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace SL.ChatLinks.Storage;
+namespace SL.ChatLinks.Storage.Converters;
 
-internal  static class ConverterExtensions
+internal static class ConverterExtensions
 {
     public static PropertyBuilder<T> HasJsonValueConversion<T>(this PropertyBuilder<T> propertyBuilder)
     {
