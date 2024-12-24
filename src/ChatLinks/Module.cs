@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.Composition;
 
+using Blish_HUD;
 using Blish_HUD.Modules;
 
 using GuildWars2;
@@ -70,8 +71,17 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 
         services.AddLogging(builder =>
         {
-            builder.AddProvider(new LoggingAdapterProvider<Module>());
-            builder.SetMinimumLevel(LogLevel.Debug);
+            builder.Services.AddSingleton<ILoggerProvider, LoggingAdapterProvider<Module>>();
+            if (ApplicationSettings.Instance.DebugEnabled || GameService.Debug.EnableDebugLogging.Value)
+            {
+                builder.SetMinimumLevel(LogLevel.Debug);
+            }
+            else
+            {
+                builder.AddFilter("Microsoft.Extensions.Http.DefaultHttpClientFactory", LogLevel.Warning);
+                builder.AddFilter("System.Net.Http.HttpClient", LogLevel.Warning);
+                builder.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.Warning);
+            }
         });
 
         _sp = services.BuildServiceProvider();

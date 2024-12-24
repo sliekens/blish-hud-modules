@@ -1,17 +1,23 @@
 ﻿using Blish_HUD;
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace SL.ChatLinks.Logging;
 
-public class LoggingAdapter<T> : ILogger
+public class LoggingAdapter<T>(string categoryName, IOptionsMonitor<LoggerFilterOptions> options) : ILogger
 {
     private static readonly Logger Sink = Logger.GetLogger<T>();
 
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception,
         Func<TState, Exception?, string> formatter)
     {
-        string logMessage = formatter(state, exception);
+        if (!IsEnabled(logLevel))
+        {
+            return;
+        }
+
+        string logMessage = $"{categoryName} | {formatter(state, exception)}";
         switch (logLevel)
         {
             case LogLevel.Trace:
@@ -41,7 +47,26 @@ public class LoggingAdapter<T> : ILogger
 
     public bool IsEnabled(LogLevel logLevel)
     {
-        return true;
+        // Check if global filters disable this log level
+        foreach (var rule in options.CurrentValue.Rules)
+        {
+            if (rule.ProviderName is not null or "Blish_HUD")
+            {
+                continue;
+            }
+
+            // Match category-specific or fallback rules
+            if (rule.CategoryName == null || categoryName.StartsWith(rule.CategoryName, StringComparison.OrdinalIgnoreCase))
+            {
+                if (rule.LogLevel == null || logLevel >= rule.LogLevel)
+                {
+                    return rule.Filter?.Invoke("Blish_HUD", categoryName, logLevel) ?? true;
+                }
+            }
+        }
+
+        // Default to the global minimum log level if no rules match
+        return logLevel >= options.CurrentValue.MinLevel;
     }
 
     public IDisposable? BeginScope<TState>(TState state) where TState : notnull
