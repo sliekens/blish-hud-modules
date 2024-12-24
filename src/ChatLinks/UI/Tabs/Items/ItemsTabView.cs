@@ -72,7 +72,15 @@ public class ItemsTabView(ILogger<ItemsTabView> logger) : View<ItemsTabPresenter
         _searchBox.EnterPressed += SearchInput;
         _searchBox.InputFocusChanged += (sender, args) =>
         {
-            _searchBox.Text = "";
+            if (args.Value)
+            {
+                _searchBox.SelectionStart = 0;
+                _searchBox.SelectionEnd = _searchBox.Length;
+            }
+            else
+            {
+                _searchBox.SelectionStart = _searchBox.SelectionEnd;
+            }
         };
 
         _searchResults.OptionClicked += (sender, item) =>
