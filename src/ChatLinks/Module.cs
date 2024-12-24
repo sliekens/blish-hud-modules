@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.Composition;
+﻿using System;
+using System.ComponentModel.Composition;
 
 using Blish_HUD.Modules;
 
@@ -32,6 +33,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
     private MainIcon? _cornerIcon;
 
     private MainWindow? _mainWindow;
+
     private ServiceProvider? _sp;
 
     protected override void Initialize()
@@ -47,6 +49,8 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
             string connectionString = $"Data Source={file}";
             optionsBuilder.UseSqlite(connectionString);
         }, ServiceLifetime.Transient);
+
+        services.AddTransient<ItemSeeder>();
 
         services.AddTransient<MainIcon>();
         services.AddTransient<MainWindow>();
@@ -91,58 +95,16 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 
         await using ChatLinksContext context = Resolve<ChatLinksContext>();
         await context.Database.MigrateAsync();
-        Progress<string> reporter = new(report =>
-        {
-            _cornerIcon.LoadingMessage = report;
-        });
 
-        await SeedItems(reporter);
-
-        _cornerIcon.LoadingMessage = null;
-    }
-
-
-    private async Task SeedItems(IProgress<string> progress)
-    {
-        Gw2Client gw2Client = Resolve<Gw2Client>();
-        ChatLinksContext context = Resolve<ChatLinksContext>();
-        HashSet<int> index = await gw2Client.Items.GetItemsIndex().ValueOnly();
-        var existing = await context.Items.Select(item => item.Id).ToListAsync();
-        index.ExceptWith(existing);
-        if (index.Count == 0)
-        {
-            return;
-        }
-
+        ItemSeeder seeder = Resolve<ItemSeeder>();
         Progress<BulkProgress> bulkProgress = new(report =>
         {
-            progress.Report($"Loading items... ({report.ResultCount} of {report.ResultTotal})");
+            _cornerIcon.LoadingMessage = $"Loading items... ({report.ResultCount} of {report.ResultTotal})";
         });
 
-        List<Item> batch = [];
-        await foreach (Item item in gw2Client.Items.GetItemsBulk(index, progress: bulkProgress).ValueOnly())
-        {
-            if (batch.Count == 100)
-            {
-                await context.BulkInsertAsync(batch, o =>
-                {
-                    o.BatchSize = 100;
-                    o.InsertKeepIdentity = true;
-                });
-                batch.Clear();
-            }
+        await seeder.Seed(bulkProgress, CancellationToken.None);
 
-            batch.Add(item);
-        }
-
-        if (batch.Count != 0)
-        {
-            await context.BulkInsertAsync(batch, o =>
-            {
-                o.BatchSize = 100;
-                o.InsertKeepIdentity = true;
-            });
-        }
+        _cornerIcon.LoadingMessage = null;
     }
 
     private void CornerIcon_Click(object sender, EventArgs e)
