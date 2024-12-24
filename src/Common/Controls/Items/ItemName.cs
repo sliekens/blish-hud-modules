@@ -14,7 +14,7 @@ public class ItemName : Label
 
     private int _quantity;
 
-    public ItemName(Item item, IDictionary<int, UpgradeComponent> upgrades)
+    public ItemName(Item item, IReadOnlyDictionary<int, UpgradeComponent> upgrades)
     {
         TextColor = ItemColors.Rarity(item.Rarity);
         _item = item;

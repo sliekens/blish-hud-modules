@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 
 using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
@@ -12,6 +13,7 @@ using Microsoft.Xna.Framework;
 
 using SL.ChatLinks.UI.Tabs.Items.Controls;
 using SL.ChatLinks.UI.Tabs.Items.Services;
+using SL.Common;
 using SL.Common.Controls.Items;
 
 using Container = Blish_HUD.Controls.Container;
@@ -61,7 +63,7 @@ public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search, ItemI
             Width = 450,
             PlaceholderText = "Enter item name or chat link..."
         };
-        _searchResults = new ItemsList(icons, _upgrades)
+        _searchResults = new ItemsList(icons, _upgrades.AsReadOnly())
         {
             Parent = buildPanel,
             Size = new Point(450, 500),
@@ -213,7 +215,7 @@ public class ItemsTabView(ILogger<ItemsTabView> logger, ItemSearch search, ItemI
         EnsureInitialized();
 
         _selectedItem?.Dispose();
-        _selectedItem = new ItemWidget(item, _upgrades, icons)
+        _selectedItem = new ItemWidget(item, _upgrades.AsReadOnly(), icons)
         {
             Parent = _root,
             Left = _searchResults.Right

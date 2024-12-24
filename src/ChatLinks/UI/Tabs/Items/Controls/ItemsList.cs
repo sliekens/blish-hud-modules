@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using Blish_HUD;
+﻿using Blish_HUD;
 using Blish_HUD.Controls;
 using Blish_HUD.Input;
 
@@ -17,7 +15,7 @@ public sealed class ItemsList : FlowPanel
 {
     private readonly ItemIcons _icons;
 
-    private readonly IDictionary<int, UpgradeComponent> _upgrades;
+    private readonly IReadOnlyDictionary<int, UpgradeComponent> _upgrades;
 
     private bool _loading;
 
@@ -25,7 +23,7 @@ public sealed class ItemsList : FlowPanel
 
     public ItemsList(
         ItemIcons icons,
-        IDictionary<int, UpgradeComponent> upgrades)
+        IReadOnlyDictionary<int, UpgradeComponent> upgrades)
     {
         _icons = icons;
         _upgrades = upgrades;

@@ -11,7 +11,7 @@ using Container = Blish_HUD.Controls.Container;
 
 namespace SL.Common.Controls.Items.Upgrades;
 
-internal sealed class ItemUpgradeBuilder(ItemFlags flags, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades)
+internal sealed class ItemUpgradeBuilder(ItemFlags flags, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades)
 {
     private static readonly Color UpgradeTextColor = new(0x55, 0x99, 0xFF);
 
@@ -94,7 +94,7 @@ internal sealed class ItemUpgradeBuilder(ItemFlags flags, ItemIcons icons, IDict
         return upgrade;
     }
 
-    private static Control? UpgradeSlot(int itemId, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades,
+    private static Control? UpgradeSlot(int itemId, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades,
         Container parent)
     {
         if (!upgrades.TryGetValue(itemId, out UpgradeComponent? item))
@@ -206,7 +206,7 @@ internal sealed class ItemUpgradeBuilder(ItemFlags flags, ItemIcons icons, IDict
     }
 
     private static Control? InfusionSlot(InfusionSlot slot, ItemIcons icons,
-        IDictionary<int, UpgradeComponent> upgrades, Container parent)
+        IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container parent)
     {
         if (!slot.ItemId.HasValue)
         {

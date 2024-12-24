@@ -24,7 +24,7 @@ public static class ItemExtensions
         };
     }
 
-    public static UpgradeComponent? SuffixItem(this Item item, IDictionary<int, UpgradeComponent> upgrades)
+    public static UpgradeComponent? SuffixItem(this Item item, IReadOnlyDictionary<int, UpgradeComponent> upgrades)
     {
         var suffixItemId = item.SuffixItemId();
         if (suffixItemId.HasValue && upgrades.TryGetValue(suffixItemId.Value, out UpgradeComponent suffixItem))
@@ -35,7 +35,7 @@ public static class ItemExtensions
         return null;
     }
 
-    public static UpgradeComponent? SecondarySuffixItem(this Item item, IDictionary<int, UpgradeComponent> upgrades)
+    public static UpgradeComponent? SecondarySuffixItem(this Item item, IReadOnlyDictionary<int, UpgradeComponent> upgrades)
     {
         var secondarySuffixItemId = item.SecondarySuffixItemId();
         if (secondarySuffixItemId.HasValue && upgrades.TryGetValue(secondarySuffixItemId.Value, out UpgradeComponent secondarySuffixItem))
@@ -46,7 +46,7 @@ public static class ItemExtensions
         return null;
     }
 
-    public static string NameWithoutSuffix(this Item item, IDictionary<int, UpgradeComponent> upgrades)
+    public static string NameWithoutSuffix(this Item item, IReadOnlyDictionary<int, UpgradeComponent> upgrades)
     {
         var name = item.Name;
         if (!item.Flags.HideSuffix)

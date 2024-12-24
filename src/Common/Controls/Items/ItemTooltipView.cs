@@ -21,7 +21,7 @@ using Item = GuildWars2.Items.Item;
 
 namespace SL.Common.Controls.Items;
 
-public class ItemTooltipView(Item item, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades) : View, ITooltipView
+public class ItemTooltipView(Item item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades) : View, ITooltipView
 {
     protected override void Build(Container buildPanel)
     {
@@ -91,7 +91,7 @@ public class ItemTooltipView(Item item, ItemIcons icons, IDictionary<int, Upgrad
                 break;
         }
 
-        static void PrintArmor(Armor item, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades, Container layout)
+        static void PrintArmor(Armor item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
         {
             Header(item, icons, upgrades, layout);
             Defense(item.Defense, layout);
@@ -146,7 +146,7 @@ public class ItemTooltipView(Item item, ItemIcons icons, IDictionary<int, Upgrad
             VendorValue(item, layout);
         }
 
-        static void PrintBackpack(Backpack item, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades, Container layout)
+        static void PrintBackpack(Backpack item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
         {
             Header(item, icons, upgrades, layout);
 
@@ -180,7 +180,7 @@ public class ItemTooltipView(Item item, ItemIcons icons, IDictionary<int, Upgrad
             VendorValue(item, layout);
         }
 
-        static void PrintBag(Bag item, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades, Container layout)
+        static void PrintBag(Bag item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
         {
             Header(item, icons, upgrades, layout);
             Description(item, layout);
@@ -196,7 +196,7 @@ public class ItemTooltipView(Item item, ItemIcons icons, IDictionary<int, Upgrad
             VendorValue(item, layout);
         }
 
-        static void PrintConsumable(Consumable item, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades, Container layout)
+        static void PrintConsumable(Consumable item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
         {
             Header(item, icons, upgrades, layout);
             switch (item)
@@ -261,7 +261,7 @@ public class ItemTooltipView(Item item, ItemIcons icons, IDictionary<int, Upgrad
             VendorValue(item, layout);
         }
 
-        static void PrintContainer(GuildWars2.Items.Container item, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades, Container layout)
+        static void PrintContainer(GuildWars2.Items.Container item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
         {
             Header(item, icons, upgrades, layout);
             Description(item, layout);
@@ -277,7 +277,7 @@ public class ItemTooltipView(Item item, ItemIcons icons, IDictionary<int, Upgrad
             VendorValue(item, layout);
         }
 
-        static void PrintCraftingMaterial(CraftingMaterial item, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades, Container layout)
+        static void PrintCraftingMaterial(CraftingMaterial item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
         {
             Header(item, icons, upgrades, layout);
             Description(item, layout);
@@ -292,7 +292,7 @@ public class ItemTooltipView(Item item, ItemIcons icons, IDictionary<int, Upgrad
             VendorValue(item, layout);
         }
 
-        static void PrintGatheringTool(GatheringTool item, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades, Container layout)
+        static void PrintGatheringTool(GatheringTool item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
         {
             Header(item, icons, upgrades, layout);
             Description(item, layout);
@@ -308,7 +308,7 @@ public class ItemTooltipView(Item item, ItemIcons icons, IDictionary<int, Upgrad
             VendorValue(item, layout);
         }
 
-        static void PrintGizmo(Gizmo item, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades, Container layout)
+        static void PrintGizmo(Gizmo item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
         {
             Header(item, icons, upgrades, layout);
             Description(item, layout, item.Level > 0);
@@ -326,7 +326,7 @@ public class ItemTooltipView(Item item, ItemIcons icons, IDictionary<int, Upgrad
             VendorValue(item, layout);
         }
 
-        static void PrintJadeTechModule(JadeTechModule item, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades, Container layout)
+        static void PrintJadeTechModule(JadeTechModule item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
         {
             Header(item, icons, upgrades, layout);
             Description(item, layout, true);
@@ -347,7 +347,7 @@ public class ItemTooltipView(Item item, ItemIcons icons, IDictionary<int, Upgrad
             VendorValue(item, layout);
         }
 
-        static void PrintMiniature(Miniature item, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades, Container layout)
+        static void PrintMiniature(Miniature item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
         {
             Header(item, icons, upgrades, layout);
             Description(item, layout);
@@ -367,7 +367,7 @@ public class ItemTooltipView(Item item, ItemIcons icons, IDictionary<int, Upgrad
             VendorValue(item, layout);
         }
 
-        static void PrintPowerCore(PowerCore item, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades, Container layout)
+        static void PrintPowerCore(PowerCore item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
         {
             Header(item, icons, upgrades, layout);
             Description(item, layout, true);
@@ -387,7 +387,7 @@ public class ItemTooltipView(Item item, ItemIcons icons, IDictionary<int, Upgrad
             VendorValue(item, layout);
         }
 
-        static void PrintRelic(Relic item, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades, Container layout)
+        static void PrintRelic(Relic item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
         {
             Header(item, icons, upgrades, layout);
             Description(item, layout, true);
@@ -406,7 +406,7 @@ public class ItemTooltipView(Item item, ItemIcons icons, IDictionary<int, Upgrad
             VendorValue(item, layout);
         }
 
-        static void PrintSalvageTool(SalvageTool item, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades, Container layout)
+        static void PrintSalvageTool(SalvageTool item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
         {
             Header(item, icons, upgrades, layout);
             PlainText(" ", layout);
@@ -425,7 +425,7 @@ public class ItemTooltipView(Item item, ItemIcons icons, IDictionary<int, Upgrad
             VendorValue(item, layout);
         }
 
-        static void PrintTrinket(Trinket item, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades, Container layout)
+        static void PrintTrinket(Trinket item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
         {
             Header(item, icons, upgrades, layout);
 
@@ -470,7 +470,7 @@ public class ItemTooltipView(Item item, ItemIcons icons, IDictionary<int, Upgrad
             VendorValue(item, layout);
         }
 
-        static void PrintTrophy(Trophy item, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades, Container layout)
+        static void PrintTrophy(Trophy item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
         {
             Header(item, icons, upgrades, layout);
             Description(item, layout, true);
@@ -487,7 +487,7 @@ public class ItemTooltipView(Item item, ItemIcons icons, IDictionary<int, Upgrad
             VendorValue(item, layout);
         }
 
-        static void PrintUpgradeComponent(UpgradeComponent item, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades, Container layout)
+        static void PrintUpgradeComponent(UpgradeComponent item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
         {
             Header(item, icons, upgrades, layout);
 
@@ -540,7 +540,7 @@ public class ItemTooltipView(Item item, ItemIcons icons, IDictionary<int, Upgrad
             VendorValue(item, layout);
         }
 
-        static void PrintWeapon(Weapon item, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades, Container layout)
+        static void PrintWeapon(Weapon item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
         {
             Header(item, icons, upgrades, layout);
             WeaponStrength(item, layout);
@@ -653,7 +653,7 @@ public class ItemTooltipView(Item item, ItemIcons icons, IDictionary<int, Upgrad
             VendorValue(item, layout);
         }
 
-        static void Print(Item item, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades, Container layout)
+        static void Print(Item item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
         {
             Header(item, icons, upgrades, layout);
             Description(item, layout);
@@ -669,7 +669,7 @@ public class ItemTooltipView(Item item, ItemIcons icons, IDictionary<int, Upgrad
             VendorValue(item, layout);
         }
 
-        static void Header(Item item, ItemIcons icons, IDictionary<int, UpgradeComponent> upgrades, Container parent)
+        static void Header(Item item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container parent)
         {
             FlowPanel header = new()
             {
