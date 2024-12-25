@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel.Composition;
 
 using Blish_HUD;
+using Blish_HUD.Controls;
+using Blish_HUD.Input;
 using Blish_HUD.Modules;
 
 using GuildWars2;
@@ -34,6 +36,8 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 
     private ServiceProvider? _sp;
 
+    private ContextMenuStripItem? _syncButton;
+
     protected override void Initialize()
     {
         ServiceCollection services = new();
@@ -48,7 +52,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
             var connection = new SqliteConnection(connectionString);
             Levenshtein.RegisterLevenshteinFunction(connection);
             optionsBuilder.UseSqlite(connection);
-        }, ServiceLifetime.Transient);
+        }, ServiceLifetime.Transient, ServiceLifetime.Transient);
 
         services.AddTransient<ItemSeeder>();
 
@@ -115,6 +119,49 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         _cornerIcon.LoadingMessage = null;
         _mainWindow = Resolve<MainWindow>();
         _cornerIcon.Click += CornerIcon_Click;
+        _cornerIcon.Menu = new ContextMenuStrip();
+        _syncButton = _cornerIcon.Menu.AddMenuItem("Sync database");
+        _syncButton.Click += SyncClicked;
+    }
+
+    private async void SyncClicked(object sender, MouseEventArgs e)
+    {
+        var logger = Resolve<ILogger<Module>>();
+        try
+        {
+            _syncButton!.Enabled = false;
+            ItemSeeder seeder = Resolve<ItemSeeder>();
+            Progress<BulkProgress> bulkProgress = new(report =>
+            {
+                _cornerIcon!.LoadingMessage = $"Loading items... ({report.ResultCount} of {report.ResultTotal})";
+            });
+
+            if (Program.IsMainThread)
+            {
+                var seederTask = await Task.Factory.StartNew(async () =>
+                {
+                    await seeder.Seed(bulkProgress, CancellationToken.None);
+                }, TaskCreationOptions.LongRunning);
+                await seederTask;
+            }
+            else
+            {
+                await seeder.Seed(bulkProgress, CancellationToken.None);
+            }
+
+            ScreenNotification.ShowNotification("Everything is up-to-date.", ScreenNotification.NotificationType.Green);
+        }
+        catch (Exception reason)
+        {
+            logger.LogError(reason, "Sync failed");
+            ScreenNotification.ShowNotification("Sync failed, try again later.",
+                ScreenNotification.NotificationType.Warning);
+        }
+        finally
+        {
+            _cornerIcon!.LoadingMessage = null;
+            _syncButton!.Enabled = true;
+        }
     }
 
     private void CornerIcon_Click(object sender, EventArgs e)
@@ -124,11 +171,6 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 
     protected override void Unload()
     {
-        if (_cornerIcon is not null)
-        {
-            _cornerIcon.Click -= CornerIcon_Click;
-        }
-
         _cornerIcon?.Dispose();
         _mainWindow?.Dispose();
         _sp?.Dispose();

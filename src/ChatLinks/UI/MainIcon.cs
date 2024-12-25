@@ -6,7 +6,10 @@ namespace SL.ChatLinks.UI;
 public sealed class MainIcon : CornerIcon
 {
     public MainIcon()
-        : base(AsyncTexture2D.FromAssetId(155156), AsyncTexture2D.FromAssetId(155157), "Chat links")
+        : base(AsyncTexture2D.FromAssetId(155156), AsyncTexture2D.FromAssetId(155157), """
+            Chat links
+            Right-click for options
+            """)
     {
         Parent = Graphics.SpriteScreen;
         Priority = 745727698;
