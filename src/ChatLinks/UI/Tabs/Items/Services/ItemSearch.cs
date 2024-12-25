@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using GuildWars2.Chat;
 using GuildWars2.Items;
 
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 using SL.ChatLinks.Storage;
@@ -30,11 +31,12 @@ public sealed class ItemSearch(ChatLinksContext context)
             .AsAsyncEnumerable();
     }
 
-    public async IAsyncEnumerable<Item> Search(string query, int limit, [EnumeratorCancellation] CancellationToken cancellationToken)
+    public async IAsyncEnumerable<Item> Search(string query, int limit,
+        [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         if (ChatLinkPattern.IsMatch(query))
         {
-            var chatLink = ItemLink.Parse(query);
+            ItemLink chatLink = ItemLink.Parse(query);
             await foreach (Item item in SearchByChatLink(chatLink, cancellationToken))
             {
                 yield return item;
@@ -42,9 +44,13 @@ public sealed class ItemSearch(ChatLinksContext context)
         }
         else
         {
-            await foreach (var item in _items
-                .OrderBy(item => item.Id)
-                .Where(i => i.Name.ToLower().Contains(query.ToLowerInvariant()))
+            await foreach (Item? item in context.Items.FromSqlInterpolated(
+                $"""
+                SELECT * FROM Items
+                WHERE Name LIKE '%' || {query} || '%'
+                ORDER BY LevenshteinDistance({query}, Name)
+                """)
+                .AsNoTracking()
                 .Take(limit)
                 .AsAsyncEnumerable()
                 .WithCancellation(cancellationToken))
@@ -54,7 +60,8 @@ public sealed class ItemSearch(ChatLinksContext context)
         }
     }
 
-    private async IAsyncEnumerable<Item> SearchByChatLink(ItemLink link, [EnumeratorCancellation] CancellationToken cancellationToken)
+    private async IAsyncEnumerable<Item> SearchByChatLink(ItemLink link,
+        [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         Item item = await _items.SingleOrDefaultAsync(row => row.Id == link.ItemId, cancellationToken);
         if (item is null)
@@ -64,7 +71,7 @@ public sealed class ItemSearch(ChatLinksContext context)
 
         yield return item;
 
-        var relatedItems = new HashSet<int>();
+        HashSet<int> relatedItems = new();
         if (link.SuffixItemId.HasValue)
         {
             relatedItems.Add(link.SuffixItemId.Value);
@@ -86,10 +93,9 @@ public sealed class ItemSearch(ChatLinksContext context)
                 if (weapon.SecondarySuffixItemId.HasValue)
                 {
                     relatedItems.Add(weapon.SecondarySuffixItemId.Value);
-
                 }
 
-                foreach (var slot in weapon.InfusionSlots)
+                foreach (InfusionSlot? slot in weapon.InfusionSlots)
                 {
                     if (slot.ItemId.HasValue)
                     {
@@ -105,7 +111,7 @@ public sealed class ItemSearch(ChatLinksContext context)
                     relatedItems.Add(armor.SuffixItemId.Value);
                 }
 
-                foreach (var slot in armor.InfusionSlots)
+                foreach (InfusionSlot? slot in armor.InfusionSlots)
                 {
                     if (slot.ItemId.HasValue)
                     {
@@ -120,7 +126,7 @@ public sealed class ItemSearch(ChatLinksContext context)
                     relatedItems.Add(back.SuffixItemId.Value);
                 }
 
-                foreach (var slot in back.InfusionSlots)
+                foreach (InfusionSlot? slot in back.InfusionSlots)
                 {
                     if (slot.ItemId.HasValue)
                     {
@@ -128,12 +134,12 @@ public sealed class ItemSearch(ChatLinksContext context)
                     }
                 }
 
-                foreach (var source in back.UpgradesFrom)
+                foreach (InfusionSlotUpgradeSource? source in back.UpgradesFrom)
                 {
                     relatedItems.Add(source.ItemId);
                 }
 
-                foreach (var upgrade in back.UpgradesInto)
+                foreach (InfusionSlotUpgradePath? upgrade in back.UpgradesInto)
                 {
                     relatedItems.Add(upgrade.ItemId);
                 }
@@ -146,7 +152,7 @@ public sealed class ItemSearch(ChatLinksContext context)
                     relatedItems.Add(trinket.SuffixItemId.Value);
                 }
 
-                foreach (var slot in trinket.InfusionSlots)
+                foreach (InfusionSlot? slot in trinket.InfusionSlots)
                 {
                     if (slot.ItemId.HasValue)
                     {
@@ -157,21 +163,49 @@ public sealed class ItemSearch(ChatLinksContext context)
                 break;
             case CraftingMaterial material:
 
-                foreach (var upgrade in material.UpgradesInto)
+                foreach (InfusionSlotUpgradePath? upgrade in material.UpgradesInto)
                 {
                     relatedItems.Add(upgrade.ItemId);
                 }
 
                 break;
-
         }
 
-        await foreach (var relatedItem in _items
-            .Where(i => relatedItems.Contains(i.Id))
-            .AsAsyncEnumerable()
-            .WithCancellation(cancellationToken))
+        await foreach (Item? relatedItem in _items
+                           .Where(i => relatedItems.Contains(i.Id))
+                           .AsAsyncEnumerable()
+                           .WithCancellation(cancellationToken))
         {
             yield return relatedItem;
         }
+    }
+
+    private static int LevenshteinDistance(string a, string b)
+    {
+        if (string.IsNullOrEmpty(a))
+        {
+            return string.IsNullOrEmpty(b) ? 0 : b.Length;
+        }
+
+        if (string.IsNullOrEmpty(b))
+        {
+            return a.Length;
+        }
+
+        int[,] costs = new int[a.Length + 1, b.Length + 1];
+        for (int i = 0; i <= a.Length; i++) { costs[i, 0] = i; }
+
+        for (int j = 0; j <= b.Length; j++) { costs[0, j] = j; }
+
+        for (int i = 1; i <= a.Length; i++)
+        {
+            for (int j = 1; j <= b.Length; j++)
+            {
+                int cost = b[j - 1] == a[i - 1] ? 0 : 1;
+                costs[i, j] = Math.Min(Math.Min(costs[i - 1, j] + 1, costs[i, j - 1] + 1), costs[i - 1, j - 1] + cost);
+            }
+        }
+
+        return costs[a.Length, b.Length];
     }
 }

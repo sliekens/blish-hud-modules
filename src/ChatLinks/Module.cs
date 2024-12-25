@@ -5,6 +5,7 @@ using Blish_HUD.Modules;
 
 using GuildWars2;
 
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -44,7 +45,9 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
             string directory = ModuleParameters.DirectoriesManager.GetFullDirectoryPath("chat-links-data");
             string file = Path.Combine(directory, "data.db");
             string connectionString = $"Data Source={file}";
-            optionsBuilder.UseSqlite(connectionString);
+            var connection = new SqliteConnection(connectionString);
+            Levenshtein.RegisterLevenshteinFunction(connection);
+            optionsBuilder.UseSqlite(connection);
         }, ServiceLifetime.Transient);
 
         services.AddTransient<ItemSeeder>();
