@@ -889,11 +889,7 @@ public class ItemTooltipView(Item item, ItemIcons icons, IReadOnlyDictionary<int
         static Control? ItemSkin(int skinId, Container parent)
         {
             // TODO: skin name
-            return PlainText($"""
-
-                              Skin
-                              {skinId}
-                              """, parent);
+            return null;
         }
 
         static Control? ItemRarity(Item item, Container parent)
