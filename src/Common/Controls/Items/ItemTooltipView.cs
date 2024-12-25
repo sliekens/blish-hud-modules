@@ -879,11 +879,7 @@ public class ItemTooltipView(Item item, ItemIcons icons, IReadOnlyDictionary<int
         static Control? Mini(int miniatureId, Container parent)
         {
             // TODO: mini name
-            return PlainText($"""
-
-                              Mini {miniatureId}
-
-                              """, parent);
+            return null;
         }
 
         static Control? ItemSkin(int skinId, Container parent)
