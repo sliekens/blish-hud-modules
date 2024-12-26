@@ -80,15 +80,14 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
             if (ApplicationSettings.Instance.DebugEnabled || GameService.Debug.EnableDebugLogging.Value)
             {
                 builder.SetMinimumLevel(LogLevel.Debug);
-                builder.AddFilter("System.Net.Http.HttpClient", LogLevel.Information);
-                builder.AddFilter("Microsoft.Extensions.Http.DefaultHttpClientFactory", LogLevel.Warning);
-                builder.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.Error);
+                builder.AddFilter("System", LogLevel.Information);
+                builder.AddFilter("Microsoft", LogLevel.Information);
+                builder.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning);
             }
             else
             {
-                builder.AddFilter("System.Net.Http.HttpClient", LogLevel.Error);
-                builder.AddFilter("Microsoft.Extensions.Http.DefaultHttpClientFactory", LogLevel.Error);
-                builder.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.Critical);
+                builder.AddFilter("System", LogLevel.Warning);
+                builder.AddFilter("Microsoft", LogLevel.Warning);
             }
         });
 
