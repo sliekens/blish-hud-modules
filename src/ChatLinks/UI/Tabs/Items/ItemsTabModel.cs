@@ -24,6 +24,11 @@ public sealed class ItemsTabModel
         _default.Add(item);
     }
 
+    public void ClearUpgrades()
+    {
+        _upgrades.Clear();
+    }
+
     public void ClearDefaultOptions()
     {
         _default.Clear();

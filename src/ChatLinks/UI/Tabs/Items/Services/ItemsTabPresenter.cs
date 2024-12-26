@@ -86,6 +86,15 @@ public class ItemsTabPresenter(
         View.Select(item);
     }
 
+    public async Task RefreshUpgrades()
+    {
+        Model.ClearUpgrades();
+        await foreach (UpgradeComponent upgrade in search.OfType<UpgradeComponent>())
+        {
+            Model.AddUpgrade(upgrade);
+        }
+    }
+
     protected override async Task<bool> Load(IProgress<string> progress)
     {
         await foreach (UpgradeComponent upgrade in search.OfType<UpgradeComponent>())

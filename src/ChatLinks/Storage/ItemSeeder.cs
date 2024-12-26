@@ -59,6 +59,7 @@ public sealed class ItemSeeder(
         }
 
         logger.LogInformation("Finished seeding {Count} items.", index.Count);
+        MessageBus.Send("items_tab", "refresh");
     }
     private static void DetachAllEntities(ChatLinksContext context)
     {
