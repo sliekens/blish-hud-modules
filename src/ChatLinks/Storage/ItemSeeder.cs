@@ -41,7 +41,7 @@ public sealed class ItemSeeder(
                                .GetItemsBulk(index,
                                    null,
                                    MissingMemberBehavior.Undefined,
-                                   20,
+                                   3,
                                    200,
                                    bulkProgress,
                                    cancellationToken)
