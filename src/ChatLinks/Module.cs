@@ -131,6 +131,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         }
 
         _cornerIcon.LoadingMessage = null;
+        _cornerIcon.BasicTooltipText = null;
         _cornerIcon.Menu = new ContextMenuStrip();
         _syncButton = _cornerIcon.Menu.AddMenuItem("Sync database");
         _syncButton.Click += SyncClicked;
@@ -172,6 +173,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         finally
         {
             _cornerIcon!.LoadingMessage = null;
+            _cornerIcon!.BasicTooltipText = null;
             _syncButton!.Enabled = true;
         }
     }
