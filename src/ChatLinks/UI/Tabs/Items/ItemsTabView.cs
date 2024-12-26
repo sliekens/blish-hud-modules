@@ -34,7 +34,8 @@ public class ItemsTabView(ILogger<ItemsTabView> logger) : View<ItemsTabPresenter
 
     public void SetOptions(IEnumerable<Item> items)
     {
-        _searchResults?.SetOptions(items);
+        var list = items.ToList();
+        _searchResults?.SetOptions(list);
     }
 
     public void ClearOptions()
