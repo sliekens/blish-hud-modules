@@ -88,6 +88,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
             {
                 builder.AddFilter("System", LogLevel.Warning);
                 builder.AddFilter("Microsoft", LogLevel.Warning);
+                builder.AddFilter("Microsoft.EntityFrameworkCore.Query", LogLevel.Critical);
             }
         });
 
