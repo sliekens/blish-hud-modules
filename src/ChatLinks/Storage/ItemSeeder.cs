@@ -1,5 +1,4 @@
 ﻿
-using Blish_HUD.Controls;
 
 using GuildWars2;
 using GuildWars2.Items;
@@ -36,19 +35,38 @@ public sealed class ItemSeeder(
                 progress.Report($"Fetching items... ({report.ResultCount} of {report.ResultTotal})");
             });
 
+            context.ChangeTracker.AutoDetectChangesEnabled = false;
+            var count = 0;
             await foreach (Item item in gw2Client.Items
-                               .GetItemsBulk(index, progress: bulkProgress, cancellationToken: cancellationToken)
+                               .GetItemsBulk(index,
+                                   null,
+                                   MissingMemberBehavior.Undefined,
+                                   20,
+                                   200,
+                                   bulkProgress,
+                                   cancellationToken)
                                .ValueOnly(cancellationToken: cancellationToken))
             {
-                context.Entry(item).State = EntityState.Added;
+                context.Add(item);
+                if (++count % 333 == 0)
+                {
+                    await context.SaveChangesAsync(cancellationToken);
+                    DetachAllEntities(context);
+                }
             }
 
-            logger.LogDebug("Start saving changes.", index.Count);
-            progress.Report("Updating database...");
             await context.SaveChangesAsync(cancellationToken);
         }
 
         logger.LogInformation("Finished seeding {Count} items.", index.Count);
+    }
+    private static void DetachAllEntities(ChatLinksContext context)
+    {
+        var entries = context.ChangeTracker.Entries().ToList();
+        foreach (var entry in entries)
+        {
+            entry.State = EntityState.Detached;
+        }
     }
 
 }
