@@ -65,8 +65,22 @@ public class UpgradeComponentsList : FlowPanel
 
         var groups = _upgrades
             .Where(FilterUpgradeSlot)
-            .OrderBy(upgrade => upgrade.Level)
-            .ThenBy(upgrade => upgrade.Name)
+            .OrderBy(upgrade => upgrade.Rarity.IsDefined()
+                ? upgrade.Rarity.ToEnum() switch
+                {
+                    Rarity.Junk => 0,
+                    Rarity.Basic => 1,
+                    Rarity.Fine => 2,
+                    Rarity.Masterwork => 3,
+                    Rarity.Rare => 4,
+                    Rarity.Exotic => 5,
+                    Rarity.Ascended => 6,
+                    Rarity.Legendary => 7,
+                    _ => 99
+                }
+                : 99)
+            .ThenBy(upgrade => upgrade.Level)
+            .ThenBy(upgrade => upgrade.SuffixName)
             .GroupBy(u => u switch
             {
                 Gem => ("Universal Upgrades", 1),
@@ -121,17 +135,27 @@ public class UpgradeComponentsList : FlowPanel
 
     private bool FilterUpgradeSlot(UpgradeComponent component)
     {
-        if ((_slotType == UpgradeSlotType.Infusion) ^ component.InfusionUpgradeFlags.Infusion)
+        if (_slotType == UpgradeSlotType.Infusion)
+        {
+            return component.InfusionUpgradeFlags.Infusion;
+        }
+
+        if (component.InfusionUpgradeFlags.Infusion)
         {
             return false;
         }
 
-        if ((_slotType == UpgradeSlotType.Enrichment) ^ component.InfusionUpgradeFlags.Enrichment)
+        if (_slotType == UpgradeSlotType.Enrichment)
+        {
+            return component.InfusionUpgradeFlags.Enrichment;
+        }
+
+        if (component.InfusionUpgradeFlags.Enrichment)
         {
             return false;
         }
 
-        if (_slotType == UpgradeSlotType.Default && component is Gem)
+        if (component is Gem)
         {
             return true;
         }
