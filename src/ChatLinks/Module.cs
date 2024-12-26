@@ -5,8 +5,6 @@ using Blish_HUD.Controls;
 using Blish_HUD.Input;
 using Blish_HUD.Modules;
 
-using GuildWars2;
-
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -82,12 +80,15 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
             if (ApplicationSettings.Instance.DebugEnabled || GameService.Debug.EnableDebugLogging.Value)
             {
                 builder.SetMinimumLevel(LogLevel.Debug);
+                builder.AddFilter("System.Net.Http.HttpClient", LogLevel.Information);
+                builder.AddFilter("Microsoft.Extensions.Http.DefaultHttpClientFactory", LogLevel.Warning);
+                builder.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.Error);
             }
             else
             {
-                builder.AddFilter("Microsoft.Extensions.Http.DefaultHttpClientFactory", LogLevel.Warning);
-                builder.AddFilter("System.Net.Http.HttpClient", LogLevel.Warning);
-                builder.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.Warning);
+                builder.AddFilter("System.Net.Http.HttpClient", LogLevel.Error);
+                builder.AddFilter("Microsoft.Extensions.Http.DefaultHttpClientFactory", LogLevel.Error);
+                builder.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.Critical);
             }
         });
 
@@ -103,22 +104,33 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 
     protected override async Task LoadAsync()
     {
-        _cornerIcon = Resolve<MainIcon>();
-
         await using ChatLinksContext context = Resolve<ChatLinksContext>();
         await context.Database.MigrateAsync();
 
-        ItemSeeder seeder = Resolve<ItemSeeder>();
-        Progress<BulkProgress> bulkProgress = new(report =>
-        {
-            _cornerIcon.LoadingMessage = $"Loading items... ({report.ResultCount} of {report.ResultTotal})";
-        });
-
-        await seeder.Seed(bulkProgress, CancellationToken.None);
-
-        _cornerIcon.LoadingMessage = null;
+        _cornerIcon = Resolve<MainIcon>();
         _mainWindow = Resolve<MainWindow>();
         _cornerIcon.Click += CornerIcon_Click;
+
+        ItemSeeder seeder = Resolve<ItemSeeder>();
+        Progress<string> progress = new(report =>
+        {
+            _cornerIcon.LoadingMessage = report;
+        });
+
+        if (Program.IsMainThread)
+        {
+            var seederTask = await Task.Factory.StartNew(async () =>
+            {
+                await seeder.Seed(progress, CancellationToken.None);
+            }, TaskCreationOptions.LongRunning);
+            await seederTask;
+        }
+        else
+        {
+            await seeder.Seed(progress, CancellationToken.None);
+        }
+
+        _cornerIcon.LoadingMessage = null;
         _cornerIcon.Menu = new ContextMenuStrip();
         _syncButton = _cornerIcon.Menu.AddMenuItem("Sync database");
         _syncButton.Click += SyncClicked;
@@ -131,22 +143,22 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         {
             _syncButton!.Enabled = false;
             ItemSeeder seeder = Resolve<ItemSeeder>();
-            Progress<BulkProgress> bulkProgress = new(report =>
+            Progress<string> progress = new(report =>
             {
-                _cornerIcon!.LoadingMessage = $"Loading items... ({report.ResultCount} of {report.ResultTotal})";
+                _cornerIcon!.LoadingMessage = report;
             });
 
             if (Program.IsMainThread)
             {
                 var seederTask = await Task.Factory.StartNew(async () =>
                 {
-                    await seeder.Seed(bulkProgress, CancellationToken.None);
+                    await seeder.Seed(progress, CancellationToken.None);
                 }, TaskCreationOptions.LongRunning);
                 await seederTask;
             }
             else
             {
-                await seeder.Seed(bulkProgress, CancellationToken.None);
+                await seeder.Seed(progress, CancellationToken.None);
             }
 
             ScreenNotification.ShowNotification("Everything is up-to-date.", ScreenNotification.NotificationType.Green);

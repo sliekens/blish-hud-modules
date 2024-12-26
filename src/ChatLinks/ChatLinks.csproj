@@ -28,7 +28,6 @@
         <PackageReference Include="SQLitePCLRaw.bundle_winsqlite3" Version="2.1.10" />
         <PackageReference Include="System.ComponentModel.Composition" Version="6.0.0" />
         <PackageReference Include="System.Text.Json" Version="9.0.0" />
-        <PackageReference Include="Z.EntityFramework.Extensions.EFCore" Version="3.103.6.3" />
     </ItemGroup>
 
     <ItemGroup>
