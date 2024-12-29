@@ -9,7 +9,7 @@
 
     <ItemGroup>
         <PackageReference Include="coverlet.collector" Version="6.0.2" />
-        <PackageReference Include="gw2sdk" Version="2.0.1-preview.0.24" />
+        <PackageReference Include="gw2sdk" Version="2.1.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
         <PackageReference Include="System.ComponentModel.Composition" Version="6.0.0" />

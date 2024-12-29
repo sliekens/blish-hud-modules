@@ -21,9 +21,9 @@
       },
       "GW2SDK": {
         "type": "Direct",
-        "requested": "[2.0.1-preview.0.24, )",
-        "resolved": "2.0.1-preview.0.24",
-        "contentHash": "/nT+Uq8Jqdwx/tjAaPdRIMuyC8HUs9oH/XMnT8+exXuB3kIqfPI52YvU79Qg9WRsGssOn9UaR8r3gKskEWjFng==",
+        "requested": "[2.1.0, )",
+        "resolved": "2.1.0",
+        "contentHash": "rQeH4hniuTFgj8k04a5g490Isrmzt2IGo7zgBw2fHJmmY8Bhi6QkUfW9WVEKmv3rLMwenYqMSkuHVhiWpWYlrQ==",
         "dependencies": {
           "Microsoft.Bcl.HashCode": "6.0.0",
           "System.Runtime.InteropServices.RuntimeInformation": "4.3.0",
@@ -533,7 +533,7 @@
       "SL.ChatLinks": {
         "type": "Project",
         "dependencies": {
-          "GW2SDK": "[2.0.1-preview.0.24, )",
+          "GW2SDK": "[2.1.0, )",
           "Gw2Sharp": "[1.7.4, )",
           "Microsoft.EntityFrameworkCore.Sqlite.Core": "[3.1.32, )",
           "Microsoft.Extensions.Http": "[3.1.32, )",
@@ -548,7 +548,7 @@
       "SL.Common": {
         "type": "Project",
         "dependencies": {
-          "GW2SDK": "[2.0.1-preview.0.24, )",
+          "GW2SDK": "[2.1.0, )",
           "Gw2Sharp": "[1.7.4, )",
           "System.ComponentModel.Composition": "[6.0.0, )"
         }
