@@ -6,22 +6,22 @@ public static class ItemExtensions
 {
     public static int? SuffixItemId(this Item item)
     {
-        return item switch
+        if (item is IUpgradable upgradable)
         {
-            Armor armor => armor.SuffixItemId,
-            Weapon weapon => weapon.SuffixItemId,
-            Backpack back => back.SuffixItemId,
-            Trinket trinket => trinket.SuffixItemId,
-            _ => null
-        };
+            return upgradable.SuffixItemId;
+        }
+
+        return null;
     }
+
     public static int? SecondarySuffixItemId(this Item item)
     {
-        return item switch
+        if (item is IUpgradable upgradable)
         {
-            Weapon weapon => weapon.SecondarySuffixItemId,
-            _ => null
-        };
+            return upgradable.SecondarySuffixItemId;
+        }
+
+        return null;
     }
 
     public static UpgradeComponent? SuffixItem(this Item item, IReadOnlyDictionary<int, UpgradeComponent> upgrades)

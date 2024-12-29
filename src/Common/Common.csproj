@@ -22,7 +22,7 @@
             <ExcludeAssets>all</ExcludeAssets>
         </PackageReference>
 
-        <PackageReference Include="GW2SDK" Version="2.0.0" />
+        <PackageReference Include="GW2SDK" Version="2.0.1-preview.0.24" />
 
         <PackageReference Include="PolySharp" Version="1.15.0">
             <PrivateAssets>all</PrivateAssets>

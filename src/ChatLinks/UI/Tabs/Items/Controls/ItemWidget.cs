@@ -98,30 +98,37 @@ public sealed class ItemWidget : FlowPanel
 
         _itemName.Text = _itemName.Text.Replace(" ", "  ");
 
-        if (!item.Flags.NotUpgradeable)
+        if (item is IUpgradable { UpgradeSlotCount: >= 1 } upgradable)
         {
-            _upgradeSlot1 = CreateUpgradeSlot(UpgradeSlotType.Default, _item.SuffixItem(upgrades));
+            UpgradeComponent? upgrade = null;
+            if (upgradable.SuffixItemId.HasValue)
+            {
+                _ = upgrades.TryGetValue(upgradable.SuffixItemId.Value, out upgrade);
+            }
 
+            _upgradeSlot1 = CreateUpgradeSlot(UpgradeSlotType.Default, upgrade);
             _upgradeComponentList1 = CreateUpgradeComponentsList(UpgradeSlotType.Default);
-            _upgradeSlot2 = CreateUpgradeSlot(UpgradeSlotType.Default, _item.SecondarySuffixItem(upgrades));
-
-            _upgradeComponentList2 = CreateUpgradeComponentsList(UpgradeSlotType.Default);
             _upgradeSlot1.Click += UpgradeSlot1Clicked;
-            _upgradeSlot2.Click += UpgradeSlot2Clicked;
             _upgradeSlot1.Cleared += UpgradeSlotCleared;
-            _upgradeSlot2.Cleared += UpgradeSlotCleared;
             _upgradeComponentList1.UpgradeComponentSelected += UpgradeComponent1Selected;
+        }
+
+        if (item is IUpgradable { UpgradeSlotCount: >= 2 } upgradable2)
+        {
+            UpgradeComponent? upgrade = null;
+            if (upgradable2.SecondarySuffixItemId.HasValue)
+            {
+                _ = upgrades.TryGetValue(upgradable2.SecondarySuffixItemId.Value, out upgrade);
+            }
+
+            _upgradeSlot2 = CreateUpgradeSlot(UpgradeSlotType.Default, upgrade);
+            _upgradeComponentList2 = CreateUpgradeComponentsList(UpgradeSlotType.Default);
+            _upgradeSlot2.Click += UpgradeSlot2Clicked;
+            _upgradeSlot2.Cleared += UpgradeSlotCleared;
             _upgradeComponentList2.UpgradeComponentSelected += UpgradeComponent2Selected;
         }
 
-        IEnumerable<InfusionSlot> infusionSlots = item switch
-        {
-            Armor armor => armor.InfusionSlots,
-            Weapon weapon => weapon.InfusionSlots,
-            Backpack back => back.InfusionSlots,
-            Trinket trinket => trinket.InfusionSlots,
-            _ => []
-        };
+        IEnumerable<InfusionSlot> infusionSlots = (item as IUpgradable)?.InfusionSlots ?? [];
 
         foreach ((InfusionSlot? infusionSlot, int index) in infusionSlots.Select((entry, index) => (entry, index)))
         {
