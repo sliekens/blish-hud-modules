@@ -53,11 +53,6 @@ internal static class FormattedLabelBuilderExtensions
 
     private static Color ParseColor(string color)
     {
-        if (color == "@Flavor")
-        {
-            return new Color(0x99, 0xEE, 0xDD);
-        }
-
         if (MarkupColorName.DefaultColorMap.TryGetValue(color, out var colorCode))
         {
             color = colorCode;
