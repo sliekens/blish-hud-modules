@@ -15,9 +15,9 @@ public sealed class ItemsListOption : Container
 {
     public Item Item { get; }
 
-    private ItemImage _icon;
+    private readonly ItemImage _icon;
 
-    private ItemName _name;
+    private readonly ItemName _name;
 
     public ItemsListOption(Item item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades)
     {
