@@ -878,13 +878,13 @@ public class ItemTooltipView(Item item, ItemIcons icons, IReadOnlyDictionary<int
 
         static Control? Mini(int miniatureId, Container parent)
         {
-            // TODO: mini name
+            // TODO: mini unlock status
             return null;
         }
 
         static Control? ItemSkin(int skinId, Container parent)
         {
-            // TODO: skin name
+            // TODO: skin unlock status
             return null;
         }
 
