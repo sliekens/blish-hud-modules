@@ -103,7 +103,7 @@ public class ItemsTabPresenter(
             progress.Report($"Loading upgrade components ({Model.Upgrades.Count})");
         }
 
-        await foreach (Item item in search.NewItems(1000).WithCancellation(_loading.Token))
+        await foreach (Item item in search.NewItems(50).WithCancellation(_loading.Token))
         {
             Model.AddDefaultOption(item);
             progress.Report($"Loading newest items ({Model.DefaultOptions.Count()})");
@@ -169,7 +169,7 @@ public class ItemsTabPresenter(
             Model.ClearDefaultOptions();
             View.ClearOptions();
 
-            await foreach (Item item in search.NewItems(1000).WithCancellation(cancellationToken))
+            await foreach (Item item in search.NewItems(50).WithCancellation(cancellationToken))
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
