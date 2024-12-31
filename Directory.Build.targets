@@ -1,0 +1,5 @@
+<Project>
+  <Target Name="EnsureRestore" BeforeTargets="ResolvePackageAssets">
+      <MSBuild Projects="$(MSBuildProjectFile)" Targets="Restore" />
+  </Target>
+</Project>

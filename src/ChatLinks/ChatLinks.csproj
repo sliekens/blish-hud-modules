@@ -37,8 +37,4 @@
     <ItemGroup>
         <Reference Include="System.IO.Compression" />
     </ItemGroup>
-
-    <Target Name="EnsureRestore" BeforeTargets="ResolvePackageAssets">
-        <MSBuild Projects="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).csproj" Targets="Restore" />
-    </Target>
 </Project>
