@@ -10,7 +10,6 @@ using Microsoft.Xna.Framework.Input;
 using SL.Common;
 using SL.Common.Controls;
 using SL.Common.Controls.Items;
-using SL.Common.Controls.Items.Upgrades;
 
 namespace SL.ChatLinks.UI.Tabs.Items.Controls;
 
@@ -30,34 +29,16 @@ public sealed class ItemWidget : FlowPanel
 
     private readonly NumberPicker _numberPicker;
 
-    private readonly UpgradeSlot? _upgradeSlot1;
-
-    private readonly UpgradeSlot? _upgradeSlot2;
-
-    private readonly UpgradeSlot? _infusionSlot1;
-
-    private readonly UpgradeSlot? _infusionSlot2;
-
-    private readonly UpgradeSlot? _infusionSlot3;
+    private readonly UpgradeSlots? _upgradeComponents;
 
     private readonly Label? _infusionWarning;
-
-    private readonly UpgradeComponentsList? _upgradeComponentList1;
-
-    private readonly UpgradeComponentsList? _upgradeComponentList2;
-
-    private readonly UpgradeComponentsList? _infusionList1;
-
-    private readonly UpgradeComponentsList? _infusionList2;
-
-    private readonly UpgradeComponentsList? _infusionList3;
 
     public ItemWidget(Item item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades)
     {
         ShowTint = true;
         ShowBorder = true;
         FlowDirection = ControlFlowDirection.SingleTopToBottom;
-        ControlPadding = new Vector2(20);
+        ControlPadding = new Vector2(0f, 15f);
         OuterControlPadding = new Vector2(10f);
         AutoSizePadding = new Point(10);
         Width = 350;
@@ -98,88 +79,6 @@ public sealed class ItemWidget : FlowPanel
 
         _itemName.Text = _itemName.Text.Replace(" ", "  ");
 
-        if (item is IUpgradable { UpgradeSlotCount: >= 1 } upgradable)
-        {
-            UpgradeComponent? upgrade = null;
-            if (upgradable.SuffixItemId.HasValue)
-            {
-                _ = upgrades.TryGetValue(upgradable.SuffixItemId.Value, out upgrade);
-            }
-
-            _upgradeSlot1 = CreateUpgradeSlot(UpgradeSlotType.Default, upgrade);
-            _upgradeComponentList1 = CreateUpgradeComponentsList(UpgradeSlotType.Default);
-            _upgradeSlot1.Click += UpgradeSlot1Clicked;
-            _upgradeSlot1.Cleared += UpgradeSlotCleared;
-            _upgradeComponentList1.UpgradeComponentSelected += UpgradeComponent1Selected;
-        }
-
-        if (item is IUpgradable { UpgradeSlotCount: >= 2 } upgradable2)
-        {
-            UpgradeComponent? upgrade = null;
-            if (upgradable2.SecondarySuffixItemId.HasValue)
-            {
-                _ = upgrades.TryGetValue(upgradable2.SecondarySuffixItemId.Value, out upgrade);
-            }
-
-            _upgradeSlot2 = CreateUpgradeSlot(UpgradeSlotType.Default, upgrade);
-            _upgradeComponentList2 = CreateUpgradeComponentsList(UpgradeSlotType.Default);
-            _upgradeSlot2.Click += UpgradeSlot2Clicked;
-            _upgradeSlot2.Cleared += UpgradeSlotCleared;
-            _upgradeComponentList2.UpgradeComponentSelected += UpgradeComponent2Selected;
-        }
-
-        IEnumerable<InfusionSlot> infusionSlots = (item as IUpgradable)?.InfusionSlots ?? [];
-
-        foreach ((InfusionSlot? infusionSlot, int index) in infusionSlots.Select((entry, index) => (entry, index)))
-        {
-            var slot = CreateInfusionSlot(infusionSlot);
-            if (slot is null)
-            {
-                continue;
-            }
-
-            var list = CreateInfusionList(infusionSlot);
-            if (list is null)
-            {
-                continue;
-            }
-
-            switch (index)
-            {
-                case 0:
-                    _infusionSlot1 = slot;
-                    _infusionList1 = list;
-                    slot.Click += InfusionSlot1Clicked;
-                    slot.Cleared += UpgradeSlotCleared;
-                    list.UpgradeComponentSelected += InfusionSlot1Selected;
-                    break;
-                case 1:
-                    _infusionSlot2 = slot;
-                    _infusionList2 = list;
-                    slot.Click += InfusionSlot2Clicked;
-                    slot.Cleared += UpgradeSlotCleared;
-                    list.UpgradeComponentSelected += InfusionSlot2Selected;
-                    break;
-                case 2:
-                    _infusionSlot3 = slot;
-                    _infusionList3 = list;
-                    slot.Click += InfusionSlot3Clicked;
-                    slot.Cleared += UpgradeSlotCleared;
-                    list.UpgradeComponentSelected += InfusionSlot3Selected;
-                    break;
-            }
-        }
-
-        _infusionWarning = new Label
-        {
-            Parent = this,
-            Width = Width - 20,
-            AutoSizeHeight = true,
-            WrapText = true,
-            TextColor = Color.Yellow,
-            Text = "Due to technical restrictions, the chat link will show the item's default infusions instead of the selected infusion(s)."
-        };
-
         var quantityGroup = new FlowPanel
         {
             Parent = this,
@@ -188,7 +87,7 @@ public sealed class ItemWidget : FlowPanel
             HeightSizingMode = SizingMode.AutoSize
         };
 
-        Label quantityLabel = new()
+        _ = new Label()
         {
             Parent = quantityGroup,
             Text = "Quantity:",
@@ -205,7 +104,7 @@ public sealed class ItemWidget : FlowPanel
             MaxValue = 250
         };
 
-        StandardButton minQuantity = new StandardButton
+        StandardButton minQuantity = new()
         {
             Parent = quantityGroup,
             Text = "Min",
@@ -213,7 +112,7 @@ public sealed class ItemWidget : FlowPanel
             Height = Height,
         };
 
-        StandardButton maxQuantity = new StandardButton
+        StandardButton maxQuantity = new()
         {
             Parent = quantityGroup,
             Text = "Max",
@@ -221,13 +120,46 @@ public sealed class ItemWidget : FlowPanel
             Height = Height,
         };
 
-        Label chatLinkLabel = new() { Parent = this, Text = "Chat Link:", AutoSizeWidth = true, AutoSizeHeight = true };
+        if (item is IUpgradable)
+        {
+            _upgradeComponents = new UpgradeSlots(
+                new UpgradeSlotsViewModel(
+                    item,
+                    icons,
+                    upgrades
+                )
+            )
+            {
+                Parent = this,
+                Width = Width - 40,
+                HeightSizingMode = SizingMode.AutoSize
+            };
 
-        _chatLink = new TextBox
+            _upgradeComponents.ViewModel.UpgradesChanged += () =>
+            {
+                UpdateHeader();
+                UpdateChatLink();
+                ToggleWarnings();
+            };
+        }
+
+        _ = new Label() { Parent = this, Text = "Chat Link:", AutoSizeWidth = true, AutoSizeHeight = true };
+
+        _chatLink = new TextBox { Parent = this, Text = item.ChatLink, Width = 150 };
+
+        _infusionWarning = new Label
         {
             Parent = this,
-            Text = item.ChatLink,
-            Width = 150
+            Width = Width - 20,
+            AutoSizeHeight = true,
+            WrapText = true,
+            TextColor = Color.Yellow,
+            Text = """
+                   Due to technical restrictions, the game will
+                   show the item's default infusions instead of the
+                   selected infusion(s).
+                   """,
+            Visible = false
         };
 
         _itemIcon.Click += HeaderClicked;
@@ -237,226 +169,9 @@ public sealed class ItemWidget : FlowPanel
         maxQuantity.Click += (_, _) => _numberPicker.Value = 250;
     }
 
-    public override void UpdateContainer(GameTime gameTime)
-    {
-        if (_infusionWarning is not null)
-        {
-            _infusionWarning.Visible = _infusionSlot1?.UpgradeComponent is not null
-                || _infusionSlot2?.UpgradeComponent is not null
-                || _infusionSlot3?.UpgradeComponent is not null;
-            Invalidate();
-        }
-    }
-
-    private void UpgradeSlot1Clicked(object sender, MouseEventArgs e)
-    {
-        if (_upgradeComponentList1 is { Visible: true })
-        {
-            _upgradeComponentList1.Hide();
-        }
-        else
-        {
-            _upgradeComponentList1?.Show();
-        }
-
-        Invalidate();
-    }
-
-    private void UpgradeSlot2Clicked(object sender, MouseEventArgs e)
-    {
-        if (_upgradeComponentList2 is { Visible: true })
-        {
-            _upgradeComponentList2.Hide();
-        }
-        else
-        {
-            _upgradeComponentList2?.Show();
-        }
-
-        Invalidate();
-    }
-
-    private void InfusionSlot1Clicked(object sender, MouseEventArgs e)
-    {
-        if (_infusionList1 is { Visible: true })
-        {
-            _infusionList1.Hide();
-        }
-        else
-        {
-            _infusionList1?.Show();
-        }
-
-        Invalidate();
-    }
-
-    private void InfusionSlot2Clicked(object sender, MouseEventArgs e)
-    {
-        if (_infusionList2 is { Visible: true })
-        {
-            _infusionList2.Hide();
-        }
-        else
-        {
-            _infusionList2?.Show();
-        }
-
-        Invalidate();
-    }
-
-    private void InfusionSlot3Clicked(object sender, MouseEventArgs e)
-    {
-        if (_infusionList3 is { Visible: true })
-        {
-            _infusionList3.Hide();
-        }
-        else
-        {
-            _infusionList3?.Show();
-        }
-
-        Invalidate();
-    }
-
-    private void UpgradeComponent1Selected(object sender, UpgradeComponentSelectedArgs e)
-    {
-        if (_upgradeSlot1 is null)
-        {
-            return;
-        }
-
-        if (_upgradeSlot1.UpgradeComponent != e.Selected)
-        {
-            _upgradeSlot1.UpgradeComponent = e.Selected;
-            UpdateHeader();
-            UpdateChatLink();
-        }
-        else
-        {
-            _upgradeSlot1.UpgradeComponent = null;
-        }
-
-        _upgradeComponentList1?.Hide();
-        Invalidate();
-    }
-
-    private void UpgradeComponent2Selected(object sender, UpgradeComponentSelectedArgs e)
-    {
-        if (_upgradeSlot2 is null)
-        {
-            return;
-        }
-
-        if (_upgradeSlot2.UpgradeComponent != e.Selected)
-        {
-            _upgradeSlot2.UpgradeComponent = e.Selected;
-            UpdateHeader();
-            UpdateChatLink();
-        }
-        else
-        {
-            _upgradeSlot2.UpgradeComponent = null;
-        }
-
-        _upgradeComponentList2?.Hide();
-        Invalidate();
-    }
-
-    private void InfusionSlot1Selected(object sender, UpgradeComponentSelectedArgs e)
-    {
-        if (_infusionSlot1 is null)
-        {
-            return;
-        }
-
-        if (_infusionSlot1.UpgradeComponent != e.Selected)
-        {
-            _infusionSlot1.UpgradeComponent = e.Selected;
-            UpdateHeader();
-            UpdateChatLink();
-        }
-        else
-        {
-            _infusionSlot1.UpgradeComponent = null;
-        }
-
-        _infusionList1?.Hide();
-        Invalidate();
-    }
-
-    private void InfusionSlot2Selected(object sender, UpgradeComponentSelectedArgs e)
-    {
-        if (_infusionSlot2 is null)
-        {
-            return;
-        }
-
-        if (_infusionSlot2.UpgradeComponent != e.Selected)
-        {
-            _infusionSlot2.UpgradeComponent = e.Selected;
-            UpdateHeader();
-            UpdateChatLink();
-        }
-        else
-        {
-            _infusionSlot2.UpgradeComponent = null;
-        }
-
-        _infusionList2?.Hide();
-        Invalidate();
-    }
-
-    private void InfusionSlot3Selected(object sender, UpgradeComponentSelectedArgs e)
-    {
-        if (_infusionSlot3 is null)
-        {
-            return;
-        }
-
-        if (_infusionSlot3.UpgradeComponent != e.Selected)
-        {
-            _infusionSlot3.UpgradeComponent = e.Selected;
-            UpdateHeader();
-            UpdateChatLink();
-        }
-        else
-        {
-            _infusionSlot3.UpgradeComponent = null;
-        }
-
-        _infusionList3?.Hide();
-        Invalidate();
-    }
-
-    private void UpgradeSlotCleared(object sender, EventArgs e)
-    {
-        UpdateChatLink();
-        UpdateHeader();
-    }
-
     protected override void OnMouseWheelScrolled(MouseEventArgs e)
     {
-        if (_upgradeComponentList1?.MouseOver == true)
-        {
-            return;
-        }
-
-        if (_upgradeComponentList2?.MouseOver == true)
-        {
-            return;
-        }
-
-        if (_infusionList1?.MouseOver == true)
-        {
-            return;
-        }
-
-        if (_infusionList2?.MouseOver == true)
-        {
-            return;
-        }
-
-        if (_infusionList3?.MouseOver == true)
+        if (_upgradeComponents?.Any(slot => slot.MouseOver) ?? false)
         {
             return;
         }
@@ -485,69 +200,38 @@ public sealed class ItemWidget : FlowPanel
         }
     }
 
-    private void ChatLinkClicked(object sender, MouseEventArgs e)
-    {
-        _chatLink.SelectionStart = 0;
-        _chatLink.SelectionEnd = _chatLink.Text.Length;
-    }
-
     private void UpdateHeader()
     {
-        _itemName.SuffixItem = _upgradeSlot1?.UpgradeComponent
-            ?? _upgradeSlot1?.DefaultUpgradeComponent
-            ?? _upgradeSlot2?.UpgradeComponent
-            ?? _upgradeSlot2?.DefaultUpgradeComponent;
+        _itemName.SuffixItem = _upgradeComponents?.ViewModel.EffctiveSuffixItem();
         _itemIcon.Tooltip = new Tooltip(new ItemTooltipView(_item switch
         {
             Armor armor => armor with
             {
                 Name = armor.NameWithoutSuffix(_upgrades),
-                SuffixItemId = _upgradeSlot1?.UpgradeComponent?.Id ?? _upgradeSlot1?.DefaultUpgradeComponent?.Id,
-                InfusionSlots = GetSelectedInfusionSlots().ToList()
+                SuffixItemId = _upgradeComponents?.ViewModel.UpgradeSlot1?.EffectiveUpgrade?.Id,
+                InfusionSlots = _upgradeComponents?.ViewModel.Infusions() ?? []
             },
             Weapon weapon => weapon with
             {
                 Name = weapon.NameWithoutSuffix(_upgrades),
-                SuffixItemId = _upgradeSlot1?.UpgradeComponent?.Id ?? _upgradeSlot1?.DefaultUpgradeComponent?.Id,
-                SecondarySuffixItemId = _upgradeSlot2?.UpgradeComponent?.Id ?? _upgradeSlot2?.DefaultUpgradeComponent?.Id,
-                InfusionSlots = GetSelectedInfusionSlots().ToList()
+                SuffixItemId = _upgradeComponents?.ViewModel.UpgradeSlot1?.EffectiveUpgrade?.Id,
+                SecondarySuffixItemId = _upgradeComponents?.ViewModel.UpgradeSlot2?.EffectiveUpgrade?.Id,
+                InfusionSlots = _upgradeComponents?.ViewModel.Infusions() ?? []
             },
             Backpack back => back with
             {
                 Name = back.NameWithoutSuffix(_upgrades),
-                SuffixItemId = _upgradeSlot1?.UpgradeComponent?.Id,
-                InfusionSlots = GetSelectedInfusionSlots().ToList()
+                SuffixItemId = _upgradeComponents?.ViewModel.UpgradeSlot1?.EffectiveUpgrade?.Id,
+                InfusionSlots = _upgradeComponents?.ViewModel.Infusions() ?? []
             },
             Trinket trinket => trinket with
             {
                 Name = trinket.NameWithoutSuffix(_upgrades),
-                SuffixItemId = _upgradeSlot1?.UpgradeComponent?.Id,
-                InfusionSlots = GetSelectedInfusionSlots().ToList()
+                SuffixItemId = _upgradeComponents?.ViewModel.UpgradeSlot1?.EffectiveUpgrade?.Id,
+                InfusionSlots = _upgradeComponents?.ViewModel.Infusions() ?? []
             },
             _ => _item
         }, _icons, _upgrades));
-    }
-
-    private IEnumerable<InfusionSlot> GetInfusionSlots()
-    {
-        return _item switch
-        {
-            Armor armor => armor.InfusionSlots,
-            Weapon weapon => weapon.InfusionSlots,
-            Backpack back => back.InfusionSlots,
-            Trinket trinket => trinket.InfusionSlots,
-            _ => []
-        };
-    }
-
-    private IEnumerable<InfusionSlot> GetSelectedInfusionSlots()
-    {
-        return GetInfusionSlots().Zip(
-            [_infusionSlot1, _infusionSlot2, _infusionSlot3],
-            (infusionSlot, infusionSlotOverride) => infusionSlot with
-            {
-                ItemId = infusionSlotOverride?.UpgradeComponent?.Id ?? infusionSlotOverride?.DefaultUpgradeComponent?.Id
-            });
     }
 
     private void UpdateChatLink()
@@ -556,69 +240,22 @@ public sealed class ItemWidget : FlowPanel
         _chatLink.Text = (_item.GetChatLink() with
         {
             Count = quantity,
-            SuffixItemId = _upgradeSlot1?.UpgradeComponent?.Id,
-            SecondarySuffixItemId = _upgradeSlot2?.UpgradeComponent?.Id
+            SuffixItemId = _upgradeComponents?.ViewModel.SuffixItemId,
+            SecondarySuffixItemId = _upgradeComponents?.ViewModel.SecondarySuffixItemId
+
         }).ToString();
     }
 
-    private UpgradeComponentsList CreateUpgradeComponentsList(UpgradeSlotType slotType)
+    private void ToggleWarnings()
     {
-        return new UpgradeComponentsList(slotType, _upgrades.Values, _icons, _item)
-        {
-            Parent = this,
-            Width = Width - 50,
-            HeightSizingMode = SizingMode.AutoSize,
-            Visible = false
-        };
+        _infusionWarning!.Visible =
+            _upgradeComponents?.ViewModel.InfusionSlots.Any(s => s.Slot.SelectedUpgradeComponent != null)
+            ?? false;
     }
 
-    private UpgradeSlot CreateUpgradeSlot(UpgradeSlotType slotType, UpgradeComponent? upgradeComponent)
+    private void ChatLinkClicked(object sender, MouseEventArgs e)
     {
-        return new UpgradeSlot(_icons)
-        {
-            Parent = this,
-            Width = Width,
-            HeightSizingMode = SizingMode.AutoSize,
-            SlotType = slotType,
-            DefaultUpgradeComponent = upgradeComponent,
-        };
+        _chatLink.SelectionStart = 0;
+        _chatLink.SelectionEnd = _chatLink.Text.Length;
     }
-
-    private UpgradeSlot? CreateInfusionSlot(InfusionSlot slot)
-    {
-        UpgradeComponent? component = null;
-        if (slot.ItemId.HasValue)
-        {
-            _upgrades.TryGetValue(slot.ItemId.Value, out component);
-        }
-
-        if (slot.Flags.Infusion)
-        {
-            return CreateUpgradeSlot(UpgradeSlotType.Infusion, component);
-        }
-
-        if (slot.Flags.Enrichment)
-        {
-            return CreateUpgradeSlot(UpgradeSlotType.Enrichment, component);
-
-        }
-
-        return null;
-    }
-
-    private UpgradeComponentsList? CreateInfusionList(InfusionSlot slot)
-    {
-        if (slot.Flags.Infusion)
-        {
-            return CreateUpgradeComponentsList(UpgradeSlotType.Infusion);
-        }
-
-        if (slot.Flags.Enrichment)
-        {
-            return CreateUpgradeComponentsList(UpgradeSlotType.Enrichment);
-        }
-
-        return null;
-    }
-
 }

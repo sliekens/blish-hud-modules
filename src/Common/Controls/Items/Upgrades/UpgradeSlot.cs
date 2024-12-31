@@ -1,4 +1,8 @@
-﻿using Blish_HUD;
+﻿using System.ComponentModel;
+using System.Diagnostics;
+using System.Net;
+
+using Blish_HUD;
 using Blish_HUD.Controls;
 
 using GuildWars2.Items;
@@ -9,60 +13,55 @@ using Container = Blish_HUD.Controls.Container;
 
 namespace SL.Common.Controls.Items.Upgrades;
 
-public sealed class UpgradeSlot(ItemIcons icons) : Container
+public sealed class UpgradeSlot : Container
 {
-    public EventHandler<EventArgs>? Cleared;
+    public UpgradeSlotViewModel ViewModel { get; }
 
     private FormattedLabel? _label;
 
-    private UpgradeComponent? _upgradeComponent;
-
-    private UpgradeComponent? _defaultUpgradeComponent;
-
-    private UpgradeSlotType _slotType;
-
-    public UpgradeComponent? UpgradeComponent
+    public UpgradeSlot(UpgradeSlotViewModel vm)
     {
-        get => _upgradeComponent;
-        set
+        ViewModel = vm;
+        ViewModel.PropertyChanged += OnChanges;
+        Click += (_, _) =>
         {
-            _upgradeComponent = value;
-            _label?.Dispose();
-            _label = null;
-            if (value is null)
+            vm.OnCustomize();
+        };
+
+        UpdateSlot();
+    }
+
+    private void UpdateSlot()
+    {
+        if (ViewModel.SelectedUpgradeComponent is not null)
+        {
+            FillSlot(new UsedUpgradeSlot
             {
-                Cleared?.Invoke(this, EventArgs.Empty);
-            }
+                UpgradeComponent = ViewModel.SelectedUpgradeComponent,
+                Icon = ViewModel.Icons.GetIcon(ViewModel.SelectedUpgradeComponent),
+                IsDefault = false
+            });
+        }
+        else if (ViewModel.DefaultUpgradeComponent is not null)
+        {
+            FillSlot(new UsedUpgradeSlot
+            {
+                UpgradeComponent = ViewModel.DefaultUpgradeComponent,
+                Icon = ViewModel.Icons.GetIcon(ViewModel.DefaultUpgradeComponent),
+                IsDefault = true
+            });
+        }
+        else
+        {
+            ClearSlot();
         }
     }
 
-    public UpgradeComponent? DefaultUpgradeComponent
+    private void OnChanges(object sender, PropertyChangedEventArgs e)
     {
-        get => _defaultUpgradeComponent;
-        set
+        if (e.PropertyName == nameof(UpgradeSlotViewModel.SelectedUpgradeComponent))
         {
-            _defaultUpgradeComponent = value;
-            _label?.Dispose();
-            _label = null;
-        }
-    }
-
-    public UpgradeSlotType SlotType
-    {
-        get => _slotType;
-        set
-        {
-            _slotType = value;
-            _label?.Dispose();
-            _label = null;
-        }
-    }
-
-    public override void UpdateContainer(GameTime gameTime)
-    {
-        if (_label is null)
-        {
-            Format();
+            UpdateSlot();
         }
     }
 
@@ -72,97 +71,110 @@ public sealed class UpgradeSlot(ItemIcons icons) : Container
         base.DisposeControl();
     }
 
-    private void Format()
+    private void FillSlot(UsedUpgradeSlot slot)
+    {
+        FormattedLabelBuilder builder = new FormattedLabelBuilder()
+            .AutoSizeWidth()
+            .AutoSizeHeight()
+            .CreatePart(" " + slot.UpgradeComponent.Name, part =>
+            {
+                part.SetPrefixImage(slot.Icon);
+                part.SetPrefixImageSize(new Point(16));
+                part.SetHoverColor(Color.BurlyWood);
+                part.SetFontSize(ContentService.FontSize.Size16);
+            });
+
+        _label?.Dispose();
+        _label = builder.Build();
+        _label.Parent = this;
+        _label.Tooltip =
+            new Tooltip(new ItemTooltipView(slot.UpgradeComponent, ViewModel.Icons, (Dictionary<int, UpgradeComponent>)[]));
+        _label.Menu = Context(slot);
+    }
+
+    private void ClearSlot()
     {
         FormattedLabelBuilder builder = new FormattedLabelBuilder()
             .AutoSizeWidth()
             .AutoSizeHeight();
 
-        if (UpgradeComponent is not null)
+        switch (ViewModel.Type)
         {
-            builder
-                .CreatePart(" " + UpgradeComponent.Name, part =>
-                {
-                    part.SetPrefixImage(icons.GetIcon(UpgradeComponent));
-                    part.SetPrefixImageSize(new Point(16));
-                    part.SetHoverColor(Color.BurlyWood);
-                    part.SetFontSize(ContentService.FontSize.Size16);
-                });
-        }
-        else if (DefaultUpgradeComponent is not null)
-        {
-            builder
-                .CreatePart(" " + DefaultUpgradeComponent.Name, part =>
-                {
-                    part.SetPrefixImage(icons.GetIcon(DefaultUpgradeComponent));
-                    part.SetPrefixImageSize(new Point(16));
-                    part.SetHoverColor(Color.BurlyWood);
-                    part.SetFontSize(ContentService.FontSize.Size16);
-                });
-        }
-        else
-        {
-            switch (SlotType)
-            {
-                case UpgradeSlotType.Default:
-                    builder
-                        .CreatePart(" Unused Upgrade Slot", part =>
-                        {
-                            part.SetPrefixImage(Resources.Texture("unused_upgrade_slot.png"));
-                            part.SetPrefixImageSize(new Point(16));
-                            part.SetFontSize(ContentService.FontSize.Size16);
-                        });
-                    break;
-                case UpgradeSlotType.Infusion:
-                    builder
-                        .CreatePart(" Unused Infusion Slot", part =>
-                        {
-                            part.SetPrefixImage(Resources.Texture("unused_infusion_slot.png"));
-                            part.SetPrefixImageSize(new Point(16));
-                            part.SetFontSize(ContentService.FontSize.Size16);
-                        });
-                    break;
-                case UpgradeSlotType.Enrichment:
-                    builder
-                        .CreatePart(" Unused Enrichment Slot", part =>
-                        {
-                            part.SetPrefixImage(Resources.Texture("unused_enrichment_slot.png"));
-                            part.SetPrefixImageSize(new Point(16));
-                            part.SetFontSize(ContentService.FontSize.Size16);
-                        });
-                    break;
-            }
+            case UpgradeSlotType.Default:
+                builder
+                    .CreatePart(" Unused Upgrade Slot", part =>
+                    {
+                        part.SetPrefixImage(Resources.Texture("unused_upgrade_slot.png"));
+                        part.SetPrefixImageSize(new Point(16));
+                        part.SetFontSize(ContentService.FontSize.Size16);
+                    });
+                break;
+            case UpgradeSlotType.Infusion:
+                builder
+                    .CreatePart(" Unused Infusion Slot", part =>
+                    {
+                        part.SetPrefixImage(Resources.Texture("unused_infusion_slot.png"));
+                        part.SetPrefixImageSize(new Point(16));
+                        part.SetFontSize(ContentService.FontSize.Size16);
+                    });
+                break;
+            case UpgradeSlotType.Enrichment:
+                builder
+                    .CreatePart(" Unused Enrichment Slot", part =>
+                    {
+                        part.SetPrefixImage(Resources.Texture("unused_enrichment_slot.png"));
+                        part.SetPrefixImageSize(new Point(16));
+                        part.SetFontSize(ContentService.FontSize.Size16);
+                    });
+                break;
         }
 
+        _label?.Dispose();
         _label = builder.Build();
         _label.Parent = this;
-
-        if (UpgradeComponent is not null)
-        {
-            _label.Tooltip =
-                new Tooltip(new ItemTooltipView(UpgradeComponent, icons, (Dictionary<int, UpgradeComponent>)[]));
-
-            _label.Menu = new ContextMenuStrip();
-            var remove = _label.Menu.AddMenuItem($"Remove {UpgradeComponent?.Name}");
-            remove.Click += (_, _) =>
-            {
-                UpgradeComponent = null;
-                OnCleared();
-            };
-        }
-        else if (DefaultUpgradeComponent is not null)
-        {
-            _label.Tooltip =
-                new Tooltip(new ItemTooltipView(DefaultUpgradeComponent, icons, (Dictionary<int, UpgradeComponent>)[]));
-        }
-        else
-        {
-            _label.BasicTooltipText = "Click to customize";
-        }
+        _label.BasicTooltipText = """
+            Click to customize
+            Right-click for options
+            """;
+        _label.Menu = Context(null);
     }
 
-    private void OnCleared()
+    private ContextMenuStrip Context(UsedUpgradeSlot? slot)
     {
-        Cleared?.Invoke(this, EventArgs.Empty);
+        var menu = new ContextMenuStrip();
+        var customize = menu.AddMenuItem("Customize");
+        customize.Click += (_, _) =>
+        {
+            ViewModel.OnCustomize();
+        };
+
+        if (slot is null)
+        {
+            return menu;
+        }
+
+        UpgradeComponent item = slot.UpgradeComponent;
+        if (!slot.IsDefault)
+        {
+            var remove = menu.AddMenuItem($"Remove {item.Name}");
+            remove.Click += (_, _) =>
+            {
+                ViewModel.OnClear();
+            };
+        }
+
+        ContextMenuStripItem copyName = menu.AddMenuItem("Copy Name");
+        copyName.Click += async (_, _) => await ClipboardUtil.WindowsClipboardService.SetTextAsync(item.Name);
+
+        ContextMenuStripItem copyLink = menu.AddMenuItem("Copy Chat Link");
+        copyLink.Click += async (_, _) => await ClipboardUtil.WindowsClipboardService.SetTextAsync(item.ChatLink);
+
+        ContextMenuStripItem wiki = menu.AddMenuItem("Wiki");
+        wiki.Click += (_, _) => Process.Start($"https://wiki.guildwars2.com/wiki/?search={WebUtility.UrlEncode(item.ChatLink)}");
+
+        ContextMenuStripItem api = menu.AddMenuItem("API");
+        api.Click += (_, _) => Process.Start($"https://api.guildwars2.com/v2/items/{item.Id}?v=latest");
+
+        return menu;
     }
 }

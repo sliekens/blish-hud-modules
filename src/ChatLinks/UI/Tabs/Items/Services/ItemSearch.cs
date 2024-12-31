@@ -4,7 +4,6 @@ using System.Text.RegularExpressions;
 using GuildWars2.Chat;
 using GuildWars2.Items;
 
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 using SL.ChatLinks.Storage;

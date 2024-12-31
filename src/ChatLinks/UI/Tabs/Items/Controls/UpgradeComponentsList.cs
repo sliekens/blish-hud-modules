@@ -1,141 +1,84 @@
 ﻿using Blish_HUD.Controls;
-using Blish_HUD.Input;
 
 using GuildWars2.Hero;
 using GuildWars2.Items;
 
-using Microsoft.Xna.Framework;
-
+using SL.Common;
 using SL.Common.Controls.Items;
 using SL.Common.Controls.Items.Upgrades;
 
 namespace SL.ChatLinks.UI.Tabs.Items.Controls;
 
-public class UpgradeComponentsList : FlowPanel
+public sealed class UpgradeComponentsListViewModel(
+    Item item,
+    UpgradeSlotType slotType,
+    ItemIcons icons,
+    IReadOnlyDictionary<int, UpgradeComponent> upgradeComponents)
+    : ViewModel
 {
-    public event EventHandler<UpgradeComponentSelectedArgs>? UpgradeComponentSelected;
+    public event Action<UpgradeComponent>? Selected;
 
-    private readonly UpgradeSlotType _slotType;
+    public ItemIcons Icons { get; } = icons;
 
-    private readonly List<UpgradeComponent> _upgrades;
+    public IReadOnlyDictionary<int, UpgradeComponent> UpgradeComponents { get; } = upgradeComponents;
 
-    private readonly Dictionary<int, UpgradeComponent> _upgradesDictionary;
-
-    private readonly ItemIcons _icons;
-
-    private readonly Item _target;
-
-    private bool _initialized;
-
-    public UpgradeComponentsList(UpgradeSlotType slotType, IEnumerable<UpgradeComponent> upgrades, ItemIcons icons, Item target)
+    public void OnSelected(UpgradeComponent upgradeComponent)
     {
-        FlowDirection = ControlFlowDirection.SingleTopToBottom;
-        _slotType = slotType;
-        _upgrades = upgrades.ToList();
-        _upgradesDictionary = _upgrades.ToDictionary(static upgrade => upgrade.Id);
-        _icons = icons;
-        _target = target;
+        Selected?.Invoke(upgradeComponent);
     }
 
-    public override void UpdateContainer(GameTime gameTime)
+    public IEnumerable<IGrouping<string, UpgradeComponent>> GetOptions()
     {
-        if (_initialized)
+        var groupOrder = new Dictionary<string, int>
         {
-            return;
-        }
-
-        Initialize();
-        _initialized = true;
-    }
-
-    private void Initialize()
-    {
-        var cancel = new StandardButton
-        {
-            Parent = this,
-            Width = Width,
-            Text = "Cancel"
+            { "Runes", 1 },
+            { "Sigils", 1 },
+            { "Runes (PvP)", 2 },
+            { "Sigils (PvP)", 2 },
+            { "Infusions", 3 },
+            { "Enrichments", 3 },
+            { "Universal Upgrades", 4 },
+            { "Uncategorized", 5 }
         };
 
-        cancel.Click += (_, _) =>
-        {
-            Hide();
-            Parent?.Invalidate();
-        };
-
-        var groups = _upgrades
-            .Where(FilterUpgradeSlot)
-            .OrderBy(upgrade => upgrade.Rarity.IsDefined()
-                ? upgrade.Rarity.ToEnum() switch
-                {
-                    Rarity.Junk => 0,
-                    Rarity.Basic => 1,
-                    Rarity.Fine => 2,
-                    Rarity.Masterwork => 3,
-                    Rarity.Rare => 4,
-                    Rarity.Exotic => 5,
-                    Rarity.Ascended => 6,
-                    Rarity.Legendary => 7,
-                    _ => 99
-                }
-                : 99)
-            .ThenBy(upgrade => upgrade.Level)
-            .ThenBy(upgrade => upgrade.SuffixName)
-            .GroupBy(u => u switch
-            {
-                Gem => ("Universal Upgrades", 1),
-                Rune when u.GameTypes.All(type => type.IsDefined() && type.ToEnum() is GameType.Pvp or GameType.PvpLobby) => ("Runes (PvP)", 3),
-                Sigil when u.GameTypes.All(type => type.IsDefined() && type.ToEnum() is GameType.Pvp or GameType.PvpLobby) => ("Sigils (PvP)", 5),
-                Rune => ("Runes", 2),
-                Sigil => ("Sigils", 4),
-                _ when u.InfusionUpgradeFlags.Infusion => ("Infusions", 6),
-                _ when u.InfusionUpgradeFlags.Enrichment => ("Enrichments", 7),
-                _ => ("Other", 8)
-            });
-
-        foreach (var group in groups.OrderBy(g => g.Key.Item2))
-        {
-            var groupPanel = new Panel
-            {
-                Parent = this,
-                Width = Width,
-                HeightSizingMode = SizingMode.AutoSize,
-                Title = group.Key.Item1,
-                CanCollapse = true,
-                Collapsed = true
-            };
-
-            var list = new ItemsList(_icons, _upgradesDictionary)
-            {
-                Parent = groupPanel,
-                Width = Width,
-                HeightSizingMode = SizingMode.AutoSize,
-                CanScroll = false
-            };
-
-            list.SetOptions(group);
-            list.OptionClicked += OptionClicked;
-
-            groupPanel.Resized += (sender, args) =>
-            {
-                if (list.Height >= 300)
-                {
-                    list.HeightSizingMode = SizingMode.Standard;
-                    list.Height = 300;
-                    list.CanScroll = true;
-                }
-                else
-                {
-                    list.HeightSizingMode = SizingMode.AutoSize;
-                    list.CanScroll = false;
-                }
-            };
-        }
+        return from upgrade in UpgradeComponents.Values
+               where FilterUpgradeSlot(item, upgrade)
+               let rank = upgrade.Rarity.IsDefined()
+                   ? upgrade.Rarity.ToEnum() switch
+                   {
+                       Rarity.Junk => 0,
+                       Rarity.Basic => 1,
+                       Rarity.Fine => 2,
+                       Rarity.Masterwork => 3,
+                       Rarity.Rare => 4,
+                       Rarity.Exotic => 5,
+                       Rarity.Ascended => 6,
+                       Rarity.Legendary => 7,
+                       _ => 99
+                   }
+                   : 99
+               orderby rank, upgrade.Level, upgrade.Name
+               group upgrade by upgrade switch
+               {
+                   Gem => "Universal Upgrades",
+                   Rune when upgrade.GameTypes.All(
+                       type => type.IsDefined() && type.ToEnum() is GameType.Pvp or GameType.PvpLobby) => "Runes (PvP)",
+                   Sigil when upgrade.GameTypes.All(
+                       type => type.IsDefined() && type.ToEnum() is GameType.Pvp or GameType.PvpLobby) => "Sigils (PvP)",
+                   Rune => "Runes",
+                   Sigil => "Sigils",
+                   _ when upgrade.InfusionUpgradeFlags.Infusion => "Infusions",
+                   _ when upgrade.InfusionUpgradeFlags.Enrichment => "Enrichments",
+                   _ => "Uncategorized"
+               }
+            into grouped
+               orderby groupOrder[grouped.Key]
+               select grouped;
     }
 
-    private bool FilterUpgradeSlot(UpgradeComponent component)
+    private bool FilterUpgradeSlot(Item item, UpgradeComponent component)
     {
-        if (_slotType == UpgradeSlotType.Infusion)
+        if (slotType == UpgradeSlotType.Infusion)
         {
             return component.InfusionUpgradeFlags.Infusion;
         }
@@ -145,7 +88,7 @@ public class UpgradeComponentsList : FlowPanel
             return false;
         }
 
-        if (_slotType == UpgradeSlotType.Enrichment)
+        if (slotType == UpgradeSlotType.Enrichment)
         {
             return component.InfusionUpgradeFlags.Enrichment;
         }
@@ -160,7 +103,7 @@ public class UpgradeComponentsList : FlowPanel
             return true;
         }
 
-        return _target switch
+        return item switch
         {
             Armor armor when armor.WeightClass == WeightClass.Light => component.UpgradeComponentFlags.LightArmor,
             Armor armor when armor.WeightClass == WeightClass.Medium => component.UpgradeComponentFlags.MediumArmor,
@@ -188,9 +131,89 @@ public class UpgradeComponentsList : FlowPanel
             _ => true
         };
     }
+}
+
+public sealed class UpgradeComponentsList : FlowPanel
+{
+    public UpgradeComponentsListViewModel ViewModel { get; }
+
+    private readonly StandardButton _cancelButton;
+
+    public UpgradeComponentsList(UpgradeComponentsListViewModel vm)
+    {
+        FlowDirection = ControlFlowDirection.SingleTopToBottom;
+        HeightSizingMode = SizingMode.Fill;
+
+        ViewModel = vm;
+        _cancelButton = new StandardButton
+        {
+            Parent = this,
+            Text = "Cancel"
+        };
+
+        _cancelButton.Click += (_, _) =>
+        {
+            Parent = null;
+        };
+
+        vm.Selected += _ =>
+        {
+            Parent = null;
+        };
+
+        Initialize();
+    }
+
+    protected override void OnResized(ResizedEventArgs e)
+    {
+        _cancelButton.Width = e.CurrentSize.X;
+        Parent?.Invalidate();
+    }
+
+    private void Initialize()
+    {
+        foreach (var group in ViewModel.GetOptions())
+        {
+            var groupPanel = new Panel
+            {
+                Parent = this,
+                WidthSizingMode = SizingMode.Fill,
+                HeightSizingMode = SizingMode.AutoSize,
+                Title = group.Key,
+                CanCollapse = true,
+                Collapsed = true
+            };
+
+            var list = new ItemsList(ViewModel.Icons, ViewModel.UpgradeComponents)
+            {
+                Parent = groupPanel,
+                WidthSizingMode = SizingMode.Fill,
+                HeightSizingMode = SizingMode.AutoSize,
+                CanScroll = false
+            };
+
+            list.SetOptions(group);
+            list.OptionClicked += OptionClicked;
+
+            groupPanel.Resized += (sender, args) =>
+            {
+                if (list.Height >= 300)
+                {
+                    list.HeightSizingMode = SizingMode.Standard;
+                    list.Height = 300;
+                    list.CanScroll = true;
+                }
+                else
+                {
+                    list.HeightSizingMode = SizingMode.AutoSize;
+                    list.CanScroll = false;
+                }
+            };
+        }
+    }
 
     private void OptionClicked(object sender, Item e)
     {
-        UpgradeComponentSelected?.Invoke(this, new UpgradeComponentSelectedArgs((UpgradeComponent)e));
+        ViewModel.OnSelected((UpgradeComponent)e);
     }
 }

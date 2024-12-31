@@ -1,7 +1,6 @@
 ﻿using Blish_HUD;
 using System.Diagnostics;
 using System.Net;
-using System.Text.Encodings.Web;
 
 using Blish_HUD.Controls;
 
@@ -19,9 +18,9 @@ public class ItemContextMenu : ContextMenuStrip
 
         copyName.Click += async (_, _) => await ClipboardUtil.WindowsClipboardService.SetTextAsync(item.Name);
 
-        api.Click += (_, _) => Process.Start($"https://api.guildwars2.com/v2/items/{item.Id}?v=latest");
-
         wiki.Click += (_, _) => Process.Start($"https://wiki.guildwars2.com/wiki/?search={WebUtility.UrlEncode(item.ChatLink)}");
+
+        api.Click += (_, _) => Process.Start($"https://api.guildwars2.com/v2/items/{item.Id}?v=latest");
     }
 
 }
