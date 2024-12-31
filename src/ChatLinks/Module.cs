@@ -54,25 +54,19 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         }, ServiceLifetime.Transient, ServiceLifetime.Transient);
 
         services.AddTransient<ItemSeeder>();
-
-        services.AddTransient<MainIcon>();
-        services.AddTransient<MainIconViewModel>();
-        services.AddTransient<MainWindow>();
-        services.AddTransient<ItemsTab>();
-        services.AddTransient(sp =>
+        services.AddTransient<IViewsFactory, ViewsFactory>();
+        services.AddTransient<IItemsTabView>(sp =>
         {
             ItemsTabView view = ActivatorUtilities.CreateInstance<ItemsTabView>(sp);
             ItemsTabModel model = ActivatorUtilities.CreateInstance<ItemsTabModel>(sp);
             view.WithPresenter(ActivatorUtilities.CreateInstance<ItemsTabPresenter>(sp, view, model));
             return view;
         });
-        services.AddTransient<Func<ItemsTabView>>(sp => sp.GetRequiredService<ItemsTabView>);
-        services.AddTransient<CraftingTab>();
-        services.AddTransient<CraftingView>();
-        services.AddTransient<Func<CraftingView>>(sp => sp.GetRequiredService<CraftingView>);
-        services.AddTransient<AchievementsTab>();
-        services.AddTransient<AchievementsView>();
-        services.AddTransient<Func<AchievementsView>>(sp => sp.GetRequiredService<AchievementsView>);
+
+        services.AddTransient<MainIcon>();
+        services.AddTransient<MainIconViewModel>();
+        services.AddTransient<MainWindow>();
+        services.AddTransient<ItemsTab>();
         services.AddTransient<ItemSearch>();
         services.AddHttpClient<ItemIcons>();
 

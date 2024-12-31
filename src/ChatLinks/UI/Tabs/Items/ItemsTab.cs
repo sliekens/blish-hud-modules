@@ -3,8 +3,8 @@ using Blish_HUD.Controls;
 
 namespace SL.ChatLinks.UI.Tabs.Items;
 
-public sealed class ItemsTab(Func<ItemsTabView> view) : Tab(
+public sealed class ItemsTab(IViewsFactory viewFactory) : Tab(
     AsyncTexture2D.FromAssetId(156699),
-    () => new AsyncView(view()),
+    viewFactory.CreateItemsTabView,
     "Items",
     TabPriority.ItemsTab);
