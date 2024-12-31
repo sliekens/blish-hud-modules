@@ -31,11 +31,14 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Common\Common.csproj" />
+        <ProjectReference Include="..\Common\Common.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="System.IO.Compression" />
+        <Reference Include="System.IO.Compression" />
     </ItemGroup>
 
+    <Target Name="EnsureRestore" BeforeTargets="Build">
+        <MSBuild Projects="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).csproj" Targets="Restore" />
+    </Target>
 </Project>
