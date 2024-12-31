@@ -145,7 +145,12 @@ public sealed class ItemWidget : FlowPanel
 
         _ = new Label() { Parent = this, Text = "Chat Link:", AutoSizeWidth = true, AutoSizeHeight = true };
 
-        _chatLink = new TextBox { Parent = this, Text = item.ChatLink, Width = 150 };
+        _chatLink = new TextBox
+        {
+            Parent = this,
+            Text = item.ChatLink,
+            Width = 200
+        };
 
         _infusionWarning = new Label
         {
@@ -155,9 +160,9 @@ public sealed class ItemWidget : FlowPanel
             WrapText = true,
             TextColor = Color.Yellow,
             Text = """
-                   Due to technical restrictions, the game will
-                   show the item's default infusions instead of the
-                   selected infusion(s).
+                   Due to technical restrictions, the game only
+                   shows the item's default infusion(s) instead of
+                   the selected infusion(s).
                    """,
             Visible = false
         };
