@@ -138,6 +138,9 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
             .HasValue<JadeBotSkinUnlocker>("jade_bot_skin_unlocker")
             ;
 
+        itemBuilder.HasIndex(item => item.Name);
+        itemBuilder.HasIndex(item => item.ChatLink);
+
         ValueConverter<IDictionary<Extensible<AttributeName>, int>, string> attributesConverter = new(
             static attr => Serialize(attr.ToDictionary(pair => pair.Key.ToString(), pair => pair.Value)),
             static json => Deserialize<Dictionary<string, int>>(json)
