@@ -1,10 +1,7 @@
 ﻿using Blish_HUD;
-using Blish_HUD.Content;
 using Blish_HUD.Controls;
 
 using Microsoft.Xna.Framework;
-
-using SL.ChatLinks.UI.Tabs.Items;
 
 namespace SL.ChatLinks.UI;
 
@@ -12,20 +9,22 @@ public sealed class MainWindow : TabbedWindow2
 {
     private readonly AsyncEmblem _emblem;
 
-    public MainWindow(ItemsTab items) : base(
-        AsyncTexture2D.FromAssetId(155985),
+    public MainWindow(MainWindowViewModel vm) : base(
+        vm.BackgroundTexture,
         new Rectangle(0, 26, 953, 691),
         new Rectangle(70, 71, 839, 605)
     )
     {
+        _emblem = AsyncEmblem.Attach(this, vm.EmblemTexture);
         Parent = Graphics.SpriteScreen;
-        Title = "Chat links";
-        Id = "sliekens.chat-links.main-window";
+        Id = vm.Id;
+        Title = vm.Title;
         Location = new Point(300, 300);
-        _emblem = AsyncEmblem.Attach(this, AsyncTexture2D.FromAssetId(2237584));
-        Tabs.Add(items);
         TabChanged += OnTabChanged;
-        Subtitle = SelectedTab.Name;
+        foreach (var tab in vm.Tabs())
+        {
+            Tabs.Add(tab);
+        }
     }
 
     private void OnTabChanged(object sender, ValueChangedEventArgs<Tab> args)

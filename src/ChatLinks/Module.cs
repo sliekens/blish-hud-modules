@@ -16,8 +16,6 @@ using SL.ChatLinks.Integrations;
 using SL.ChatLinks.Logging;
 using SL.ChatLinks.Storage;
 using SL.ChatLinks.UI;
-using SL.ChatLinks.UI.Tabs.Achievements;
-using SL.ChatLinks.UI.Tabs.Crafting;
 using SL.ChatLinks.UI.Tabs.Items;
 using SL.ChatLinks.UI.Tabs.Items.Services;
 using SL.Common.Controls.Items;
@@ -66,7 +64,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         services.AddTransient<MainIcon>();
         services.AddTransient<MainIconViewModel>();
         services.AddTransient<MainWindow>();
-        services.AddTransient<ItemsTab>();
+        services.AddTransient<MainWindowViewModel>();
         services.AddTransient<ItemSearch>();
         services.AddHttpClient<ItemIcons>();
 
