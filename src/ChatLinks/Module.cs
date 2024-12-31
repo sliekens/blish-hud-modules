@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel.Composition;
+using System.IO.Compression;
 
 using Blish_HUD;
+using Blish_HUD.Content;
 using Blish_HUD.Controls;
 using Blish_HUD.Input;
 using Blish_HUD.Modules;
@@ -44,8 +46,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 
         services.AddDbContext<ChatLinksContext>(optionsBuilder =>
         {
-            string directory = ModuleParameters.DirectoriesManager.GetFullDirectoryPath("chat-links-data");
-            string file = Path.Combine(directory, "data.db");
+            string file = DatabaseLocation();
             string connectionString = $"Data Source={file}";
             var connection = new SqliteConnection(connectionString);
             Levenshtein.RegisterLevenshteinFunction(connection);
@@ -97,13 +98,18 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         Batteries_V2.Init();
     }
 
-    private T Resolve<T>() where T : notnull
-    {
-        return _sp.GetRequiredService<T>();
-    }
-
     protected override async Task LoadAsync()
     {
+        var logger = Resolve<ILogger<Module>>();
+        try
+        {
+            await FirstTimeSetup();
+        }
+        catch (Exception reason)
+        {
+            logger.LogError(reason, "First-time setup failed.");
+        }
+
         await using ChatLinksContext context = Resolve<ChatLinksContext>();
         await context.Database.MigrateAsync();
 
@@ -135,6 +141,34 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         _cornerIcon.Menu = new ContextMenuStrip();
         _syncButton = _cornerIcon.Menu.AddMenuItem("Sync database");
         _syncButton.Click += SyncClicked;
+    }
+
+    private async Task FirstTimeSetup()
+    {
+        var databaseLocation = DatabaseLocation();
+        if (new FileInfo(databaseLocation) is { Exists: false } or { Length: 0 })
+        {
+            using var seed = ModuleParameters.ContentsManager.GetFileStream("data.zip");
+            using var unzip = new ZipArchive(seed, ZipArchiveMode.Read);
+            var data = unzip.GetEntry("data.db");
+            if (data is not null)
+            {
+                using var dataStream = data.Open();
+                using var fileStream = File.Create(databaseLocation);
+                await dataStream.CopyToAsync(fileStream);
+            }
+        }
+    }
+
+    private T Resolve<T>() where T : notnull
+    {
+        return _sp.GetRequiredService<T>();
+    }
+
+    private string DatabaseLocation()
+    {
+        string directory = ModuleParameters.DirectoriesManager.GetFullDirectoryPath("chat-links-data");
+        return Path.Combine(directory, "data.db");
     }
 
     private async void SyncClicked(object sender, MouseEventArgs e)
