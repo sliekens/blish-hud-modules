@@ -35,10 +35,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Concurrency\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <Reference Include="System.IO.Compression" />
     </ItemGroup>
 
