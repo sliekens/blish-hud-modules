@@ -11,7 +11,7 @@ using Container = Blish_HUD.Controls.Container;
 
 namespace SL.Common.Controls.Items.Services;
 
-internal sealed class ItemUpgradeBuilder(ItemFlags flags, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades)
+public sealed class ItemUpgradeBuilder(ItemFlags flags, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades)
 {
     private static readonly Color UpgradeTextColor = new(0x55, 0x99, 0xFF);
 
