@@ -14,23 +14,21 @@ namespace SL.ChatLinks.UI.Tabs.Items.Controls;
 public sealed class ItemsListOption : Container
 {
     public Item Item { get; }
-    public ItemIcons Icons { get; }
     public IReadOnlyDictionary<int, UpgradeComponent> Upgrades { get; }
 
     private readonly ItemImage _icon;
 
     private readonly ItemName _name;
 
-    public ItemsListOption(Item item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades)
+    public ItemsListOption(Item item, IReadOnlyDictionary<int, UpgradeComponent> upgrades)
     {
         Item = item;
-        Icons = icons;
         Upgrades = upgrades;
         Width = 425;
         Height = 35;
         Menu = new ItemContextMenu(item);
 
-        _icon = new ItemImage(item, icons)
+        _icon = new ItemImage(item)
         {
             Size = new Point(35, 35),
             Parent = this
@@ -51,7 +49,7 @@ public sealed class ItemsListOption : Container
     {
         BackgroundColor = Color.BurlyWood;
         _name.ShowShadow = true;
-        Tooltip tooltip = new(new ItemTooltipView(Item, Icons, Upgrades));
+        Tooltip tooltip = new(new ItemTooltipView(Item, Upgrades));
         _icon.Tooltip ??= tooltip;
         _name.Tooltip ??= tooltip;
     }

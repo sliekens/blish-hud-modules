@@ -1,7 +1,6 @@
 ﻿using GuildWars2.Items;
 
 using SL.Common;
-using SL.Common.Controls.Items;
 using SL.Common.Controls.Items.Upgrades;
 
 namespace SL.ChatLinks.UI.Tabs.Items.Controls;
@@ -11,8 +10,6 @@ public sealed class UpgradeSlotsViewModel : ViewModel
 	public event Action? UpgradesChanged;
 
 	public Item Item { get; }
-
-	public ItemIcons Icons { get; }
 
 	public IReadOnlyDictionary<int, UpgradeComponent> UpgradeComponents { get; }
 
@@ -25,11 +22,9 @@ public sealed class UpgradeSlotsViewModel : ViewModel
 	public int? SecondarySuffixItemId => UpgradeSlots.Skip(1).FirstOrDefault().Slot?.SelectedUpgradeComponent?.Id;
 
 	public UpgradeSlotsViewModel(Item item,
-		ItemIcons icons,
 		IReadOnlyDictionary<int, UpgradeComponent> upgradeComponents)
 	{
 		Item = item;
-		Icons = icons;
 		UpgradeComponents = upgradeComponents;
 		UpgradeSlots = SetupUpgradeSlots(item);
 		InfusionSlots = SetupInfusionSlots(item);
@@ -72,7 +67,7 @@ public sealed class UpgradeSlotsViewModel : ViewModel
 		var upgradeSlots = new List<(UpgradeSlotViewModel Slot, UpgradeComponentsListViewModel Options)>(upgradable.UpgradeSlotCount);
 		foreach (var upgradeComponentId in upgradable.UpgradeSlots)
 		{
-			UpgradeSlotViewModel slotViewModel = new(UpgradeSlotType.Default, Icons)
+			UpgradeSlotViewModel slotViewModel = new(UpgradeSlotType.Default)
 			{
 				DefaultUpgradeComponent = DefaultUpgradeComponent(upgradeComponentId)
 			};
@@ -85,7 +80,6 @@ public sealed class UpgradeSlotsViewModel : ViewModel
 			UpgradeComponentsListViewModel optionsViewModel = new(
 				item,
 				UpgradeSlotType.Default,
-				Icons,
 				UpgradeComponents
 			);
 
@@ -119,7 +113,7 @@ public sealed class UpgradeSlotsViewModel : ViewModel
 				_ => UpgradeSlotType.Default
 			};
 
-			UpgradeSlotViewModel slotViewModel = new(upgradeSlotType, Icons)
+			UpgradeSlotViewModel slotViewModel = new(upgradeSlotType)
 			{
 				DefaultUpgradeComponent = DefaultUpgradeComponent(infusionSlot.ItemId)
 			};
@@ -132,7 +126,6 @@ public sealed class UpgradeSlotsViewModel : ViewModel
 			UpgradeComponentsListViewModel optionsViewModel = new(
 				item,
 				upgradeSlotType,
-				Icons,
 				UpgradeComponents
 			);
 

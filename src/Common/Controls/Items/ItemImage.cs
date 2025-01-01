@@ -8,10 +8,10 @@ namespace SL.Common.Controls.Items;
 
 public sealed class ItemImage : Image
 {
-    public ItemImage(Item item, ItemIcons icons)
+    public ItemImage(Item item)
     {
         Size = new Point(50, 50);
-        Texture = icons.GetIcon(item);
+        Texture = ServiceLocator.GetService<ItemIcons>().GetIcon(item);
     }
 
     protected override void DisposeControl()

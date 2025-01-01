@@ -4,7 +4,6 @@ using GuildWars2.Hero;
 using GuildWars2.Items;
 
 using SL.Common;
-using SL.Common.Controls.Items;
 using SL.Common.Controls.Items.Upgrades;
 
 namespace SL.ChatLinks.UI.Tabs.Items.Controls;
@@ -12,13 +11,10 @@ namespace SL.ChatLinks.UI.Tabs.Items.Controls;
 public sealed class UpgradeComponentsListViewModel(
     Item item,
     UpgradeSlotType slotType,
-    ItemIcons icons,
     IReadOnlyDictionary<int, UpgradeComponent> upgradeComponents)
     : ViewModel
 {
     public event Action<UpgradeComponent>? Selected;
-
-    public ItemIcons Icons { get; } = icons;
 
     public IReadOnlyDictionary<int, UpgradeComponent> UpgradeComponents { get; } = upgradeComponents;
 
@@ -184,7 +180,7 @@ public sealed class UpgradeComponentsList : FlowPanel
                 Collapsed = true
             };
 
-            var list = new ItemsList(ViewModel.Icons, ViewModel.UpgradeComponents)
+            var list = new ItemsList(ViewModel.UpgradeComponents)
             {
                 Parent = groupPanel,
                 WidthSizingMode = SizingMode.Fill,

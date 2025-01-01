@@ -91,8 +91,7 @@ public sealed class UpgradeSlot : Container
         _label.MouseEntered += (_, _) =>
         {
             _label.Tooltip ??=
-                new Tooltip(new ItemTooltipView(slot.UpgradeComponent, ViewModel.Icons,
-                    (Dictionary<int, UpgradeComponent>)[]));
+                new Tooltip(new ItemTooltipView(slot.UpgradeComponent, (Dictionary<int, UpgradeComponent>)[]));
         };
     }
 

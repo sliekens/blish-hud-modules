@@ -7,25 +7,18 @@ using GuildWars2.Items;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using SL.Common.Controls.Items;
-
 namespace SL.ChatLinks.UI.Tabs.Items.Controls;
 
 public sealed class ItemsList : FlowPanel
 {
-    private readonly ItemIcons _icons;
-
     private readonly IReadOnlyDictionary<int, UpgradeComponent> _upgrades;
 
     private bool _loading;
 
     public event EventHandler<Item>? OptionClicked;
 
-    public ItemsList(
-        ItemIcons icons,
-        IReadOnlyDictionary<int, UpgradeComponent> upgrades)
+    public ItemsList(IReadOnlyDictionary<int, UpgradeComponent> upgrades)
     {
-        _icons = icons;
         _upgrades = upgrades;
         ShowTint = true;
         ShowBorder = true;
@@ -65,7 +58,7 @@ public sealed class ItemsList : FlowPanel
 
     public void AddOption(Item item)
     {
-        var option = new ItemsListOption(item, _icons, _upgrades)
+        var option = new ItemsListOption(item, _upgrades)
         {
             Parent = this
         };

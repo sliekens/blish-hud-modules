@@ -25,7 +25,6 @@ public sealed class ViewsFactory(IServiceProvider serviceProvider) : IViewsFacto
 
     public IView CreateItemTooltipView(Item item, IReadOnlyDictionary<int, UpgradeComponent> upgrades)
     {
-        var icons = serviceProvider.GetRequiredService<ItemIcons>();
-        return new AsyncView(() => new ItemTooltipView(item, icons, upgrades));
+        return new AsyncView(() => new ItemTooltipView(item, upgrades));
     }
 }

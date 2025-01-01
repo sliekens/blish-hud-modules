@@ -20,8 +20,10 @@ using Item = GuildWars2.Items.Item;
 
 namespace SL.Common.Controls.Items;
 
-public class ItemTooltipView(Item item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades) : View, IItemTooltipView
+public class ItemTooltipView(Item item, IReadOnlyDictionary<int, UpgradeComponent> upgrades) : View, IItemTooltipView
 {
+    private readonly ItemIcons _icons = ServiceLocator.GetService<ItemIcons>();
+
     protected override void Build(Container buildPanel)
     {
         FlowPanel layout = new()
@@ -35,58 +37,58 @@ public class ItemTooltipView(Item item, ItemIcons icons, IReadOnlyDictionary<int
         switch (item)
         {
             case Armor armor:
-                PrintArmor(armor, icons, upgrades, layout);
+                PrintArmor(armor, _icons, upgrades, layout);
                 break;
             case Backpack back:
-                PrintBackpack(back, icons, upgrades, layout);
+                PrintBackpack(back, _icons, upgrades, layout);
                 break;
             case Bag bag:
-                PrintBag(bag, icons, upgrades, layout);
+                PrintBag(bag, _icons, upgrades, layout);
                 break;
             case Consumable consumable:
-                PrintConsumable(consumable, icons, upgrades, layout);
+                PrintConsumable(consumable, _icons, upgrades, layout);
                 break;
             case GuildWars2.Items.Container container:
-                PrintContainer(container, icons, upgrades, layout);
+                PrintContainer(container, _icons, upgrades, layout);
                 break;
             case CraftingMaterial craftingMaterial:
-                PrintCraftingMaterial(craftingMaterial, icons, upgrades, layout);
+                PrintCraftingMaterial(craftingMaterial, _icons, upgrades, layout);
                 break;
             case GatheringTool gatheringTool:
-                PrintGatheringTool(gatheringTool, icons, upgrades, layout);
+                PrintGatheringTool(gatheringTool, _icons, upgrades, layout);
                 break;
             case Trinket trinket:
-                PrintTrinket(trinket, icons, upgrades, layout);
+                PrintTrinket(trinket, _icons, upgrades, layout);
                 break;
             case Gizmo gizmo:
-                PrintGizmo(gizmo, icons, upgrades, layout);
+                PrintGizmo(gizmo, _icons, upgrades, layout);
                 break;
             case JadeTechModule jadeTechModule:
-                PrintJadeTechModule(jadeTechModule, icons, upgrades, layout);
+                PrintJadeTechModule(jadeTechModule, _icons, upgrades, layout);
                 break;
             case Miniature miniature:
-                PrintMiniature(miniature, icons, upgrades, layout);
+                PrintMiniature(miniature, _icons, upgrades, layout);
                 break;
             case PowerCore powerCore:
-                PrintPowerCore(powerCore, icons, upgrades, layout);
+                PrintPowerCore(powerCore, _icons, upgrades, layout);
                 break;
             case Relic relic:
-                PrintRelic(relic, icons, upgrades, layout);
+                PrintRelic(relic, _icons, upgrades, layout);
                 break;
             case SalvageTool salvageTool:
-                PrintSalvageTool(salvageTool, icons, upgrades, layout);
+                PrintSalvageTool(salvageTool, _icons, upgrades, layout);
                 break;
             case Trophy trophy:
-                PrintTrophy(trophy, icons, upgrades, layout);
+                PrintTrophy(trophy, _icons, upgrades, layout);
                 break;
             case UpgradeComponent upgradeComponent:
-                PrintUpgradeComponent(upgradeComponent, icons, upgrades, layout);
+                PrintUpgradeComponent(upgradeComponent, _icons, upgrades, layout);
                 break;
             case Weapon weapon:
-                PrintWeapon(weapon, icons, upgrades, layout);
+                PrintWeapon(weapon, _icons, upgrades, layout);
                 break;
             default:
-                Print(item, icons, upgrades, layout);
+                Print(item, _icons, upgrades, layout);
                 break;
         }
 
@@ -679,7 +681,7 @@ public class ItemTooltipView(Item item, ItemIcons icons, IReadOnlyDictionary<int
                 Height = 50
             };
 
-            ItemImage icon = new(item, icons)
+            ItemImage icon = new(item)
             {
                 Parent = header
             };

@@ -3,8 +3,7 @@
 namespace SL.Common.Controls.Items.Upgrades;
 
 public class UpgradeSlotViewModel(
-    UpgradeSlotType slotType,
-    ItemIcons icons
+    UpgradeSlotType slotType
 ) : ViewModel
 {
     private UpgradeComponent? _selectedUpgradeComponent;
@@ -15,7 +14,7 @@ public class UpgradeSlotViewModel(
 
     public UpgradeSlotType Type { get; } = slotType;
 
-    public ItemIcons Icons { get; set; } = icons;
+    public ItemIcons Icons { get; set; } = ServiceLocator.GetService<ItemIcons>();
 
     public UpgradeComponent? DefaultUpgradeComponent
     {

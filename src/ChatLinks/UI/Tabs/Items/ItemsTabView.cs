@@ -45,7 +45,7 @@ public class ItemsTabView(ILogger<ItemsTabView> logger) : View<ItemsTabPresenter
     public void Select(Item item)
     {
         _selectedItem?.Dispose();
-        _selectedItem = new ItemWidget(item, Presenter.Icons, Presenter.Model.Upgrades)
+        _selectedItem = new ItemWidget(item, Presenter.Model.Upgrades)
         {
             Parent = _root,
             Left = _searchResults!.Right
@@ -61,7 +61,7 @@ public class ItemsTabView(ILogger<ItemsTabView> logger) : View<ItemsTabPresenter
             Width = 450,
             PlaceholderText = "Enter item name or chat link..."
         };
-        _searchResults = new ItemsList(Presenter.Icons, Presenter.Model.Upgrades)
+        _searchResults = new ItemsList(Presenter.Model.Upgrades)
         {
             Parent = buildPanel,
             Size = new Point(450, 500),

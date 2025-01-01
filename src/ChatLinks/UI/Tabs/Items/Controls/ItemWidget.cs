@@ -19,8 +19,6 @@ public sealed class ItemWidget : FlowPanel
 
     private readonly Item _item;
 
-    private readonly ItemIcons _icons;
-
     private readonly IReadOnlyDictionary<int, UpgradeComponent> _upgrades;
 
     private readonly ItemImage _itemIcon;
@@ -33,7 +31,7 @@ public sealed class ItemWidget : FlowPanel
 
     private readonly Label? _infusionWarning;
 
-    public ItemWidget(Item item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades)
+    public ItemWidget(Item item, IReadOnlyDictionary<int, UpgradeComponent> upgrades)
     {
         ShowTint = true;
         ShowBorder = true;
@@ -47,7 +45,6 @@ public sealed class ItemWidget : FlowPanel
         CanScroll = true;
 
         _item = item;
-        _icons = icons;
         _upgrades = upgrades;
 
         var header = new FlowPanel
@@ -59,14 +56,14 @@ public sealed class ItemWidget : FlowPanel
             Parent = this
         };
 
-        _itemIcon = new ItemImage(item, icons)
+        _itemIcon = new ItemImage(item)
         {
             Parent = header
         };
 
         _itemIcon.MouseEntered += (_, _) =>
         {
-            _itemIcon.Tooltip ??= new Tooltip(new ItemTooltipView(item, icons, upgrades));
+            _itemIcon.Tooltip ??= new Tooltip(new ItemTooltipView(item, upgrades));
         };
 
         header.Menu = new ItemContextMenu(item);
@@ -129,7 +126,6 @@ public sealed class ItemWidget : FlowPanel
             _upgradeComponents = new UpgradeSlots(
                 new UpgradeSlotsViewModel(
                     item,
-                    icons,
                     upgrades
                 )
             )
@@ -240,7 +236,7 @@ public sealed class ItemWidget : FlowPanel
                 InfusionSlots = _upgradeComponents?.ViewModel.Infusions() ?? []
             },
             _ => _item
-        }, _icons, _upgrades));
+        }, _upgrades));
     }
 
     private void UpdateChatLink()

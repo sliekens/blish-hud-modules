@@ -6,7 +6,6 @@ using GuildWars2.Items;
 using Microsoft.Extensions.Logging;
 
 using SL.ChatLinks.UI.Tabs.Items.Services;
-using SL.Common.Controls.Items;
 
 namespace SL.ChatLinks.UI.Tabs.Items;
 
@@ -14,12 +13,9 @@ public class ItemsTabPresenter(
     IItemsTabView view,
     ItemsTabModel model,
     ILogger<ItemsTabPresenter> logger,
-    ItemIcons icons,
     ItemSearch search
 ) : Presenter<IItemsTabView, ItemsTabModel>(view, model)
 {
-    public ItemIcons Icons { get; } = icons;
-
     private readonly CancellationTokenSource _loading = new(TimeSpan.FromMinutes(5));
 
     private readonly SemaphoreSlim _searchLock = new(1, 1);
