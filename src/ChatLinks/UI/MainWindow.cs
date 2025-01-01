@@ -12,7 +12,7 @@ public sealed class MainWindow : TabbedWindow2
     private readonly AsyncEmblem _emblem;
 
     public MainWindow()
-    : this(ServiceLocator.Resolve<MainWindowViewModel>())
+    : this(Objects.Create<MainWindowViewModel>())
     {
 
     }

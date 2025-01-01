@@ -14,7 +14,7 @@ public sealed class UpgradeComponentsList : FlowPanel
 
     public UpgradeComponentsList(IEnumerable<UpgradeComponent> upgrades)
     {
-        ViewModel = ServiceLocator.Resolve<UpgradeComponentsListViewModel>();
+        ViewModel = Objects.Create<UpgradeComponentsListViewModel>();
         ViewModel.Options = upgrades.ToList().AsReadOnly();
         FlowDirection = ControlFlowDirection.SingleTopToBottom;
         HeightSizingMode = SizingMode.Fill;

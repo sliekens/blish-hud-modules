@@ -7,7 +7,7 @@ namespace SL.ChatLinks.UI;
 public sealed class MainIcon : CornerIcon
 {
     public MainIcon()
-    : this(ServiceLocator.Resolve<MainIconViewModel>())
+    : this(Objects.Create<MainIconViewModel>())
     {
     }
 

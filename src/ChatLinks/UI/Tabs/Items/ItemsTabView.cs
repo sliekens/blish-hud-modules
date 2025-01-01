@@ -27,7 +27,7 @@ public class ItemsTabView : View<ItemsTabPresenter>, IItemsTabView
     public ItemsTabView(ILogger<ItemsTabView> logger)
     {
         _logger = logger;
-        Presenter = Objects.Create<ItemsTabPresenter>(this);
+        this.AutoWire();
     }
 
     public void SetSearchLoading(bool loading)

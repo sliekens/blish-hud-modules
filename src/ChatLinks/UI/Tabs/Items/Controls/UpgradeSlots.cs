@@ -17,7 +17,7 @@ public sealed class UpgradeSlots : FlowPanel
 
     public UpgradeSlots(Item item, IReadOnlyDictionary<int, UpgradeComponent> upgrades)
     {
-        ViewModel = ServiceLocator.Resolve<UpgradeSlotsViewModel>();
+        ViewModel = Objects.Create<UpgradeSlotsViewModel>();
         ViewModel.Item = item;
         ViewModel.UpgradeComponents = upgrades;
         ViewModel.Initialize();

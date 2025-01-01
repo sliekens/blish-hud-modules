@@ -21,7 +21,7 @@ public sealed class UpgradeSlot : Container
 
     public UpgradeSlot(UpgradeSlotModel model)
     {
-        ViewModel = ServiceLocator.Resolve<UpgradeSlotViewModel>();
+        ViewModel = Objects.Create<UpgradeSlotViewModel>();
         ViewModel.Type = model.Type;
         ViewModel.DefaultUpgradeComponent = model.DefaultUpgradeComponent;
         ViewModel.SelectedUpgradeComponent = model.SelectedUpgradeComponent;
