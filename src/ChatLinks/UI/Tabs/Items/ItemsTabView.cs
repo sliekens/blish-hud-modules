@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 
 using SL.ChatLinks.UI.Tabs.Items.Controls;
-using SL.ChatLinks.UI.Tabs.Items.Services;
 
 using Container = Blish_HUD.Controls.Container;
 using Item = GuildWars2.Items.Item;

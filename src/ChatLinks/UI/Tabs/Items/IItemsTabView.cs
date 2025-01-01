@@ -2,7 +2,7 @@
 
 using GuildWars2.Items;
 
-namespace SL.ChatLinks.UI.Tabs.Items.Services;
+namespace SL.ChatLinks.UI.Tabs.Items;
 
 public interface IItemsTabView : IView
 {
