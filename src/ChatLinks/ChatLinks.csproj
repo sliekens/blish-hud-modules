@@ -7,13 +7,6 @@
         <BlishHUDModuleFileName>sliekens.chat-links</BlishHUDModuleFileName>
     </PropertyGroup>
 
-    <PropertyGroup>
-        <BuildDependsOn>
-            $(BuildDependsOn);
-            BuildBlishHUDModule;
-        </BuildDependsOn>
-    </PropertyGroup>
-
     <ItemGroup>
         <PackageReference Include="BlishHUD" Version="1.2.0">
             <PrivateAssets>all</PrivateAssets>
@@ -44,6 +37,4 @@
     <ItemGroup>
         <Reference Include="System.IO.Compression" />
     </ItemGroup>
-    
-    
 </Project>
