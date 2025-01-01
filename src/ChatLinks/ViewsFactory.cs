@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 using SL.ChatLinks.UI;
 using SL.ChatLinks.UI.Tabs.Items;
-using SL.ChatLinks.UI.Tabs.Items.Services;
 using SL.Common.Controls.Items;
 
 namespace SL.ChatLinks;

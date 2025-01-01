@@ -5,9 +5,10 @@ using GuildWars2.Items;
 
 using Microsoft.Extensions.Logging;
 
+using SL.ChatLinks.UI.Tabs.Items.Services;
 using SL.Common.Controls.Items;
 
-namespace SL.ChatLinks.UI.Tabs.Items.Services;
+namespace SL.ChatLinks.UI.Tabs.Items;
 
 public class ItemsTabPresenter(
     IItemsTabView view,
