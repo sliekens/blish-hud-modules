@@ -53,13 +53,6 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 
         services.AddTransient<ItemSeeder>();
         services.AddTransient<IViewsFactory, ViewsFactory>();
-        services.AddTransient<IItemsTabView>(sp =>
-        {
-            ItemsTabView view = ActivatorUtilities.CreateInstance<ItemsTabView>(sp);
-            ItemsTabModel model = ActivatorUtilities.CreateInstance<ItemsTabModel>(sp);
-            view.WithPresenter(ActivatorUtilities.CreateInstance<ItemsTabPresenter>(sp, view, model));
-            return view;
-        });
 
         services.AddTransient<MainIcon>();
         services.AddTransient<MainIconViewModel>();
