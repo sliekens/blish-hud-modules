@@ -3,6 +3,7 @@
 using Microsoft.Extensions.DependencyInjection;
 
 using SL.ChatLinks.UI;
+using SL.ChatLinks.UI.Tabs.Items;
 using SL.ChatLinks.UI.Tabs.Items.Services;
 
 namespace SL.ChatLinks;
@@ -11,6 +12,12 @@ public sealed class ViewsFactory(IServiceProvider serviceProvider) : IViewsFacto
 {
     public IView CreateItemsTabView()
     {
-        return new AsyncView(serviceProvider.GetRequiredService<IItemsTabView>());
+        return new AsyncView(() =>
+        {
+            ItemsTabView view = ActivatorUtilities.CreateInstance<ItemsTabView>(serviceProvider);
+            ItemsTabModel model = ActivatorUtilities.CreateInstance<ItemsTabModel>(serviceProvider);
+            view.WithPresenter(ActivatorUtilities.CreateInstance<ItemsTabPresenter>(serviceProvider, view, model));
+            return view;
+        });
     }
 }

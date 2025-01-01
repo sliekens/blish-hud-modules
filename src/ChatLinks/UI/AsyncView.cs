@@ -3,13 +3,14 @@ using Blish_HUD.Graphics.UI;
 
 namespace SL.ChatLinks.UI;
 
-public sealed class AsyncView : View
+public sealed class AsyncView(Func<IView> other) : View
 {
     private readonly ViewContainer _container = new();
 
-    public AsyncView(IView other)
+    protected override Task<bool> Load(IProgress<string> progress)
     {
-        _container.Show(other);
+        _container.Show(other());
+        return Task.FromResult(true);
     }
 
     protected override void Build(Container buildPanel)
