@@ -8,7 +8,7 @@ using GuildWars2.Items;
 
 using Microsoft.Xna.Framework.Graphics;
 
-namespace SL.Common.Controls.Items;
+namespace SL.Common.Controls.Items.Services;
 
 public class ItemIcons(HttpClient httpClient)
 {

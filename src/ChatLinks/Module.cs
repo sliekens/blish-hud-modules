@@ -18,7 +18,7 @@ using SL.ChatLinks.Storage;
 using SL.ChatLinks.UI;
 using SL.ChatLinks.UI.Tabs.Items.Services;
 using SL.Common;
-using SL.Common.Controls.Items;
+using SL.Common.Controls.Items.Services;
 
 using SQLitePCL;
 

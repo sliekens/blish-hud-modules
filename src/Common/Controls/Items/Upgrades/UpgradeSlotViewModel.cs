@@ -1,5 +1,7 @@
 ﻿using GuildWars2.Items;
 
+using SL.Common.Controls.Items.Services;
+
 namespace SL.Common.Controls.Items.Upgrades;
 
 public class UpgradeSlotViewModel : ViewModel

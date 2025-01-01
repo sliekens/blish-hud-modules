@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework;
 
 using Container = Blish_HUD.Controls.Container;
 
-namespace SL.Common.Controls.Items.Upgrades;
+namespace SL.Common.Controls.Items.Services;
 
 internal sealed class ItemUpgradeBuilder(ItemFlags flags, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades)
 {
