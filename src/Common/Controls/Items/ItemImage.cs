@@ -11,7 +11,7 @@ public sealed class ItemImage : Image
     public ItemImage(Item item)
     {
         Size = new Point(50, 50);
-        Texture = ServiceLocator.GetService<ItemIcons>().GetIcon(item);
+        Texture = ServiceLocator.Resolve<ItemIcons>().GetIcon(item);
     }
 
     protected override void DisposeControl()

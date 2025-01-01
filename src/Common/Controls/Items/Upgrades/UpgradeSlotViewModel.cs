@@ -14,7 +14,7 @@ public class UpgradeSlotViewModel(
 
     public UpgradeSlotType Type { get; } = slotType;
 
-    public ItemIcons Icons { get; set; } = ServiceLocator.GetService<ItemIcons>();
+    public ItemIcons Icons { get; set; } = ServiceLocator.Resolve<ItemIcons>();
 
     public UpgradeComponent? DefaultUpgradeComponent
     {

@@ -22,7 +22,7 @@ namespace SL.Common.Controls.Items;
 
 public class ItemTooltipView(Item item, IReadOnlyDictionary<int, UpgradeComponent> upgrades) : View, IItemTooltipView
 {
-    private readonly ItemIcons _icons = ServiceLocator.GetService<ItemIcons>();
+    private readonly ItemIcons _icons = ServiceLocator.Resolve<ItemIcons>();
 
     protected override void Build(Container buildPanel)
     {

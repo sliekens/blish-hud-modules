@@ -7,8 +7,8 @@ public static class ServiceLocator
 {
     public static IServiceProvider? ServiceProvider { get; set; }
 
-    public static T GetService<T>()
+    public static T Resolve<T>()
     {
-        return ServiceProvider!.GetRequiredService<T>();
+        return ActivatorUtilities.GetServiceOrCreateInstance<T>(ServiceProvider);
     }
 }
