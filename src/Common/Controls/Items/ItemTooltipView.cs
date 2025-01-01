@@ -37,205 +37,205 @@ public class ItemTooltipView(Item item, IReadOnlyDictionary<int, UpgradeComponen
         switch (item)
         {
             case Armor armor:
-                PrintArmor(armor, _icons, upgrades, layout);
+                PrintArmor(armor);
                 break;
             case Backpack back:
-                PrintBackpack(back, _icons, upgrades, layout);
+                PrintBackpack(back);
                 break;
             case Bag bag:
-                PrintBag(bag, _icons, upgrades, layout);
+                PrintBag(bag);
                 break;
             case Consumable consumable:
-                PrintConsumable(consumable, _icons, upgrades, layout);
+                PrintConsumable(consumable);
                 break;
             case GuildWars2.Items.Container container:
-                PrintContainer(container, _icons, upgrades, layout);
+                PrintContainer(container);
                 break;
             case CraftingMaterial craftingMaterial:
-                PrintCraftingMaterial(craftingMaterial, _icons, upgrades, layout);
+                PrintCraftingMaterial(craftingMaterial);
                 break;
             case GatheringTool gatheringTool:
-                PrintGatheringTool(gatheringTool, _icons, upgrades, layout);
+                PrintGatheringTool(gatheringTool);
                 break;
             case Trinket trinket:
-                PrintTrinket(trinket, _icons, upgrades, layout);
+                PrintTrinket(trinket);
                 break;
             case Gizmo gizmo:
-                PrintGizmo(gizmo, _icons, upgrades, layout);
+                PrintGizmo(gizmo);
                 break;
             case JadeTechModule jadeTechModule:
-                PrintJadeTechModule(jadeTechModule, _icons, upgrades, layout);
+                PrintJadeTechModule(jadeTechModule);
                 break;
             case Miniature miniature:
-                PrintMiniature(miniature, _icons, upgrades, layout);
+                PrintMiniature(miniature);
                 break;
             case PowerCore powerCore:
-                PrintPowerCore(powerCore, _icons, upgrades, layout);
+                PrintPowerCore(powerCore);
                 break;
             case Relic relic:
-                PrintRelic(relic, _icons, upgrades, layout);
+                PrintRelic(relic);
                 break;
             case SalvageTool salvageTool:
-                PrintSalvageTool(salvageTool, _icons, upgrades, layout);
+                PrintSalvageTool(salvageTool);
                 break;
             case Trophy trophy:
-                PrintTrophy(trophy, _icons, upgrades, layout);
+                PrintTrophy(trophy);
                 break;
             case UpgradeComponent upgradeComponent:
-                PrintUpgradeComponent(upgradeComponent, _icons, upgrades, layout);
+                PrintUpgradeComponent(upgradeComponent);
                 break;
             case Weapon weapon:
-                PrintWeapon(weapon, _icons, upgrades, layout);
+                PrintWeapon(weapon);
                 break;
             default:
-                Print(item, _icons, upgrades, layout);
+                Print();
                 break;
         }
 
-        static void PrintArmor(Armor item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
+        void PrintArmor(Armor armor)
         {
-            Header(item, icons, upgrades, layout);
-            Defense(item.Defense, layout);
-            Attributes(item.Attributes, layout);
+            Header();
+            Defense(armor.Defense);
+            Attributes(armor.Attributes);
 
-            ItemUpgradeBuilder upgradeBuilder = new(item.Flags, icons, upgrades);
-            upgradeBuilder.AddSuffixItem(item.SuffixItemId);
-            upgradeBuilder.AddInfusionSlots(item.InfusionSlots);
+            ItemUpgradeBuilder upgradeBuilder = new(armor.Flags, _icons, upgrades);
+            upgradeBuilder.AddSuffixItem(armor.SuffixItemId);
+            upgradeBuilder.AddInfusionSlots(armor.InfusionSlots);
             upgradeBuilder.Build(layout);
 
-            ItemSkin(item.DefaultSkinId, layout);
-            ItemRarity(item, layout);
-            PlainText(item.WeightClass.ToString(), layout);
-            switch (item)
+            ItemSkin(armor.DefaultSkinId);
+            ItemRarity();
+            PlainText(armor.WeightClass.ToString());
+            switch (armor)
             {
                 case Boots:
-                    PlainText("Foot Armor", layout);
+                    PlainText("Foot Armor");
                     break;
                 case Coat:
-                    PlainText("Chest Armor", layout);
+                    PlainText("Chest Armor");
                     break;
                 case Gloves:
-                    PlainText("Hand Armor", layout);
+                    PlainText("Hand Armor");
                     break;
                 case Helm:
                 case HelmAquatic:
-                    PlainText("Head Armor", layout);
+                    PlainText("Head Armor");
                     break;
                 case Leggings:
-                    PlainText("Leg Armor", layout);
+                    PlainText("Leg Armor");
                     break;
                 case Shoulders:
-                    PlainText("Shoulder Armor", layout);
+                    PlainText("Shoulder Armor");
                     break;
             }
 
-            RequiredLevel(item, layout);
-            Description(item, layout);
-            InBank(item, layout);
-            if (item.StatChoices.Count > 0)
+            RequiredLevel();
+            Description();
+            InBank();
+            if (armor.StatChoices.Count > 0)
             {
-                PlainText("Double-click to select stats.", layout);
+                PlainText("Double-click to select stats.");
             }
 
-            if (item.Flags.Unique)
+            if (armor.Flags.Unique)
             {
-                PlainText("Unique", layout);
+                PlainText("Unique");
             }
 
-            AccountBound(item, layout);
-            SoulBound(item, layout);
-            VendorValue(item, layout);
+            AccountBound();
+            SoulBound();
+            VendorValue();
         }
 
-        static void PrintBackpack(Backpack item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
+        void PrintBackpack(Backpack back)
         {
-            Header(item, icons, upgrades, layout);
+            Header();
 
-            Attributes(item.Attributes, layout);
+            Attributes(back.Attributes);
 
-            ItemUpgradeBuilder upgradeBuilder = new(item.Flags, icons, upgrades);
-            upgradeBuilder.AddSuffixItem(item.SuffixItemId);
-            upgradeBuilder.AddInfusionSlots(item.InfusionSlots);
+            ItemUpgradeBuilder upgradeBuilder = new(back.Flags, _icons, upgrades);
+            upgradeBuilder.AddSuffixItem(back.SuffixItemId);
+            upgradeBuilder.AddInfusionSlots(back.InfusionSlots);
             upgradeBuilder.Build(layout);
 
-            ItemSkin(item.DefaultSkinId, layout);
+            ItemSkin(back.DefaultSkinId);
 
-            ItemRarity(item, layout);
-            PlainText("Back Item", layout);
-            RequiredLevel(item, layout);
-            Description(item, layout);
+            ItemRarity();
+            PlainText("Back Item");
+            RequiredLevel();
+            Description();
 
-            InBank(item, layout);
-            if (item.StatChoices.Count > 0)
+            InBank();
+            if (back.StatChoices.Count > 0)
             {
-                PlainText("Double-click to select stats.", layout);
+                PlainText("Double-click to select stats.");
             }
 
-            if (item.Flags.Unique)
+            if (back.Flags.Unique)
             {
-                PlainText("Unique", layout);
+                PlainText("Unique");
             }
 
-            AccountBound(item, layout);
-            SoulBound(item, layout);
-            VendorValue(item, layout);
+            AccountBound();
+            SoulBound();
+            VendorValue();
         }
 
-        static void PrintBag(Bag item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
+        void PrintBag(Bag bag)
         {
-            Header(item, icons, upgrades, layout);
-            Description(item, layout);
+            Header();
+            Description();
 
-            InBank(item, layout);
-            if (item.Flags.Unique)
+            InBank();
+            if (bag.Flags.Unique)
             {
-                PlainText("Unique", layout);
+                PlainText("Unique");
             }
 
-            AccountBound(item, layout);
-            SoulBound(item, layout);
-            VendorValue(item, layout);
+            AccountBound();
+            SoulBound();
+            VendorValue();
         }
 
-        static void PrintConsumable(Consumable item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
+        void PrintConsumable(Consumable consumable)
         {
-            Header(item, icons, upgrades, layout);
-            switch (item)
+            Header();
+            switch (consumable)
             {
                 case Currency or Service:
-                    PlainText("Takes effect immediately upon receipt.", layout);
+                    PlainText("Takes effect immediately upon receipt.");
                     break;
                 default:
-                    PlainText("Double-click to consume.", layout);
+                    PlainText("Double-click to consume.");
                     break;
             }
 
-            switch (item)
+            switch (consumable)
             {
                 case Food { Effect: not null } food:
-                    Effect(food.Effect, layout);
+                    Effect(food.Effect);
                     break;
                 case Utility { Effect: not null } utility:
-                    Effect(utility.Effect, layout);
+                    Effect(utility.Effect);
                     break;
                 case Service { Effect: not null } service:
-                    Effect(service.Effect, layout);
+                    Effect(service.Effect);
                     break;
                 case GenericConsumable { Effect: not null } generic:
-                    Effect(generic.Effect, layout);
+                    Effect(generic.Effect);
                     break;
             }
 
-            Description(item, layout);
+            Description();
 
-            switch (item)
+            switch (consumable)
             {
                 case Currency or Service:
-                    PlainText(string.IsNullOrEmpty(item.Description) ? "Service" : "\r\nService", layout);
+                    PlainText(string.IsNullOrEmpty(consumable.Description) ? "Service" : "\r\nService");
                     break;
                 case Transmutation transmutation:
-                    ItemSkin(transmutation.SkinIds.First(), layout);
-                    PlainText("\r\nConsumable", layout);
+                    ItemSkin(transmutation.SkinIds.First());
+                    PlainText("\r\nConsumable");
                     break;
                 case Booze:
                     PlainText("""
@@ -243,256 +243,256 @@ public class ItemTooltipView(Item item, IReadOnlyDictionary<int, UpgradeComponen
                               Excessive alcohol consumption will result in intoxication.
 
                               Consumable          
-                              """, layout);
+                              """);
                     break;
                 default:
-                    PlainText(string.IsNullOrEmpty(item.Description) ? "Consumable" : "\r\nConsumable", layout);
+                    PlainText(string.IsNullOrEmpty(consumable.Description) ? "Consumable" : "\r\nConsumable");
                     break;
             }
 
-            RequiredLevel(item, layout);
-            InBank(item, layout);
-            if (item.Flags.Unique)
+            RequiredLevel();
+            InBank();
+            if (consumable.Flags.Unique)
             {
-                PlainText("Unique", layout);
+                PlainText("Unique");
             }
 
-            AccountBound(item, layout);
-            SoulBound(item, layout);
-            VendorValue(item, layout);
+            AccountBound();
+            SoulBound();
+            VendorValue();
         }
 
-        static void PrintContainer(GuildWars2.Items.Container item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
+        void PrintContainer(GuildWars2.Items.Container container)
         {
-            Header(item, icons, upgrades, layout);
-            Description(item, layout);
-            PlainText(string.IsNullOrEmpty(item.Description) ? "Consumable" : "\r\nConsumable", layout);
-            InBank(item, layout);
-            if (item.Flags.Unique)
+            Header();
+            Description();
+            PlainText(string.IsNullOrEmpty(container.Description) ? "Consumable" : "\r\nConsumable");
+            InBank();
+            if (container.Flags.Unique)
             {
-                PlainText("Unique", layout);
+                PlainText("Unique");
             }
 
-            AccountBound(item, layout);
-            SoulBound(item, layout);
-            VendorValue(item, layout);
+            AccountBound();
+            SoulBound();
+            VendorValue();
         }
 
-        static void PrintCraftingMaterial(CraftingMaterial item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
+        void PrintCraftingMaterial(CraftingMaterial craftingMaterial)
         {
-            Header(item, icons, upgrades, layout);
-            Description(item, layout);
-            InBank(item, layout);
-            if (item.Flags.Unique)
+            Header();
+            Description();
+            InBank();
+            if (craftingMaterial.Flags.Unique)
             {
-                PlainText("Unique", layout);
+                PlainText("Unique");
             }
 
-            AccountBound(item, layout);
-            SoulBound(item, layout);
-            VendorValue(item, layout);
+            AccountBound();
+            SoulBound();
+            VendorValue();
         }
 
-        static void PrintGatheringTool(GatheringTool item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
+        void PrintGatheringTool(GatheringTool gatheringTool)
         {
-            Header(item, icons, upgrades, layout);
-            Description(item, layout);
+            Header();
+            Description();
 
-            InBank(item, layout);
-            if (item.Flags.Unique)
+            InBank();
+            if (gatheringTool.Flags.Unique)
             {
-                PlainText("Unique", layout);
+                PlainText("Unique");
             }
 
-            AccountBound(item, layout);
-            SoulBound(item, layout);
-            VendorValue(item, layout);
+            AccountBound();
+            SoulBound();
+            VendorValue();
         }
 
-        static void PrintGizmo(Gizmo item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
+        void PrintGizmo(Gizmo gizmo)
         {
-            Header(item, icons, upgrades, layout);
-            Description(item, layout, item.Level > 0);
+            Header();
+            Description(gizmo.Level > 0);
 
-            RequiredLevel(item, layout);
+            RequiredLevel();
 
-            InBank(item, layout);
-            if (item.Flags.Unique)
+            InBank();
+            if (gizmo.Flags.Unique)
             {
-                PlainText("Unique", layout);
+                PlainText("Unique");
             }
 
-            AccountBound(item, layout);
-            SoulBound(item, layout);
-            VendorValue(item, layout);
+            AccountBound();
+            SoulBound();
+            VendorValue();
         }
 
-        static void PrintJadeTechModule(JadeTechModule item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
+        void PrintJadeTechModule(JadeTechModule jadeTechModule)
         {
-            Header(item, icons, upgrades, layout);
-            Description(item, layout, true);
+            Header();
+            Description(true);
 
-            ItemRarity(item, layout);
-            PlainText("Module", layout);
-            RequiredLevel(item, layout);
-            PlainText("Required Mastery: Jade Bots", layout);
+            ItemRarity();
+            PlainText("Module");
+            RequiredLevel();
+            PlainText("Required Mastery: Jade Bots");
 
-            InBank(item, layout);
-            if (item.Flags.Unique)
+            InBank();
+            if (jadeTechModule.Flags.Unique)
             {
-                PlainText("Unique", layout);
+                PlainText("Unique");
             }
 
-            AccountBound(item, layout);
-            SoulBound(item, layout);
-            VendorValue(item, layout);
+            AccountBound();
+            SoulBound();
+            VendorValue();
         }
 
-        static void PrintMiniature(Miniature item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
+        void PrintMiniature(Miniature miniature)
         {
-            Header(item, icons, upgrades, layout);
-            Description(item, layout);
+            Header();
+            Description();
 
-            Mini(item.MiniatureId, layout);
+            Mini(miniature.MiniatureId);
 
-            PlainText("Mini", layout);
+            PlainText("Mini");
 
-            InBank(item, layout);
-            if (item.Flags.Unique)
+            InBank();
+            if (miniature.Flags.Unique)
             {
-                PlainText("Unique", layout);
+                PlainText("Unique");
             }
 
-            AccountBound(item, layout);
-            SoulBound(item, layout);
-            VendorValue(item, layout);
+            AccountBound();
+            SoulBound();
+            VendorValue();
         }
 
-        static void PrintPowerCore(PowerCore item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
+        void PrintPowerCore(PowerCore powerCore)
         {
-            Header(item, icons, upgrades, layout);
-            Description(item, layout, true);
+            Header();
+            Description(true);
 
-            ItemRarity(item, layout);
-            PlainText("Power Core", layout);
-            RequiredLevel(item, layout);
+            ItemRarity();
+            PlainText("Power Core");
+            RequiredLevel();
 
-            InBank(item, layout);
-            if (item.Flags.Unique)
+            InBank();
+            if (powerCore.Flags.Unique)
             {
-                PlainText("Unique", layout);
+                PlainText("Unique");
             }
 
-            AccountBound(item, layout);
-            SoulBound(item, layout);
-            VendorValue(item, layout);
+            AccountBound();
+            SoulBound();
+            VendorValue();
         }
 
-        static void PrintRelic(Relic item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
+        void PrintRelic(Relic relic)
         {
-            Header(item, icons, upgrades, layout);
-            Description(item, layout, true);
-            ItemRarity(item, layout);
-            PlainText("Relic", layout);
-            RequiredLevel(item, layout);
+            Header();
+            Description(true);
+            ItemRarity();
+            PlainText("Relic");
+            RequiredLevel();
 
-            InBank(item, layout);
-            if (item.Flags.Unique)
+            InBank();
+            if (relic.Flags.Unique)
             {
-                PlainText("Unique", layout);
+                PlainText("Unique");
             }
 
-            AccountBound(item, layout);
-            SoulBound(item, layout);
-            VendorValue(item, layout);
+            AccountBound();
+            SoulBound();
+            VendorValue();
         }
 
-        static void PrintSalvageTool(SalvageTool item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
+        void PrintSalvageTool(SalvageTool salvageTool)
         {
-            Header(item, icons, upgrades, layout);
-            PlainText(" ", layout);
-            ItemRarity(item, layout);
-            PlainText("Consumable", layout);
-            Description(item, layout);
+            Header();
+            PlainText(" ");
+            ItemRarity();
+            PlainText("Consumable");
+            Description();
 
-            InBank(item, layout);
-            if (item.Flags.Unique)
+            InBank();
+            if (salvageTool.Flags.Unique)
             {
-                PlainText("Unique", layout);
+                PlainText("Unique");
             }
 
-            AccountBound(item, layout);
-            SoulBound(item, layout);
-            VendorValue(item, layout);
+            AccountBound();
+            SoulBound();
+            VendorValue();
         }
 
-        static void PrintTrinket(Trinket item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
+        void PrintTrinket(Trinket trinket)
         {
-            Header(item, icons, upgrades, layout);
+            Header();
 
-            Attributes(item.Attributes, layout);
+            Attributes(trinket.Attributes);
 
-            ItemUpgradeBuilder upgradeBuilder = new(item.Flags, icons, upgrades);
-            upgradeBuilder.AddSuffixItem(item.SuffixItemId);
-            upgradeBuilder.AddInfusionSlots(item.InfusionSlots);
+            ItemUpgradeBuilder upgradeBuilder = new(trinket.Flags, _icons, upgrades);
+            upgradeBuilder.AddSuffixItem(trinket.SuffixItemId);
+            upgradeBuilder.AddInfusionSlots(trinket.InfusionSlots);
             upgradeBuilder.Build(layout);
 
-            ItemRarity(item, layout);
+            ItemRarity();
 
-            switch (item)
+            switch (trinket)
             {
                 case Accessory:
-                    PlainText("Accessory", layout);
+                    PlainText("Accessory");
                     break;
                 case Amulet:
-                    PlainText("Amulet", layout);
+                    PlainText("Amulet");
                     break;
                 case Ring:
-                    PlainText("Ring", layout);
+                    PlainText("Ring");
                     break;
             }
 
-            RequiredLevel(item, layout);
-            Description(item, layout);
+            RequiredLevel();
+            Description();
 
-            InBank(item, layout);
-            if (item.StatChoices.Count > 0)
+            InBank();
+            if (trinket.StatChoices.Count > 0)
             {
-                PlainText("Double-click to select stats.", layout);
+                PlainText("Double-click to select stats.");
             }
 
-            if (item.Flags.Unique)
+            if (trinket.Flags.Unique)
             {
-                PlainText("Unique", layout);
+                PlainText("Unique");
             }
 
-            AccountBound(item, layout);
-            SoulBound(item, layout);
-            VendorValue(item, layout);
+            AccountBound();
+            SoulBound();
+            VendorValue();
         }
 
-        static void PrintTrophy(Trophy item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
+        void PrintTrophy(Trophy trophy)
         {
-            Header(item, icons, upgrades, layout);
-            Description(item, layout, true);
-            PlainText("Trophy", layout);
+            Header();
+            Description(true);
+            PlainText("Trophy");
 
-            InBank(item, layout);
-            if (item.Flags.Unique)
+            InBank();
+            if (trophy.Flags.Unique)
             {
-                PlainText("Unique", layout);
+                PlainText("Unique");
             }
 
-            AccountBound(item, layout);
-            SoulBound(item, layout);
-            VendorValue(item, layout);
+            AccountBound();
+            SoulBound();
+            VendorValue();
         }
 
-        static void PrintUpgradeComponent(UpgradeComponent item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
+        void PrintUpgradeComponent(UpgradeComponent upgradeComponent)
         {
-            Header(item, icons, upgrades, layout);
+            Header();
 
-            if (item is Rune rune)
+            if (upgradeComponent is Rune rune)
             {
                 StringBuilder bonuses = new();
                 foreach ((string? bonus, int ordinal) in (rune.Bonuses ?? []).Select((value, index) =>
@@ -501,183 +501,183 @@ public class ItemTooltipView(Item item, IReadOnlyDictionary<int, UpgradeComponen
                     bonuses.Append($"\r\n({ordinal:0}): {bonus}");
                 }
 
-                PlainText(bonuses.ToString(), layout, new Color(0x99, 0x99, 0x99));
+                PlainText(bonuses.ToString(), new Color(0x99, 0x99, 0x99));
             }
-            else if (item.Buff is { Description.Length: > 0 })
+            else if (upgradeComponent.Buff is { Description.Length: > 0 })
             {
                 FormattedLabel? label = new FormattedLabelBuilder()
                     .SetWidth(layout.Width)
                     .AutoSizeHeight()
                     .Wrap()
                     .CreatePart("\r\n", part => part.SetFontSize(ContentService.FontSize.Size16))
-                    .AddMarkup(item.Buff!.Description, new Color(0x55, 0x99, 0xFF))
+                    .AddMarkup(upgradeComponent.Buff!.Description, new Color(0x55, 0x99, 0xFF))
                     .Build();
                 label.Parent = layout;
             }
             else
             {
                 StringBuilder builder = new();
-                foreach (KeyValuePair<Extensible<AttributeName>, int> stat in item.Attributes)
+                foreach (KeyValuePair<Extensible<AttributeName>, int> stat in upgradeComponent.Attributes)
                 {
                     builder.Append($"+{stat.Value:N0} {AttributeName(stat.Key)}");
                 }
 
-                PlainText(builder.ToString(), layout, new Color(0x55, 0x99, 0xFF));
+                PlainText(builder.ToString(), new Color(0x55, 0x99, 0xFF));
             }
 
 
-            Description(item, layout);
+            Description();
 
-            RequiredLevel(item, layout);
+            RequiredLevel();
 
-            InBank(item, layout);
-            if (item.Flags.Unique)
+            InBank();
+            if (upgradeComponent.Flags.Unique)
             {
-                PlainText("Unique", layout);
+                PlainText("Unique");
             }
 
-            AccountBound(item, layout);
-            SoulBound(item, layout);
-            VendorValue(item, layout);
+            AccountBound();
+            SoulBound();
+            VendorValue();
         }
 
-        static void PrintWeapon(Weapon item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
+        void PrintWeapon(Weapon weapon)
         {
-            Header(item, icons, upgrades, layout);
-            WeaponStrength(item, layout);
-            Defense(item.Defense, layout);
-            Attributes(item.Attributes, layout);
+            Header();
+            WeaponStrength(weapon);
+            Defense(weapon.Defense);
+            Attributes(weapon.Attributes);
 
-            ItemUpgradeBuilder upgradeBuilder = new(item.Flags, icons, upgrades);
-            upgradeBuilder.AddSuffixItem(item.SuffixItemId);
-            upgradeBuilder.AddSecondarySuffixItemId(item.SecondarySuffixItemId);
-            upgradeBuilder.AddInfusionSlots(item.InfusionSlots);
-            if (item is Greatsword or Hammer or Longbow or Rifle or Shortbow or Staff or Spear or HarpoonGun or Trident)
+            ItemUpgradeBuilder upgradeBuilder = new(weapon.Flags, _icons, upgrades);
+            upgradeBuilder.AddSuffixItem(weapon.SuffixItemId);
+            upgradeBuilder.AddSecondarySuffixItemId(weapon.SecondarySuffixItemId);
+            upgradeBuilder.AddInfusionSlots(weapon.InfusionSlots);
+            if (weapon is Greatsword or Hammer or Longbow or Rifle or Shortbow or Staff or Spear or HarpoonGun or Trident)
             {
                 upgradeBuilder.TwoHanded();
             }
 
             upgradeBuilder.Build(layout);
 
-            ItemSkin(item.DefaultSkinId, layout);
-            ItemRarity(item, layout);
-            switch (item)
+            ItemSkin(weapon.DefaultSkinId);
+            ItemRarity();
+            switch (weapon)
             {
                 case Axe:
-                    PlainText("Axe", layout);
+                    PlainText("Axe");
                     break;
                 case Dagger:
-                    PlainText("Dagger", layout);
+                    PlainText("Dagger");
                     break;
                 case Focus:
-                    PlainText("Focus", layout);
+                    PlainText("Focus");
                     break;
                 case Greatsword:
-                    PlainText("Greatsword", layout);
+                    PlainText("Greatsword");
                     break;
                 case Hammer:
-                    PlainText("Hammer", layout);
+                    PlainText("Hammer");
                     break;
                 case HarpoonGun:
-                    PlainText("Harpoon Gun", layout);
+                    PlainText("Harpoon Gun");
                     break;
                 case LargeBundle:
-                    PlainText("Large Bundle", layout);
+                    PlainText("Large Bundle");
                     break;
                 case Longbow:
-                    PlainText("Longbow", layout);
+                    PlainText("Longbow");
                     break;
                 case Mace:
-                    PlainText("Mace", layout);
+                    PlainText("Mace");
                     break;
                 case Pistol:
-                    PlainText("Pistol", layout);
+                    PlainText("Pistol");
                     break;
                 case Rifle:
-                    PlainText("Rifle", layout);
+                    PlainText("Rifle");
                     break;
                 case Scepter:
-                    PlainText("Scepter", layout);
+                    PlainText("Scepter");
                     break;
                 case Shield:
-                    PlainText("Shield", layout);
+                    PlainText("Shield");
                     break;
                 case Shortbow:
-                    PlainText("Shortbow", layout);
+                    PlainText("Shortbow");
                     break;
                 case SmallBundle:
-                    PlainText("Small Bundle", layout);
+                    PlainText("Small Bundle");
                     break;
                 case Spear:
-                    PlainText("Spear", layout);
+                    PlainText("Spear");
                     break;
                 case Staff:
-                    PlainText("Staff", layout);
+                    PlainText("Staff");
                     break;
                 case Sword:
-                    PlainText("Sword", layout);
+                    PlainText("Sword");
                     break;
                 case Torch:
-                    PlainText("Torch", layout);
+                    PlainText("Torch");
                     break;
                 case Toy:
-                    PlainText("Toy", layout);
+                    PlainText("Toy");
                     break;
                 case ToyTwoHanded:
-                    PlainText("Toy", layout);
+                    PlainText("Toy");
                     break;
                 case Trident:
-                    PlainText("Trident", layout);
+                    PlainText("Trident");
                     break;
                 case Warhorn:
-                    PlainText("Warhorn", layout);
+                    PlainText("Warhorn");
                     break;
             }
 
-            RequiredLevel(item, layout);
+            RequiredLevel();
 
-            Description(item, layout);
+            Description();
 
-            InBank(item, layout);
-            if (item.StatChoices.Count > 0)
+            InBank();
+            if (weapon.StatChoices.Count > 0)
             {
-                PlainText("Double-click to select stats.", layout);
+                PlainText("Double-click to select stats.");
             }
 
-            if (item.Flags.Unique)
+            if (weapon.Flags.Unique)
             {
-                PlainText("Unique", layout);
+                PlainText("Unique");
             }
 
-            AccountBound(item, layout);
-            SoulBound(item, layout);
-            VendorValue(item, layout);
+            AccountBound();
+            SoulBound();
+            VendorValue();
         }
 
-        static void Print(Item item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container layout)
+        void Print()
         {
-            Header(item, icons, upgrades, layout);
-            Description(item, layout);
+            Header();
+            Description();
 
-            InBank(item, layout);
+            InBank();
             if (item.Flags.Unique)
             {
-                PlainText("Unique", layout);
+                PlainText("Unique");
             }
 
-            AccountBound(item, layout);
-            SoulBound(item, layout);
-            VendorValue(item, layout);
+            AccountBound();
+            SoulBound();
+            VendorValue();
         }
 
-        static void Header(Item item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades, Container parent)
+        void Header()
         {
             FlowPanel header = new()
             {
-                Parent = parent,
+                Parent = layout,
                 FlowDirection = ControlFlowDirection.SingleLeftToRight,
                 ControlPadding = new Vector2(5f),
-                Width = parent.Width,
+                Width = layout.Width,
                 Height = 50
             };
 
@@ -689,7 +689,7 @@ public class ItemTooltipView(Item item, IReadOnlyDictionary<int, UpgradeComponen
             ItemName name = new(item, upgrades)
             {
                 Parent = header,
-                Width = parent.Width - 55,
+                Width = layout.Width - 55,
                 Height = 50,
                 VerticalAlignment = VerticalAlignment.Middle,
                 Font = GameService.Content.DefaultFont18,
@@ -700,21 +700,21 @@ public class ItemTooltipView(Item item, IReadOnlyDictionary<int, UpgradeComponen
             name.Text = name.Text.Replace(" ", "  ");
         }
 
-        static Control? WeaponStrength(Weapon item, Container parent)
+        Control? WeaponStrength(Weapon weapon)
         {
             FormattedLabelBuilder? builder = new FormattedLabelBuilder()
-                .SetWidth(parent.Width)
+                .SetWidth(layout.Width)
                 .AutoSizeHeight()
                 .Wrap();
 
-            builder.CreatePart($"Weapon Strength: {item.MinPower:N0} - {item.MaxPower:N0}", static part =>
+            builder.CreatePart($"Weapon Strength: {weapon.MinPower:N0} - {weapon.MaxPower:N0}", static part =>
             {
                 part.SetFontSize(ContentService.FontSize.Size16);
             });
 
-            if (item.DamageType.IsDefined())
+            if (weapon.DamageType.IsDefined())
             {
-                switch (item.DamageType.ToEnum())
+                switch (weapon.DamageType.ToEnum())
                 {
                     case DamageType.Choking:
                         builder.CreatePart(" (Choking)", static part =>
@@ -748,21 +748,21 @@ public class ItemTooltipView(Item item, IReadOnlyDictionary<int, UpgradeComponen
             }
 
             FormattedLabel? label = builder.Build();
-            label.Parent = parent;
+            label.Parent = layout;
             return label;
         }
 
-        static Control? Defense(int defense, Container parent)
+        Control? Defense(int defense)
         {
             if (defense == 0)
             {
                 return null;
             }
 
-            return PlainText($"Defense: {defense:N0}", parent);
+            return PlainText($"Defense: {defense:N0}");
         }
 
-        static Control? Attributes(IDictionary<Extensible<AttributeName>, int> attributes, Container parent)
+        Control? Attributes(IDictionary<Extensible<AttributeName>, int> attributes)
         {
             if (attributes.Count == 0)
             {
@@ -780,36 +780,16 @@ public class ItemTooltipView(Item item, IReadOnlyDictionary<int, UpgradeComponen
                 builder.AppendFormat($"+{stat.Value:N0} {AttributeName(stat.Key)}");
             }
 
-            return PlainText(builder.ToString(), parent);
+            return PlainText(builder.ToString());
         }
 
-        static string AttributeName(Extensible<AttributeName> stat)
-        {
-            return stat.IsDefined()
-                ? stat.ToEnum() switch
-                {
-                    GuildWars2.Hero.AttributeName.Power => "Power",
-                    GuildWars2.Hero.AttributeName.Precision => "Precision",
-                    GuildWars2.Hero.AttributeName.Toughness => "Toughness",
-                    GuildWars2.Hero.AttributeName.Vitality => "Vitality",
-                    GuildWars2.Hero.AttributeName.Concentration => "Concentration",
-                    GuildWars2.Hero.AttributeName.ConditionDamage => "Condition Damage",
-                    GuildWars2.Hero.AttributeName.Expertise => "Expertise",
-                    GuildWars2.Hero.AttributeName.Ferocity => "Ferocity",
-                    GuildWars2.Hero.AttributeName.HealingPower => "Healing Power",
-                    GuildWars2.Hero.AttributeName.AgonyResistance => "Agony Resistance",
-                    _ => stat.ToString()
-                }
-                : stat.ToString();
-        }
-
-        static Control Effect(Effect effect, Container parent)
+        Control Effect(Effect effect)
         {
             FlowPanel panel = new()
             {
-                Parent = parent,
+                Parent = layout,
                 FlowDirection = ControlFlowDirection.SingleLeftToRight,
-                Width = parent.Width,
+                Width = layout.Width,
                 HeightSizingMode = SizingMode.AutoSize,
                 ControlPadding = new Vector2(5f)
             };
@@ -853,17 +833,17 @@ public class ItemTooltipView(Item item, IReadOnlyDictionary<int, UpgradeComponen
             return panel;
         }
 
-        static Control? Description(Item item, Container parent, bool finalNewLine = false)
+        Control? Description(bool finalNewLine = false)
         {
             if (string.IsNullOrEmpty(item.Description))
             {
                 return null;
             }
 
-            Panel container = new() { Parent = parent, Width = parent.Width, HeightSizingMode = SizingMode.AutoSize };
+            Panel container = new() { Parent = layout, Width = layout.Width, HeightSizingMode = SizingMode.AutoSize };
 
             FormattedLabelBuilder builder = new FormattedLabelBuilder()
-                .SetWidth(parent.Width - 10)
+                .SetWidth(layout.Width - 10)
                 .AutoSizeHeight()
                 .Wrap()
                 .AddMarkup(item.Description);
@@ -877,44 +857,44 @@ public class ItemTooltipView(Item item, IReadOnlyDictionary<int, UpgradeComponen
             return label;
         }
 
-        static Control? Mini(int miniatureId, Container parent)
+        Control? Mini(int miniatureId)
         {
             // TODO: mini unlock status
             return null;
         }
 
-        static Control? ItemSkin(int skinId, Container parent)
+        Control? ItemSkin(int skinId)
         {
             // TODO: skin unlock status
             return null;
         }
 
-        static Control? ItemRarity(Item item, Container parent)
+        Control? ItemRarity()
         {
             if (item.Rarity == Rarity.Basic)
             {
                 return null;
             }
 
-            return PlainText($"\r\n{item.Rarity}", parent, ItemColors.Rarity(item.Rarity));
+            return PlainText($"\r\n{item.Rarity}", ItemColors.Rarity(item.Rarity));
         }
 
-        static Control? RequiredLevel(Item item, Container parent)
+        Control? RequiredLevel()
         {
             if (item.Level == 0)
             {
                 return null;
             }
 
-            return PlainText($"Required Level: {item.Level}", parent);
+            return PlainText($"Required Level: {item.Level}");
         }
 
-        static Control? InBank(Item item, Container parent)
+        Control? InBank()
         {
             return null;
         }
 
-        static Control? AccountBound(Item item, Container parent)
+        Control? AccountBound()
         {
             if (item is Currency or Service)
             {
@@ -923,18 +903,18 @@ public class ItemTooltipView(Item item, IReadOnlyDictionary<int, UpgradeComponen
 
             if (item.Flags.AccountBound)
             {
-                return PlainText("Account Bound on Acquire", parent);
+                return PlainText("Account Bound on Acquire");
             }
 
             if (item.Flags.AccountBindOnUse)
             {
-                return PlainText("Account Bound on Use", parent);
+                return PlainText("Account Bound on Use");
             }
 
             return null;
         }
 
-        static Control? SoulBound(Item item, Container parent)
+        Control? SoulBound()
         {
             if (item is Currency or Service)
             {
@@ -943,18 +923,18 @@ public class ItemTooltipView(Item item, IReadOnlyDictionary<int, UpgradeComponen
 
             if (item.Flags.Soulbound)
             {
-                return PlainText("Soulbound on Acquire", parent);
+                return PlainText("Soulbound on Acquire");
             }
 
             if (item.Flags.SoulbindOnUse)
             {
-                return PlainText("Soulbound on Use", parent);
+                return PlainText("Soulbound on Use");
             }
 
             return null;
         }
 
-        static Control? VendorValue(Item item, Container parent)
+        Control? VendorValue()
         {
             Coin vendorValue = item.VendorValue;
             if (vendorValue == Coin.Zero || item.Flags.NoSell)
@@ -963,7 +943,7 @@ public class ItemTooltipView(Item item, IReadOnlyDictionary<int, UpgradeComponen
             }
 
             FormattedLabelBuilder? builder = new FormattedLabelBuilder()
-                .SetWidth(parent.Width)
+                .SetWidth(layout.Width)
                 .AutoSizeHeight();
 
             if (vendorValue.Amount >= 10_000)
@@ -996,18 +976,18 @@ public class ItemTooltipView(Item item, IReadOnlyDictionary<int, UpgradeComponen
             builder.CreatePart(copper);
 
             FormattedLabel? label = builder.Build();
-            label.Parent = parent;
-            label.Width = parent.Width;
+            label.Parent = layout;
+            label.Width = layout.Width;
 
             return label;
         }
 
-        static Label PlainText(string text, Container parent, Color? textColor = null)
+        Label PlainText(string text, Color? textColor = null)
         {
             return new Label
             {
-                Parent = parent,
-                Width = parent.Width,
+                Parent = layout,
+                Width = layout.Width,
                 AutoSizeHeight = true,
                 Text = text,
                 TextColor = textColor.GetValueOrDefault(Color.White),
@@ -1015,5 +995,25 @@ public class ItemTooltipView(Item item, IReadOnlyDictionary<int, UpgradeComponen
                 WrapText = true
             };
         }
+    }
+
+    private string AttributeName(Extensible<AttributeName> stat)
+    {
+        return stat.IsDefined()
+            ? stat.ToEnum() switch
+            {
+                GuildWars2.Hero.AttributeName.Power => "Power",
+                GuildWars2.Hero.AttributeName.Precision => "Precision",
+                GuildWars2.Hero.AttributeName.Toughness => "Toughness",
+                GuildWars2.Hero.AttributeName.Vitality => "Vitality",
+                GuildWars2.Hero.AttributeName.Concentration => "Concentration",
+                GuildWars2.Hero.AttributeName.ConditionDamage => "Condition Damage",
+                GuildWars2.Hero.AttributeName.Expertise => "Expertise",
+                GuildWars2.Hero.AttributeName.Ferocity => "Ferocity",
+                GuildWars2.Hero.AttributeName.HealingPower => "Healing Power",
+                GuildWars2.Hero.AttributeName.AgonyResistance => "Agony Resistance",
+                _ => stat.ToString()
+            }
+            : stat.ToString();
     }
 }
