@@ -19,15 +19,17 @@ public sealed class UpgradeSlot : Container
 
     private FormattedLabel? _label;
 
-    public UpgradeSlot(UpgradeSlotViewModel vm)
+    public UpgradeSlot(UpgradeSlotModel model)
     {
-        ViewModel = vm;
+        ViewModel = ServiceLocator.Resolve<UpgradeSlotViewModel>();
+        ViewModel.Type = model.Type;
+        ViewModel.DefaultUpgradeComponent = model.DefaultUpgradeComponent;
+        ViewModel.SelectedUpgradeComponent = model.SelectedUpgradeComponent;
         ViewModel.PropertyChanged += OnChanges;
         Click += (_, _) =>
         {
-            vm.OnCustomize();
+            ViewModel.OnCustomize();
         };
-
         UpdateSlot();
     }
 

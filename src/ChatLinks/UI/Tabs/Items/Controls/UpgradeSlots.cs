@@ -1,7 +1,10 @@
 ﻿using Blish_HUD.Controls;
 
+using GuildWars2.Items;
+
 using Microsoft.Xna.Framework;
 
+using SL.Common;
 using SL.Common.Controls.Items.Upgrades;
 
 namespace SL.ChatLinks.UI.Tabs.Items.Controls;
@@ -12,39 +15,66 @@ public sealed class UpgradeSlots : FlowPanel
 
     private readonly List<(UpgradeSlot Slot, UpgradeComponentsList Options)> _slots = [];
 
-    public UpgradeSlots(UpgradeSlotsViewModel vm)
+    public UpgradeSlots(Item item, IReadOnlyDictionary<int, UpgradeComponent> upgrades)
     {
-        ViewModel = vm;
+        ViewModel = ServiceLocator.Resolve<UpgradeSlotsViewModel>();
+        ViewModel.Item = item;
+        ViewModel.UpgradeComponents = upgrades;
+        ViewModel.Initialize();
+
         FlowDirection = ControlFlowDirection.SingleTopToBottom;
         ControlPadding = new Vector2(20);
 
-        foreach (var (slotViewModel, optionsViewModel) in vm.UpgradeSlots.Concat(vm.InfusionSlots))
+        foreach (var slotModel in ViewModel.Slots())
         {
-            var slot = new UpgradeSlot(slotViewModel)
+            var slot = new UpgradeSlot(slotModel)
             {
                 Parent = this,
                 WidthSizingMode = SizingMode.Fill,
                 HeightSizingMode = SizingMode.AutoSize
             };
 
-            var options = new UpgradeComponentsList(optionsViewModel)
+            var options = slotModel.Type switch
+            {
+                UpgradeSlotType.Default => ViewModel.UpgradeOptions,
+                UpgradeSlotType.Infusion => ViewModel.InfusionOptions,
+                UpgradeSlotType.Enrichment => ViewModel.EnrichmentOptions,
+                _ => []
+            } ?? [];
+
+            var list = new UpgradeComponentsList(options)
             {
                 WidthSizingMode = SizingMode.Fill,
                 HeightSizingMode = SizingMode.AutoSize
             };
 
-            _slots.Add((slot, options));
+            _slots.Add((slot, list));
 
-            slotViewModel.Customized += () =>
+            slot.ViewModel.Customized += () =>
             {
-                if (options.Parent is null)
+                if (list.Parent is null)
                 {
-                    ShowOptions(options);
+                    ShowOptions(list);
                 }
                 else
                 {
-                    options.Parent = null;
+                    list.Parent = null;
                 }
+            };
+
+            slot.ViewModel.Cleared += () =>
+            {
+                slotModel.SelectedUpgradeComponent = null;
+                ViewModel.OnUpgradeChanged();
+            };
+
+            list.ViewModel.Selected += component =>
+            {
+                slotModel.SelectedUpgradeComponent = slotModel.SelectedUpgradeComponent == component
+                    ? null
+                    : component;
+                slot.ViewModel.SelectedUpgradeComponent = slotModel.SelectedUpgradeComponent;
+                ViewModel.OnUpgradeChanged();
             };
         }
     }

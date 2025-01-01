@@ -1,7 +1,6 @@
 ﻿using Blish_HUD.Content;
 using Blish_HUD.Controls;
 
-using SL.ChatLinks.UI.Tabs;
 using SL.Common;
 
 namespace SL.ChatLinks.UI;

@@ -3,13 +3,21 @@ using Blish_HUD.Controls;
 
 using Microsoft.Xna.Framework;
 
+using SL.Common;
+
 namespace SL.ChatLinks.UI;
 
 public sealed class MainWindow : TabbedWindow2
 {
     private readonly AsyncEmblem _emblem;
 
-    public MainWindow(MainWindowViewModel vm) : base(
+    public MainWindow()
+    : this(ServiceLocator.Resolve<MainWindowViewModel>())
+    {
+
+    }
+
+    private MainWindow(MainWindowViewModel vm) : base(
         vm.BackgroundTexture,
         new Rectangle(0, 26, 953, 691),
         new Rectangle(70, 71, 839, 605)

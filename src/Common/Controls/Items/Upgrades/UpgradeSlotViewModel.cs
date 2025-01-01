@@ -2,9 +2,7 @@
 
 namespace SL.Common.Controls.Items.Upgrades;
 
-public class UpgradeSlotViewModel(
-    UpgradeSlotType slotType
-) : ViewModel
+public class UpgradeSlotViewModel : ViewModel
 {
     private UpgradeComponent? _selectedUpgradeComponent;
 
@@ -12,7 +10,9 @@ public class UpgradeSlotViewModel(
 
     public event Action? Customized;
 
-    public UpgradeSlotType Type { get; } = slotType;
+    public event Action? Cleared;
+
+    public UpgradeSlotType? Type { get; set; }
 
     public ItemIcons Icons { get; set; } = ServiceLocator.Resolve<ItemIcons>();
 
@@ -34,9 +34,6 @@ public class UpgradeSlotViewModel(
         }
     }
 
-    public UpgradeComponent? EffectiveUpgrade =>
-        SelectedUpgradeComponent ?? DefaultUpgradeComponent;
-
     public void OnCustomize()
     {
         Customized?.Invoke();
@@ -45,5 +42,6 @@ public class UpgradeSlotViewModel(
     public void OnClear()
     {
         SelectedUpgradeComponent = null;
+        Cleared?.Invoke();
     }
 }

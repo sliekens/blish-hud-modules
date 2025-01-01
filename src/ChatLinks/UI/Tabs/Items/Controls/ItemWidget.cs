@@ -123,12 +123,7 @@ public sealed class ItemWidget : FlowPanel
 
         if (item is IUpgradable)
         {
-            _upgradeComponents = new UpgradeSlots(
-                new UpgradeSlotsViewModel(
-                    item,
-                    upgrades
-                )
-            )
+            _upgradeComponents = new UpgradeSlots(item, upgrades)
             {
                 Parent = this,
                 Width = Width - 40,
@@ -207,7 +202,7 @@ public sealed class ItemWidget : FlowPanel
 
     private void UpdateHeader()
     {
-        _itemName.SuffixItem = _upgradeComponents?.ViewModel.EffctiveSuffixItem();
+        _itemName.SuffixItem = _upgradeComponents?.ViewModel.EffectiveSuffixItem();
         _itemIcon.Tooltip = new Tooltip(new ItemTooltipView(_item switch
         {
             Armor armor => armor with
@@ -254,7 +249,7 @@ public sealed class ItemWidget : FlowPanel
     private void ToggleWarnings()
     {
         _infusionWarning!.Visible =
-            _upgradeComponents?.ViewModel.InfusionSlots.Any(s => s.Slot.SelectedUpgradeComponent != null)
+            _upgradeComponents?.ViewModel.InfusionSlots?.Any(s => s.SelectedUpgradeComponent != null)
             ?? false;
     }
 
