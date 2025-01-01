@@ -1,7 +1,6 @@
 ﻿using System.Text;
 
 using Blish_HUD;
-using Blish_HUD.Common.UI.Views;
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
@@ -21,7 +20,7 @@ using Item = GuildWars2.Items.Item;
 
 namespace SL.Common.Controls.Items;
 
-public class ItemTooltipView(Item item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades) : View, ITooltipView
+public class ItemTooltipView(Item item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades) : View, IItemTooltipView
 {
     protected override void Build(Container buildPanel)
     {
