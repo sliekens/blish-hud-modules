@@ -1,4 +1,5 @@
-﻿using Blish_HUD.Graphics.UI;
+﻿using Blish_HUD.Common.UI.Views;
+using Blish_HUD.Graphics.UI;
 
 using GuildWars2.Items;
 
@@ -8,5 +9,5 @@ public interface IViewsFactory
 {
     IView CreateItemsTabView();
 
-    IView CreateItemTooltipView(Item item, IReadOnlyDictionary<int, UpgradeComponent> upgrades);
+    ITooltipView CreateItemTooltipView(Item item, IReadOnlyDictionary<int, UpgradeComponent> upgrades);
 }

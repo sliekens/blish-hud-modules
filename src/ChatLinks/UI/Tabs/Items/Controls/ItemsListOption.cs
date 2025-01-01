@@ -5,6 +5,7 @@ using GuildWars2.Items;
 
 using Microsoft.Xna.Framework;
 
+using SL.Common;
 using SL.Common.Controls.Items;
 
 using Container = Blish_HUD.Controls.Container;
@@ -13,6 +14,8 @@ namespace SL.ChatLinks.UI.Tabs.Items.Controls;
 
 public sealed class ItemsListOption : Container
 {
+    private readonly Lazy<Tooltip> _tooltip;
+
     public Item Item { get; }
     public IReadOnlyDictionary<int, UpgradeComponent> Upgrades { get; }
 
@@ -43,15 +46,18 @@ public sealed class ItemsListOption : Container
             VerticalAlignment = VerticalAlignment.Middle,
             Parent = this
         };
+
+        _tooltip = new Lazy<Tooltip>(() => new Tooltip(
+            ServiceLocator.Resolve<IViewsFactory>().CreateItemTooltipView(item, upgrades))
+        );
     }
 
     protected override void OnMouseEntered(MouseEventArgs e)
     {
         BackgroundColor = Color.BurlyWood;
         _name.ShowShadow = true;
-        Tooltip tooltip = new(new ItemTooltipView(Item, Upgrades));
-        _icon.Tooltip ??= tooltip;
-        _name.Tooltip ??= tooltip;
+        _icon.Tooltip ??= _tooltip.Value;
+        _name.Tooltip ??= _tooltip.Value;
     }
 
     protected override void OnMouseLeft(MouseEventArgs e)

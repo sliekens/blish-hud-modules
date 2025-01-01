@@ -1,4 +1,5 @@
-﻿using Blish_HUD.Graphics.UI;
+﻿using Blish_HUD.Common.UI.Views;
+using Blish_HUD.Graphics.UI;
 
 using GuildWars2.Items;
 
@@ -17,8 +18,8 @@ public sealed class ViewsFactory(IServiceProvider serviceProvider) : IViewsFacto
         return new AsyncView(() => ActivatorUtilities.CreateInstance<ItemsTabView>(serviceProvider));
     }
 
-    public IView CreateItemTooltipView(Item item, IReadOnlyDictionary<int, UpgradeComponent> upgrades)
+    public ITooltipView CreateItemTooltipView(Item item, IReadOnlyDictionary<int, UpgradeComponent> upgrades)
     {
-        return new AsyncView(() => ActivatorUtilities.CreateInstance<ItemTooltipView>(serviceProvider, item, upgrades));
+        return ActivatorUtilities.CreateInstance<ItemTooltipView>(serviceProvider, item, upgrades);
     }
 }
