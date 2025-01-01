@@ -16,8 +16,8 @@ using SL.ChatLinks.Integrations;
 using SL.ChatLinks.Logging;
 using SL.ChatLinks.Storage;
 using SL.ChatLinks.UI;
-using SL.ChatLinks.UI.Tabs.Items;
 using SL.ChatLinks.UI.Tabs.Items.Services;
+using SL.Common;
 using SL.Common.Controls.Items;
 
 using SQLitePCL;
@@ -32,7 +32,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 
     private MainWindow? _mainWindow;
 
-    private ServiceProvider? _sp;
+    private ServiceProvider? _serviceProvider;
 
     private ContextMenuStripItem? _syncButton;
 
@@ -79,7 +79,9 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
             }
         });
 
-        _sp = services.BuildServiceProvider();
+        ServiceProvider serviceProvider = services.BuildServiceProvider();
+        ServiceLocator.ServiceProvider = serviceProvider;
+        _serviceProvider = serviceProvider;
 
         Batteries_V2.Init();
     }
@@ -148,7 +150,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 
     private T Resolve<T>() where T : notnull
     {
-        return _sp.GetRequiredService<T>();
+        return _serviceProvider.GetRequiredService<T>();
     }
 
     private string DatabaseLocation()
@@ -207,6 +209,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
     {
         _cornerIcon?.Dispose();
         _mainWindow?.Dispose();
-        _sp?.Dispose();
+        _serviceProvider?.Dispose();
+        ServiceLocator.ServiceProvider = null;
     }
 }
