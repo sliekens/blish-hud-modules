@@ -1,7 +1,7 @@
 {
     "name": "Chat Links",
     "version": "1.0.0",
-    "namespace": "sliekens.chat-links",
+    "namespace": "sliekens.chat_links",
     "package": "SL.ChatLinks.dll",
     "manifest_version": 1,
     "description": "Chat link editor—create your own customized chat links.",
