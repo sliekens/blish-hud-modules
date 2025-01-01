@@ -49,6 +49,11 @@ public sealed class ItemTooltipPresenter(IItemTooltipView view, ItemIcons icons)
 
     protected override void UpdateView()
     {
+        if (Item is null)
+        {
+            throw new InvalidOperationException();
+        }
+
         switch (Item)
         {
             case Armor armor:
@@ -285,6 +290,7 @@ public sealed class ItemTooltipPresenter(IItemTooltipView view, ItemIcons icons)
 
     private void PrintGatheringTool(GatheringTool gatheringTool)
     {
+        EnsureUpgradesNotNull();
         View.PrintHeader(gatheringTool, Upgrades);
         View.PrintDescription(gatheringTool.Description);
         View.PrintInBank();
