@@ -5,13 +5,14 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 
 using SL.ChatLinks.UI.Tabs.Items.Controls;
+using SL.Common;
 
 using Container = Blish_HUD.Controls.Container;
 using Item = GuildWars2.Items.Item;
 
 namespace SL.ChatLinks.UI.Tabs.Items;
 
-public class ItemsTabView(ILogger<ItemsTabView> logger) : View<ItemsTabPresenter>, IItemsTabView
+public class ItemsTabView : View<ItemsTabPresenter>, IItemsTabView
 {
     private Container? _root;
 
@@ -20,6 +21,14 @@ public class ItemsTabView(ILogger<ItemsTabView> logger) : View<ItemsTabPresenter
     private ItemsList? _searchResults;
 
     private ItemWidget? _selectedItem;
+
+    private readonly ILogger<ItemsTabView> _logger;
+
+    public ItemsTabView(ILogger<ItemsTabView> logger)
+    {
+        _logger = logger;
+        Presenter = Objects.Create<ItemsTabPresenter>(this);
+    }
 
     public void SetSearchLoading(bool loading)
     {
@@ -102,7 +111,7 @@ public class ItemsTabView(ILogger<ItemsTabView> logger) : View<ItemsTabPresenter
             }
             catch (Exception reason)
             {
-                logger.LogError(reason, "Failed to process message: {Message}", message);
+                _logger.LogError(reason, "Failed to process message: {Message}", message);
             }
         });
     }
@@ -136,7 +145,7 @@ public class ItemsTabView(ILogger<ItemsTabView> logger) : View<ItemsTabPresenter
         }
         catch (Exception reason)
         {
-            logger.LogError(reason, "Failed to search for items");
+            _logger.LogError(reason, "Failed to search for items");
             ScreenNotification.ShowNotification("Something went wrong", ScreenNotification.NotificationType.Red);
         }
     }
@@ -154,7 +163,7 @@ public class ItemsTabView(ILogger<ItemsTabView> logger) : View<ItemsTabPresenter
         }
         catch (Exception reason)
         {
-            logger.LogError(reason, "Failed to search for items");
+            _logger.LogError(reason, "Failed to search for items");
             ScreenNotification.ShowNotification("Something went wrong", ScreenNotification.NotificationType.Red);
         }
     }

@@ -14,17 +14,11 @@ public sealed class ViewsFactory(IServiceProvider serviceProvider) : IViewsFacto
 {
     public IView CreateItemsTabView()
     {
-        return new AsyncView(() =>
-        {
-            ItemsTabView view = ActivatorUtilities.CreateInstance<ItemsTabView>(serviceProvider);
-            ItemsTabModel model = ActivatorUtilities.CreateInstance<ItemsTabModel>(serviceProvider);
-            view.WithPresenter(ActivatorUtilities.CreateInstance<ItemsTabPresenter>(serviceProvider, view, model));
-            return view;
-        });
+        return new AsyncView(() => ActivatorUtilities.CreateInstance<ItemsTabView>(serviceProvider));
     }
 
     public IView CreateItemTooltipView(Item item, IReadOnlyDictionary<int, UpgradeComponent> upgrades)
     {
-        return new AsyncView(() => new ItemTooltipView(item, upgrades));
+        return new AsyncView(() => ActivatorUtilities.CreateInstance<ItemTooltipView>(serviceProvider, item, upgrades));
     }
 }

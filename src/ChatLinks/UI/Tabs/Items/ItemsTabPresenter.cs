@@ -6,15 +6,15 @@ using GuildWars2.Items;
 using Microsoft.Extensions.Logging;
 
 using SL.ChatLinks.UI.Tabs.Items.Services;
+using SL.Common;
 
 namespace SL.ChatLinks.UI.Tabs.Items;
 
 public class ItemsTabPresenter(
     IItemsTabView view,
-    ItemsTabModel model,
     ILogger<ItemsTabPresenter> logger,
     ItemSearch search
-) : Presenter<IItemsTabView, ItemsTabModel>(view, model)
+) : Presenter<IItemsTabView, ItemsTabModel>(view, Objects.Create<ItemsTabModel>())
 {
     private readonly CancellationTokenSource _loading = new(TimeSpan.FromMinutes(5));
 

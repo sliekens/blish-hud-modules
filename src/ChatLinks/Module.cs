@@ -2,7 +2,6 @@
 using System.IO.Compression;
 
 using Blish_HUD;
-using Blish_HUD.Content;
 using Blish_HUD.Controls;
 using Blish_HUD.Input;
 using Blish_HUD.Modules;
@@ -40,6 +39,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
     {
         ServiceCollection services = new();
         services.AddSingleton(ModuleParameters);
+        services.AddSingleton<IViewsFactory, ViewsFactory>();
         services.AddGw2Client();
 
         services.AddDbContext<ChatLinksContext>(optionsBuilder =>
@@ -52,7 +52,6 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         }, ServiceLifetime.Transient, ServiceLifetime.Transient);
 
         services.AddTransient<ItemSeeder>();
-        services.AddTransient<IViewsFactory, ViewsFactory>();
 
         services.AddTransient<MainIcon>();
         services.AddTransient<MainWindow>();
