@@ -61,8 +61,12 @@ public sealed class ItemWidget : FlowPanel
 
         _itemIcon = new ItemImage(item, icons)
         {
-            Parent = header,
-            Tooltip = new Tooltip(new ItemTooltipView(item, icons, upgrades))
+            Parent = header
+        };
+
+        _itemIcon.MouseEntered += (_, _) =>
+        {
+            _itemIcon.Tooltip ??= new Tooltip(new ItemTooltipView(item, icons, upgrades));
         };
 
         header.Menu = new ItemContextMenu(item);

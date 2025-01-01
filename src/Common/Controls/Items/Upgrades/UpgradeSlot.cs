@@ -87,9 +87,13 @@ public sealed class UpgradeSlot : Container
         _label?.Dispose();
         _label = builder.Build();
         _label.Parent = this;
-        _label.Tooltip =
-            new Tooltip(new ItemTooltipView(slot.UpgradeComponent, ViewModel.Icons, (Dictionary<int, UpgradeComponent>)[]));
         _label.Menu = Context(slot);
+        _label.MouseEntered += (_, _) =>
+        {
+            _label.Tooltip ??=
+                new Tooltip(new ItemTooltipView(slot.UpgradeComponent, ViewModel.Icons,
+                    (Dictionary<int, UpgradeComponent>)[]));
+        };
     }
 
     private void ClearSlot()

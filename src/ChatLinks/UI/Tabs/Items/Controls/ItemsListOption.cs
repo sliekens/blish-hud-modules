@@ -14,6 +14,8 @@ namespace SL.ChatLinks.UI.Tabs.Items.Controls;
 public sealed class ItemsListOption : Container
 {
     public Item Item { get; }
+    public ItemIcons Icons { get; }
+    public IReadOnlyDictionary<int, UpgradeComponent> Upgrades { get; }
 
     private readonly ItemImage _icon;
 
@@ -22,15 +24,15 @@ public sealed class ItemsListOption : Container
     public ItemsListOption(Item item, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades)
     {
         Item = item;
+        Icons = icons;
+        Upgrades = upgrades;
         Width = 425;
         Height = 35;
-        Tooltip = new Tooltip(new ItemTooltipView(Item, icons, upgrades));
         Menu = new ItemContextMenu(item);
 
         _icon = new ItemImage(item, icons)
         {
             Size = new Point(35, 35),
-            Tooltip = Tooltip,
             Parent = this
         };
 
@@ -41,7 +43,6 @@ public sealed class ItemsListOption : Container
             AutoSizeHeight = false,
             Height = 35,
             VerticalAlignment = VerticalAlignment.Middle,
-            Tooltip = Tooltip,
             Parent = this
         };
     }
@@ -50,6 +51,9 @@ public sealed class ItemsListOption : Container
     {
         BackgroundColor = Color.BurlyWood;
         _name.ShowShadow = true;
+        Tooltip tooltip = new(new ItemTooltipView(Item, Icons, Upgrades));
+        _icon.Tooltip ??= tooltip;
+        _name.Tooltip ??= tooltip;
     }
 
     protected override void OnMouseLeft(MouseEventArgs e)
