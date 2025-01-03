@@ -12,7 +12,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>compile; build</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Costura.Fody" Version="5.7.0">
+        <PackageReference Include="Costura.Fody" Version="6.0.0">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Include="Fody" Version="6.9.1">
@@ -51,18 +51,14 @@
         <Reference Include="System.IO.Compression" />
     </ItemGroup>
 
-    <Target Name="EnsureRestore" BeforeTargets="ResolvePackageAssets">
-        <MSBuild Projects="$(MSBuildProjectFile)" Targets="Restore" />
-    </Target>
-
     <Target Name="EmbedNativeSQLiteDllWithCostura" BeforeTargets="ResolveAssemblyReferences">
         <ItemGroup>
             <EmbeddedResource Include="$(PkgSQLitePCLRaw_lib_e_sqlite3)\runtimes\win-x86\native\e_sqlite3.dll">
-                <Link>costura32\sliekens.e_sqlite3.dll</Link>
+                <Link>costura-win-x86\sliekens.e_sqlite3.dll</Link>
                 <Visible>false</Visible>
             </EmbeddedResource>
             <EmbeddedResource Include="$(PkgSQLitePCLRaw_lib_e_sqlite3)\runtimes\win-x64\native\e_sqlite3.dll">
-                <Link>costura64\sliekens.e_sqlite3.dll</Link>
+                <Link>costura-win-x64\sliekens.e_sqlite3.dll</Link>
                 <Visible>false</Visible>
             </EmbeddedResource>
             <Content Remove="@(Content)" Condition="'%(Filename)%(Extension)' == 'e_sqlite3.dll'" />
