@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.IO.Compression;
+using System.Reflection;
 
 using Blish_HUD;
 using Blish_HUD.Controls;
@@ -80,9 +82,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         ServiceLocator.ServiceProvider = serviceProvider;
         _serviceProvider = serviceProvider;
 
-        const string name = "sliekens.e_sqlite3";
-        SQLite3Provider_dynamic_cdecl.Setup(name, new ModuleGetFunctionPointer(name));
-        raw.SetProvider(new SQLite3Provider_dynamic_cdecl());
+        SetupSQLite3();
     }
 
     protected override async Task LoadAsync()
@@ -128,6 +128,12 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         _cornerIcon.Menu = new ContextMenuStrip();
         _syncButton = _cornerIcon.Menu.AddMenuItem("Sync database");
         _syncButton.Click += SyncClicked;
+    }
+
+    private void SetupSQLite3()
+    {
+        SQLite3Provider_dynamic_cdecl.Setup("e_sqlite3", new ModuleGetFunctionPointer("sliekens.e_sqlite3"));
+        raw.SetProvider(new SQLite3Provider_dynamic_cdecl());
     }
 
     private async Task FirstTimeSetup()
