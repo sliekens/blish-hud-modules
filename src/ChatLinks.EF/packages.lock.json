@@ -394,14 +394,6 @@
           "SharpDX": "4.0.1"
         }
       },
-      "SQLitePCLRaw.bundle_winsqlite3": {
-        "type": "Transitive",
-        "resolved": "2.1.10",
-        "contentHash": "66PUECrtZzCT4XRk5o6uBNFJ4mHHebGiwcncjoGKsigKei5wmDLnIJduOpamRvrqo2565a5LLfhbKC4gGHB1BA==",
-        "dependencies": {
-          "SQLitePCLRaw.provider.winsqlite3": "2.1.10"
-        }
-      },
       "SQLitePCLRaw.core": {
         "type": "Transitive",
         "resolved": "2.1.10",
@@ -410,10 +402,15 @@
           "System.Memory": "4.5.3"
         }
       },
-      "SQLitePCLRaw.provider.winsqlite3": {
+      "SQLitePCLRaw.lib.e_sqlite3": {
         "type": "Transitive",
         "resolved": "2.1.10",
-        "contentHash": "DynFTTkDIlPb5dMbnqDamvRJYv1m/gUfj7Oxfw7dfyQqA+941pzqKrZn7NZXqsGLh4Tuh9GsJIwjSKP2rxl6mw==",
+        "contentHash": "mAr69tDbnf3QJpRy2nJz8Qdpebdil00fvycyByR58Cn9eARvR+UiG2Vzsp+4q1tV3ikwiYIjlXCQFc12GfebbA=="
+      },
+      "SQLitePCLRaw.provider.dynamic_cdecl": {
+        "type": "Transitive",
+        "resolved": "2.1.10",
+        "contentHash": "tNc5qGjKWuhKO9wG5ewP+fm13sa4PPZW0pcKxbH0+/dZ/a/8GAKsd3j7BVP2kd+C0RqZNLwUWQbCTDK4ETtOPQ==",
         "dependencies": {
           "SQLitePCLRaw.core": "2.1.10"
         }
@@ -540,7 +537,8 @@
           "Newtonsoft.Json": "[13.0.1, )",
           "Polly": "[8.5.0, )",
           "SL.Common": "[1.0.0, )",
-          "SQLitePCLRaw.bundle_winsqlite3": "[2.1.10, )",
+          "SQLitePCLRaw.lib.e_sqlite3": "[2.1.10, )",
+          "SQLitePCLRaw.provider.dynamic_cdecl": "[2.1.10, )",
           "System.ComponentModel.Composition": "[6.0.0, )",
           "System.Text.Json": "[9.0.0, )"
         }
@@ -556,6 +554,11 @@
       }
     },
     ".NETFramework,Version=v4.7.2/win-x86": {
+      "SQLitePCLRaw.lib.e_sqlite3": {
+        "type": "Transitive",
+        "resolved": "2.1.10",
+        "contentHash": "mAr69tDbnf3QJpRy2nJz8Qdpebdil00fvycyByR58Cn9eARvR+UiG2Vzsp+4q1tV3ikwiYIjlXCQFc12GfebbA=="
+      },
       "System.Runtime.InteropServices.RuntimeInformation": {
         "type": "Transitive",
         "resolved": "4.3.0",

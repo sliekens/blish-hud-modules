@@ -80,7 +80,9 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         ServiceLocator.ServiceProvider = serviceProvider;
         _serviceProvider = serviceProvider;
 
-        Batteries_V2.Init();
+        const string name = "sliekens.e_sqlite3";
+        SQLite3Provider_dynamic_cdecl.Setup(name, new ModuleGetFunctionPointer(name));
+        raw.SetProvider(new SQLite3Provider_dynamic_cdecl());
     }
 
     protected override async Task LoadAsync()
