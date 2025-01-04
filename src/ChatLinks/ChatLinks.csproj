@@ -45,6 +45,12 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Content Include="..\..\forked\Microsoft.Data.Sqlite.dll">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\Common\Common.csproj" />
     </ItemGroup>
 
