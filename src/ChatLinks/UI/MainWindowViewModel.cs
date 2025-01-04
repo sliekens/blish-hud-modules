@@ -18,8 +18,14 @@ public sealed class MainWindowViewModel(IViewsFactory viewFactory) : ViewModel
     {
         yield return new Tab(
             AsyncTexture2D.FromAssetId(156699),
-            viewFactory.CreateItemsTabView,
+            viewFactory.CreateItemsTabView2,
             "Items",
             1);
+
+        yield return new Tab(
+            AsyncTexture2D.FromAssetId(156699),
+            viewFactory.CreateItemsTabView,
+            "Items (old)",
+            2);
     }
 }

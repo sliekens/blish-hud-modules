@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using SL.ChatLinks.UI;
 using SL.ChatLinks.UI.Tabs.Items;
+using SL.ChatLinks.UI.Tabs.Items2;
 using SL.Common.Controls.Items;
 
 namespace SL.ChatLinks;
@@ -16,6 +17,11 @@ public sealed class ViewsFactory(IServiceProvider serviceProvider) : IViewsFacto
     public IView CreateItemsTabView()
     {
         return new AsyncView(() => ActivatorUtilities.CreateInstance<ItemsTabView>(serviceProvider));
+    }
+
+    public IView CreateItemsTabView2()
+    {
+        return new AsyncView(serviceProvider.GetRequiredService<ItemsTabView2>);
     }
 
     public ITooltipView CreateItemTooltipView(Item item, IReadOnlyDictionary<int, UpgradeComponent> upgrades)

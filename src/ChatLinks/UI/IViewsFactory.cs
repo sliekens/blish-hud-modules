@@ -9,5 +9,7 @@ public interface IViewsFactory
 {
     IView CreateItemsTabView();
 
+    IView CreateItemsTabView2();
+
     ITooltipView CreateItemTooltipView(Item item, IReadOnlyDictionary<int, UpgradeComponent> upgrades);
 }

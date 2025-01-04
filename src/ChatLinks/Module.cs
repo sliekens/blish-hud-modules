@@ -1,7 +1,5 @@
 ﻿using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.IO.Compression;
-using System.Reflection;
 
 using Blish_HUD;
 using Blish_HUD.Controls;
@@ -18,6 +16,7 @@ using SL.ChatLinks.Logging;
 using SL.ChatLinks.Storage;
 using SL.ChatLinks.UI;
 using SL.ChatLinks.UI.Tabs.Items.Services;
+using SL.ChatLinks.UI.Tabs.Items2;
 using SL.Common;
 using SL.Common.Controls.Items.Services;
 
@@ -59,9 +58,11 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         services.AddTransient<MainIconViewModel>();
         services.AddTransient<MainWindow>();
         services.AddTransient<MainWindowViewModel>();
+        services.AddTransient<ItemsTabView2>();
+        services.AddTransient<ItemsTabViewModel>();
         services.AddTransient<ItemSearch>();
         services.AddHttpClient<ItemIcons>();
-
+        
         services.AddLogging(builder =>
         {
             builder.Services.AddSingleton<ILoggerProvider, LoggingAdapterProvider<Module>>();
