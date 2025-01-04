@@ -57,6 +57,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 
         services.AddTransient<MainIcon>();
         services.AddTransient<MainWindow>();
+        services.AddTransient<MainWindowViewModel>();
         services.AddTransient<ItemSearch>();
         services.AddHttpClient<ItemIcons>();
 
