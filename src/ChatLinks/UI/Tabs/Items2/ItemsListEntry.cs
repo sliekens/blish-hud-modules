@@ -31,7 +31,8 @@ public sealed class ItemsListEntry : FlowPanel, IListItem<Item>
         _name = new Label
         {
             Parent = this,
-            Text = Data.Name,
+            Text = viewModel.Item.Name,
+            TextColor = viewModel.Color,
             Width = 400,
             Height = 35,
             WrapText = true,

@@ -3,7 +3,7 @@ using GuildWars2.Items;
 
 using Microsoft.Xna.Framework;
 
-namespace SL.Common.Controls.Items;
+namespace SL.Common;
 
 public static class ItemColors
 {
