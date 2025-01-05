@@ -32,7 +32,7 @@ public class ItemsTabView2 : View
             PlaceholderText = "Enter item name or chat link..."
         };
 
-        _searchResults = new ListBox<Item>
+        _searchResults = new ItemsList(ViewModel.ItemsListViewModel)
         {
             Size = new Point(450, 500),
             Top = _searchBox.Bottom,

@@ -34,13 +34,17 @@ public sealed class ItemsTabViewModel : ViewModel
     public ItemsTabViewModel(
         ILogger<ItemsTabViewModel> logger,
         ChatLinksContext context,
-        ItemSearch search)
+        ItemSearch search,
+        ItemsListViewModel itemsListViewModel
+    )
     {
         _logger = logger;
         _context = context;
         _search = search;
+        ItemsListViewModel = itemsListViewModel;
         SearchCommand = new AsyncRelayCommand(Search);
     }
+    public ItemsListViewModel ItemsListViewModel { get; }
 
     public string SearchText
     {

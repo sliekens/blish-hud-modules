@@ -87,9 +87,11 @@ public class ListBox<T> : FlowPanel
         };
     }
 
-    protected virtual void AddItem(T item)
+    protected virtual IListItem<T> AddItem(T item)
     {
-        Template(item).Parent = this;
+        var listItem = Template(item);
+        listItem.Parent = this;
+        return listItem;
     }
 
     protected virtual void RemoveItem(T item)
