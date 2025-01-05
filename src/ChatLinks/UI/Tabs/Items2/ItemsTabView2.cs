@@ -21,6 +21,8 @@ public class ItemsTabView2 : View
 
     private readonly TextBox _searchBox;
 
+    private readonly LoadingSpinner _loadingSpinner;
+
     private readonly ListBox<Item> _searchResults;
 
     public ItemsTabView2(ILogger<ItemsTabView> logger, ItemsTabViewModel viewModel)
@@ -30,6 +32,12 @@ public class ItemsTabView2 : View
         {
             Width = 450,
             PlaceholderText = "Enter item name or chat link..."
+        };
+
+        _loadingSpinner = new LoadingSpinner
+        {
+            Size = new Point(_searchBox.Height),
+            Right = _searchBox.Right
         };
 
         _searchResults = new ItemsList(ViewModel.ItemsListViewModel)
@@ -50,9 +58,11 @@ public class ItemsTabView2 : View
     {
         ViewModel.EnsureLoaded();
         _searchBox.Parent = buildPanel;
+        _loadingSpinner.Parent = buildPanel;
         _searchResults.Parent = buildPanel;
 
         Binder.Bind(ViewModel, vm => vm.SearchText, _searchBox);
+        Binder.Bind(ViewModel, vm => vm.Searching, _loadingSpinner);
 
         _searchBox.TextChanged += SearchTextChanged;
         _searchBox.EnterPressed += SearchEnterPressed;

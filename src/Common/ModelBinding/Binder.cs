@@ -10,4 +10,9 @@ public sealed class Binder
     {
         return new TextBoxBinding<TViewModel>(viewModel, propertySelector, textBox);
     }
+
+    public static ViewModelBinding<TViewModel, bool> Bind<TViewModel>(TViewModel viewModel, Expression<Func<TViewModel, bool>> propertySelector, LoadingSpinner loadingSpinner) where TViewModel : ViewModel
+    {
+        return new LoadingSpinnerBinding<TViewModel>(viewModel, propertySelector, loadingSpinner);
+    }
 }
