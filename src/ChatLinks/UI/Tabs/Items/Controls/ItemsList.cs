@@ -1,4 +1,6 @@
-﻿using Blish_HUD;
+﻿using System.Reflection;
+
+using Blish_HUD;
 using Blish_HUD.Controls;
 using Blish_HUD.Input;
 
@@ -14,6 +16,9 @@ public sealed class ItemsList : FlowPanel
     private readonly IReadOnlyDictionary<int, UpgradeComponent> _upgrades;
 
     private bool _loading;
+    
+    private static readonly MethodInfo? UpdateScrollbarMethod = typeof(Panel)
+        .GetMethod("UpdateScrollbar", BindingFlags.NonPublic | BindingFlags.Instance);
 
     public event EventHandler<Item>? OptionClicked;
 
@@ -62,8 +67,36 @@ public sealed class ItemsList : FlowPanel
         {
             Parent = this
         };
-
         option.Click += OptionClick;
+    }
+
+    protected override void OnChildAdded(ChildChangedEventArgs e)
+    {
+        UpdateScrollbar();
+        base.OnChildAdded(e);
+    }
+
+    protected override void OnChildRemoved(ChildChangedEventArgs e)
+    {
+        UpdateScrollbar();
+        base.OnChildRemoved(e);
+    }
+
+    private void UpdateScrollbar()
+    {
+        UpdateScrollbarMethod?.Invoke(this, []);
+    }
+
+    public void RemoveOption(Item item)
+    {
+        var option = Children.FirstOrDefault(c => c is ItemsListOption option && option.Item == item);
+        if (option is null)
+        {
+            return;
+        }
+
+        option.Click -= OptionClick;
+        option.Dispose();
     }
 
     public void SetOptions(IEnumerable<Item> items)
@@ -73,12 +106,6 @@ public sealed class ItemsList : FlowPanel
         foreach (Item item in items)
         {
             AddOption(item);
-        }
-
-        if (CanScroll)
-        {
-            CanScroll = false;
-            CanScroll = true;
         }
     }
 
