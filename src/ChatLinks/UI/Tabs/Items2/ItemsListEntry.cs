@@ -11,6 +11,8 @@ namespace SL.ChatLinks.UI.Tabs.Items2;
 
 public sealed class ItemsListEntry : FlowPanel, IListItem<Item>
 {
+    public ItemsListEntryViewModel ViewModel { get; }
+
     private readonly Image _image;
 
     private readonly Panel _labelHolder;
@@ -19,6 +21,7 @@ public sealed class ItemsListEntry : FlowPanel, IListItem<Item>
 
     public ItemsListEntry(ItemsListEntryViewModel viewModel)
     {
+        ViewModel = viewModel;
         Data = viewModel.Item;
         Width = 435;
         HeightSizingMode = SizingMode.AutoSize;
@@ -56,6 +59,8 @@ public sealed class ItemsListEntry : FlowPanel, IListItem<Item>
     {
         _labelHolder.BackgroundColor = Color.BurlyWood;
         _name.ShowShadow = true;
+        _image.Tooltip ??= new Tooltip(new ItemTooltipView(ViewModel.CreateTooltipViewModel()));
+        _name.Tooltip ??= new Tooltip(new ItemTooltipView(ViewModel.CreateTooltipViewModel()));
     }
 
     protected override void OnMouseLeft(MouseEventArgs e)

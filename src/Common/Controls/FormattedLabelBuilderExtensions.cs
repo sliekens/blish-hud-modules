@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework;
 
 namespace SL.Common.Controls;
 
-internal static class FormattedLabelBuilderExtensions
+public static class FormattedLabelBuilderExtensions
 {
     private static readonly MarkupLexer Lexer = new();
     private static readonly MarkupParser Parser = new();

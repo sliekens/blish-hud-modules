@@ -7,11 +7,15 @@ using GuildWars2.Items;
 
 using Microsoft.Xna.Framework;
 
+using SL.Common;
+using SL.Common.Controls;
+using SL.Common.Controls.Items.Services;
+
 using Container = Blish_HUD.Controls.Container;
 
-namespace SL.Common.Controls.Items.Services;
+namespace SL.ChatLinks.UI.Tabs.Items2;
 
-public sealed class ItemUpgradeBuilder(ItemFlags flags, ItemIcons icons, IReadOnlyDictionary<int, UpgradeComponent> upgrades)
+public sealed class ItemUpgradeBuilder(ItemFlags flags, ItemIcons icons, Customizer customizer)
 {
     private static readonly Color UpgradeTextColor = new(0x55, 0x99, 0xFF);
 
@@ -96,7 +100,7 @@ public sealed class ItemUpgradeBuilder(ItemFlags flags, ItemIcons icons, IReadOn
 
     private Control? UpgradeSlot(int itemId, Container parent)
     {
-        if (!upgrades.TryGetValue(itemId, out UpgradeComponent? item))
+        if (!customizer.UpgradeComponents.TryGetValue(itemId, out UpgradeComponent? item))
         {
             return UnusedUpgradeSlot(parent);
         }
@@ -211,7 +215,7 @@ public sealed class ItemUpgradeBuilder(ItemFlags flags, ItemIcons icons, IReadOn
             return UnusedInfusionSlot(slot, parent);
         }
 
-        if (!upgrades.TryGetValue(slot.ItemId.Value, out UpgradeComponent? item))
+        if (!customizer.UpgradeComponents.TryGetValue(slot.ItemId.Value, out UpgradeComponent? item))
         {
             return UnusedInfusionSlot(slot, parent);
         }

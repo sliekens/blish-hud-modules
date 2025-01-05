@@ -8,7 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 using SL.ChatLinks.UI;
 using SL.ChatLinks.UI.Tabs.Items;
 using SL.ChatLinks.UI.Tabs.Items2;
-using SL.Common.Controls.Items;
+
+using ItemTooltipView = SL.Common.Controls.Items.ItemTooltipView;
 
 namespace SL.ChatLinks;
 

@@ -62,6 +62,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         services.AddTransient<ItemsTabViewModel>();
         services.AddTransient<ItemsListViewModel>();
         services.AddTransient<ItemsListEntryViewModelFactory>();
+        services.AddTransient<ItemTooltipViewModelFactory>();
         services.AddTransient<ItemSearch>();
         services.AddSingleton<Customizer>();
         services.AddHttpClient<ItemIcons>();

@@ -9,7 +9,7 @@ using SL.Common.Controls.Items.Services;
 
 namespace SL.ChatLinks.UI.Tabs.Items2;
 
-public sealed class ItemsListEntryViewModel(ItemIcons icons, Item item)
+public sealed class ItemsListEntryViewModel(ItemIcons icons, Item item, ItemTooltipViewModelFactory tooltipViewModelFactory)
 {
     public Item Item { get; } = item ?? throw new ArgumentNullException(nameof(item));
 
@@ -18,5 +18,10 @@ public sealed class ItemsListEntryViewModel(ItemIcons icons, Item item)
     public AsyncTexture2D? GetIcon()
     {
         return icons.GetIcon(item);
+    }
+
+    public ItemTooltipViewModel CreateTooltipViewModel()
+    {
+        return tooltipViewModelFactory.Create(item);
     }
 }
