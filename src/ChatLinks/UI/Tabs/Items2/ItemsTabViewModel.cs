@@ -111,7 +111,7 @@ public sealed class ItemsTabViewModel : ViewModel
         try
         {
             // Debounce search
-            await Task.Delay(1000, cancellationTokenSource.Token);
+            await Task.Delay(300, cancellationTokenSource.Token);
 
             // Ensure exclusive access to the DbContext (not thread-safe)
             await _searchLock.WaitAsync(cancellationTokenSource.Token);
