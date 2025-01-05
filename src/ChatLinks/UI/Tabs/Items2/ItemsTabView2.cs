@@ -4,6 +4,7 @@ using Blish_HUD.Graphics.UI;
 using Microsoft.Extensions.Logging;
 
 using SL.ChatLinks.UI.Tabs.Items;
+using SL.Common.ModelBinding;
 
 using Container = Blish_HUD.Controls.Container;
 
@@ -31,9 +32,10 @@ public class ItemsTabView2(ILogger<ItemsTabView> logger, ItemsTabViewModel viewM
         {
             Parent = buildPanel,
             Width = 450,
-            PlaceholderText = "Enter item name or chat link...",
-            Text = ViewModel.SearchText
+            PlaceholderText = "Enter item name or chat link..."
         };
+
+        Binder.Bind(ViewModel, vm => vm.SearchText, _searchBox);
 
         _searchBox.TextChanged += SearchTextChanged;
         _searchBox.EnterPressed += SearchEnterPressed;
@@ -71,7 +73,7 @@ public class ItemsTabView2(ILogger<ItemsTabView> logger, ItemsTabViewModel viewM
 
             if (_searchBox.Focused)
             {
-                await ViewModel.Search(_searchBox.Text);
+                await ViewModel.Search();
             }
         }
         catch (Exception reason)
@@ -90,7 +92,7 @@ public class ItemsTabView2(ILogger<ItemsTabView> logger, ItemsTabViewModel viewM
                 return;
             }
 
-            await ViewModel.Search(_searchBox.Text);
+            await ViewModel.Search();
         }
         catch (Exception reason)
         {

@@ -62,10 +62,9 @@ public sealed class ItemsTabViewModel(
         });
     }
 
-    public async Task Search(string text)
+    public async Task Search()
     {
-        SearchText = text;
-        //await search.Search(text);
+        logger.LogInformation("TODO: search {Text}", SearchText);
     }
 
     public void Unload()
