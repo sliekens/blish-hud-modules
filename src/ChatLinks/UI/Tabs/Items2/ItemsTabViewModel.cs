@@ -1,12 +1,9 @@
 ﻿using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 
 using GuildWars2.Items;
 
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-using SL.ChatLinks.Storage;
 using SL.ChatLinks.UI.Tabs.Items.Services;
 using SL.Common;
 using SL.Common.ModelBinding;
@@ -17,9 +14,9 @@ public sealed class ItemsTabViewModel : ViewModel
 {
     private readonly ILogger<ItemsTabViewModel> _logger;
 
-    private readonly ChatLinksContext _context;
-
     private readonly ItemSearch _search;
+
+    private readonly Customizer _customizer;
 
     private string _searchText = "";
 
@@ -29,18 +26,16 @@ public sealed class ItemsTabViewModel : ViewModel
 
     private readonly SemaphoreSlim _searchLock = new(1, 1);
 
-    private IReadOnlyDictionary<int, UpgradeComponent>? _upgrades;
-
     public ItemsTabViewModel(
         ILogger<ItemsTabViewModel> logger,
-        ChatLinksContext context,
         ItemSearch search,
+        Customizer customizer,
         ItemsListViewModel itemsListViewModel
     )
     {
         _logger = logger;
-        _context = context;
         _search = search;
+        _customizer = customizer;
         ItemsListViewModel = itemsListViewModel;
         SearchCommand = new AsyncRelayCommand(Search);
     }
@@ -62,40 +57,11 @@ public sealed class ItemsTabViewModel : ViewModel
 
     public AsyncRelayCommand SearchCommand { get; }
 
-    public IReadOnlyDictionary<int, UpgradeComponent>? Upgrades
-    {
-        get => _upgrades;
-        private set => SetField(ref _upgrades, value);
-    }
-
-    [MemberNotNull(nameof(Upgrades))]
-    public void EnsureLoaded()
-    {
-        if (Upgrades is null)
-        {
-            throw new InvalidOperationException();
-        }
-    }
 
     public async Task LoadAsync()
     {
-        Upgrades = await _context.Set<UpgradeComponent>().ToDictionaryAsync(upgrade => upgrade.Id);
+        await _customizer.LoadAsync();
         await NewItems(CancellationToken.None);
-
-        MessageBus.Register("items_tab", async void (message) =>
-        {
-            try
-            {
-                if (message == "refresh")
-                {
-                    Upgrades = await _context.Set<UpgradeComponent>().ToDictionaryAsync(upgrade => upgrade.Id);
-                }
-            }
-            catch (Exception reason)
-            {
-                _logger.LogError(reason, "Failed to process message: {Message}", message);
-            }
-        });
     }
 
     public void CancelPendingSearches()
@@ -204,11 +170,5 @@ public sealed class ItemsTabViewModel : ViewModel
         {
             Searching = false;
         }
-    }
-
-
-    public void Unload()
-    {
-        MessageBus.Unregister("items_tab");
     }
 }

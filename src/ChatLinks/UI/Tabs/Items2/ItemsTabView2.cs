@@ -56,7 +56,6 @@ public class ItemsTabView2 : View
 
     protected override void Build(Container buildPanel)
     {
-        ViewModel.EnsureLoaded();
         _searchBox.Parent = buildPanel;
         _loadingSpinner.Parent = buildPanel;
         _searchResults.Parent = buildPanel;
@@ -71,7 +70,6 @@ public class ItemsTabView2 : View
 
     protected override void Unload()
     {
-        ViewModel.Unload();
         _searchBox.TextChanged -= SearchEnterPressed;
         _searchBox.EnterPressed -= SearchEnterPressed;
         _searchBox.InputFocusChanged -= SearchInputFocusChanged;
