@@ -1,4 +1,5 @@
-﻿using Blish_HUD.Controls;
+﻿using Blish_HUD;
+using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
 
 using Microsoft.Extensions.Logging;
@@ -14,9 +15,11 @@ public class ItemsTabView2(ILogger<ItemsTabView> logger, ItemsTabViewModel viewM
 {
     public ItemsTabViewModel ViewModel { get; } = viewModel;
 
-    private Container? _root;
-
-    private TextBox? _searchBox;
+    private readonly TextBox _searchBox = new()
+    {
+        Width = 450,
+        PlaceholderText = "Enter item name or chat link..."
+    };
 
     protected override async Task<bool> Load(IProgress<string> progress)
     {
@@ -27,48 +30,25 @@ public class ItemsTabView2(ILogger<ItemsTabView> logger, ItemsTabViewModel viewM
     protected override void Build(Container buildPanel)
     {
         ViewModel.EnsureLoaded();
-        _root = buildPanel;
-        _searchBox = new TextBox
-        {
-            Parent = buildPanel,
-            Width = 450,
-            PlaceholderText = "Enter item name or chat link..."
-        };
+        _searchBox.Parent = buildPanel;
 
         Binder.Bind(ViewModel, vm => vm.SearchText, _searchBox);
 
         _searchBox.TextChanged += SearchTextChanged;
         _searchBox.EnterPressed += SearchEnterPressed;
-        _searchBox.InputFocusChanged += (_, args) =>
-        {
-            if (args.Value)
-            {
-                _searchBox.SelectionStart = 0;
-                _searchBox.SelectionEnd = _searchBox.Length;
-            }
-            else
-            {
-                _searchBox.SelectionStart = _searchBox.SelectionEnd;
-            }
-        };
+        _searchBox.InputFocusChanged += SearchInputFocusChanged;
     }
 
     protected override void Unload()
     {
         ViewModel.Unload();
-        if (_searchBox is not null)
-        {
-            _searchBox.TextChanged -= SearchEnterPressed;
-        }
+        _searchBox.TextChanged -= SearchEnterPressed;
+        _searchBox.EnterPressed -= SearchEnterPressed;
+        _searchBox.InputFocusChanged -= SearchInputFocusChanged;
     }
 
     private void SearchTextChanged(object sender, EventArgs e)
     {
-        if (_searchBox is not { Focused: true })
-        {
-            return;
-        }
-
         if (ViewModel.SearchCommand.CanExecute(null!))
         {
             ViewModel.SearchCommand.Execute(null!);
@@ -80,6 +60,19 @@ public class ItemsTabView2(ILogger<ItemsTabView> logger, ItemsTabViewModel viewM
         if (ViewModel.SearchCommand.CanExecute(null!))
         {
             ViewModel.SearchCommand.Execute(null!);
+        }
+    }
+
+    private void SearchInputFocusChanged(object sender, ValueEventArgs<bool> args)
+    {
+        if (args.Value)
+        {
+            _searchBox.SelectionStart = 0;
+            _searchBox.SelectionEnd = _searchBox.Length;
+        }
+        else
+        {
+            _searchBox.SelectionStart = _searchBox.SelectionEnd;
         }
     }
 }
