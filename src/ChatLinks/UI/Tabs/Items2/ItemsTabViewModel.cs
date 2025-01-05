@@ -29,8 +29,6 @@ public sealed class ItemsTabViewModel : ViewModel
 
     private readonly SemaphoreSlim _searchLock = new(1, 1);
 
-    private readonly ObservableCollection<Item> _searchResults = [];
-
     private IReadOnlyDictionary<int, UpgradeComponent>? _upgrades;
 
     public ItemsTabViewModel(
@@ -41,7 +39,6 @@ public sealed class ItemsTabViewModel : ViewModel
         _logger = logger;
         _context = context;
         _search = search;
-        SearchResults = new ReadOnlyObservableCollection<Item>(_searchResults);
         SearchCommand = new AsyncRelayCommand(Search);
     }
 
@@ -57,7 +54,7 @@ public sealed class ItemsTabViewModel : ViewModel
         set => SetField(ref _searching, value);
     }
 
-    public ReadOnlyObservableCollection<Item> SearchResults { get; }
+    public ObservableCollection<Item> SearchResults { get; } = [];
 
     public AsyncRelayCommand SearchCommand { get; }
 
@@ -79,6 +76,7 @@ public sealed class ItemsTabViewModel : ViewModel
     public async Task LoadAsync()
     {
         Upgrades = await _context.Set<UpgradeComponent>().ToDictionaryAsync(upgrade => upgrade.Id);
+        await NewItems(CancellationToken.None);
 
         MessageBus.Register("items_tab", async void (message) =>
         {
@@ -163,7 +161,7 @@ public sealed class ItemsTabViewModel : ViewModel
         Searching = true;
         try
         {
-            _searchResults.Clear();
+            SearchResults.Clear();
 
             await foreach (Item item in _search.Search(text, 100, cancellationToken))
             {
@@ -172,7 +170,7 @@ public sealed class ItemsTabViewModel : ViewModel
                     break;
                 }
 
-                _searchResults.Add(item);
+                SearchResults.Add(item);
             }
         }
         finally
@@ -186,7 +184,7 @@ public sealed class ItemsTabViewModel : ViewModel
         Searching = true;
         try
         {
-            _searchResults.Clear();
+            SearchResults.Clear();
 
             await foreach (Item item in _search.NewItems(50).WithCancellation(cancellationToken))
             {
@@ -195,7 +193,7 @@ public sealed class ItemsTabViewModel : ViewModel
                     break;
                 }
 
-                _searchResults.Add(item);
+                SearchResults.Add(item);
             }
         }
         finally
