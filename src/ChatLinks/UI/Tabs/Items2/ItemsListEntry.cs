@@ -13,6 +13,8 @@ public sealed class ItemsListEntry : FlowPanel, IListItem<Item>
 {
     private readonly Image _image;
 
+    private readonly Panel _labelHolder;
+
     private readonly Label _name;
 
     public ItemsListEntry(ItemsListEntryViewModel viewModel)
@@ -28,13 +30,21 @@ public sealed class ItemsListEntry : FlowPanel, IListItem<Item>
             Texture = viewModel.GetIcon()
         };
 
-        _name = new Label
+        _labelHolder = new Panel
         {
             Parent = this,
+            WidthSizingMode = SizingMode.Fill,
+            Height = 35,
+            HorizontalScrollOffset = -5
+        };
+
+        _name = new Label
+        {
+            Parent = _labelHolder,
             Text = viewModel.Item.Name,
             TextColor = viewModel.Color,
-            Width = 400,
             Height = 35,
+            Width = 395,
             WrapText = true,
             VerticalAlignment = VerticalAlignment.Middle
         };
@@ -44,13 +54,13 @@ public sealed class ItemsListEntry : FlowPanel, IListItem<Item>
 
     protected override void OnMouseEntered(MouseEventArgs e)
     {
-        _name.BackgroundColor = Color.BurlyWood;
+        _labelHolder.BackgroundColor = Color.BurlyWood;
         _name.ShowShadow = true;
     }
 
     protected override void OnMouseLeft(MouseEventArgs e)
     {
-        _name.BackgroundColor = Color.Transparent;
+        _labelHolder.BackgroundColor = Color.Transparent;
         _name.ShowShadow = false;
     }
 
