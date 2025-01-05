@@ -62,42 +62,24 @@ public class ItemsTabView2(ILogger<ItemsTabView> logger, ItemsTabViewModel viewM
         }
     }
 
-    private async void SearchTextChanged(object sender, EventArgs e)
+    private void SearchTextChanged(object sender, EventArgs e)
     {
-        try
+        if (_searchBox is not { Focused: true })
         {
-            if (_searchBox is null)
-            {
-                return;
-            }
-
-            if (_searchBox.Focused)
-            {
-                await ViewModel.Search();
-            }
+            return;
         }
-        catch (Exception reason)
+
+        if (ViewModel.SearchCommand.CanExecute(null!))
         {
-            logger.LogError(reason, "Failed to search for items");
-            ScreenNotification.ShowNotification("Something went wrong", ScreenNotification.NotificationType.Red);
+            ViewModel.SearchCommand.Execute(null!);
         }
     }
 
-    private async void SearchEnterPressed(object sender, EventArgs e)
+    private void SearchEnterPressed(object sender, EventArgs e)
     {
-        try
+        if (ViewModel.SearchCommand.CanExecute(null!))
         {
-            if (_searchBox is null)
-            {
-                return;
-            }
-
-            await ViewModel.Search();
-        }
-        catch (Exception reason)
-        {
-            logger.LogError(reason, "Failed to search for items");
-            ScreenNotification.ShowNotification("Something went wrong", ScreenNotification.NotificationType.Red);
+            ViewModel.SearchCommand.Execute(null!);
         }
     }
 }
