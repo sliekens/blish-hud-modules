@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 using SL.Common.Controls;
 
-namespace SL.ChatLinks.UI.Tabs.Items2;
+namespace SL.ChatLinks.UI.Tabs.Items2.Search;
 
 public sealed class ItemsListEntry : FlowPanel, IListItem<Item>
 {
@@ -26,19 +26,11 @@ public sealed class ItemsListEntry : FlowPanel, IListItem<Item>
         Width = 435;
         HeightSizingMode = SizingMode.AutoSize;
         FlowDirection = ControlFlowDirection.SingleLeftToRight;
-        _image = new Image
-        {
-            Parent = this,
-            Size = new Point(35),
-            Texture = viewModel.GetIcon()
-        };
+        _image = new Image { Parent = this, Size = new Point(35), Texture = viewModel.GetIcon() };
 
         _labelHolder = new Panel
         {
-            Parent = this,
-            WidthSizingMode = SizingMode.Fill,
-            Height = 35,
-            HorizontalScrollOffset = -5
+            Parent = this, WidthSizingMode = SizingMode.Fill, Height = 35, HorizontalScrollOffset = -5
         };
 
         _name = new Label

@@ -2,7 +2,7 @@
 
 using SL.Common.Controls;
 
-namespace SL.ChatLinks.UI.Tabs.Items2;
+namespace SL.ChatLinks.UI.Tabs.Items2.Search;
 
 public class ItemsList(ItemsListViewModel viewModel) : ListBox<Item>
 {

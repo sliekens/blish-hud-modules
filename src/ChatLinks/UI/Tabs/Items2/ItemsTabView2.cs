@@ -28,23 +28,13 @@ public class ItemsTabView2 : View
     public ItemsTabView2(ILogger<ItemsTabView> logger, ItemsTabViewModel viewModel)
     {
         ViewModel = viewModel;
-        _searchBox = new TextBox
-        {
-            Width = 450,
-            PlaceholderText = "Enter item name or chat link..."
-        };
+        _searchBox = new TextBox { Width = 450, PlaceholderText = "Enter item name or chat link..." };
 
-        _loadingSpinner = new LoadingSpinner
-        {
-            Size = new Point(_searchBox.Height),
-            Right = _searchBox.Right
-        };
+        _loadingSpinner = new LoadingSpinner { Size = new Point(_searchBox.Height), Right = _searchBox.Right };
 
         _searchResults = new ItemsList(ViewModel.ItemsListViewModel)
         {
-            Size = new Point(450, 500),
-            Top = _searchBox.Bottom,
-            Entries = ViewModel.SearchResults
+            Size = new Point(450, 500), Top = _searchBox.Bottom, Entries = ViewModel.SearchResults
         };
     }
 

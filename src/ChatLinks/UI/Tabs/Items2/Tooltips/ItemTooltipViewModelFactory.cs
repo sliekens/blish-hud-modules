@@ -2,7 +2,7 @@
 
 using SL.Common.Controls.Items.Services;
 
-namespace SL.ChatLinks.UI.Tabs.Items2;
+namespace SL.ChatLinks.UI.Tabs.Items2.Tooltips;
 
 public sealed class ItemTooltipViewModelFactory(ItemIcons icons, Customizer customizer)
 {

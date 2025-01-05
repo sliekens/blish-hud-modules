@@ -17,6 +17,8 @@ using SL.ChatLinks.Storage;
 using SL.ChatLinks.UI;
 using SL.ChatLinks.UI.Tabs.Items.Services;
 using SL.ChatLinks.UI.Tabs.Items2;
+using SL.ChatLinks.UI.Tabs.Items2.Search;
+using SL.ChatLinks.UI.Tabs.Items2.Tooltips;
 using SL.Common;
 using SL.Common.Controls.Items.Services;
 

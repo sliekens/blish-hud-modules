@@ -17,14 +17,16 @@ public sealed class Customizer(
 
     public async Task LoadAsync()
     {
-        UpgradeComponents = await context.Set<UpgradeComponent>().AsNoTracking().ToDictionaryAsync(upgrade => upgrade.Id);
+        UpgradeComponents =
+            await context.Set<UpgradeComponent>().AsNoTracking().ToDictionaryAsync(upgrade => upgrade.Id);
         MessageBus.Register("customizer", async void (message) =>
         {
             try
             {
                 if (message == "refresh")
                 {
-                    UpgradeComponents = await context.Set<UpgradeComponent>().AsNoTracking().ToDictionaryAsync(upgrade => upgrade.Id);
+                    UpgradeComponents = await context.Set<UpgradeComponent>().AsNoTracking()
+                        .ToDictionaryAsync(upgrade => upgrade.Id);
                 }
             }
             catch (Exception reason)

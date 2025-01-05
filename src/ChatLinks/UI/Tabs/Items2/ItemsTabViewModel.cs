@@ -5,6 +5,7 @@ using GuildWars2.Items;
 using Microsoft.Extensions.Logging;
 
 using SL.ChatLinks.UI.Tabs.Items.Services;
+using SL.ChatLinks.UI.Tabs.Items2.Search;
 using SL.Common;
 using SL.Common.ModelBinding;
 
@@ -39,6 +40,7 @@ public sealed class ItemsTabViewModel : ViewModel
         ItemsListViewModel = itemsListViewModel;
         SearchCommand = new AsyncRelayCommand(Search);
     }
+
     public ItemsListViewModel ItemsListViewModel { get; }
 
     public string SearchText
@@ -126,6 +128,7 @@ public sealed class ItemsTabViewModel : ViewModel
                 break;
         }
     }
+
     private async Task Query(string text, CancellationToken cancellationToken)
     {
         Searching = true;

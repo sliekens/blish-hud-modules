@@ -21,7 +21,7 @@ using Container = Blish_HUD.Controls.Container;
 using Currency = GuildWars2.Items.Currency;
 using Item = GuildWars2.Items.Item;
 
-namespace SL.ChatLinks.UI.Tabs.Items2;
+namespace SL.ChatLinks.UI.Tabs.Items2.Tooltips;
 
 public sealed class ItemTooltipView : View, ITooltipView
 {
@@ -219,10 +219,10 @@ public sealed class ItemTooltipView : View, ITooltipView
             case Booze:
                 PrintPlainText("""
 
-                          Excessive alcohol consumption will result in intoxication.
+                               Excessive alcohol consumption will result in intoxication.
 
-                          Consumable          
-                          """);
+                               Consumable          
+                               """);
                 break;
             default:
                 PrintPlainText(string.IsNullOrEmpty(consumable.Description) ? "Consumable" : "\r\nConsumable");
@@ -234,7 +234,6 @@ public sealed class ItemTooltipView : View, ITooltipView
         PrintUniqueness(consumable);
         PrintItemBinding(consumable);
         PrintVendorValue(consumable);
-
     }
 
     private void PrintContainer(GuildWars2.Items.Container container)
@@ -543,10 +542,7 @@ public sealed class ItemTooltipView : View, ITooltipView
             Height = 50
         };
 
-        ItemImage icon = new(item)
-        {
-            Parent = header
-        };
+        ItemImage icon = new(item) { Parent = header };
 
         ItemName name = new(item, ViewModel.Upgrades)
         {
@@ -797,7 +793,7 @@ public sealed class ItemTooltipView : View, ITooltipView
     {
         StringBuilder text = new();
         foreach ((string? bonus, int ordinal) in bonuses
-            .Select((value, index) => (value, index + 1)))
+                     .Select((value, index) => (value, index + 1)))
         {
             text.Append($"\r\n({ordinal:0}): {bonus}");
         }

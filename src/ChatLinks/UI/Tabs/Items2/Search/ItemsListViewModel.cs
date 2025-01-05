@@ -2,7 +2,7 @@
 
 using SL.Common;
 
-namespace SL.ChatLinks.UI.Tabs.Items2;
+namespace SL.ChatLinks.UI.Tabs.Items2.Search;
 
 public class ItemsListViewModel(ItemsListEntryViewModelFactory factory) : ViewModel
 {

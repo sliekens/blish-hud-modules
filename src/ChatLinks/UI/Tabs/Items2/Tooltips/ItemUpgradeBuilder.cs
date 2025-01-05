@@ -13,7 +13,7 @@ using SL.Common.Controls.Items.Services;
 
 using Container = Blish_HUD.Controls.Container;
 
-namespace SL.ChatLinks.UI.Tabs.Items2;
+namespace SL.ChatLinks.UI.Tabs.Items2.Tooltips;
 
 public sealed class ItemUpgradeBuilder(ItemFlags flags, ItemIcons icons, Customizer customizer)
 {

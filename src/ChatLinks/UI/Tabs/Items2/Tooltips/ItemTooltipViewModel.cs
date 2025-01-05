@@ -5,7 +5,7 @@ using GuildWars2.Items;
 using SL.Common;
 using SL.Common.Controls.Items.Services;
 
-namespace SL.ChatLinks.UI.Tabs.Items2;
+namespace SL.ChatLinks.UI.Tabs.Items2.Tooltips;
 
 public sealed class ItemTooltipViewModel(ItemIcons icons, Customizer customizer, Item item) : ViewModel
 {
