@@ -44,13 +44,13 @@ public sealed class ItemsListEntry : FlowPanel, IListItem<Item>
 
     protected override void OnMouseEntered(MouseEventArgs e)
     {
-        BackgroundColor = Color.BurlyWood;
+        _name.BackgroundColor = Color.BurlyWood;
         _name.ShowShadow = true;
     }
 
     protected override void OnMouseLeft(MouseEventArgs e)
     {
-        BackgroundColor = Color.Transparent;
+        _name.BackgroundColor = Color.Transparent;
         _name.ShowShadow = false;
     }
 
