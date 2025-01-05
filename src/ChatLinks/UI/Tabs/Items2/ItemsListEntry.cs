@@ -1,4 +1,5 @@
 ﻿using Blish_HUD.Controls;
+using Blish_HUD.Input;
 
 using GuildWars2.Items;
 
@@ -43,6 +44,18 @@ public sealed class ItemsListEntry : FlowPanel, IListItem<Item>
     {
         base.OnResized(e);
         _name.Width = Width;
+    }
+
+    protected override void OnMouseEntered(MouseEventArgs e)
+    {
+        BackgroundColor = Color.BurlyWood;
+        _name.ShowShadow = true;
+    }
+
+    protected override void OnMouseLeft(MouseEventArgs e)
+    {
+        BackgroundColor = Color.Transparent;
+        _name.ShowShadow = false;
     }
 
     protected override void DisposeControl()
