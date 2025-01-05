@@ -18,7 +18,7 @@ public sealed class ItemsListEntry : FlowPanel, IListItem<Item>
     public ItemsListEntry(ItemsListEntryViewModel viewModel)
     {
         Data = viewModel.Item;
-        WidthSizingMode = SizingMode.Fill;
+        Width = 435;
         HeightSizingMode = SizingMode.AutoSize;
         FlowDirection = ControlFlowDirection.SingleLeftToRight;
         _image = new Image
@@ -32,19 +32,14 @@ public sealed class ItemsListEntry : FlowPanel, IListItem<Item>
         {
             Parent = this,
             Text = Data.Name,
-            Width = Width,
+            Width = 400,
+            Height = 35,
             WrapText = true,
-            AutoSizeHeight = true,
+            VerticalAlignment = VerticalAlignment.Middle
         };
     }
 
     public Item Data { get; }
-
-    protected override void OnResized(ResizedEventArgs e)
-    {
-        base.OnResized(e);
-        _name.Width = Width;
-    }
 
     protected override void OnMouseEntered(MouseEventArgs e)
     {
