@@ -24,7 +24,7 @@ public sealed class ItemsListEntry : FlowPanel, IListItem<Item>
         _image = new Image
         {
             Parent = this,
-            Size = new Point(50),
+            Size = new Point(35),
             Texture = viewModel.GetIcon()
         };
 
