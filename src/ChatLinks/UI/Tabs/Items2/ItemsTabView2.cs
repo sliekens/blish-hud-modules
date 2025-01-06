@@ -26,6 +26,8 @@ public class ItemsTabView2 : View
 
     private readonly ListBox<Item> _searchResults;
 
+    private readonly ViewContainer _editor;
+
     public ItemsTabView2(ILogger<ItemsTabView> logger, ItemsTabViewModel viewModel)
     {
         ViewModel = viewModel;
@@ -36,6 +38,13 @@ public class ItemsTabView2 : View
         _searchResults = new ItemsList(ViewModel.ItemsListViewModel)
         {
             Size = new Point(450, 500), Top = _searchBox.Bottom, Entries = ViewModel.SearchResults
+        };
+
+        _editor = new ViewContainer
+        {
+            Size = new Point(350, 500),
+            Left = _searchResults.Right,
+            FadeView = true
         };
     }
 
