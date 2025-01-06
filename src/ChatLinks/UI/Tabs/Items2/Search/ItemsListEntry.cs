@@ -54,18 +54,20 @@ public sealed class ItemsListEntry : FlowPanel, IListItem<Item>
         _name.ShowShadow = true;
         _image.Tooltip ??= new Tooltip(new ItemTooltipView(ViewModel.CreateTooltipViewModel()));
         _name.Tooltip ??= new Tooltip(new ItemTooltipView(ViewModel.CreateTooltipViewModel()));
+        base.OnMouseEntered(e);
     }
 
     protected override void OnMouseLeft(MouseEventArgs e)
     {
         _labelHolder.BackgroundColor = Color.Transparent;
         _name.ShowShadow = false;
+        base.OnMouseLeft(e);
     }
 
     protected override void DisposeControl()
     {
-        base.DisposeControl();
         _image.Dispose();
         _name.Dispose();
+        base.DisposeControl();
     }
 }
