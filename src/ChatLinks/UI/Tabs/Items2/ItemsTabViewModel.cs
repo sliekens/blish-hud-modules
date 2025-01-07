@@ -5,6 +5,7 @@ using GuildWars2.Items;
 using Microsoft.Extensions.Logging;
 
 using SL.ChatLinks.UI.Tabs.Items.Services;
+using SL.ChatLinks.UI.Tabs.Items2.Content;
 using SL.ChatLinks.UI.Tabs.Items2.Search;
 using SL.Common;
 using SL.Common.ModelBinding;
@@ -19,6 +20,8 @@ public sealed class ItemsTabViewModel : ViewModel
 
     private readonly Customizer _customizer;
 
+    private readonly ChatLinkEditorViewModelFactory _chatLinkEditorViewModelFactory;
+
     private string _searchText = "";
 
     private bool _searching;
@@ -31,12 +34,14 @@ public sealed class ItemsTabViewModel : ViewModel
         ILogger<ItemsTabViewModel> logger,
         ItemSearch search,
         Customizer customizer,
-        ItemsListViewModel itemsListViewModel
+        ItemsListViewModel itemsListViewModel,
+        ChatLinkEditorViewModelFactory chatLinkEditorViewModelFactory
     )
     {
         _logger = logger;
         _search = search;
         _customizer = customizer;
+        _chatLinkEditorViewModelFactory = chatLinkEditorViewModelFactory;
         ItemsListViewModel = itemsListViewModel;
         SearchCommand = new AsyncRelayCommand(Search);
     }
@@ -64,6 +69,11 @@ public sealed class ItemsTabViewModel : ViewModel
     {
         await _customizer.LoadAsync();
         await NewItems(CancellationToken.None);
+    }
+
+    public ChatLinkEditorViewModel CreateChatLinkEditorViewModel(Item item)
+    {
+        return _chatLinkEditorViewModelFactory.Create(item);
     }
 
     public void CancelPendingSearches()

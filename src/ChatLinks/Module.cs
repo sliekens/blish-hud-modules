@@ -17,6 +17,7 @@ using SL.ChatLinks.Storage;
 using SL.ChatLinks.UI;
 using SL.ChatLinks.UI.Tabs.Items.Services;
 using SL.ChatLinks.UI.Tabs.Items2;
+using SL.ChatLinks.UI.Tabs.Items2.Content;
 using SL.ChatLinks.UI.Tabs.Items2.Search;
 using SL.ChatLinks.UI.Tabs.Items2.Tooltips;
 using SL.Common;
@@ -65,6 +66,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         services.AddTransient<ItemsListViewModel>();
         services.AddTransient<ItemsListEntryViewModelFactory>();
         services.AddTransient<ItemTooltipViewModelFactory>();
+        services.AddTransient<ChatLinkEditorViewModelFactory>();
         services.AddTransient<ItemSearch>();
         services.AddSingleton<Customizer>();
         services.AddHttpClient<ItemIcons>();

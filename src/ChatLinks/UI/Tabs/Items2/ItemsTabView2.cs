@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 
 using SL.ChatLinks.UI.Tabs.Items;
+using SL.ChatLinks.UI.Tabs.Items2.Content;
 using SL.ChatLinks.UI.Tabs.Items2.Search;
 using SL.Common.Controls;
 using SL.Common.ModelBinding;
@@ -37,7 +38,9 @@ public class ItemsTabView2 : View
 
         _searchResults = new ItemsList(ViewModel.ItemsListViewModel)
         {
-            Size = new Point(450, 500), Top = _searchBox.Bottom, Entries = ViewModel.SearchResults
+            Size = new Point(450, 500),
+            Top = _searchBox.Bottom,
+            Entries = ViewModel.SearchResults
         };
 
         _editor = new ViewContainer
@@ -46,6 +49,20 @@ public class ItemsTabView2 : View
             Left = _searchResults.Right,
             FadeView = true
         };
+
+        _searchResults.SelectionChanged += SelectionChanged;
+    }
+
+    private void SelectionChanged(ListBox<Item> sender, ListBoxSelectionChangedEventArgs<Item> args)
+    {
+        if (args.AddedItems is [{ Data: { } item }])
+        {
+            _editor.Show(new ChatLinkEditor(ViewModel.CreateChatLinkEditorViewModel(item)));
+        }
+        else
+        {
+            _editor.Clear();
+        }
     }
 
     protected override async Task<bool> Load(IProgress<string> progress)
@@ -59,6 +76,7 @@ public class ItemsTabView2 : View
         _searchBox.Parent = buildPanel;
         _loadingSpinner.Parent = buildPanel;
         _searchResults.Parent = buildPanel;
+        _editor.Parent = buildPanel;
 
         Binder.Bind(ViewModel, vm => vm.SearchText, _searchBox);
         Binder.Bind(ViewModel, vm => vm.Searching, _loadingSpinner);
