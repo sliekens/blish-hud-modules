@@ -49,12 +49,12 @@ public sealed class ItemsListEntry : FlowPanel
     {
         if (ViewModel.IsSelected)
         {
-            _labelHolder.BackgroundColor = Color.BurlyWood;
+            _labelHolder.BackgroundColor = new Color(109,100,69, 0);
             _name.ShowShadow = true;
         }
         else if (MouseOver)
         {
-            _labelHolder.BackgroundColor = Color.AntiqueWhite;
+            _labelHolder.BackgroundColor = new Color(109, 100, 69, 127);
             _name.ShowShadow = true;
         }
         else
