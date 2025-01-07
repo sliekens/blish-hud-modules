@@ -2,13 +2,7 @@
 
 namespace SL.Common.Controls;
 
-public sealed class ListItem<TData> : Label, IListItem<TData>
+public sealed class ListItem<TData>(TData data) : Panel
 {
-    public TData Data { get; }
-
-    public ListItem(TData data)
-    {
-        Data = data;
-        Text = data?.ToString();
-    }
+    public TData Data { get; } = data;
 }

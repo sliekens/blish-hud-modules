@@ -77,26 +77,33 @@ public class ListBox<T> : FlowPanel
         }
     }
 
-    protected virtual IListItem<T> Template(T item)
+    protected virtual Control Template(T data)
     {
-        return new ListItem<T>(item)
+        return new Label
         {
-            Width = Width - 25,
-            AutoSizeHeight = true,
-            WrapText = true
+            Text = data?.ToString(),
+            AutoSizeWidth = true,
         };
     }
 
-    protected virtual IListItem<T> AddItem(T item)
+    protected virtual ListItem<T> AddItem(T item)
     {
-        var listItem = Template(item);
-        listItem.Parent = this;
+        var listItem = new ListItem<T>(item)
+        {
+            Parent = this,
+            Width = Width - 16,
+            HeightSizingMode = SizingMode.AutoSize,
+            ShowTint = Children.Count % 2 == 1
+        };
+
+        var template = Template(item);
+        template.Parent = listItem;
         return listItem;
     }
 
     protected virtual void RemoveItem(T item)
     {
-        var entry = Children.OfType<IListItem<T>>()
+        var entry = Children.OfType<ListItem<T>>()
             .FirstOrDefault(child => EqualityComparer<T>.Default.Equals(child.Data, item));
         entry?.Dispose();
     }

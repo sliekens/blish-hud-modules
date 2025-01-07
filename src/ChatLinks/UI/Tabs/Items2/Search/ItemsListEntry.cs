@@ -6,11 +6,10 @@ using GuildWars2.Items;
 using Microsoft.Xna.Framework;
 
 using SL.ChatLinks.UI.Tabs.Items2.Tooltips;
-using SL.Common.Controls;
 
 namespace SL.ChatLinks.UI.Tabs.Items2.Search;
 
-public sealed class ItemsListEntry : FlowPanel, IListItem<Item>
+public sealed class ItemsListEntry : FlowPanel
 {
     public ItemsListEntryViewModel ViewModel { get; }
 
