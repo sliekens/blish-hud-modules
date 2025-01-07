@@ -36,6 +36,10 @@ public class ListBox<T> : FlowPanel
         }
     }
 
+    protected virtual void Bind(T data, ListItem<T> listItem)
+    {
+    }
+
     private void EntriesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
         switch (e.Action)
@@ -90,15 +94,17 @@ public class ListBox<T> : FlowPanel
         };
     }
 
-    protected virtual ListItem<T> AddItem(T item)
+    protected virtual ListItem<T> AddItem(T data)
     {
-        var listItem = new ListItem<T>(item)
+        var listItem = new ListItem<T>(data)
         {
             Parent = this,
             Width = Width - 16,
             HeightSizingMode = SizingMode.AutoSize,
             ShowTint = Children.Count % 2 == 1
         };
+
+        Bind(data, listItem);
 
         listItem.SelectionChanged += (sender, args) =>
         {
@@ -127,7 +133,7 @@ public class ListBox<T> : FlowPanel
             );
         };
 
-        var template = Template(item);
+        var template = Template(data);
         template.Parent = listItem;
         return listItem;
     }

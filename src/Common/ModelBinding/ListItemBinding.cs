@@ -12,13 +12,13 @@ public sealed class ListItemBinding<TViewModel, TData> : ViewModelBinding<TViewM
     public ListItemBinding(TViewModel viewModel, Expression<Func<TViewModel, bool>> propertySelector, ListItem<TData> listItem) : base(viewModel, propertySelector)
     {
         ListItem = listItem;
-        ListItem.SelectionChanged += SelectionChanged;
-        ListItem.IsSelected = Snapshot();
+        listItem.SelectionChanged += SelectionChanged;
+        listItem.IsSelected = Snapshot();
     }
 
-    private void SelectionChanged(ListItem<TData> sender, ListItemSelectionChangedEventArgs args)
+    private void SelectionChanged(object sender, EventArgs e)
     {
-        UpdateModel(args.IsSelected);
+        UpdateModel(ListItem.IsSelected);
     }
 
     protected override void UpdateView(bool data)
