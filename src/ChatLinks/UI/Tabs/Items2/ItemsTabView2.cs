@@ -25,7 +25,7 @@ public class ItemsTabView2 : View
 
     private readonly LoadingSpinner _loadingSpinner;
 
-    private readonly ListBox<Item> _searchResults;
+    private readonly ListBox<ItemsListViewModel> _searchResults;
 
     private readonly ViewContainer _editor;
 
@@ -36,7 +36,7 @@ public class ItemsTabView2 : View
 
         _loadingSpinner = new LoadingSpinner { Size = new Point(_searchBox.Height), Right = _searchBox.Right };
 
-        _searchResults = new ItemsList(ViewModel.ItemsListViewModel)
+        _searchResults = new ItemsList
         {
             Size = new Point(450, 500),
             Top = _searchBox.Bottom,
@@ -53,11 +53,11 @@ public class ItemsTabView2 : View
         _searchResults.SelectionChanged += SelectionChanged;
     }
 
-    private void SelectionChanged(ListBox<Item> sender, ListBoxSelectionChangedEventArgs<Item> args)
+    private void SelectionChanged(ListBox<ItemsListViewModel> sender, ListBoxSelectionChangedEventArgs<ItemsListViewModel> args)
     {
-        if (args.AddedItems is [{ Data: { } item }])
+        if (args.AddedItems is [{ Data: { } listItem }])
         {
-            _editor.Show(new ChatLinkEditor(ViewModel.CreateChatLinkEditorViewModel(item)));
+            _editor.Show(new ChatLinkEditor(ViewModel.CreateChatLinkEditorViewModel(listItem.Item)));
         }
         else
         {

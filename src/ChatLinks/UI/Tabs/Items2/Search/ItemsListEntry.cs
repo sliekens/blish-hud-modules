@@ -1,8 +1,6 @@
 ﻿using Blish_HUD.Controls;
 using Blish_HUD.Input;
 
-using GuildWars2.Items;
-
 using Microsoft.Xna.Framework;
 
 using SL.ChatLinks.UI.Tabs.Items2.Tooltips;
@@ -11,7 +9,7 @@ namespace SL.ChatLinks.UI.Tabs.Items2.Search;
 
 public sealed class ItemsListEntry : FlowPanel
 {
-    public ItemsListEntryViewModel ViewModel { get; }
+    public ItemsListViewModel ViewModel { get; }
 
     private readonly Image _image;
 
@@ -19,10 +17,9 @@ public sealed class ItemsListEntry : FlowPanel
 
     private readonly Label _name;
 
-    public ItemsListEntry(ItemsListEntryViewModel viewModel)
+    public ItemsListEntry(ItemsListViewModel viewModel)
     {
         ViewModel = viewModel;
-        Data = viewModel.Item;
         Width = 435;
         HeightSizingMode = SizingMode.AutoSize;
         FlowDirection = ControlFlowDirection.SingleLeftToRight;
@@ -44,8 +41,6 @@ public sealed class ItemsListEntry : FlowPanel
             VerticalAlignment = VerticalAlignment.Middle
         };
     }
-
-    public Item Data { get; }
 
     protected override void OnMouseEntered(MouseEventArgs e)
     {

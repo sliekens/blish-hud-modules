@@ -20,6 +20,8 @@ public sealed class ItemsTabViewModel : ViewModel
 
     private readonly Customizer _customizer;
 
+    private readonly ItemsListViewModelFactory _itemsListViewModelFactory;
+
     private readonly ChatLinkEditorViewModelFactory _chatLinkEditorViewModelFactory;
 
     private string _searchText = "";
@@ -34,19 +36,18 @@ public sealed class ItemsTabViewModel : ViewModel
         ILogger<ItemsTabViewModel> logger,
         ItemSearch search,
         Customizer customizer,
-        ItemsListViewModel itemsListViewModel,
+        ItemsListViewModelFactory itemsListViewModelFactory,
         ChatLinkEditorViewModelFactory chatLinkEditorViewModelFactory
     )
     {
         _logger = logger;
         _search = search;
         _customizer = customizer;
+        _itemsListViewModelFactory = itemsListViewModelFactory;
         _chatLinkEditorViewModelFactory = chatLinkEditorViewModelFactory;
-        ItemsListViewModel = itemsListViewModel;
         SearchCommand = new AsyncRelayCommand(Search);
     }
 
-    public ItemsListViewModel ItemsListViewModel { get; }
 
     public string SearchText
     {
@@ -60,7 +61,7 @@ public sealed class ItemsTabViewModel : ViewModel
         set => SetField(ref _searching, value);
     }
 
-    public ObservableCollection<Item> SearchResults { get; } = [];
+    public ObservableCollection<ItemsListViewModel> SearchResults { get; } = [];
 
     public AsyncRelayCommand SearchCommand { get; }
 
@@ -153,7 +154,8 @@ public sealed class ItemsTabViewModel : ViewModel
                     break;
                 }
 
-                SearchResults.Add(item);
+                var viewModel = _itemsListViewModelFactory.Create(item);
+                SearchResults.Add(viewModel);
             }
         }
         finally
@@ -176,7 +178,8 @@ public sealed class ItemsTabViewModel : ViewModel
                     break;
                 }
 
-                SearchResults.Add(item);
+                var viewModel = _itemsListViewModelFactory.Create(item);
+                SearchResults.Add(viewModel);
             }
         }
         finally
