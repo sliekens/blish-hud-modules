@@ -27,7 +27,10 @@ public sealed class ItemsListEntry : FlowPanel
 
         _labelHolder = new Panel
         {
-            Parent = this, WidthSizingMode = SizingMode.Fill, Height = 35, HorizontalScrollOffset = -5
+            Parent = this,
+            WidthSizingMode = SizingMode.Fill,
+            Height = 35,
+            HorizontalScrollOffset = -5
         };
 
         _name = new Label
@@ -42,20 +45,31 @@ public sealed class ItemsListEntry : FlowPanel
         };
     }
 
-    protected override void OnMouseEntered(MouseEventArgs e)
+    public override void UpdateContainer(GameTime gameTime)
     {
-        _labelHolder.BackgroundColor = Color.BurlyWood;
-        _name.ShowShadow = true;
-        _image.Tooltip ??= new Tooltip(new ItemTooltipView(ViewModel.CreateTooltipViewModel()));
-        _name.Tooltip ??= new Tooltip(new ItemTooltipView(ViewModel.CreateTooltipViewModel()));
-        base.OnMouseEntered(e);
-    }
+        if (ViewModel.IsSelected)
+        {
+            _labelHolder.BackgroundColor = Color.BurlyWood;
+            _name.ShowShadow = true;
+        }
+        else if (MouseOver)
+        {
+            _labelHolder.BackgroundColor = Color.AntiqueWhite;
+            _name.ShowShadow = true;
+        }
+        else
+        {
+            _labelHolder.BackgroundColor = Color.Transparent;
+            _name.ShowShadow = false;
+        }
 
-    protected override void OnMouseLeft(MouseEventArgs e)
-    {
-        _labelHolder.BackgroundColor = Color.Transparent;
-        _name.ShowShadow = false;
-        base.OnMouseLeft(e);
+        if (MouseOver)
+        {
+            _image.Tooltip ??= new Tooltip(new ItemTooltipView(ViewModel.CreateTooltipViewModel()));
+            _name.Tooltip ??= new Tooltip(new ItemTooltipView(ViewModel.CreateTooltipViewModel()));
+        }
+
+        base.UpdateContainer(gameTime);
     }
 
     protected override void DisposeControl()
