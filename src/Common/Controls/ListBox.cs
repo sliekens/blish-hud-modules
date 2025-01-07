@@ -8,7 +8,11 @@ namespace SL.Common.Controls;
 
 public class ListBox<T> : FlowPanel
 {
+    public event Action<ListBox<T>, ListBoxSelectionChangedEventArgs<T>>? SelectionChanged;
+
     private ObservableCollection<T>? _entries;
+
+    private readonly ObservableCollection<ListItem<T>> _selection = [];
 
     public ListBox()
     {
@@ -96,6 +100,33 @@ public class ListBox<T> : FlowPanel
             ShowTint = Children.Count % 2 == 1
         };
 
+        listItem.SelectionChanged += (sender, args) =>
+        {
+            List<ListItem<T>> addedItems = [];
+            List<ListItem<T>> removedItems = [];
+            if (args.IsSelected)
+            {
+                foreach (ListItem<T> previousSelection in _selection)
+                {
+                    previousSelection.IsSelected = false;
+                    removedItems.Add(previousSelection);
+                }
+
+                _selection.Clear();
+                _selection.Add(sender);
+                addedItems.Add(sender);
+            }
+            else
+            {
+                _selection.Remove(sender);
+            }
+
+            SelectionChanged?.Invoke(
+                this,
+                new ListBoxSelectionChangedEventArgs<T>(addedItems, removedItems)
+            );
+        };
+
         var template = Template(item);
         template.Parent = listItem;
         return listItem;
@@ -156,5 +187,10 @@ public class ListBox<T> : FlowPanel
         {
             AddItem(item);
         }
+    }
+
+    protected override void DisposeControl()
+    {
+        SelectionChanged = null;
     }
 }
