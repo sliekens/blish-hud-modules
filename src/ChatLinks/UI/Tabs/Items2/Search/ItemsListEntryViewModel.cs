@@ -13,11 +13,19 @@ namespace SL.ChatLinks.UI.Tabs.Items2.Search;
 public sealed class ItemsListEntryViewModel(
     ItemIcons icons,
     Item item,
-    ItemTooltipViewModelFactory tooltipViewModelFactory)
+    ItemTooltipViewModelFactory tooltipViewModelFactory) : ViewModel
 {
+    private bool _isSelected;
+
     public Item Item { get; } = item ?? throw new ArgumentNullException(nameof(item));
 
     public Color Color { get; } = ItemColors.Rarity(item.Rarity);
+
+    public bool IsSelected
+    {
+        get => _isSelected;
+        set => SetField(ref _isSelected, value);
+    }
 
     public AsyncTexture2D? GetIcon()
     {
