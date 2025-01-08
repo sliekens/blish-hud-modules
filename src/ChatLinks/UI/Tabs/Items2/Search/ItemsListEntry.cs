@@ -9,6 +9,8 @@ namespace SL.ChatLinks.UI.Tabs.Items2.Search;
 
 public sealed class ItemsListEntry : FlowPanel
 {
+    private static readonly Color ActiveColor = new Color(109,100,69, 0);
+    private static readonly Color HoverColor = new Color(109, 100, 69, 127);
     public ItemsListViewModel ViewModel { get; }
 
     private readonly Image _image;
@@ -49,12 +51,12 @@ public sealed class ItemsListEntry : FlowPanel
     {
         if (ViewModel.IsSelected)
         {
-            _labelHolder.BackgroundColor = new Color(109,100,69, 0);
+            _labelHolder.BackgroundColor = ActiveColor;
             _name.ShowShadow = true;
         }
         else if (MouseOver)
         {
-            _labelHolder.BackgroundColor = new Color(109, 100, 69, 127);
+            _labelHolder.BackgroundColor = HoverColor;
             _name.ShowShadow = true;
         }
         else
