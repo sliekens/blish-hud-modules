@@ -37,6 +37,7 @@ public sealed class NumberPicker : TextInputBase
     private Rectangle _highlightRectangle = Rectangle.Empty;
 
     private bool _highlightUpArrow;
+
     private int _horizontalOffset;
 
     private TimeSpan _incrementInterval = TimeSpan.FromMilliseconds(150);
@@ -62,6 +63,8 @@ public sealed class NumberPicker : TextInputBase
         GameService.Input.Mouse.LeftMouseButtonReleased += OnGlobalLeftMouseButtonReleased;
     }
 
+    public event EventHandler<EventArgs>? ValueChanged;
+
     public int Value
     {
         get => int.TryParse(Text, out int value) ? value : 0;
@@ -78,7 +81,13 @@ public sealed class NumberPicker : TextInputBase
 
             Text = value.ToString(NumberFormatInfo.InvariantInfo);
             CursorIndex = Text.Length;
+            OnValueChanged();
         }
+    }
+
+    private void OnValueChanged()
+    {
+        ValueChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public int MinValue

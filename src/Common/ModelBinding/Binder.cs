@@ -13,6 +13,11 @@ public sealed class Binder
         return new TextBoxBinding<TViewModel>(viewModel, propertySelector, textBox);
     }
 
+    public static ViewModelBinding<TViewModel, int> Bind<TViewModel>(TViewModel viewModel, Expression<Func<TViewModel, int>> propertySelector, NumberPicker numberPicker) where TViewModel : ViewModel
+    {
+        return new NumberPickerBinding<TViewModel>(viewModel, propertySelector, numberPicker);
+    }
+
     public static ViewModelBinding<TViewModel, bool> Bind<TViewModel>(TViewModel viewModel, Expression<Func<TViewModel, bool>> propertySelector, LoadingSpinner loadingSpinner) where TViewModel : ViewModel
     {
         return new LoadingSpinnerBinding<TViewModel>(viewModel, propertySelector, loadingSpinner);
@@ -20,6 +25,6 @@ public sealed class Binder
 
     public static ViewModelBinding<TViewModel, bool> Bind<TViewModel, TData>(TViewModel viewModel, Expression<Func<TViewModel, bool>> propertySelector, ListItem<TData> listItem) where TViewModel : ViewModel
     {
-        return new ListItemBinding<TViewModel,TData>(viewModel, propertySelector, listItem);
+        return new ListItemBinding<TViewModel, TData>(viewModel, propertySelector, listItem);
     }
 }
