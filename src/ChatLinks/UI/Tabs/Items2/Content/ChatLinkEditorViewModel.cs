@@ -2,6 +2,8 @@
 
 using GuildWars2.Items;
 
+using Microsoft.Xna.Framework;
+
 using SL.ChatLinks.UI.Tabs.Items2.Tooltips;
 using SL.Common;
 using SL.Common.Controls.Items.Services;
@@ -15,6 +17,9 @@ public sealed class ChatLinkEditorViewModel(
 ) : ViewModel
 {
     public Item Item { get; } = item;
+    public string ItemName { get; } = item.Name;
+    
+    public Color ItemNameColor { get; } = ItemColors.Rarity(item.Rarity);
 
     public ItemTooltipViewModel CreateTooltipViewModel()
     {
