@@ -4,9 +4,19 @@ namespace SL.Common.ModelBinding;
 
 public sealed class AsyncRelayCommand(Func<Task> execute, Func<bool>? canExecute = null) : ICommand
 {
+    public bool CanExecute()
+    {
+        return CanExecute(null!);
+    }
+
     public bool CanExecute(object parameter)
     {
         return canExecute == null || canExecute();
+    }
+
+    public void Execute()
+    {
+        Execute(null!);
     }
 
     public void Execute(object parameter)

@@ -95,17 +95,17 @@ public class ItemsTabView2 : View
 
     private void SearchTextChanged(object sender, EventArgs e)
     {
-        if (ViewModel.SearchCommand.CanExecute(null!))
+        if (ViewModel.SearchCommand.CanExecute())
         {
-            ViewModel.SearchCommand.Execute(null!);
+            ViewModel.SearchCommand.Execute();
         }
     }
 
     private void SearchEnterPressed(object sender, EventArgs e)
     {
-        if (ViewModel.SearchCommand.CanExecute(null!))
+        if (ViewModel.SearchCommand.CanExecute())
         {
-            ViewModel.SearchCommand.Execute(null!);
+            ViewModel.SearchCommand.Execute();
         }
     }
 
