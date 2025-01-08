@@ -3,13 +3,10 @@ using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
 using Blish_HUD.Input;
 
-using GuildWars2.Items;
-
-using GuildWars2.Wvw.Upgrades;
-
 using Microsoft.Xna.Framework;
 
-using SL.Common.Controls.Items;
+using SL.Common.Controls;
+using SL.Common.ModelBinding;
 
 using Container = Blish_HUD.Controls.Container;
 using ItemTooltipView = SL.ChatLinks.UI.Tabs.Items2.Tooltips.ItemTooltipView;
@@ -25,6 +22,8 @@ public sealed class ChatLinkEditor : View
     private readonly Image _itemIcon;
 
     private readonly Label _itemName;
+
+    private readonly NumberPicker _numberPicker;
 
     private readonly TextBox _chatLink;
 
@@ -60,10 +59,11 @@ public sealed class ChatLinkEditor : View
             Size = new Point(50)
         };
 
+        _itemIcon.MouseEntered += IconMouseEntered;
+
         _itemName = new Label
         {
             Parent = header,
-            Text = viewModel.ItemName,
             TextColor = viewModel.ItemNameColor,
             Width = header.Width - 50,
             Height = 50,
@@ -72,21 +72,83 @@ public sealed class ChatLinkEditor : View
             WrapText = true,
         };
 
-        _itemIcon.MouseEntered += IconMouseEntered;
+        Binder.Bind(viewModel, vm => vm.ItemName, _itemName);
+
+        var quantityGroup = new FlowPanel
+        {
+            Parent = _layout,
+            FlowDirection = ControlFlowDirection.LeftToRight,
+            WidthSizingMode = SizingMode.Fill,
+            HeightSizingMode = SizingMode.AutoSize
+        };
+
+        _ = new Label
+        {
+            Parent = quantityGroup,
+            Text = "Quantity:",
+            AutoSizeWidth = true,
+            AutoSizeHeight = true
+        };
+
+        _numberPicker = new NumberPicker
+        {
+            Parent = quantityGroup,
+            Width = 80,
+            Value = 1,
+            MinValue = 1,
+            MaxValue = 250
+        };
+
+        Binder.Bind(viewModel, vm => vm.Quantity, _numberPicker);
+
+        StandardButton minQuantity = new()
+        {
+            Parent = quantityGroup,
+            Text = "Min",
+            Width = 40
+        };
+
+        minQuantity.Click += MinQuantityOnClick;
+
+        StandardButton maxQuantity = new()
+        {
+            Parent = quantityGroup,
+            Text = "Max",
+            Width = 40
+        };
+
+        maxQuantity.Click += MaxQuantityOnClick;
 
         _ = new Label { Parent = _layout, Text = "Chat Link:", AutoSizeWidth = true, AutoSizeHeight = true };
 
         _chatLink = new TextBox
         {
             Parent = _layout,
-            Text = ViewModel.ChatLink.ToString(),
             Width = 200
         };
+
+        Binder.Bind(ViewModel, vm => vm.ChatLink, _chatLink);
 
         _chatLink.Click += ChatLinkClicked;
         _chatLink.Menu = new ContextMenuStrip();
         var copy = _chatLink.Menu.AddMenuItem("Copy");
         copy.Click += CopyClicked;
+    }
+
+    private void MaxQuantityOnClick(object sender, MouseEventArgs e)
+    {
+        if (ViewModel.MaxQuantity.CanExecute())
+        {
+            ViewModel.MaxQuantity.Execute();
+        }
+    }
+
+    private void MinQuantityOnClick(object sender, MouseEventArgs e)
+    {
+        if (ViewModel.MinQuantity.CanExecute())
+        {
+            ViewModel.MinQuantity.Execute();
+        }
     }
 
     private void IconMouseEntered(object sender, MouseEventArgs e)
@@ -102,9 +164,9 @@ public sealed class ChatLinkEditor : View
 
     private void CopyClicked(object sender, MouseEventArgs e)
     {
-        if (ViewModel.Copy.CanExecute(null!))
+        if (ViewModel.Copy.CanExecute())
         {
-            ViewModel.Copy.Execute(null);
+            ViewModel.Copy.Execute();
         }
     }
 
