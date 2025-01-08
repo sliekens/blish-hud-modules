@@ -12,8 +12,8 @@ public sealed class ListItemBinding<TViewModel, TData> : ViewModelBinding<TViewM
     public ListItemBinding(TViewModel viewModel, Expression<Func<TViewModel, bool>> propertySelector, ListItem<TData> listItem) : base(viewModel, propertySelector)
     {
         ListItem = listItem;
-        listItem.SelectionChanged += SelectionChanged;
         listItem.IsSelected = Snapshot();
+        listItem.SelectionChanged += SelectionChanged;
     }
 
     private void SelectionChanged(object sender, EventArgs e)

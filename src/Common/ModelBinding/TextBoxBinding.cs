@@ -12,8 +12,8 @@ public sealed class TextBoxBinding<TViewModel> : ViewModelBinding<TViewModel, st
     public TextBoxBinding(TViewModel viewModel, Expression<Func<TViewModel, string>> propertySelector, TextBox textBox) : base(viewModel, propertySelector)
     {
         TextBox = textBox;
-        textBox.TextChanged += TextChanged;
         textBox.Text = Snapshot();
+        textBox.TextChanged += TextChanged;
     }
 
     private void TextChanged(object sender, EventArgs e)
