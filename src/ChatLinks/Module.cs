@@ -70,6 +70,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         services.AddTransient<ItemSearch>();
         services.AddSingleton<Customizer>();
         services.AddHttpClient<ItemIcons>();
+        services.AddTransient<IClipBoard, WpfClipboard>();
         
         services.AddLogging(builder =>
         {

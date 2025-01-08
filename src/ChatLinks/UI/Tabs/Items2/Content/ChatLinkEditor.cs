@@ -2,6 +2,7 @@
 using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
 using Blish_HUD.Input;
+
 using GuildWars2.Items;
 
 using GuildWars2.Wvw.Upgrades;
@@ -24,6 +25,8 @@ public sealed class ChatLinkEditor : View
     private readonly Image _itemIcon;
 
     private readonly Label _itemName;
+
+    private readonly TextBox _chatLink;
 
     public ChatLinkEditor(ChatLinkEditorViewModel viewModel)
     {
@@ -70,11 +73,39 @@ public sealed class ChatLinkEditor : View
         };
 
         _itemIcon.MouseEntered += IconMouseEntered;
+
+        _ = new Label { Parent = _layout, Text = "Chat Link:", AutoSizeWidth = true, AutoSizeHeight = true };
+
+        _chatLink = new TextBox
+        {
+            Parent = _layout,
+            Text = ViewModel.ChatLink.ToString(),
+            Width = 200
+        };
+
+        _chatLink.Click += ChatLinkClicked;
+        _chatLink.Menu = new ContextMenuStrip();
+        var copy = _chatLink.Menu.AddMenuItem("Copy");
+        copy.Click += CopyClicked;
     }
 
     private void IconMouseEntered(object sender, MouseEventArgs e)
     {
         _itemIcon.Tooltip ??= new Tooltip(new ItemTooltipView(ViewModel.CreateTooltipViewModel()));
+    }
+
+    private void ChatLinkClicked(object sender, MouseEventArgs e)
+    {
+        _chatLink.SelectionStart = 0;
+        _chatLink.SelectionEnd = _chatLink.Text.Length;
+    }
+
+    private void CopyClicked(object sender, MouseEventArgs e)
+    {
+        if (ViewModel.Copy.CanExecute(null!))
+        {
+            ViewModel.Copy.Execute(null);
+        }
     }
 
     protected override void Build(Container buildPanel)
