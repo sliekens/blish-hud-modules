@@ -4,8 +4,6 @@ using Blish_HUD.Input;
 
 using Microsoft.Xna.Framework;
 
-using SL.Common.Controls.Items;
-
 using Container = Blish_HUD.Controls.Container;
 using ItemTooltipView = SL.ChatLinks.UI.Tabs.Items2.Tooltips.ItemTooltipView;
 
@@ -17,12 +15,12 @@ public sealed class ChatLinkEditor : View
 
     private readonly FlowPanel _layout;
 
-    private readonly ItemImage _itemIcon;
+    private readonly Image _itemIcon;
 
     public ChatLinkEditor(ChatLinkEditorViewModel viewModel)
     {
         ViewModel = viewModel;
-        _layout = new FlowPanel()
+        _layout = new FlowPanel
         {
             ShowTint = true,
             ShowBorder = true,
@@ -44,9 +42,11 @@ public sealed class ChatLinkEditor : View
             Parent = _layout
         };
 
-        _itemIcon = new ItemImage(ViewModel.Item)
+        _itemIcon = new Image
         {
-            Parent = header
+            Parent = header,
+            Texture = viewModel.GetIcon(),
+            Size = new Point(50)
         };
 
         _itemIcon.MouseEntered += IconMouseEntered;
