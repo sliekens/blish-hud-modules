@@ -13,6 +13,11 @@ public sealed class Binder
         return new TextBoxBinding<TViewModel>(viewModel, propertySelector, textBox);
     }
 
+    public static ViewModelBinding<TViewModel, string> Bind<TViewModel>(TViewModel viewModel, Expression<Func<TViewModel, string>> propertySelector, Label label) where TViewModel : ViewModel
+    {
+        return new LabelBinding<TViewModel>(viewModel, propertySelector, label);
+    }
+
     public static ViewModelBinding<TViewModel, int> Bind<TViewModel>(TViewModel viewModel, Expression<Func<TViewModel, int>> propertySelector, NumberPicker numberPicker) where TViewModel : ViewModel
     {
         return new NumberPickerBinding<TViewModel>(viewModel, propertySelector, numberPicker);
