@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Windows.Input;
 
 using GuildWars2.Items;
 
@@ -49,6 +48,7 @@ public sealed class ItemsTabViewModel : ViewModel
         SearchCommand = new AsyncRelayCommand(Search);
     }
 
+
     public string SearchText
     {
         get => _searchText;
@@ -63,7 +63,8 @@ public sealed class ItemsTabViewModel : ViewModel
 
     public ObservableCollection<ItemsListViewModel> SearchResults { get; } = [];
 
-    public ICommand SearchCommand { get; }
+    public AsyncRelayCommand SearchCommand { get; }
+
 
     public async Task LoadAsync()
     {
