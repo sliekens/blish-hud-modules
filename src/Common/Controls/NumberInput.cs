@@ -102,8 +102,12 @@ public class NumberInput : TextInputBase
                 value = MaxValue;
             }
 
-            Text = value.ToString(NumberFormatInfo.InvariantInfo);
-            OnValueChanged();
+            var text = value.ToString(NumberFormatInfo.InvariantInfo);
+            if (Text != text)
+            {
+                Text = text;
+                OnValueChanged();
+            }
         }
     }
 
@@ -487,17 +491,10 @@ public class NumberInput : TextInputBase
             }
         }
 
-        var numberic = numericBuilder.ToString();
-        if (Text == numberic)
+        if (int.TryParse(numericBuilder.ToString(), out var value))
         {
-            OnValueChanged();
+            Value = value;
         }
-        else
-        {
-            Text = numberic;
-            Invalidate();
-        }
-
     }
 
     private void OnValueChanged()
