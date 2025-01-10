@@ -76,23 +76,21 @@ public class NumberInput : TextInputBase
 
     private int _maxValue = int.MaxValue;
 
-    private int _value = 0;
-
     public NumberInput()
     {
         Width = 150;
         Height = SpinnerButtonHeight * 2;
         TextChanged += OnTextChanged;
-
-        GameService.Input.Mouse.MouseMoved += OnGlobalMouseMoved;
-        GameService.Input.Mouse.LeftMouseButtonReleased += OnGlobalLeftMouseButtonReleased;
+        InputFocusChanged += OnInputFocusChanged;
+        Input.Mouse.MouseMoved += OnGlobalMouseMoved;
+        Input.Mouse.LeftMouseButtonReleased += OnGlobalLeftMouseButtonReleased;
     }
 
     public event EventHandler<EventArgs>? ValueChanged;
 
     public int Value
     {
-        get => _value;
+        get => int.TryParse(Text, out int value) ? value : 0;
         set
         {
             if (value < MinValue)
@@ -105,8 +103,6 @@ public class NumberInput : TextInputBase
             }
 
             Text = value.ToString(NumberFormatInfo.InvariantInfo);
-            CursorIndex = Text.Length;
-            _value = value;
             OnValueChanged();
         }
     }
@@ -352,13 +348,24 @@ public class NumberInput : TextInputBase
 
     protected override void OnClick(MouseEventArgs e)
     {
-        SelectionStart = 0;
-        SelectionEnd = _text.Length;
+        SelectAll();
         base.OnClick(e);
+    }
+
+    private void OnInputFocusChanged(object sender, ValueEventArgs<bool> e)
+    {
+        if (!e.Value)
+        {
+            Text = Value.ToString();
+            _horizontalOffset = 0;
+            Invalidate();
+        }
     }
 
     protected override void Paint(SpriteBatch spriteBatch, Rectangle bounds)
     {
+        #region Text
+
         if (Focused)
         {
             spriteBatch.DrawOnCtrl(
@@ -382,7 +389,9 @@ public class NumberInput : TextInputBase
 
         PaintText(spriteBatch, _textRectangle, HorizontalAlignment.Right);
 
-        #region Buttons
+        #endregion Text
+
+        #region Spinner
 
         var buttonsRectangle = new Rectangle(bounds.Right - SpinnerWidth, 0, SpinnerWidth, SpinnerButtonHeight * 2);
         switch ((hoverButton: _glow, pressedButton: _action))
@@ -442,56 +451,53 @@ public class NumberInput : TextInputBase
                 break;
         }
 
-        #endregion
+        #endregion Spinner
     }
 
     protected override void DisposeControl()
     {
         ValueChanged = null;
-        GameService.Input.Mouse.MouseMoved -= OnGlobalMouseMoved;
-        GameService.Input.Mouse.LeftMouseButtonReleased -= OnGlobalLeftMouseButtonReleased;
+        Input.Mouse.MouseMoved -= OnGlobalMouseMoved;
+        Input.Mouse.LeftMouseButtonReleased -= OnGlobalLeftMouseButtonReleased;
         base.DisposeControl();
     }
 
     private void OnTextChanged(object sender, EventArgs e)
     {
-        var cleaned = new StringBuilder(_text.Length);
+        if (_text == "")
+        {
+            return;
+        }
+
+        var numericBuilder = new StringBuilder(_text.Length);
         var input = _text.AsSpan();
         foreach (char c in input)
         {
-            if (cleaned.Length == 0)
+            if (numericBuilder.Length == 0)
             {
                 if (c is '+' or '-')
                 {
-                    cleaned.Append(c);
+                    numericBuilder.Append(c);
                 }
             }
 
             if (c is >= '0' and <= '9')
             {
-                cleaned.Append(c);
+                numericBuilder.Append(c);
             }
         }
 
-        _text = cleaned.ToString();
-
-        if (int.TryParse(_text, out var value))
+        var numberic = numericBuilder.ToString();
+        if (Text == numberic)
         {
-            if (value > MaxValue)
-            {
-                Value = MaxValue;
-            }
-            else if (value < MinValue)
-            {
-                Value = MinValue;
-            }
-            else
-            {
-                Value = value;
-            }
+            OnValueChanged();
+        }
+        else
+        {
+            Text = numberic;
+            Invalidate();
         }
 
-        Invalidate();
     }
 
     private void OnValueChanged()
@@ -515,6 +521,8 @@ public class NumberInput : TextInputBase
                     HideMousePosition();
                     break;
             }
+
+            CursorIndex = Text.Length;
         }
     }
 
