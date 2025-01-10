@@ -47,7 +47,7 @@ public sealed class ChatLinkEditor : View
         {
             FlowDirection = ControlFlowDirection.SingleLeftToRight,
             ControlPadding = new Vector2(5f),
-            Width = _layout.Width - 5,
+            WidthSizingMode = SizingMode.Fill,
             Height = 50,
             Parent = _layout
         };
@@ -65,7 +65,7 @@ public sealed class ChatLinkEditor : View
         {
             Parent = header,
             TextColor = viewModel.ItemNameColor,
-            Width = header.Width - 50,
+            Width = 250,
             Height = 50,
             VerticalAlignment = VerticalAlignment.Middle,
             Font = GameService.Content.DefaultFont18,
