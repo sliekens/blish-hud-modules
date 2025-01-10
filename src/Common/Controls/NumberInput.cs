@@ -1,0 +1,538 @@
+﻿using System.Globalization;
+using System.Text;
+using System.Windows.Input;
+
+using Blish_HUD;
+using Blish_HUD.Controls;
+
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Graphics;
+
+using MonoGame.Extended.BitmapFonts;
+
+using Mouse = Microsoft.Xna.Framework.Input.Mouse;
+using MouseEventArgs = Blish_HUD.Input.MouseEventArgs;
+
+namespace SL.Common.Controls;
+
+internal enum NumberInputAction
+{
+    None,
+
+    Increment,
+
+    Decrement,
+
+    Drag
+}
+
+internal enum SpinnerGlow
+{
+    None,
+
+    Up,
+
+    Down
+}
+
+public class NumberInput : TextInputBase
+{
+    private const int TextPaddingX = 10;
+
+    private const int SpinnerWidth = 32;
+
+    private const int SpinnerButtonHeight = 16;
+
+    // Points up
+    private static readonly Texture2D SpinnerSprite = Resources.Texture("spinner.png");
+
+    // Points up
+    private static readonly Texture2D SpinnerGlowSprite = Resources.Texture("spinner-glow.png");
+
+    private static readonly Texture2D TextBoxSprite = Resources.Texture("textbox.png");
+
+    private static readonly SoundEffect ClickSoundEffect = Resources.Sound("click.wav");
+
+    private SpinnerGlow _glow = SpinnerGlow.None;
+
+    private NumberInputAction _action = NumberInputAction.None;
+
+    private TimeSpan _incrementInterval = TimeSpan.FromMilliseconds(150);
+
+    private TimeSpan _incrementTimer;
+
+    private Rectangle _textBoxRectangle = Rectangle.Empty;
+
+    private Rectangle _textRectangle = Rectangle.Empty;
+
+    private Rectangle _cursorRectangle = Rectangle.Empty;
+
+    private Rectangle _highlightRectangle = Rectangle.Empty;
+
+    private int _horizontalOffset;
+
+    private int _minValue = int.MinValue;
+
+    private int _maxValue = int.MaxValue;
+
+    private int _value = 0;
+
+    public NumberInput()
+    {
+        Width = 150;
+        Height = SpinnerButtonHeight * 2;
+        TextChanged += OnTextChanged;
+
+        GameService.Input.Mouse.MouseMoved += OnGlobalMouseMoved;
+        GameService.Input.Mouse.LeftMouseButtonReleased += OnGlobalLeftMouseButtonReleased;
+    }
+
+    public event EventHandler<EventArgs>? ValueChanged;
+
+    public int Value
+    {
+        get => _value;
+        set
+        {
+            if (value < MinValue)
+            {
+                value = MinValue;
+            }
+            else if (value > MaxValue)
+            {
+                value = MaxValue;
+            }
+
+            Text = value.ToString(NumberFormatInfo.InvariantInfo);
+            CursorIndex = Text.Length;
+            _value = value;
+            OnValueChanged();
+        }
+    }
+
+    public int MinValue
+    {
+        get
+        {
+            return _minValue;
+        }
+        set
+        {
+            _minValue = value;
+            if (Value < value)
+            {
+                Value = value;
+            }
+        }
+    }
+
+    public int MaxValue
+    {
+        get
+        {
+            return _maxValue;
+        }
+        set
+        {
+            _maxValue = value;
+            if (Value > value)
+            {
+                Value = value;
+            }
+        }
+    }
+
+    public override void DoUpdate(GameTime gameTime)
+    {
+        switch (_action)
+        {
+            case NumberInputAction.Increment:
+                _incrementTimer += gameTime.ElapsedGameTime;
+                if (_incrementTimer >= _incrementInterval)
+                {
+                    Value++;
+                    _incrementTimer += gameTime.ElapsedGameTime;
+                    _incrementInterval = TimeSpan.FromMilliseconds(100);
+                }
+                break;
+            case NumberInputAction.Decrement:
+                _incrementTimer += gameTime.ElapsedGameTime;
+                if (_incrementTimer >= _incrementInterval)
+                {
+                    Value--;
+                    _incrementTimer += gameTime.ElapsedGameTime;
+                    _incrementInterval = TimeSpan.FromMilliseconds(100);
+                }
+                break;
+            default:
+                _incrementTimer = TimeSpan.Zero;
+                _incrementInterval = TimeSpan.FromMilliseconds(150);
+                break;
+        }
+
+        base.DoUpdate(gameTime);
+    }
+
+    public override void RecalculateLayout()
+    {
+        _textBoxRectangle = TextBoxRectangle();
+
+        _textRectangle = TextRectangle();
+
+        _highlightRectangle = HighlightRectangle();
+
+        _cursorRectangle = CursorRectangle();
+
+        base.RecalculateLayout();
+
+        Rectangle TextBoxRectangle()
+        {
+            return new Rectangle(0, 0, Width - SpinnerWidth, Height);
+        }
+
+        Rectangle TextRectangle()
+        {
+            int verticalPadding = (Height / 2) - (_font.LineHeight / 2);
+            return new Rectangle(
+                _horizontalOffset - TextPaddingX,
+                verticalPadding,
+                Width - SpinnerWidth,
+                Height - (verticalPadding * 2)
+            );
+        }
+
+        Rectangle CursorRectangle()
+        {
+            int currentCursorIndex = _cursorIndex;
+            if (currentCursorIndex > _text.Length)
+            {
+                currentCursorIndex = _text.Length;
+            }
+
+            float textStart = Width - _font.MeasureString(Text).Width - SpinnerWidth + _horizontalOffset - TextPaddingX;
+            float cursorStart = textStart + _font.MeasureString(_text[..currentCursorIndex]).Width;
+            return new Rectangle(
+                (int)cursorStart,
+                _textRectangle.Y + 2,
+                2,
+                _font.LineHeight - 4
+            );
+        }
+
+        Rectangle HighlightRectangle()
+        {
+            int currentSelectionStart = _selectionStart;
+            int currentSelectionEnd = _selectionEnd;
+            int selectionOffset = Math.Min(currentSelectionStart, currentSelectionEnd);
+            if (selectionOffset > _text.Length)
+            {
+                return Rectangle.Empty;
+            }
+
+            int selectionLength = Math.Abs(currentSelectionStart - currentSelectionEnd);
+            if (selectionLength <= 0 || selectionOffset + selectionLength > _text.Length)
+            {
+                return Rectangle.Empty;
+            }
+
+            float textStart = Width - _font.MeasureString(_text).Width - SpinnerWidth + _horizontalOffset - TextPaddingX;
+            float highlightStart = textStart + _font.MeasureString(_text[..selectionOffset]).Width;
+            float highlightWidth = _font.MeasureString(_text.Substring(selectionOffset, selectionLength)).Width;
+
+            return new Rectangle(
+                (int)highlightStart - 1,
+                _textRectangle.Y,
+                (int)highlightWidth,
+                _font.LineHeight - 1);
+        }
+    }
+
+    public override int GetCursorIndexFromPosition(int x, int y)
+    {
+        float textStart = Width - _font.MeasureString(Text).Width - TextPaddingX - SpinnerWidth;
+
+        int charIndex = 0;
+
+        BitmapFont.StringGlyphEnumerable glyphs = _font.GetGlyphs(_text);
+        foreach (BitmapFontGlyph glyph in glyphs)
+        {
+            if (textStart + glyph.Position.X + (glyph.FontRegion.Width / 2f) > _horizontalOffset + x)
+            {
+                break;
+            }
+
+            charIndex++;
+        }
+
+        return charIndex;
+    }
+
+
+    protected override void OnMouseMoved(MouseEventArgs e)
+    {
+        if (e.MousePosition.X > AbsoluteBounds.Right - SpinnerWidth)
+        {
+            _glow = e.MousePosition.Y < AbsoluteBounds.Top + SpinnerButtonHeight
+                ? SpinnerGlow.Up
+                : SpinnerGlow.Down;
+        }
+        else
+        {
+            _glow = SpinnerGlow.None;
+        }
+
+        base.OnMouseMoved(e);
+    }
+
+    protected override void OnMouseLeft(MouseEventArgs e)
+    {
+        _glow = SpinnerGlow.None;
+        base.OnMouseLeft(e);
+    }
+
+    protected override void MoveLine(int delta)
+    {
+        // Not sure what to do here
+    }
+
+    protected override void UpdateScrolling()
+    {
+        float lineWidth = MeasureStringWidth(_text[_cursorIndex..]);
+
+        if (_cursorIndex < _prevCursorIndex)
+        {
+            _horizontalOffset = (int)Math.Max(_horizontalOffset, lineWidth + TextPaddingX * 2 - _textBoxRectangle.Width);
+        }
+        else
+        {
+            _horizontalOffset = (int)Math.Min(_horizontalOffset, lineWidth);
+        }
+
+        _prevCursorIndex = _cursorIndex;
+        Invalidate();
+    }
+
+    protected override void OnLeftMouseButtonPressed(MouseEventArgs e)
+    {
+        if (e.MousePosition.X > AbsoluteBounds.Right - SpinnerWidth)
+        {
+            UnsetFocus();
+            ClickSoundEffect.Play(0.4f, 0, 0);
+            _action = e.MousePosition.Y < AbsoluteBounds.Top + SpinnerButtonHeight
+                ? NumberInputAction.Increment
+                : NumberInputAction.Decrement;
+        }
+        else
+        {
+            _action = NumberInputAction.Drag;
+            base.OnLeftMouseButtonPressed(e);
+        }
+    }
+
+    protected override void OnLeftMouseButtonReleased(MouseEventArgs e)
+    {
+        switch (_action)
+        {
+            case NumberInputAction.Increment:
+                Value++;
+                UnsetFocus();
+                break;
+            case NumberInputAction.Decrement:
+                Value--;
+                UnsetFocus();
+                break;
+            case NumberInputAction.Drag:
+                base.OnLeftMouseButtonReleased(e);
+                break;
+        }
+
+        _action = NumberInputAction.None;
+    }
+
+    protected override void OnClick(MouseEventArgs e)
+    {
+        SelectionStart = 0;
+        SelectionEnd = _text.Length;
+        base.OnClick(e);
+    }
+
+    protected override void Paint(SpriteBatch spriteBatch, Rectangle bounds)
+    {
+        if (Focused)
+        {
+            spriteBatch.DrawOnCtrl(
+                this,
+                TextBoxSprite,
+                _textBoxRectangle
+            );
+
+            if (_action != NumberInputAction.Drag)
+            {
+                if (_highlightRectangle.IsEmpty)
+                {
+                    PaintCursor(spriteBatch, _cursorRectangle);
+                }
+                else
+                {
+                    PaintHighlight(spriteBatch, _highlightRectangle);
+                }
+            }
+        }
+
+        PaintText(spriteBatch, _textRectangle, HorizontalAlignment.Right);
+
+        #region Buttons
+
+        var buttonsRectangle = new Rectangle(bounds.Right - SpinnerWidth, 0, SpinnerWidth, SpinnerButtonHeight * 2);
+        switch ((hoverButton: _glow, pressedButton: _action))
+        {
+            case (SpinnerGlow.Up, NumberInputAction.None):
+                spriteBatch.DrawOnCtrl(
+                    this,
+                    SpinnerGlowSprite,
+                    buttonsRectangle
+                );
+
+                spriteBatch.DrawOnCtrl(
+                    this,
+                    SpinnerSprite,
+                    buttonsRectangle,
+                    null,
+                    Color.White,
+                    0,
+                    Vector2.Zero,
+                    SpriteEffects.FlipVertically
+                );
+                break;
+            case (SpinnerGlow.Down, NumberInputAction.None):
+                spriteBatch.DrawOnCtrl(
+                    this,
+                    SpinnerSprite,
+                    buttonsRectangle
+                );
+                spriteBatch.DrawOnCtrl(
+                    this,
+                    SpinnerGlowSprite,
+                    buttonsRectangle,
+                    null,
+                    Color.White,
+                    0,
+                    Vector2.Zero,
+                    SpriteEffects.FlipVertically
+                );
+                break;
+            default:
+                spriteBatch.DrawOnCtrl(
+                    this,
+                    SpinnerSprite,
+                    buttonsRectangle
+                );
+
+                spriteBatch.DrawOnCtrl(
+                    this,
+                    SpinnerSprite,
+                    buttonsRectangle,
+                    null,
+                    Color.White,
+                    0,
+                    Vector2.Zero,
+                    SpriteEffects.FlipVertically
+                );
+                break;
+        }
+
+        #endregion
+    }
+
+    protected override void DisposeControl()
+    {
+        ValueChanged = null;
+        GameService.Input.Mouse.MouseMoved -= OnGlobalMouseMoved;
+        GameService.Input.Mouse.LeftMouseButtonReleased -= OnGlobalLeftMouseButtonReleased;
+        base.DisposeControl();
+    }
+
+    private void OnTextChanged(object sender, EventArgs e)
+    {
+        var cleaned = new StringBuilder(_text.Length);
+        var input = _text.AsSpan();
+        foreach (char c in input)
+        {
+            if (cleaned.Length == 0)
+            {
+                if (c is '+' or '-')
+                {
+                    cleaned.Append(c);
+                }
+            }
+
+            if (c is >= '0' and <= '9')
+            {
+                cleaned.Append(c);
+            }
+        }
+
+        _text = cleaned.ToString();
+
+        if (int.TryParse(_text, out var value))
+        {
+            if (value > MaxValue)
+            {
+                Value = MaxValue;
+            }
+            else if (value < MinValue)
+            {
+                Value = MinValue;
+            }
+            else
+            {
+                Value = value;
+            }
+        }
+
+        Invalidate();
+    }
+
+    private void OnValueChanged()
+    {
+        ValueChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void OnGlobalMouseMoved(object sender, MouseEventArgs e)
+    {
+        if (_action == NumberInputAction.Drag)
+        {
+            var center = AbsoluteBounds.Y + _textBoxRectangle.Center.Y;
+            switch (e.MousePosition.Y - center)
+            {
+                case < -1:
+                    Value++;
+                    HideMousePosition();
+                    break;
+                case > 1:
+                    Value--;
+                    HideMousePosition();
+                    break;
+            }
+        }
+    }
+
+    private void OnGlobalLeftMouseButtonReleased(object sender, MouseEventArgs e)
+    {
+        if (!MouseOver)
+        {
+            _action = NumberInputAction.None;
+        }
+    }
+
+    private void HideMousePosition()
+    {
+        var x = AbsoluteBounds.X + Width - SpinnerWidth / 2;
+        var y = AbsoluteBounds.Y + Height / 2;
+        System.Windows.Input.Mouse.OverrideCursor = Cursors.None;
+        Mouse.SetPosition(
+            (int)(x * GameService.Graphics.UIScaleMultiplier),
+            (int)(y * GameService.Graphics.UIScaleMultiplier));
+    }
+}

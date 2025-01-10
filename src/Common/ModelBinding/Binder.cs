@@ -18,9 +18,9 @@ public sealed class Binder
         return new LabelBinding<TViewModel>(viewModel, propertySelector, label);
     }
 
-    public static ViewModelBinding<TViewModel, int> Bind<TViewModel>(TViewModel viewModel, Expression<Func<TViewModel, int>> propertySelector, NumberPicker numberPicker) where TViewModel : ViewModel
+    public static ViewModelBinding<TViewModel, int> Bind<TViewModel>(TViewModel viewModel, Expression<Func<TViewModel, int>> propertySelector, NumberInput numberInput) where TViewModel : ViewModel
     {
-        return new NumberPickerBinding<TViewModel>(viewModel, propertySelector, numberPicker);
+        return new NumberInputBinding<TViewModel>(viewModel, propertySelector, numberInput);
     }
 
     public static ViewModelBinding<TViewModel, bool> Bind<TViewModel>(TViewModel viewModel, Expression<Func<TViewModel, bool>> propertySelector, LoadingSpinner loadingSpinner) where TViewModel : ViewModel

@@ -23,7 +23,7 @@ public sealed class ChatLinkEditor : View
 
     private readonly Label _itemName;
 
-    private readonly NumberPicker _numberPicker;
+    private readonly NumberInput _quantity;
 
     private readonly TextBox _chatLink;
 
@@ -85,21 +85,21 @@ public sealed class ChatLinkEditor : View
         _ = new Label
         {
             Parent = quantityGroup,
-            Text = "Quantity:",
+            Text = "Stack Size:",
             AutoSizeWidth = true,
-            AutoSizeHeight = true
+			Height = 32
         };
 
-        _numberPicker = new NumberPicker
+        _quantity = new NumberInput
         {
             Parent = quantityGroup,
             Width = 80,
             Value = 1,
-            MinValue = 1,
-            MaxValue = 250
+            //MinValue = 1,
+            //MaxValue = 250
         };
 
-        Binder.Bind(viewModel, vm => vm.Quantity, _numberPicker);
+        Binder.Bind(viewModel, vm => vm.Quantity, _quantity);
 
         StandardButton minQuantity = new()
         {
