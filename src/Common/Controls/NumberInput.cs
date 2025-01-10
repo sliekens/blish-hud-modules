@@ -494,6 +494,7 @@ public class NumberInput : TextInputBase
         if (int.TryParse(numericBuilder.ToString(), out var value))
         {
             Value = value;
+            OnValueChanged();
         }
     }
 
