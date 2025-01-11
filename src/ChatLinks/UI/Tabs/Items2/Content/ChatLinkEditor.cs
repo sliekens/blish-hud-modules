@@ -79,7 +79,8 @@ public sealed class ChatLinkEditor : View
             Parent = _layout,
             FlowDirection = ControlFlowDirection.LeftToRight,
             WidthSizingMode = SizingMode.Fill,
-            HeightSizingMode = SizingMode.AutoSize
+            HeightSizingMode = SizingMode.AutoSize,
+            ControlPadding = new Vector2(5f)
         };
 
         _ = new Label
@@ -105,7 +106,8 @@ public sealed class ChatLinkEditor : View
         {
             Parent = quantityGroup,
             Text = "Min",
-            Width = 40
+            Width = 50,
+            Height = 32
         };
 
         minQuantity.Click += MinQuantityOnClick;
@@ -114,7 +116,8 @@ public sealed class ChatLinkEditor : View
         {
             Parent = quantityGroup,
             Text = "Max",
-            Width = 40
+            Width = 50,
+            Height = 32
         };
 
         maxQuantity.Click += MaxQuantityOnClick;
