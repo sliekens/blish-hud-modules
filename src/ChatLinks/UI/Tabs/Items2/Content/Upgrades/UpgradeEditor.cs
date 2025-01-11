@@ -1,14 +1,6 @@
 ﻿using Blish_HUD.Controls;
 
-using SL.Common;
-
 namespace SL.ChatLinks.UI.Tabs.Items2.Content.Upgrades;
-
-public sealed class UpgradeEditorViewModel(UpgradeSlotViewModel upgradeSlotViewModel) : ViewModel
-{
-    public UpgradeSlotViewModel UpgradeSlotViewModel { get; } = upgradeSlotViewModel;
-}
-
 
 public sealed class UpgradeEditor : FlowPanel
 {
@@ -24,8 +16,8 @@ public sealed class UpgradeEditor : FlowPanel
         WidthSizingMode = SizingMode.AutoSize;
         HeightSizingMode = SizingMode.AutoSize;
         ViewModel = viewModel;
-        viewModel.UpgradeSlotViewModel.Customize += Customize;
         _upgradeSlot = CreateUpgradeSlot();
+        viewModel.Customizing += OnCustomizing;
     }
 
     private UpgradeSlot CreateUpgradeSlot()
@@ -37,7 +29,7 @@ public sealed class UpgradeEditor : FlowPanel
         };
     }
 
-    private void Customize(object sender, EventArgs e)
+    private void OnCustomizing(object sender, EventArgs e)
     {
         if (_options is null)
         {
@@ -50,8 +42,13 @@ public sealed class UpgradeEditor : FlowPanel
         }
         else
         {
-            _options?.Dispose();
-            _options = null;
+            HideOptions();
         }
+    }
+
+    public void HideOptions()
+    {
+        _options?.Dispose();
+        _options = null;
     }
 }

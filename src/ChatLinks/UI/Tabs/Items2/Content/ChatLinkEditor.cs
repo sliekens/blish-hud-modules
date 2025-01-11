@@ -28,6 +28,8 @@ public sealed class ChatLinkEditor : View
 
     private readonly TextBox _chatLink;
 
+    private event EventHandler Customizing;
+
     public ChatLinkEditor(ChatLinkEditorViewModel viewModel)
     {
         ViewModel = viewModel;
@@ -125,10 +127,23 @@ public sealed class ChatLinkEditor : View
 
         foreach (var upgradeEditorViewModel in viewModel.UpgradeSlots())
         {
-            _ = new UpgradeEditor(upgradeEditorViewModel)
+            UpgradeEditor editor = new UpgradeEditor(upgradeEditorViewModel)
             {
                 Parent = _layout,
                 WidthSizingMode = SizingMode.Fill
+            };
+
+            upgradeEditorViewModel.Customizing += (_, _) =>
+            {
+                Customizing?.Invoke(editor, EventArgs.Empty);
+            };
+
+            Customizing += (sender, args) =>
+            {
+                if (sender != editor)
+                {
+                    editor.HideOptions();
+                }
             };
         }
 

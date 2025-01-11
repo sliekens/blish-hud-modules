@@ -66,13 +66,13 @@ public sealed class UpgradeSlot : Container
             case { DefaultUpgradeComponent: not null }:
                 _label = UsedSlot(ViewModel.DefaultUpgradeComponent);
                 _label.Menu = new ContextMenuStrip(() => [
-                    MenuItem("Customize", ViewModel.CustomizeCommand),
+                    MenuItem("OnCustomizing", ViewModel.CustomizeCommand),
                 ]);
                 break;
             default:
                 _label = UnusedSlot();
                 _label.Menu = new ContextMenuStrip(() => [
-                    MenuItem("Customize", ViewModel.CustomizeCommand),
+                    MenuItem("OnCustomizing", ViewModel.CustomizeCommand),
                 ]);
                 break;
         }

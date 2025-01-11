@@ -18,7 +18,7 @@ public sealed class UpgradeSlotViewModel(
     ItemTooltipViewModelFactory itemTooltipViewModelFactory
 ) : ViewModel
 {
-    public event EventHandler? Customize;
+    public event EventHandler? Customizing;
 
     private UpgradeSlotType _type = type;
 
@@ -48,7 +48,7 @@ public sealed class UpgradeSlotViewModel(
 
     private void OnCustomize()
     {
-        Customize?.Invoke(this, EventArgs.Empty);
+        Customizing?.Invoke(this, EventArgs.Empty);
     }
 
     public AsyncTexture2D? GetIcon(UpgradeComponent item) => icons.GetIcon(item);
