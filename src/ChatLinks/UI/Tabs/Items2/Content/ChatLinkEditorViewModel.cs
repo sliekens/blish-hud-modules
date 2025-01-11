@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Windows.Input;
 
 using Blish_HUD.Content;
 
@@ -17,40 +17,19 @@ using SL.Common.ModelBinding;
 
 namespace SL.ChatLinks.UI.Tabs.Items2.Content;
 
-public sealed class ChatLinkEditorViewModel : ViewModel
+public sealed class ChatLinkEditorViewModel(
+    ItemTooltipViewModelFactory tooltipViewModelFactory,
+    UpgradeSlotViewModelFactory upgradeEditorViewModelFactory,
+    ItemIcons icons,
+    IClipBoard clipboard,
+    Item item
+) : ViewModel
 {
-    private readonly ItemTooltipViewModelFactory _tooltipViewModelFactory;
-
-    private readonly UpgradeSlotViewModelFactory _upgradeEditorViewModelFactory;
-
-    private readonly ItemIcons _icons;
-
-    private readonly IClipBoard _clipboard;
-
     private int _quantity = 1;
 
-    private ItemLink _chatLinkBuilder;
+    private ItemLink _chatLinkBuilder = new() { ItemId = item.Id };
 
-    public ChatLinkEditorViewModel(
-        ItemTooltipViewModelFactory tooltipViewModelFactory,
-        UpgradeSlotViewModelFactory upgradeEditorViewModelFactory,
-        ItemIcons icons,
-        IClipBoard clipboard,
-        Item item)
-    {
-        _tooltipViewModelFactory = tooltipViewModelFactory;
-        _upgradeEditorViewModelFactory = upgradeEditorViewModelFactory;
-        _icons = icons;
-        _clipboard = clipboard;
-        Item = item;
-        ItemNameColor = ItemColors.Rarity(item.Rarity);
-        ChatLink = item.ChatLink;
-        Copy = new RelayCommand(DoCopy);
-        MinQuantity = new RelayCommand(SetMinQuantity);
-        MaxQuantity = new RelayCommand(SetMaxQuantity);
-    }
-
-    public Item Item { get; }
+    public Item Item { get; } = item;
 
     public string ItemName
     {
@@ -65,7 +44,7 @@ public sealed class ChatLinkEditorViewModel : ViewModel
         }
     }
 
-    public Color ItemNameColor { get; }
+    public Color ItemNameColor { get; } = ItemColors.Rarity(item.Rarity);
 
     public int Quantity
     {
@@ -93,35 +72,20 @@ public sealed class ChatLinkEditorViewModel : ViewModel
         }
     }
 
-    public RelayCommand Copy { get; }
+    public ICommand CopyCommand => new RelayCommand(OnCopy);
 
-    public RelayCommand MinQuantity { get; set; }
+    public ICommand MinQuantityCommand => new RelayCommand(OnMinQuantity);
 
-    public RelayCommand MaxQuantity { get; set; }
+    public ICommand MaxQuantityCommand => new RelayCommand(OnMaxQuantity);
 
     public ItemTooltipViewModel CreateTooltipViewModel()
     {
-        return _tooltipViewModelFactory.Create(Item);
+        return tooltipViewModelFactory.Create(Item);
     }
 
     public AsyncTexture2D? GetIcon()
     {
-        return _icons.GetIcon(Item);
-    }
-
-    private void DoCopy()
-    {
-        _clipboard.SetText(ChatLink);
-    }
-
-    private void SetMinQuantity()
-    {
-        Quantity = 1;
-    }
-
-    private void SetMaxQuantity()
-    {
-        Quantity = 250;
+        return icons.GetIcon(Item);
     }
 
     public IEnumerable<Upgrades.UpgradeSlotViewModel> UpgradeSlots()
@@ -133,12 +97,12 @@ public sealed class ChatLinkEditorViewModel : ViewModel
 
         foreach (var defaultUpgradeComponentId in upgradable.UpgradeSlots)
         {
-            yield return _upgradeEditorViewModelFactory.Create(UpgradeSlotType.Default, defaultUpgradeComponentId);
+            yield return upgradeEditorViewModelFactory.Create(UpgradeSlotType.Default, defaultUpgradeComponentId);
         }
 
         foreach (var infusionSlot in upgradable.InfusionSlots)
         {
-            yield return _upgradeEditorViewModelFactory.Create(
+            yield return upgradeEditorViewModelFactory.Create(
                 infusionSlot.Flags switch
                 {
                     { Enrichment: true } => UpgradeSlotType.Enrichment,
@@ -148,5 +112,20 @@ public sealed class ChatLinkEditorViewModel : ViewModel
                 infusionSlot.ItemId
             );
         }
+    }
+
+    private void OnCopy()
+    {
+        clipboard.SetText(ChatLink);
+    }
+
+    private void OnMinQuantity()
+    {
+        Quantity = 1;
+    }
+
+    private void OnMaxQuantity()
+    {
+        Quantity = 250;
     }
 }

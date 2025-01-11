@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 using GuildWars2.Items;
 
@@ -12,18 +13,14 @@ using SL.Common.ModelBinding;
 
 namespace SL.ChatLinks.UI.Tabs.Items2;
 
-public sealed class ItemsTabViewModel : ViewModel
+public sealed class ItemsTabViewModel(
+    ILogger<ItemsTabViewModel> logger,
+    ItemSearch search,
+    Customizer customizer,
+    ItemsListViewModelFactory itemsListViewModelFactory,
+    ChatLinkEditorViewModelFactory chatLinkEditorViewModelFactory)
+    : ViewModel
 {
-    private readonly ILogger<ItemsTabViewModel> _logger;
-
-    private readonly ItemSearch _search;
-
-    private readonly Customizer _customizer;
-
-    private readonly ItemsListViewModelFactory _itemsListViewModelFactory;
-
-    private readonly ChatLinkEditorViewModelFactory _chatLinkEditorViewModelFactory;
-
     private string _searchText = "";
 
     private bool _searching;
@@ -31,23 +28,6 @@ public sealed class ItemsTabViewModel : ViewModel
     private EventHandler? _searchCancelled;
 
     private readonly SemaphoreSlim _searchLock = new(1, 1);
-
-    public ItemsTabViewModel(
-        ILogger<ItemsTabViewModel> logger,
-        ItemSearch search,
-        Customizer customizer,
-        ItemsListViewModelFactory itemsListViewModelFactory,
-        ChatLinkEditorViewModelFactory chatLinkEditorViewModelFactory
-    )
-    {
-        _logger = logger;
-        _search = search;
-        _customizer = customizer;
-        _itemsListViewModelFactory = itemsListViewModelFactory;
-        _chatLinkEditorViewModelFactory = chatLinkEditorViewModelFactory;
-        SearchCommand = new AsyncRelayCommand(Search);
-    }
-
 
     public string SearchText
     {
@@ -63,18 +43,17 @@ public sealed class ItemsTabViewModel : ViewModel
 
     public ObservableCollection<ItemsListViewModel> SearchResults { get; } = [];
 
-    public AsyncRelayCommand SearchCommand { get; }
-
+    public ICommand SearchCommand => new AsyncRelayCommand(OnSearch);
 
     public async Task LoadAsync()
     {
-        await _customizer.LoadAsync();
+        await customizer.LoadAsync();
         await NewItems(CancellationToken.None);
     }
 
     public ChatLinkEditorViewModel CreateChatLinkEditorViewModel(Item item)
     {
-        return _chatLinkEditorViewModelFactory.Create(item);
+        return chatLinkEditorViewModelFactory.Create(item);
     }
 
     public void CancelPendingSearches()
@@ -82,7 +61,7 @@ public sealed class ItemsTabViewModel : ViewModel
         _searchCancelled?.Invoke(this, EventArgs.Empty);
     }
 
-    public async Task Search()
+    public async Task OnSearch()
     {
         CancelPendingSearches();
         using CancellationTokenSource cancellationTokenSource = new();
@@ -105,7 +84,7 @@ public sealed class ItemsTabViewModel : ViewModel
         }
         catch (OperationCanceledException)
         {
-            _logger.LogDebug("Previous search was canceled");
+            logger.LogDebug("Previous search was canceled");
         }
         finally
         {
@@ -147,14 +126,14 @@ public sealed class ItemsTabViewModel : ViewModel
         {
             SearchResults.Clear();
 
-            await foreach (Item item in _search.Search(text, 100, cancellationToken))
+            await foreach (Item item in search.Search(text, 100, cancellationToken))
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
                     break;
                 }
 
-                var viewModel = _itemsListViewModelFactory.Create(item);
+                var viewModel = itemsListViewModelFactory.Create(item);
                 SearchResults.Add(viewModel);
             }
         }
@@ -171,14 +150,14 @@ public sealed class ItemsTabViewModel : ViewModel
         {
             SearchResults.Clear();
 
-            await foreach (Item item in _search.NewItems(50).WithCancellation(cancellationToken))
+            await foreach (Item item in search.NewItems(50).WithCancellation(cancellationToken))
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
                     break;
                 }
 
-                var viewModel = _itemsListViewModelFactory.Create(item);
+                var viewModel = itemsListViewModelFactory.Create(item);
                 SearchResults.Add(viewModel);
             }
         }

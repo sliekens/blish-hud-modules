@@ -88,7 +88,7 @@ public sealed class ChatLinkEditor : View
             Parent = quantityGroup,
             Text = "Stack Size:",
             AutoSizeWidth = true,
-			Height = 32
+            Height = 32
         };
 
         _quantity = new NumberInput
@@ -149,18 +149,12 @@ public sealed class ChatLinkEditor : View
 
     private void MaxQuantityOnClick(object sender, MouseEventArgs e)
     {
-        if (ViewModel.MaxQuantity.CanExecute())
-        {
-            ViewModel.MaxQuantity.Execute();
-        }
+        ViewModel.MaxQuantityCommand.Execute(null);
     }
 
     private void MinQuantityOnClick(object sender, MouseEventArgs e)
     {
-        if (ViewModel.MinQuantity.CanExecute())
-        {
-            ViewModel.MinQuantity.Execute();
-        }
+        ViewModel.MinQuantityCommand.Execute(null);
     }
 
     private void IconMouseEntered(object sender, MouseEventArgs e)
@@ -176,10 +170,7 @@ public sealed class ChatLinkEditor : View
 
     private void CopyClicked(object sender, MouseEventArgs e)
     {
-        if (ViewModel.Copy.CanExecute())
-        {
-            ViewModel.Copy.Execute();
-        }
+        ViewModel.CopyCommand.Execute(null);
     }
 
     protected override void Build(Container buildPanel)
