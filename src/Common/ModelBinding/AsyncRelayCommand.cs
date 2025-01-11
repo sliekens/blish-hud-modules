@@ -4,30 +4,25 @@ namespace SL.Common.ModelBinding;
 
 public sealed class AsyncRelayCommand(Func<Task> execute, Func<bool>? canExecute = null) : ICommand
 {
-    public bool CanExecute()
-    {
-        return CanExecute(null!);
-    }
+    public event EventHandler? CanExecuteChanged;
 
-    public bool CanExecute(object parameter)
+    public bool CanExecute()
     {
         return canExecute == null || canExecute();
     }
 
-    public void Execute()
+    public bool CanExecute(object parameter)
     {
-        Execute(null!);
+        return CanExecute();
     }
 
-    public void Execute(object parameter)
+    public void Execute()
     {
         execute();
     }
 
-    public event EventHandler? CanExecuteChanged;
-
-    public void OnCanExecuteChanged()
+    public void Execute(object parameter)
     {
-        CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+        Execute();
     }
 }
