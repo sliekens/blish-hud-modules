@@ -12,9 +12,9 @@ public class ListBox<T> : FlowPanel
 
     private ObservableCollection<T>? _entries;
 
-    private bool _updatingSelection;
+    private ListBoxSelectionChange<T>? _selectionChange;
 
-    private readonly ObservableCollection<ListItem<T>> _selection = [];
+    private event EventHandler<ListItemSelectionChangedEventArgs>? SelectionChanging;
 
     public ListBox()
     {
@@ -76,6 +76,29 @@ public class ListBox<T> : FlowPanel
 
         Bind(data, listItem);
 
+        SelectionChanging += (sender, args) =>
+        {
+            if (args.IsSelected)
+            {
+                if (sender == listItem)
+                {
+                    _selectionChange?.Added.Add(listItem);
+                }
+                else if (listItem.IsSelected)
+                {
+                    listItem.IsSelected = false;
+                    _selectionChange?.Removed.Add(listItem);
+                }
+            }
+            else
+            {
+                if (sender == listItem)
+                {
+                    _selectionChange?.Removed.Add(listItem);
+                }
+            }
+        };
+
         listItem.SelectionChanged += ListItemSelectionChanged;
 
         var template = Template(data);
@@ -132,40 +155,25 @@ public class ListBox<T> : FlowPanel
 
     private void ListItemSelectionChanged(ListItem<T> sender, ListItemSelectionChangedEventArgs args)
     {
+        // Avoid recursively entering this routine when we update the selection
+        if (_selectionChange is not null)
+        {
+            return;
+        }
+
+        _selectionChange = new ListBoxSelectionChange<T>();
         try
         {
-            // Avoid recursively entering this routine when we update the selection
-            if (!_updatingSelection)
-            {
-                _updatingSelection = true;
-                List<ListItem<T>> addedItems = [];
-                List<ListItem<T>> removedItems = [];
-                if (args.IsSelected)
-                {
-                    foreach (ListItem<T> previousSelection in _selection)
-                    {
-                        previousSelection.IsSelected = false;
-                        removedItems.Add(previousSelection);
-                    }
-
-                    _selection.Clear();
-                    _selection.Add(sender);
-                    addedItems.Add(sender);
-                }
-                else
-                {
-                    _selection.Remove(sender);
-                }
-
-                SelectionChanged?.Invoke(
-                    this,
-                    new ListBoxSelectionChangedEventArgs<T>(addedItems, removedItems)
-                );
-            }
+            // The event handling for 'SelectionChanging' configures the SelectionChange<T> as a side-effect
+            SelectionChanging?.Invoke(sender, args);
+            SelectionChanged?.Invoke(
+                this,
+                new ListBoxSelectionChangedEventArgs<T>(_selectionChange.Added, _selectionChange.Removed)
+            );
         }
         finally
         {
-            _updatingSelection = false;
+            _selectionChange = null;
         }
     }
 
