@@ -5,9 +5,7 @@ using Blish_HUD.Input;
 
 using Microsoft.Xna.Framework;
 
-using SL.ChatLinks.UI.Tabs.Items2.Content.Upgrades;
 using SL.Common.Controls;
-using SL.Common.Controls.Items.Upgrades;
 using SL.Common.ModelBinding;
 
 using Container = Blish_HUD.Controls.Container;

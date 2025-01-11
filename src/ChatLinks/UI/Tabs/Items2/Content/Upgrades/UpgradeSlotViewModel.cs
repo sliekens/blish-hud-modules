@@ -2,6 +2,7 @@
 
 using GuildWars2.Items;
 
+using SL.ChatLinks.UI.Tabs.Items2.Tooltips;
 using SL.Common;
 using SL.Common.Controls.Items.Services;
 using SL.Common.Controls.Items.Upgrades;
@@ -10,7 +11,8 @@ namespace SL.ChatLinks.UI.Tabs.Items2.Content.Upgrades;
 
 public sealed class UpgradeSlotViewModel(
     UpgradeSlotType type,
-    ItemIcons icons
+    ItemIcons icons,
+    ItemTooltipViewModelFactory itemTooltipViewModelFactory
 ) : ViewModel
 {
     private UpgradeSlotType _type = type;
@@ -37,5 +39,7 @@ public sealed class UpgradeSlotViewModel(
         set => SetField(ref _selectedUpgradeComponent, value);
     }
 
-    public AsyncTexture2D? Icon(UpgradeComponent item) => icons.GetIcon(item);
+    public AsyncTexture2D? GetIcon(UpgradeComponent item) => icons.GetIcon(item);
+
+    public ItemTooltipViewModel CreateTooltipViewModel(UpgradeComponent item) => itemTooltipViewModelFactory.Create(item);
 }
