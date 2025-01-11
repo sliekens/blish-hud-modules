@@ -1,5 +1,7 @@
 ﻿using Blish_HUD.Controls;
 
+using Microsoft.Xna.Framework;
+
 namespace SL.ChatLinks.UI.Tabs.Items2.Content.Upgrades;
 
 public sealed class UpgradeEditor : FlowPanel
@@ -8,13 +10,14 @@ public sealed class UpgradeEditor : FlowPanel
 
     private readonly UpgradeSlot _upgradeSlot;
 
-    private Label? _options;
+    private UpgradeComponentList? _options;
 
     public UpgradeEditor(UpgradeEditorViewModel viewModel)
     {
         FlowDirection = ControlFlowDirection.SingleTopToBottom;
-        WidthSizingMode = SizingMode.AutoSize;
+        Width = 300;
         HeightSizingMode = SizingMode.AutoSize;
+        ControlPadding = new Vector2(10);
         ViewModel = viewModel;
         _upgradeSlot = CreateUpgradeSlot();
         viewModel.Customizing += OnCustomizing;
@@ -33,11 +36,9 @@ public sealed class UpgradeEditor : FlowPanel
     {
         if (_options is null)
         {
-            _options = new Label
+            _options = new UpgradeComponentList
             {
-                Parent = this,
-                Text = "TODO: options",
-                AutoSizeWidth = true
+                Parent = this
             };
         }
         else

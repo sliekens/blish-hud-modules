@@ -129,8 +129,7 @@ public sealed class ChatLinkEditor : View
         {
             UpgradeEditor editor = new UpgradeEditor(upgradeEditorViewModel)
             {
-                Parent = _layout,
-                WidthSizingMode = SizingMode.Fill
+                Parent = _layout
             };
 
             upgradeEditorViewModel.Customizing += (_, _) =>
