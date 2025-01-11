@@ -6,12 +6,12 @@ using SL.Common.Controls.Items.Upgrades;
 
 namespace SL.ChatLinks.UI.Tabs.Items2.Content.Upgrades;
 
-public sealed class UpgradeSlotViewModelFactory(
+public sealed class UpgradeEditorViewModelFactory(
     ItemIcons icons,
     Customizer customizer,
     ItemTooltipViewModelFactory itemTooltipViewModelFactory)
 {
-    public UpgradeSlotViewModel Create(UpgradeSlotType slotType, int? defaultUpgradeComponentId)
+    public UpgradeEditorViewModel Create(UpgradeSlotType slotType, int? defaultUpgradeComponentId)
     {
         UpgradeComponent? defaultUpgradeComponent = null;
         if (defaultUpgradeComponentId.HasValue)
@@ -19,9 +19,11 @@ public sealed class UpgradeSlotViewModelFactory(
             customizer.UpgradeComponents.TryGetValue(defaultUpgradeComponentId.Value, out defaultUpgradeComponent);
         }
 
-        return new UpgradeSlotViewModel(slotType, icons, itemTooltipViewModelFactory)
+        var upgradeSlotViewModel = new UpgradeSlotViewModel(slotType, icons, itemTooltipViewModelFactory)
         {
             DefaultUpgradeComponent = defaultUpgradeComponent
         };
+
+        return new UpgradeEditorViewModel(upgradeSlotViewModel);
     }
 }

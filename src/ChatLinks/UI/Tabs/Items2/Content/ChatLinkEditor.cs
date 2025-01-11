@@ -5,6 +5,7 @@ using Blish_HUD.Input;
 
 using Microsoft.Xna.Framework;
 
+using SL.ChatLinks.UI.Tabs.Items2.Content.Upgrades;
 using SL.Common.Controls;
 using SL.Common.ModelBinding;
 
@@ -122,9 +123,9 @@ public sealed class ChatLinkEditor : View
 
         maxQuantity.Click += MaxQuantityOnClick;
 
-        foreach (var slot in viewModel.UpgradeSlots())
+        foreach (var upgradeEditorViewModel in viewModel.UpgradeSlots())
         {
-            _ = new Upgrades.UpgradeSlot(slot)
+            _ = new UpgradeEditor(upgradeEditorViewModel)
             {
                 Parent = _layout,
                 WidthSizingMode = SizingMode.Fill

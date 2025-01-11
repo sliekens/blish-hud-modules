@@ -19,7 +19,7 @@ namespace SL.ChatLinks.UI.Tabs.Items2.Content;
 
 public sealed class ChatLinkEditorViewModel(
     ItemTooltipViewModelFactory tooltipViewModelFactory,
-    UpgradeSlotViewModelFactory upgradeEditorViewModelFactory,
+    UpgradeEditorViewModelFactory upgradeEditorViewModelFactory,
     ItemIcons icons,
     IClipBoard clipboard,
     Item item
@@ -88,7 +88,7 @@ public sealed class ChatLinkEditorViewModel(
         return icons.GetIcon(Item);
     }
 
-    public IEnumerable<Upgrades.UpgradeSlotViewModel> UpgradeSlots()
+    public IEnumerable<UpgradeEditorViewModel> UpgradeSlots()
     {
         if (Item is not IUpgradable upgradable)
         {

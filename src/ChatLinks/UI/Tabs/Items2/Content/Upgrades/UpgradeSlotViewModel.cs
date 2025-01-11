@@ -18,7 +18,7 @@ public sealed class UpgradeSlotViewModel(
     ItemTooltipViewModelFactory itemTooltipViewModelFactory
 ) : ViewModel
 {
-    public EventHandler? Customize;
+    public event EventHandler? Customize;
 
     private UpgradeSlotType _type = type;
 

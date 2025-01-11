@@ -9,7 +9,7 @@ namespace SL.ChatLinks.UI.Tabs.Items2.Content;
 
 public sealed class ChatLinkEditorViewModelFactory(
     ItemTooltipViewModelFactory itemTooltipViewModelFactory,
-    UpgradeSlotViewModelFactory upgradeEditorViewModelFactory,
+    UpgradeEditorViewModelFactory upgradeEditorViewModelFactory,
     ItemIcons icons,
     IClipBoard clipboard
 )
