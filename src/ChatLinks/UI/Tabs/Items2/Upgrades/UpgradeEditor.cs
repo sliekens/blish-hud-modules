@@ -1,4 +1,6 @@
-﻿using Blish_HUD.Controls;
+﻿using Blish_HUD.Content;
+using Blish_HUD.Controls;
+using Blish_HUD.Input;
 
 using Microsoft.Xna.Framework;
 
@@ -9,6 +11,8 @@ public sealed class UpgradeEditor : FlowPanel
     public UpgradeEditorViewModel ViewModel { get; }
 
     private readonly UpgradeSlot _upgradeSlot;
+
+    private StandardButton? _cancelButton;
 
     private UpgradeSelector? _options;
 
@@ -36,10 +40,20 @@ public sealed class UpgradeEditor : FlowPanel
     {
         if (_options is null)
         {
+            _cancelButton = new StandardButton
+            {
+                Parent = this,
+                Width = 300,
+                Text = "Cancel",
+                Icon = AsyncTexture2D.FromAssetId(155149)
+            };
+
             _options = new UpgradeSelector(ViewModel.CreateUpgradeComponentListViewModel())
             {
                 Parent = this
             };
+
+            _cancelButton.Click += CancelClicked;
         }
         else
         {
@@ -47,9 +61,16 @@ public sealed class UpgradeEditor : FlowPanel
         }
     }
 
+    private void CancelClicked(object sender, MouseEventArgs e)
+    {
+        HideOptions();
+    }
+
     public void HideOptions()
     {
+        _cancelButton?.Dispose();
         _options?.Dispose();
+        _cancelButton = null;
         _options = null;
     }
 }
