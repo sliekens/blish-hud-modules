@@ -2,8 +2,6 @@
 using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
 
-using GuildWars2.Items;
-
 using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 
@@ -58,7 +56,7 @@ public class ItemsTabView2 : View
     {
         if (args.AddedItems is [{ Data: { } listItem }])
         {
-            _editor.Show(new ChatLinkEditor(ViewModel.CreateChatLinkEditorViewModel(listItem.Item)));
+            _editor.Show(new ChatLinkEditorView(ViewModel.CreateChatLinkEditorViewModel(listItem.Item)));
         }
         else
         {

@@ -40,6 +40,21 @@ public sealed class Accordion : FlowPanel
                 section.Collapse();
             }
         };
+
+        section.Resized += (sender, args) =>
+        {
+            if (section.Height >= 300)
+            {
+                section.HeightSizingMode = SizingMode.Standard;
+                section.Height = 300;
+                section.CanScroll = true;
+            }
+            else
+            {
+                section.HeightSizingMode = SizingMode.AutoSize;
+                section.CanScroll = false;
+            }
+        };
     }
 
     private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)

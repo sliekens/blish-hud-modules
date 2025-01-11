@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 
 using Blish_HUD.Controls;
+using Blish_HUD.Input;
 
 using SL.ChatLinks.UI.Tabs.Items2.Collections;
 using SL.Common.Controls;
@@ -26,7 +27,19 @@ public sealed class UpgradeSelector : FlowPanel
             };
 
             accordion.AddSection(group.Key, list);
+
+            list.MouseEntered += MouseEnteredList;
+            list.MouseLeft += MouseLeftList;
         }
     }
 
+    private void MouseEnteredList(object sender, MouseEventArgs e)
+    {
+        MessageBus.Send("item editor", "prevent scroll");
+    }
+
+    private void MouseLeftList(object sender, MouseEventArgs e)
+    {
+        MessageBus.Send("item editor", "allow scroll");
+    }
 }

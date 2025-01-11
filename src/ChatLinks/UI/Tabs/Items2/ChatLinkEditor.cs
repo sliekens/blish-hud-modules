@@ -1,25 +1,19 @@
 ﻿using Blish_HUD;
 using Blish_HUD.Controls;
-using Blish_HUD.Graphics.UI;
-using Blish_HUD.Input;
 
 using Microsoft.Xna.Framework;
-
 using SL.ChatLinks.UI.Tabs.Items2.Upgrades;
-using SL.Common.Controls;
-using SL.Common.ModelBinding;
 
-using Container = Blish_HUD.Controls.Container;
-using ItemTooltipView = SL.ChatLinks.UI.Tabs.Items2.Tooltips.ItemTooltipView;
+using SL.Common.Controls;
+using Blish_HUD.Input;
+
+using SL.ChatLinks.UI.Tabs.Items2.Tooltips;
+using SL.Common.ModelBinding;
 
 namespace SL.ChatLinks.UI.Tabs.Items2;
 
-public sealed class ChatLinkEditor : View
+public sealed class ChatLinkEditor : FlowPanel
 {
-    public ChatLinkEditorViewModel ViewModel { get; }
-
-    private readonly FlowPanel _layout;
-
     private readonly Image _itemIcon;
 
     private readonly Label _itemName;
@@ -28,23 +22,24 @@ public sealed class ChatLinkEditor : View
 
     private readonly TextBox _chatLink;
 
+    private readonly ChatLinkEditorViewModel _viewModel;
+
     private event EventHandler? Customizing;
+
+    private bool _allowScroll = true;
 
     public ChatLinkEditor(ChatLinkEditorViewModel viewModel)
     {
-        ViewModel = viewModel;
-        _layout = new FlowPanel
-        {
-            ShowTint = true,
-            ShowBorder = true,
-            FlowDirection = ControlFlowDirection.SingleTopToBottom,
-            ControlPadding = new Vector2(0f, 15f),
-            OuterControlPadding = new Vector2(10f),
-            AutoSizePadding = new Point(10),
-            Width = 350,
-            HeightSizingMode = SizingMode.Fill,
-            CanScroll = true,
-        };
+        _viewModel = viewModel;
+        ShowTint = true;
+        ShowBorder = true;
+        FlowDirection = ControlFlowDirection.SingleTopToBottom;
+        ControlPadding = new Vector2(0f, 15f);
+        OuterControlPadding = new Vector2(10f);
+        AutoSizePadding = new Point(10);
+        Width = 350;
+        HeightSizingMode = SizingMode.Fill;
+        CanScroll = true;
 
         var header = new FlowPanel
         {
@@ -52,7 +47,7 @@ public sealed class ChatLinkEditor : View
             ControlPadding = new Vector2(5f),
             WidthSizingMode = SizingMode.Fill,
             Height = 50,
-            Parent = _layout
+            Parent = this
         };
 
         _itemIcon = new Image
@@ -79,7 +74,7 @@ public sealed class ChatLinkEditor : View
 
         var quantityGroup = new FlowPanel
         {
-            Parent = _layout,
+            Parent = this,
             FlowDirection = ControlFlowDirection.LeftToRight,
             WidthSizingMode = SizingMode.Fill,
             HeightSizingMode = SizingMode.AutoSize,
@@ -129,7 +124,7 @@ public sealed class ChatLinkEditor : View
         {
             UpgradeEditor editor = new UpgradeEditor(upgradeEditorViewModel)
             {
-                Parent = _layout
+                Parent = this
             };
 
             upgradeEditorViewModel.Customizing += (_, _) =>
@@ -146,35 +141,58 @@ public sealed class ChatLinkEditor : View
             };
         }
 
-        _ = new Label { Parent = _layout, Text = "Chat Link:", AutoSizeWidth = true, AutoSizeHeight = true };
+        _ = new Label { Parent = this, Text = "Chat Link:", AutoSizeWidth = true, AutoSizeHeight = true };
 
         _chatLink = new TextBox
         {
-            Parent = _layout,
+            Parent = this,
             Width = 200
         };
 
-        Binder.Bind(ViewModel, vm => vm.ChatLink, _chatLink);
+        Binder.Bind(_viewModel, vm => vm.ChatLink, _chatLink);
 
         _chatLink.Click += ChatLinkClicked;
         _chatLink.Menu = new ContextMenuStrip();
         var copy = _chatLink.Menu.AddMenuItem("Copy");
         copy.Click += CopyClicked;
+
+        MessageBus.Register("item editor", MessageReceived);
+    }
+
+    protected override void OnMouseWheelScrolled(MouseEventArgs e)
+    {
+        if (_allowScroll)
+        {
+            base.OnMouseWheelScrolled(e);
+        }
+    }
+
+    private void MessageReceived(string message)
+    {
+        switch (message)
+        {
+            case "prevent scroll":
+                _allowScroll = false;
+                break;
+            case "allow scroll":
+                _allowScroll = true;
+                break;
+        }
     }
 
     private void MaxQuantityOnClick(object sender, MouseEventArgs e)
     {
-        ViewModel.MaxQuantityCommand.Execute(null);
+        _viewModel.MaxQuantityCommand.Execute(null);
     }
 
     private void MinQuantityOnClick(object sender, MouseEventArgs e)
     {
-        ViewModel.MinQuantityCommand.Execute(null);
+        _viewModel.MinQuantityCommand.Execute(null);
     }
 
     private void IconMouseEntered(object sender, MouseEventArgs e)
     {
-        _itemIcon.Tooltip ??= new Tooltip(new ItemTooltipView(ViewModel.CreateTooltipViewModel()));
+        _itemIcon.Tooltip ??= new Tooltip(new ItemTooltipView(_viewModel.CreateTooltipViewModel()));
     }
 
     private void ChatLinkClicked(object sender, MouseEventArgs e)
@@ -185,11 +203,12 @@ public sealed class ChatLinkEditor : View
 
     private void CopyClicked(object sender, MouseEventArgs e)
     {
-        ViewModel.CopyCommand.Execute(null);
+        _viewModel.CopyCommand.Execute(null);
     }
 
-    protected override void Build(Container buildPanel)
+    protected override void DisposeControl()
     {
-        _layout.Parent = buildPanel;
+        MessageBus.Unregister("item editor");
+        base.DisposeControl();
     }
 }
