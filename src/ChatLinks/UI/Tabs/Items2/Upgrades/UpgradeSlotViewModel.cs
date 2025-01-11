@@ -10,7 +10,7 @@ using SL.Common.Controls.Items.Services;
 using SL.Common.Controls.Items.Upgrades;
 using SL.Common.ModelBinding;
 
-namespace SL.ChatLinks.UI.Tabs.Items2.Content.Upgrades;
+namespace SL.ChatLinks.UI.Tabs.Items2.Upgrades;
 
 public sealed class UpgradeSlotViewModel(
     UpgradeSlotType type,

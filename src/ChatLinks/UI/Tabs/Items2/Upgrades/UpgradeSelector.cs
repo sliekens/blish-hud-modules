@@ -2,14 +2,14 @@
 
 using Blish_HUD.Controls;
 
-using SL.ChatLinks.UI.Tabs.Items2.Search;
+using SL.ChatLinks.UI.Tabs.Items2.Collections;
 using SL.Common.Controls;
 
-namespace SL.ChatLinks.UI.Tabs.Items2.Content.Upgrades;
+namespace SL.ChatLinks.UI.Tabs.Items2.Upgrades;
 
-public sealed class UpgradeComponentList : FlowPanel
+public sealed class UpgradeSelector : FlowPanel
 {
-    public UpgradeComponentList(UpgradeComponentListViewModel viewModel)
+    public UpgradeSelector(UpgradeSelectorViewModel viewModel)
     {
         WidthSizingMode = SizingMode.Fill;
         HeightSizingMode = SizingMode.AutoSize;

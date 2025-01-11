@@ -8,7 +8,7 @@ using SL.ChatLinks.UI.Tabs.Items2.Tooltips;
 using SL.Common;
 using SL.Common.Controls.Items.Services;
 
-namespace SL.ChatLinks.UI.Tabs.Items2.Search;
+namespace SL.ChatLinks.UI.Tabs.Items2.Collections;
 
 public sealed class ItemsListViewModel(
     ItemIcons icons,

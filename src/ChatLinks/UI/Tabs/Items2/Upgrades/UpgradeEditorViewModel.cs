@@ -2,17 +2,17 @@
 
 using SL.Common;
 
-namespace SL.ChatLinks.UI.Tabs.Items2.Content.Upgrades;
+namespace SL.ChatLinks.UI.Tabs.Items2.Upgrades;
 
 public sealed class UpgradeEditorViewModel : ViewModel
 {
     public event EventHandler? Customizing;
 
-    private readonly UpgradeComponentListViewModelFactory _upgradeComponentListViewModelFactory;
+    private readonly UpgradeSelectorViewModelFactory _upgradeComponentListViewModelFactory;
 
     public UpgradeEditorViewModel(
         UpgradeSlotViewModel upgradeSlotViewModel,
-        UpgradeComponentListViewModelFactory upgradeComponentListViewModelFactory,
+        UpgradeSelectorViewModelFactory upgradeComponentListViewModelFactory,
         Item target
     )
     {
@@ -26,7 +26,7 @@ public sealed class UpgradeEditorViewModel : ViewModel
 
     public Item TargetItem { get; }
 
-    public UpgradeComponentListViewModel CreateUpgradeComponentListViewModel()
+    public UpgradeSelectorViewModel CreateUpgradeComponentListViewModel()
     {
         return _upgradeComponentListViewModelFactory.Create(TargetItem, UpgradeSlotViewModel.Type);
     }

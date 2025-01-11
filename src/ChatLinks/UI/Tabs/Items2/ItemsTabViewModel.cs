@@ -6,8 +6,7 @@ using GuildWars2.Items;
 using Microsoft.Extensions.Logging;
 
 using SL.ChatLinks.UI.Tabs.Items.Services;
-using SL.ChatLinks.UI.Tabs.Items2.Content;
-using SL.ChatLinks.UI.Tabs.Items2.Search;
+using SL.ChatLinks.UI.Tabs.Items2.Collections;
 using SL.Common;
 using SL.Common.ModelBinding;
 

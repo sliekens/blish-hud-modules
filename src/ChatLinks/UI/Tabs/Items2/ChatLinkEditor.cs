@@ -5,14 +5,14 @@ using Blish_HUD.Input;
 
 using Microsoft.Xna.Framework;
 
-using SL.ChatLinks.UI.Tabs.Items2.Content.Upgrades;
+using SL.ChatLinks.UI.Tabs.Items2.Upgrades;
 using SL.Common.Controls;
 using SL.Common.ModelBinding;
 
 using Container = Blish_HUD.Controls.Container;
 using ItemTooltipView = SL.ChatLinks.UI.Tabs.Items2.Tooltips.ItemTooltipView;
 
-namespace SL.ChatLinks.UI.Tabs.Items2.Content;
+namespace SL.ChatLinks.UI.Tabs.Items2;
 
 public sealed class ChatLinkEditor : View
 {

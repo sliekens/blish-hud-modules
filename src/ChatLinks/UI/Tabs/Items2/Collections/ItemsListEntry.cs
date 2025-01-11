@@ -1,11 +1,10 @@
 ﻿using Blish_HUD.Controls;
-using Blish_HUD.Input;
 
 using Microsoft.Xna.Framework;
 
 using SL.ChatLinks.UI.Tabs.Items2.Tooltips;
 
-namespace SL.ChatLinks.UI.Tabs.Items2.Search;
+namespace SL.ChatLinks.UI.Tabs.Items2.Collections;
 
 public sealed class ItemsListEntry : FlowPanel
 {

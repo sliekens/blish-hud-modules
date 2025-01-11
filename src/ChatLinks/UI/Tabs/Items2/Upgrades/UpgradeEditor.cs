@@ -2,7 +2,7 @@
 
 using Microsoft.Xna.Framework;
 
-namespace SL.ChatLinks.UI.Tabs.Items2.Content.Upgrades;
+namespace SL.ChatLinks.UI.Tabs.Items2.Upgrades;
 
 public sealed class UpgradeEditor : FlowPanel
 {
@@ -10,7 +10,7 @@ public sealed class UpgradeEditor : FlowPanel
 
     private readonly UpgradeSlot _upgradeSlot;
 
-    private UpgradeComponentList? _options;
+    private UpgradeSelector? _options;
 
     public UpgradeEditor(UpgradeEditorViewModel viewModel)
     {
@@ -36,7 +36,7 @@ public sealed class UpgradeEditor : FlowPanel
     {
         if (_options is null)
         {
-            _options = new UpgradeComponentList(ViewModel.CreateUpgradeComponentListViewModel())
+            _options = new UpgradeSelector(ViewModel.CreateUpgradeComponentListViewModel())
             {
                 Parent = this
             };

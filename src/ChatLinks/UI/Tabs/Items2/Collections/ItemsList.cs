@@ -3,7 +3,7 @@
 using SL.Common.Controls;
 using SL.Common.ModelBinding;
 
-namespace SL.ChatLinks.UI.Tabs.Items2.Search;
+namespace SL.ChatLinks.UI.Tabs.Items2.Collections;
 
 public class ItemsList : ListBox<ItemsListViewModel>
 {

@@ -17,10 +17,9 @@ using SL.ChatLinks.Storage;
 using SL.ChatLinks.UI;
 using SL.ChatLinks.UI.Tabs.Items.Services;
 using SL.ChatLinks.UI.Tabs.Items2;
-using SL.ChatLinks.UI.Tabs.Items2.Content;
-using SL.ChatLinks.UI.Tabs.Items2.Content.Upgrades;
-using SL.ChatLinks.UI.Tabs.Items2.Search;
+using SL.ChatLinks.UI.Tabs.Items2.Collections;
 using SL.ChatLinks.UI.Tabs.Items2.Tooltips;
+using SL.ChatLinks.UI.Tabs.Items2.Upgrades;
 using SL.Common;
 using SL.Common.Controls.Items.Services;
 
@@ -69,7 +68,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         services.AddTransient<ItemTooltipViewModelFactory>();
         services.AddTransient<ChatLinkEditorViewModelFactory>();
         services.AddTransient<UpgradeEditorViewModelFactory>();
-        services.AddTransient<UpgradeComponentListViewModelFactory>();
+        services.AddTransient<UpgradeSelectorViewModelFactory>();
         services.AddTransient<ItemSearch>();
         services.AddSingleton<Customizer>();
         services.AddHttpClient<ItemIcons>();

@@ -15,7 +15,7 @@ using SL.Common.Controls.Items.Upgrades;
 
 using Container = Blish_HUD.Controls.Container;
 
-namespace SL.ChatLinks.UI.Tabs.Items2.Content.Upgrades;
+namespace SL.ChatLinks.UI.Tabs.Items2.Upgrades;
 
 public sealed class UpgradeSlot : Container
 {

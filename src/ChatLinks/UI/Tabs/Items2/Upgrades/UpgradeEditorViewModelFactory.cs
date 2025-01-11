@@ -1,15 +1,16 @@
 ﻿using GuildWars2.Items;
 
+using SL.ChatLinks.UI.Tabs.Items2.Content.Upgrades;
 using SL.ChatLinks.UI.Tabs.Items2.Tooltips;
 using SL.Common.Controls.Items.Services;
 using SL.Common.Controls.Items.Upgrades;
 
-namespace SL.ChatLinks.UI.Tabs.Items2.Content.Upgrades;
+namespace SL.ChatLinks.UI.Tabs.Items2.Upgrades;
 
 public sealed class UpgradeEditorViewModelFactory(
     ItemIcons icons,
     Customizer customizer,
-    UpgradeComponentListViewModelFactory upgradeComponentListViewModelFactory,
+    UpgradeSelectorViewModelFactory upgradeComponentListViewModelFactory,
     ItemTooltipViewModelFactory itemTooltipViewModelFactory)
 {
     public UpgradeEditorViewModel Create(Item targetItem, UpgradeSlotType slotType, int? defaultUpgradeComponentId)
