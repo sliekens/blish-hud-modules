@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Windows.Input;
 
 using Blish_HUD;
 using Blish_HUD.Controls;
+using Blish_HUD.Input;
 
 using GuildWars2.Items;
 
@@ -27,16 +29,6 @@ public sealed class UpgradeSlot : Container
         Initialize();
     }
 
-    [MemberNotNull(nameof(_label))]
-    private void Initialize()
-    {
-        _label = ViewModel.DefaultUpgradeComponent is not null
-            ? UsedSlot(ViewModel.DefaultUpgradeComponent)
-            : UnusedSlot();
-
-        _label.Parent = this;
-    }
-
     public override void UpdateContainer(GameTime gameTime)
     {
         if (MouseOver)
@@ -53,11 +45,46 @@ public sealed class UpgradeSlot : Container
             {
                 _label.BasicTooltipText ??=
                     """
-                Click to customize
-                Right-click for options
-                """;
+                    Click to customize
+                    Right-click for options
+                    """;
             }
         }
+    }
+
+    protected override void OnClick(MouseEventArgs e)
+    {
+        ViewModel.CustomizeCommand.Execute(null);
+        base.OnClick(e);
+    }
+
+    [MemberNotNull(nameof(_label))]
+    private void Initialize()
+    {
+        switch (ViewModel)
+        {
+            case { DefaultUpgradeComponent: not null }:
+                _label = UsedSlot(ViewModel.DefaultUpgradeComponent);
+                _label.Menu = new ContextMenuStrip(() => [
+                    MenuItem("Customize", ViewModel.CustomizeCommand),
+                ]);
+                break;
+            default:
+                _label = UnusedSlot();
+                _label.Menu = new ContextMenuStrip(() => [
+                    MenuItem("Customize", ViewModel.CustomizeCommand),
+                ]);
+                break;
+        }
+
+        _label.Parent = this;
+    }
+
+    private ContextMenuStripItem MenuItem(string itemText, ICommand command)
+    {
+        var item = new ContextMenuStripItem(itemText);
+        item.Click += (_, _) => command.Execute(null);
+        return item;
     }
 
     private FormattedLabel UsedSlot(UpgradeComponent upgradeComponent)
