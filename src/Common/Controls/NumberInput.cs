@@ -52,8 +52,6 @@ public class NumberInput : TextInputBase
 
     private static readonly Texture2D TextBoxSprite = Resources.Texture("textbox.png");
 
-    private static readonly SoundEffect ClickSoundEffect = Resources.Sound("click.wav");
-
     private SpinnerGlow _glow = SpinnerGlow.None;
 
     private NumberInputAction _action = NumberInputAction.None;
@@ -318,7 +316,7 @@ public class NumberInput : TextInputBase
         if (e.MousePosition.X > AbsoluteBounds.Right - SpinnerWidth)
         {
             UnsetFocus();
-            ClickSoundEffect.Play(0.4f, 0, 0);
+            Soundboard.Click.Play();
             _action = e.MousePosition.Y < AbsoluteBounds.Top + SpinnerButtonHeight
                 ? NumberInputAction.Increment
                 : NumberInputAction.Decrement;

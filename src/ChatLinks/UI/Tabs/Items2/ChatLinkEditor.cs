@@ -1,4 +1,5 @@
 ﻿using Blish_HUD;
+using Blish_HUD.Content;
 using Blish_HUD.Controls;
 
 using Microsoft.Xna.Framework;
@@ -9,6 +10,7 @@ using Blish_HUD.Input;
 
 using SL.ChatLinks.UI.Tabs.Items2.Tooltips;
 using SL.Common.ModelBinding;
+using SL.Common;
 
 namespace SL.ChatLinks.UI.Tabs.Items2;
 
@@ -100,25 +102,26 @@ public sealed class ChatLinkEditor : FlowPanel
 
         Binder.Bind(viewModel, vm => vm.Quantity, _quantity);
 
-        StandardButton minQuantity = new()
-        {
-            Parent = quantityGroup,
-            Text = "Min",
-            Width = 50,
-            Height = 32
-        };
-
-        minQuantity.Click += MinQuantityOnClick;
-
         StandardButton maxQuantity = new()
         {
             Parent = quantityGroup,
-            Text = "Max",
+            Text = "250",
             Width = 50,
             Height = 32
         };
 
-        maxQuantity.Click += MaxQuantityOnClick;
+        maxQuantity.Click += MaxQuantityClicked;
+
+        GlowButton resetQuantity = new()
+        {
+            Parent = quantityGroup,
+            Width = 32,
+            Height = 32,
+            Icon = AsyncTexture2D.FromAssetId(157324),
+            ActiveIcon = AsyncTexture2D.FromAssetId(157325)
+        };
+
+        resetQuantity.Click += ResetQuantityClicked;
 
         foreach (var upgradeEditorViewModel in viewModel.UpgradeSlots())
         {
@@ -180,14 +183,16 @@ public sealed class ChatLinkEditor : FlowPanel
         }
     }
 
-    private void MaxQuantityOnClick(object sender, MouseEventArgs e)
+    private void MaxQuantityClicked(object sender, MouseEventArgs e)
     {
         _viewModel.MaxQuantityCommand.Execute(null);
+        Soundboard.Click.Play();
     }
 
-    private void MinQuantityOnClick(object sender, MouseEventArgs e)
+    private void ResetQuantityClicked(object sender, MouseEventArgs e)
     {
         _viewModel.MinQuantityCommand.Execute(null);
+        Soundboard.Click.Play();
     }
 
     private void IconMouseEntered(object sender, MouseEventArgs e)
