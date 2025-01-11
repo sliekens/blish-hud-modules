@@ -69,6 +69,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         services.AddTransient<ItemTooltipViewModelFactory>();
         services.AddTransient<ChatLinkEditorViewModelFactory>();
         services.AddTransient<UpgradeEditorViewModelFactory>();
+        services.AddTransient<UpgradeComponentListViewModelFactory>();
         services.AddTransient<ItemSearch>();
         services.AddSingleton<Customizer>();
         services.AddHttpClient<ItemIcons>();

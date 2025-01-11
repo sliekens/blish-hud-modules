@@ -36,7 +36,7 @@ public sealed class UpgradeEditor : FlowPanel
     {
         if (_options is null)
         {
-            _options = new UpgradeComponentList
+            _options = new UpgradeComponentList(ViewModel.CreateUpgradeComponentListViewModel())
             {
                 Parent = this
             };

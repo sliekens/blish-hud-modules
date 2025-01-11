@@ -22,7 +22,7 @@ public sealed class ItemsListEntry : FlowPanel
     public ItemsListEntry(ItemsListViewModel viewModel)
     {
         ViewModel = viewModel;
-        Width = 435;
+        WidthSizingMode = SizingMode.Fill;
         HeightSizingMode = SizingMode.AutoSize;
         FlowDirection = ControlFlowDirection.SingleLeftToRight;
         _image = new Image { Parent = this, Size = new Point(35), Texture = viewModel.GetIcon() };

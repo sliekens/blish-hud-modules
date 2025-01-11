@@ -1,35 +1,32 @@
-﻿using Blish_HUD.Controls;
+﻿using System.Collections.ObjectModel;
 
+using Blish_HUD.Controls;
+
+using SL.ChatLinks.UI.Tabs.Items2.Search;
 using SL.Common.Controls;
 
 namespace SL.ChatLinks.UI.Tabs.Items2.Content.Upgrades;
 
 public sealed class UpgradeComponentList : FlowPanel
 {
-    public UpgradeComponentList()
+    public UpgradeComponentList(UpgradeComponentListViewModel viewModel)
     {
         WidthSizingMode = SizingMode.Fill;
         HeightSizingMode = SizingMode.AutoSize;
-        var container = new Accordion
+        var accordion = new Accordion
         {
             Parent = this
         };
 
-        container.AddSection("First", new Label
+        foreach (var group in viewModel.GetOptions())
         {
-            Text = "TODO TODO TODO",
-            AutoSizeWidth = true
-        });
-        container.AddSection("Second", new Label
-        {
-            Text = "TODO TODO TODO TODO TODO",
-            AutoSizeWidth = true
-        });
-        container.AddSection("Third", new Label
-        {
-            Text = "TODO TODO TODO",
-            AutoSizeWidth = true
-        });
+            var list = new ItemsList
+            {
+                Entries = new ObservableCollection<ItemsListViewModel>(group)
+            };
+
+            accordion.AddSection(group.Key, list);
+        }
     }
 
 }

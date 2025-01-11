@@ -25,7 +25,7 @@ public class ItemsTabView2 : View
 
     private readonly LoadingSpinner _loadingSpinner;
 
-    private readonly ListBox<ItemsListViewModel> _searchResults;
+    private readonly ItemsList _searchResults;
 
     private readonly ViewContainer _editor;
 
@@ -38,6 +38,8 @@ public class ItemsTabView2 : View
 
         _searchResults = new ItemsList
         {
+            WidthSizingMode = SizingMode.Standard,
+            HeightSizingMode = SizingMode.Standard,
             Size = new Point(450, 500),
             Top = _searchBox.Bottom,
             Entries = ViewModel.SearchResults

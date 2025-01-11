@@ -20,6 +20,11 @@ public class ListBox<T> : FlowPanel
     {
         ShowBorder = true;
         CanScroll = true;
+
+        // ReSharper disable VirtualMemberCallInConstructor
+        WidthSizingMode = SizingMode.Fill;
+        HeightSizingMode = SizingMode.AutoSize;
+        // ReSharper restore VirtualMemberCallInConstructor
     }
 
     public ObservableCollection<T>? Entries
@@ -40,6 +45,42 @@ public class ListBox<T> : FlowPanel
 
     protected virtual void Bind(T data, ListItem<T> listItem)
     {
+    }
+
+    protected virtual Control Template(T data)
+    {
+        return new Label
+        {
+            Text = data?.ToString(),
+            AutoSizeWidth = true,
+        };
+    }
+
+    protected virtual ListItem<T> AddItem(T data)
+    {
+        var listItem = new ListItem<T>(data)
+        {
+            Parent = this,
+            ShowTint = Children.Count % 2 == 1
+        };
+
+        listItem.Resized += (sender, args) =>
+        {
+            Invalidate();
+        };
+
+        listItem.ContentResized += (sender, args) =>
+        {
+            Invalidate();
+        };
+
+        Bind(data, listItem);
+
+        listItem.SelectionChanged += ListItemSelectionChanged;
+
+        var template = Template(data);
+        template.Parent = listItem;
+        return listItem;
     }
 
     private void EntriesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -85,34 +126,8 @@ public class ListBox<T> : FlowPanel
                 RefreshItems();
                 break;
         }
-    }
 
-    protected virtual Control Template(T data)
-    {
-        return new Label
-        {
-            Text = data?.ToString(),
-            AutoSizeWidth = true,
-        };
-    }
-
-    protected virtual ListItem<T> AddItem(T data)
-    {
-        var listItem = new ListItem<T>(data)
-        {
-            Parent = this,
-            Width = Width - 16,
-            HeightSizingMode = SizingMode.AutoSize,
-            ShowTint = Children.Count % 2 == 1
-        };
-
-        Bind(data, listItem);
-
-        listItem.SelectionChanged += ListItemSelectionChanged;
-
-        var template = Template(data);
-        template.Parent = listItem;
-        return listItem;
+        Invalidate();
     }
 
     private void ListItemSelectionChanged(ListItem<T> sender, ListItemSelectionChangedEventArgs args)
@@ -188,15 +203,8 @@ public class ListBox<T> : FlowPanel
         }
     }
 
-    protected override void OnChildAdded(ChildChangedEventArgs e)
+    public override void RecalculateLayout()
     {
-        base.OnChildAdded(e);
-        this.UpdateScrollbar();
-    }
-
-    protected override void OnChildRemoved(ChildChangedEventArgs e)
-    {
-        base.OnChildRemoved(e);
         this.UpdateScrollbar();
     }
 

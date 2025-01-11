@@ -1,4 +1,6 @@
-﻿using SL.Common;
+﻿using GuildWars2.Items;
+
+using SL.Common;
 
 namespace SL.ChatLinks.UI.Tabs.Items2.Content.Upgrades;
 
@@ -6,14 +8,28 @@ public sealed class UpgradeEditorViewModel : ViewModel
 {
     public event EventHandler? Customizing;
 
-    public UpgradeEditorViewModel(UpgradeSlotViewModel upgradeSlotViewModel)
+    private readonly UpgradeComponentListViewModelFactory _upgradeComponentListViewModelFactory;
+
+    public UpgradeEditorViewModel(
+        UpgradeSlotViewModel upgradeSlotViewModel,
+        UpgradeComponentListViewModelFactory upgradeComponentListViewModelFactory,
+        Item target
+    )
     {
+        _upgradeComponentListViewModelFactory = upgradeComponentListViewModelFactory;
         UpgradeSlotViewModel = upgradeSlotViewModel;
+        TargetItem = target;
         UpgradeSlotViewModel.Customizing += OnCustomizing;
     }
 
     public UpgradeSlotViewModel UpgradeSlotViewModel { get; }
 
+    public Item TargetItem { get; }
+
+    public UpgradeComponentListViewModel CreateUpgradeComponentListViewModel()
+    {
+        return _upgradeComponentListViewModelFactory.Create(TargetItem, UpgradeSlotViewModel.Type);
+    }
 
     private void OnCustomizing(object sender, EventArgs e)
     {

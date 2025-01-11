@@ -97,12 +97,13 @@ public sealed class ChatLinkEditorViewModel(
 
         foreach (var defaultUpgradeComponentId in upgradable.UpgradeSlots)
         {
-            yield return upgradeEditorViewModelFactory.Create(UpgradeSlotType.Default, defaultUpgradeComponentId);
+            yield return upgradeEditorViewModelFactory.Create(Item, UpgradeSlotType.Default, defaultUpgradeComponentId);
         }
 
         foreach (var infusionSlot in upgradable.InfusionSlots)
         {
             yield return upgradeEditorViewModelFactory.Create(
+                Item,
                 infusionSlot.Flags switch
                 {
                     { Enrichment: true } => UpgradeSlotType.Enrichment,

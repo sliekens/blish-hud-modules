@@ -9,9 +9,10 @@ namespace SL.ChatLinks.UI.Tabs.Items2.Content.Upgrades;
 public sealed class UpgradeEditorViewModelFactory(
     ItemIcons icons,
     Customizer customizer,
+    UpgradeComponentListViewModelFactory upgradeComponentListViewModelFactory,
     ItemTooltipViewModelFactory itemTooltipViewModelFactory)
 {
-    public UpgradeEditorViewModel Create(UpgradeSlotType slotType, int? defaultUpgradeComponentId)
+    public UpgradeEditorViewModel Create(Item targetItem, UpgradeSlotType slotType, int? defaultUpgradeComponentId)
     {
         UpgradeComponent? defaultUpgradeComponent = null;
         if (defaultUpgradeComponentId.HasValue)
@@ -24,6 +25,6 @@ public sealed class UpgradeEditorViewModelFactory(
             DefaultUpgradeComponent = defaultUpgradeComponent
         };
 
-        return new UpgradeEditorViewModel(upgradeSlotViewModel);
+        return new UpgradeEditorViewModel(upgradeSlotViewModel, upgradeComponentListViewModelFactory, targetItem);
     }
 }

@@ -3,13 +3,20 @@ using Blish_HUD.Input;
 
 namespace SL.Common.Controls;
 
-public sealed class ListItem<TData>(TData data) : Panel
+public sealed class ListItem<TData> : Panel
 {
     public event Action<ListItem<TData>, ListItemSelectionChangedEventArgs>? SelectionChanged;
 
     private readonly object _lock = new();
 
     private bool _isSelected;
+
+    public ListItem(TData data)
+    {
+        Data = data;
+        WidthSizingMode = SizingMode.Fill;
+        HeightSizingMode = SizingMode.AutoSize;
+    }
 
     public bool IsSelected
     {
@@ -30,7 +37,7 @@ public sealed class ListItem<TData>(TData data) : Panel
         }
     }
 
-    public TData Data { get; } = data;
+    public TData Data { get; }
 
     protected override void OnClick(MouseEventArgs e)
     {

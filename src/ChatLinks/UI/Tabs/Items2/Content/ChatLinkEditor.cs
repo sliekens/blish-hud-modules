@@ -28,7 +28,7 @@ public sealed class ChatLinkEditor : View
 
     private readonly TextBox _chatLink;
 
-    private event EventHandler Customizing;
+    private event EventHandler? Customizing;
 
     public ChatLinkEditor(ChatLinkEditorViewModel viewModel)
     {
