@@ -9,7 +9,6 @@ using Microsoft.Xna.Framework;
 
 using SL.ChatLinks.UI.Tabs.Items;
 using SL.ChatLinks.UI.Tabs.Items2.Collections;
-using SL.ChatLinks.UI.Tabs.Items2.Content;
 using SL.Common.Controls;
 using SL.Common.ModelBinding;
 
