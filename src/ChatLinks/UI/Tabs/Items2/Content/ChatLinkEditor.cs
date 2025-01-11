@@ -5,7 +5,9 @@ using Blish_HUD.Input;
 
 using Microsoft.Xna.Framework;
 
+using SL.ChatLinks.UI.Tabs.Items2.Content.Upgrades;
 using SL.Common.Controls;
+using SL.Common.Controls.Items.Upgrades;
 using SL.Common.ModelBinding;
 
 using Container = Blish_HUD.Controls.Container;
@@ -121,6 +123,15 @@ public sealed class ChatLinkEditor : View
         };
 
         maxQuantity.Click += MaxQuantityOnClick;
+
+        foreach (var slot in viewModel.UpgradeSlots())
+        {
+            _ = new Upgrades.UpgradeSlot(slot)
+            {
+                Parent = _layout,
+                WidthSizingMode = SizingMode.Fill
+            };
+        }
 
         _ = new Label { Parent = _layout, Text = "Chat Link:", AutoSizeWidth = true, AutoSizeHeight = true };
 

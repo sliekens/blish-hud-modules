@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 
 using Blish_HUD.Content;
 
@@ -7,9 +8,11 @@ using GuildWars2.Items;
 
 using Microsoft.Xna.Framework;
 
+using SL.ChatLinks.UI.Tabs.Items2.Content.Upgrades;
 using SL.ChatLinks.UI.Tabs.Items2.Tooltips;
 using SL.Common;
 using SL.Common.Controls.Items.Services;
+using SL.Common.Controls.Items.Upgrades;
 using SL.Common.ModelBinding;
 
 namespace SL.ChatLinks.UI.Tabs.Items2.Content;
@@ -17,6 +20,8 @@ namespace SL.ChatLinks.UI.Tabs.Items2.Content;
 public sealed class ChatLinkEditorViewModel : ViewModel
 {
     private readonly ItemTooltipViewModelFactory _tooltipViewModelFactory;
+
+    private readonly UpgradeSlotViewModelFactory _upgradeEditorViewModelFactory;
 
     private readonly ItemIcons _icons;
 
@@ -26,12 +31,15 @@ public sealed class ChatLinkEditorViewModel : ViewModel
 
     private ItemLink _chatLinkBuilder;
 
-    public ChatLinkEditorViewModel(ItemTooltipViewModelFactory tooltipViewModelFactory,
+    public ChatLinkEditorViewModel(
+        ItemTooltipViewModelFactory tooltipViewModelFactory,
+        UpgradeSlotViewModelFactory upgradeEditorViewModelFactory,
         ItemIcons icons,
         IClipBoard clipboard,
         Item item)
     {
         _tooltipViewModelFactory = tooltipViewModelFactory;
+        _upgradeEditorViewModelFactory = upgradeEditorViewModelFactory;
         _icons = icons;
         _clipboard = clipboard;
         Item = item;
@@ -114,5 +122,31 @@ public sealed class ChatLinkEditorViewModel : ViewModel
     private void SetMaxQuantity()
     {
         Quantity = 250;
+    }
+
+    public IEnumerable<Upgrades.UpgradeSlotViewModel> UpgradeSlots()
+    {
+        if (Item is not IUpgradable upgradable)
+        {
+            yield break;
+        }
+
+        foreach (var defaultUpgradeComponentId in upgradable.UpgradeSlots)
+        {
+            yield return _upgradeEditorViewModelFactory.Create(UpgradeSlotType.Default, defaultUpgradeComponentId);
+        }
+
+        foreach (var infusionSlot in upgradable.InfusionSlots)
+        {
+            yield return _upgradeEditorViewModelFactory.Create(
+                infusionSlot.Flags switch
+                {
+                    { Enrichment: true } => UpgradeSlotType.Enrichment,
+                    { Infusion: true } => UpgradeSlotType.Infusion,
+                    _ => UpgradeSlotType.Default
+                },
+                infusionSlot.ItemId
+            );
+        }
     }
 }
