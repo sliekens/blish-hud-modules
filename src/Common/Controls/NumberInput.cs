@@ -38,6 +38,8 @@ internal enum SpinnerGlow
 
 public class NumberInput : TextInputBase
 {
+    public event EventHandler<EventArgs>? EnterPressed;
+
     private const int TextPaddingX = 10;
 
     private const int SpinnerWidth = 32;
@@ -266,7 +268,6 @@ public class NumberInput : TextInputBase
         return charIndex;
     }
 
-
     protected override void OnMouseMoved(MouseEventArgs e)
     {
         if (e.MousePosition.X > AbsoluteBounds.Right - SpinnerWidth)
@@ -354,14 +355,15 @@ public class NumberInput : TextInputBase
         base.OnClick(e);
     }
 
-    private void OnInputFocusChanged(object sender, ValueEventArgs<bool> e)
+    protected override void HandleEnter()
     {
-        if (!e.Value)
-        {
-            Text = Value.ToString();
-            _horizontalOffset = 0;
-            Invalidate();
-        }
+        OnEnterPressed();
+    }
+
+    protected virtual void OnEnterPressed()
+    {
+        UnsetFocus();
+        EnterPressed?.Invoke(this, EventArgs.Empty);
     }
 
     protected override void Paint(SpriteBatch spriteBatch, Rectangle bounds)
@@ -462,6 +464,16 @@ public class NumberInput : TextInputBase
         Input.Mouse.MouseMoved -= OnGlobalMouseMoved;
         Input.Mouse.LeftMouseButtonReleased -= OnGlobalLeftMouseButtonReleased;
         base.DisposeControl();
+    }
+
+    private void OnInputFocusChanged(object sender, ValueEventArgs<bool> e)
+    {
+        if (!e.Value)
+        {
+            Text = Value.ToString();
+            _horizontalOffset = 0;
+            Invalidate();
+        }
     }
 
     private void OnTextChanged(object sender, EventArgs e)
