@@ -26,8 +26,6 @@ public sealed class ChatLinkEditor : FlowPanel
 
     private readonly ChatLinkEditorViewModel _viewModel;
 
-    private event EventHandler? Customizing;
-
     private bool _allowScroll = true;
 
     public ChatLinkEditor(ChatLinkEditorViewModel viewModel)
@@ -123,29 +121,11 @@ public sealed class ChatLinkEditor : FlowPanel
 
         resetQuantity.Click += ResetQuantityClicked;
 
-        foreach (var upgradeEditorViewModel in viewModel.UpgradeSlots())
+        foreach (var upgradeEditorViewModel in viewModel.UpgradeEditorViewModels)
         {
             UpgradeEditor editor = new(upgradeEditorViewModel)
             {
                 Parent = this
-            };
-
-            upgradeEditorViewModel.PropertyChanged += (sender, args) =>
-            {
-                switch (args.PropertyName)
-                {
-                    case nameof(upgradeEditorViewModel.Customizing) when upgradeEditorViewModel.Customizing:
-                        Customizing?.Invoke(editor, EventArgs.Empty);
-                        break;
-                }
-            };
-
-            Customizing += (sender, args) =>
-            {
-                if (sender != editor)
-                {
-                    editor.ViewModel.HideCommand.Execute(null);
-                }
             };
         }
 

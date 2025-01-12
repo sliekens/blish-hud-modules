@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Input;
 
 using Blish_HUD.Content;
@@ -17,19 +18,59 @@ using SL.Common.ModelBinding;
 
 namespace SL.ChatLinks.UI.Tabs.Items2;
 
-public sealed class ChatLinkEditorViewModel(
-    ItemTooltipViewModelFactory tooltipViewModelFactory,
-    UpgradeEditorViewModelFactory upgradeEditorViewModelFactory,
-    ItemIcons icons,
-    IClipBoard clipboard,
-    Item item
-) : ViewModel
+public sealed class ChatLinkEditorViewModel : ViewModel
 {
     private int _quantity = 1;
 
-    private ItemLink _chatLinkBuilder = new() { ItemId = item.Id };
+    private ItemLink _chatLinkBuilder;
 
-    public Item Item { get; } = item;
+    private readonly List<UpgradeEditorViewModel> _upgradeEditorViewModels;
+
+    private readonly ItemTooltipViewModelFactory _tooltipViewModelFactory;
+
+    private readonly UpgradeEditorViewModelFactory _upgradeEditorViewModelFactory;
+
+    private readonly ItemIcons _icons;
+
+    private readonly IClipBoard _clipboard;
+
+    public ChatLinkEditorViewModel(
+        ItemTooltipViewModelFactory tooltipViewModelFactory,
+        UpgradeEditorViewModelFactory upgradeEditorViewModelFactory,
+        ItemIcons icons,
+        IClipBoard clipboard,
+        Item item)
+    {
+        _tooltipViewModelFactory = tooltipViewModelFactory;
+        _upgradeEditorViewModelFactory = upgradeEditorViewModelFactory;
+        _icons = icons;
+        _clipboard = clipboard;
+        _chatLinkBuilder = new ItemLink { ItemId = item.Id };
+        Item = item;
+        ItemNameColor = ItemColors.Rarity(item.Rarity);
+        _upgradeEditorViewModels = CreateUpgradeEditorViewModels().ToList();
+        foreach (var vm in _upgradeEditorViewModels)
+        {
+            vm.PropertyChanged += (sender, args) =>
+            {
+                switch (args.PropertyName)
+                {
+                    case nameof(vm.Customizing) when vm.Customizing:
+                        foreach (var editor in UpgradeEditorViewModels)
+                        {
+                            editor.Customizing = editor == sender;
+                        }
+
+                        break;
+                }
+            };
+        }
+    }
+
+    public Item Item { get; }
+
+    public ObservableCollection<UpgradeEditorViewModel> UpgradeEditorViewModels
+        => new(_upgradeEditorViewModels);
 
     public string ItemName
     {
@@ -44,7 +85,7 @@ public sealed class ChatLinkEditorViewModel(
         }
     }
 
-    public Color ItemNameColor { get; } = ItemColors.Rarity(item.Rarity);
+    public Color ItemNameColor { get; }
 
     public int Quantity
     {
@@ -80,15 +121,15 @@ public sealed class ChatLinkEditorViewModel(
 
     public ItemTooltipViewModel CreateTooltipViewModel()
     {
-        return tooltipViewModelFactory.Create(Item);
+        return _tooltipViewModelFactory.Create(Item);
     }
 
     public AsyncTexture2D? GetIcon()
     {
-        return icons.GetIcon(Item);
+        return _icons.GetIcon(Item);
     }
 
-    public IEnumerable<UpgradeEditorViewModel> UpgradeSlots()
+    private IEnumerable<UpgradeEditorViewModel> CreateUpgradeEditorViewModels()
     {
         if (Item is not IUpgradable upgradable)
         {
@@ -97,7 +138,7 @@ public sealed class ChatLinkEditorViewModel(
 
         foreach (var defaultUpgradeComponentId in upgradable.UpgradeSlots)
         {
-            yield return upgradeEditorViewModelFactory.Create(
+            yield return _upgradeEditorViewModelFactory.Create(
                 Item,
                 UpgradeSlotType.Default,
                 defaultUpgradeComponentId
@@ -106,7 +147,7 @@ public sealed class ChatLinkEditorViewModel(
 
         foreach (var infusionSlot in upgradable.InfusionSlots)
         {
-            yield return upgradeEditorViewModelFactory.Create(
+            yield return _upgradeEditorViewModelFactory.Create(
                 Item,
                 infusionSlot.Flags switch
                 {
@@ -121,7 +162,7 @@ public sealed class ChatLinkEditorViewModel(
 
     private void OnCopy()
     {
-        clipboard.SetText(ChatLink);
+        _clipboard.SetText(ChatLink);
     }
 
     private void OnMinQuantity()

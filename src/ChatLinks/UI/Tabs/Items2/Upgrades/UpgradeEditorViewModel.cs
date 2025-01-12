@@ -18,7 +18,7 @@ public sealed class UpgradeEditorViewModel(
     public bool Customizing
     {
         get => _customizing;
-        private set => SetField(ref _customizing, value);
+        set => SetField(ref _customizing, value);
     }
 
     public ICommand CustomizeCommand => new RelayCommand(OnCustomize);
