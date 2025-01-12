@@ -132,7 +132,7 @@ public sealed class ItemsTabViewModel(
                     break;
                 }
 
-                var viewModel = itemsListViewModelFactory.Create(item);
+                var viewModel = itemsListViewModelFactory.Create(item, false);
                 SearchResults.Add(viewModel);
             }
         }
@@ -156,7 +156,7 @@ public sealed class ItemsTabViewModel(
                     break;
                 }
 
-                var viewModel = itemsListViewModelFactory.Create(item);
+                var viewModel = itemsListViewModelFactory.Create(item, false);
                 SearchResults.Add(viewModel);
             }
         }

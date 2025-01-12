@@ -13,7 +13,8 @@ public sealed class UpgradeSelectorViewModel(
     Customizer customizer,
     ItemsListViewModelFactory itemsListViewModelFactory,
     Item target,
-    UpgradeSlotType slotType
+    UpgradeSlotType slotType,
+    UpgradeComponent? selectedUpgradeComponent
 ) : ViewModel
 {
     public event EventHandler<UpgradeComponent>? Selected;
@@ -75,7 +76,7 @@ public sealed class UpgradeSelectorViewModel(
                     _ => 99
                 }
                 : 99
-            let vm = itemsListViewModelFactory.Create(upgrade)
+            let vm = itemsListViewModelFactory.Create(upgrade, upgrade == selectedUpgradeComponent)
             orderby rank, upgrade.Level, upgrade.Name
             group vm by upgrade switch
             {

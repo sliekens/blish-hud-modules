@@ -7,8 +7,8 @@ namespace SL.ChatLinks.UI.Tabs.Items2.Collections;
 
 public sealed class ItemsListViewModelFactory(ItemIcons icons, ItemTooltipViewModelFactory tooltipViewModelFactory)
 {
-    public ItemsListViewModel Create(Item item)
+    public ItemsListViewModel Create(Item item, bool isSelected)
     {
-        return new ItemsListViewModel(icons, item, tooltipViewModelFactory);
+        return new ItemsListViewModel(icons, item, tooltipViewModelFactory, isSelected);
     }
 }

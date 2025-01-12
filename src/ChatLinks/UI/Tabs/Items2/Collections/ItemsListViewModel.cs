@@ -13,9 +13,11 @@ namespace SL.ChatLinks.UI.Tabs.Items2.Collections;
 public sealed class ItemsListViewModel(
     ItemIcons icons,
     Item item,
-    ItemTooltipViewModelFactory tooltipViewModelFactory) : ViewModel
+    ItemTooltipViewModelFactory tooltipViewModelFactory,
+    bool isSelected
+) : ViewModel
 {
-    private bool _isSelected;
+    private bool _isSelected = isSelected;
 
     public Item Item { get; } = item ?? throw new ArgumentNullException(nameof(item));
 

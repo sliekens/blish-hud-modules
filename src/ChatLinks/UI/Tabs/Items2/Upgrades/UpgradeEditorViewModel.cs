@@ -33,7 +33,8 @@ public sealed class UpgradeEditorViewModel(
     {
         UpgradeSelectorViewModel upgradeComponentListViewModel = upgradeComponentListViewModelFactory.Create(
             TargetItem,
-            UpgradeSlotViewModel.Type
+            UpgradeSlotViewModel.Type,
+            UpgradeSlotViewModel.SelectedUpgradeComponent
         );
 
         upgradeComponentListViewModel.Selected += Selected;
