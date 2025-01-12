@@ -43,6 +43,10 @@ public sealed class UpgradeSelector : FlowPanel
         {
             ViewModel.SelectCommand.Execute(item.Data);
         }
+        else
+        {
+            ViewModel.DeselectCommand.Execute();
+        }
     }
 
     private void MouseEnteredList(object sender, MouseEventArgs e)

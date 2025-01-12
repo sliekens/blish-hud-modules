@@ -1,9 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Windows.Input;
+﻿using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 using Blish_HUD;
 using Blish_HUD.Controls;
-using Blish_HUD.Input;
 
 using GuildWars2.Items;
 
@@ -26,7 +25,23 @@ public sealed class UpgradeSlot : Container
     public UpgradeSlot(UpgradeSlotViewModel viewModel)
     {
         ViewModel = viewModel;
-        Initialize();
+        ViewModel.PropertyChanged += PropertyChanged;
+        _label = FormatSlot();
+        _label.Parent = this;
+    }
+
+    private new void PropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+        switch (e.PropertyName)
+        {
+            case nameof(ViewModel.SelectedUpgradeComponent):
+            case nameof(ViewModel.DefaultUpgradeComponent):
+            case nameof(ViewModel.Type):
+                _label.Dispose();
+                _label = FormatSlot();
+                _label.Parent = this;
+                break;
+        }
     }
 
     public override void UpdateContainer(GameTime gameTime)
@@ -52,39 +67,14 @@ public sealed class UpgradeSlot : Container
         }
     }
 
-    protected override void OnClick(MouseEventArgs e)
+    private FormattedLabel FormatSlot()
     {
-        ViewModel.CustomizeCommand.Execute(null);
-        base.OnClick(e);
-    }
-
-    [MemberNotNull(nameof(_label))]
-    private void Initialize()
-    {
-        switch (ViewModel)
+        return ViewModel switch
         {
-            case { DefaultUpgradeComponent: not null }:
-                _label = UsedSlot(ViewModel.DefaultUpgradeComponent);
-                _label.Menu = new ContextMenuStrip(() => [
-                    MenuItem("Customize", ViewModel.CustomizeCommand),
-                ]);
-                break;
-            default:
-                _label = UnusedSlot();
-                _label.Menu = new ContextMenuStrip(() => [
-                    MenuItem("Customize", ViewModel.CustomizeCommand),
-                ]);
-                break;
-        }
-
-        _label.Parent = this;
-    }
-
-    private ContextMenuStripItem MenuItem(string itemText, ICommand command)
-    {
-        var item = new ContextMenuStripItem(itemText);
-        item.Click += (_, _) => command.Execute(null);
-        return item;
+            { SelectedUpgradeComponent: not null } => UsedSlot(ViewModel.SelectedUpgradeComponent),
+            { DefaultUpgradeComponent: not null } => UsedSlot(ViewModel.DefaultUpgradeComponent),
+            _ => UnusedSlot()
+        };
     }
 
     private FormattedLabel UsedSlot(UpgradeComponent upgradeComponent)

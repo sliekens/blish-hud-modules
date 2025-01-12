@@ -125,21 +125,26 @@ public sealed class ChatLinkEditor : FlowPanel
 
         foreach (var upgradeEditorViewModel in viewModel.UpgradeSlots())
         {
-            UpgradeEditor editor = new UpgradeEditor(upgradeEditorViewModel)
+            UpgradeEditor editor = new(upgradeEditorViewModel)
             {
                 Parent = this
             };
 
-            upgradeEditorViewModel.Customizing += (_, _) =>
+            upgradeEditorViewModel.PropertyChanged += (sender, args) =>
             {
-                Customizing?.Invoke(editor, EventArgs.Empty);
+                switch (args.PropertyName)
+                {
+                    case nameof(upgradeEditorViewModel.Customizing) when upgradeEditorViewModel.Customizing:
+                        Customizing?.Invoke(editor, EventArgs.Empty);
+                        break;
+                }
             };
 
             Customizing += (sender, args) =>
             {
                 if (sender != editor)
                 {
-                    editor.HideOptions();
+                    editor.ViewModel.HideCommand.Execute(null);
                 }
             };
         }

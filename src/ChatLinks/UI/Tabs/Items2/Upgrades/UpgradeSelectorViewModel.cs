@@ -16,13 +16,19 @@ public sealed class UpgradeSelectorViewModel(
     UpgradeSlotType slotType
 ) : ViewModel
 {
-    private List<IGrouping<string, ItemsListViewModel>>? _options;
+    public event EventHandler<UpgradeComponent>? Selected;
+
+    public event EventHandler? Deselected;
 
     public IReadOnlyList<IGrouping<string, ItemsListViewModel>> Options => _options ??= GetOptions();
 
     public IEnumerable<ItemsListViewModel> AllOptions => Options.SelectMany(group => group);
 
-    public ICommand SelectCommand => new RelayCommand<ItemsListViewModel>(OnSelect);
+    public RelayCommand<ItemsListViewModel> SelectCommand => new(OnSelect);
+
+    public RelayCommand DeselectCommand => new(OnRemove);
+
+    private List<IGrouping<string, ItemsListViewModel>>? _options;
 
     private void OnSelect(ItemsListViewModel selection)
     {
@@ -30,6 +36,13 @@ public sealed class UpgradeSelectorViewModel(
         {
             option.IsSelected = option == selection;
         }
+
+        Selected?.Invoke(this, (UpgradeComponent)selection.Item);
+    }
+
+    private void OnRemove()
+    {
+        Deselected?.Invoke(this, EventArgs.Empty);
     }
 
     private List<IGrouping<string, ItemsListViewModel>> GetOptions()
