@@ -72,6 +72,14 @@ public sealed class ChatLinkEditor : FlowPanel
 
         Binder.Bind(viewModel, vm => vm.ItemName, _itemName);
 
+        foreach (var upgradeEditorViewModel in viewModel.UpgradeEditorViewModels)
+        {
+            UpgradeEditor editor = new(upgradeEditorViewModel)
+            {
+                Parent = this
+            };
+        }
+
         var quantityGroup = new FlowPanel
         {
             Parent = this,
@@ -120,14 +128,6 @@ public sealed class ChatLinkEditor : FlowPanel
         };
 
         resetQuantity.Click += ResetQuantityClicked;
-
-        foreach (var upgradeEditorViewModel in viewModel.UpgradeEditorViewModels)
-        {
-            UpgradeEditor editor = new(upgradeEditorViewModel)
-            {
-                Parent = this
-            };
-        }
 
         _ = new Label { Parent = this, Text = "Chat Link:", AutoSizeWidth = true, AutoSizeHeight = true };
 
