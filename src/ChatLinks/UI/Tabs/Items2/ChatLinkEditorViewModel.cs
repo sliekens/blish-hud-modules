@@ -22,6 +22,10 @@ public sealed class ChatLinkEditorViewModel : ViewModel
 {
     private int _quantity = 1;
 
+    private UpgradeComponent? _suffixItem;
+
+    private UpgradeComponent? _secondarySuffixItem;
+
     private ItemLink _chatLinkBuilder;
 
     private readonly List<UpgradeEditorViewModel> _upgradeEditorViewModels;
@@ -49,7 +53,7 @@ public sealed class ChatLinkEditorViewModel : ViewModel
         Item = item;
         ItemNameColor = ItemColors.Rarity(item.Rarity);
         _upgradeEditorViewModels = CreateUpgradeEditorViewModels().ToList();
-        foreach (var vm in _upgradeEditorViewModels)
+        foreach (var (slot, vm) in _upgradeEditorViewModels.Select((vm, index) => (index + 1, vm)))
         {
             vm.PropertyChanged += (sender, args) =>
             {
@@ -59,6 +63,25 @@ public sealed class ChatLinkEditorViewModel : ViewModel
                         foreach (var editor in UpgradeEditorViewModels)
                         {
                             editor.Customizing = editor == sender;
+                        }
+
+                        break;
+                }
+            };
+
+            vm.UpgradeSlotViewModel.PropertyChanged += (sender, args) =>
+            {
+                switch (args.PropertyName)
+                {
+                    case (nameof(vm.UpgradeSlotViewModel.SelectedUpgradeComponent)) when vm.UpgradeSlotViewModel.Type == UpgradeSlotType.Default:
+                        switch (slot)
+                        {
+                            case 1:
+                                SuffixItem = vm.UpgradeSlotViewModel.SelectedUpgradeComponent;
+                                break;
+                            case 2:
+                                SecondarySuffixItem = vm.UpgradeSlotViewModel.SelectedUpgradeComponent;
+                                break;
                         }
 
                         break;
@@ -96,6 +119,40 @@ public sealed class ChatLinkEditorViewModel : ViewModel
             OnPropertyChanging(nameof(ChatLink));
             SetField(ref _quantity, value);
             _chatLinkBuilder = _chatLinkBuilder with { Count = value };
+            OnPropertyChanged(nameof(ItemName));
+            OnPropertyChanged(nameof(ChatLink));
+        }
+    }
+
+    public UpgradeComponent? SuffixItem
+    {
+        get => _suffixItem;
+        set
+        {
+            OnPropertyChanging(nameof(ItemName));
+            OnPropertyChanging(nameof(ChatLink));
+            SetField(ref _suffixItem, value);
+            _chatLinkBuilder = _chatLinkBuilder with
+            {
+                SuffixItemId = value?.Id
+            };
+            OnPropertyChanged(nameof(ItemName));
+            OnPropertyChanged(nameof(ChatLink));
+        }
+    }
+
+    public UpgradeComponent? SecondarySuffixItem
+    {
+        get => _secondarySuffixItem;
+        set
+        {
+            OnPropertyChanging(nameof(ItemName));
+            OnPropertyChanging(nameof(ChatLink));
+            SetField(ref _secondarySuffixItem, value);
+            _chatLinkBuilder = _chatLinkBuilder with
+            {
+                SecondarySuffixItemId = value?.Id
+            };
             OnPropertyChanged(nameof(ItemName));
             OnPropertyChanged(nameof(ChatLink));
         }
