@@ -32,22 +32,32 @@ public sealed class UpgradeEditor : FlowPanel
 
         _upgradeSlot = CreateUpgradeSlot();
         _upgradeSlot.Click += UpgradeSlotClicked;
-        _upgradeSlot.Menu = new ContextMenuStrip(() => [
-            MenuItem("Customize", ViewModel.CustomizeCommand),
-        ]);
+        _upgradeSlot.Menu = new ContextMenuStrip(ContextMenu);
+
+    }
+
+    private IEnumerable<ContextMenuStripItem> ContextMenu()
+    {
+        yield return MenuItem("Customize", ViewModel.CustomizeCommand);
+        yield return MenuItem(ViewModel.RemoveItemText, ViewModel.RemoveCommand);
     }
 
     private ContextMenuStripItem MenuItem(string itemText, ICommand command)
     {
         var item = new ContextMenuStripItem(itemText);
         item.Click += (_, _) => command.Execute(null);
+        item.Enabled = command.CanExecute(null);
+        command.CanExecuteChanged += (_, _) =>
+        {
+            item.Enabled = command.CanExecute(null);
+        };
         return item;
     }
 
     private void UpgradeSlotClicked(object sender, MouseEventArgs e)
     {
         Soundboard.Click.Play();
-        ViewModel.CustomizeCommand.Execute(null);
+        ViewModel.CustomizeCommand.Execute();
     }
 
     public void ShowOptions()
@@ -78,7 +88,7 @@ public sealed class UpgradeEditor : FlowPanel
 
     private void CancelClicked(object sender, MouseEventArgs e)
     {
-        ViewModel.HideCommand.Execute(null);
+        ViewModel.HideCommand.Execute();
     }
 
     private UpgradeSlot CreateUpgradeSlot()

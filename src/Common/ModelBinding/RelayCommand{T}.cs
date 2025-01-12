@@ -25,4 +25,9 @@ public sealed class RelayCommand<T>(Action<T> execute, Func<T, bool>? canExecute
     {
         Execute((T)parameter);
     }
+
+    public void OnCanExecuteChanged()
+    {
+        CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+    }
 }

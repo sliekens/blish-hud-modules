@@ -1,6 +1,4 @@
-﻿using System.Windows.Input;
-
-using GuildWars2.Items;
+﻿using GuildWars2.Items;
 
 using SL.Common;
 using SL.Common.ModelBinding;
@@ -21,13 +19,23 @@ public sealed class UpgradeEditorViewModel(
         set => SetField(ref _customizing, value);
     }
 
-    public ICommand CustomizeCommand => new RelayCommand(OnCustomize);
+    public RelayCommand CustomizeCommand => new(OnCustomize);
+
+    public RelayCommand RemoveCommand => new(OnRemove, CanRemove);
+
+    public RelayCommand HideCommand => new(OnHide);
 
     public UpgradeSlotViewModel UpgradeSlotViewModel { get; } = upgradeSlotViewModel;
 
     public Item TargetItem { get; } = target;
 
-    public ICommand HideCommand => new RelayCommand(OnHide);
+    public string RemoveItemText =>
+        UpgradeSlotViewModel switch
+        {
+            { SelectedUpgradeComponent: not null } => $"Remove {UpgradeSlotViewModel.SelectedUpgradeComponent.Name}",
+            { DefaultUpgradeComponent: not null } => $"Remove {UpgradeSlotViewModel.DefaultUpgradeComponent.Name}",
+            _ => "Remove"
+        };
 
     public UpgradeSelectorViewModel CreateUpgradeComponentListViewModel()
     {
@@ -47,12 +55,14 @@ public sealed class UpgradeEditorViewModel(
     {
         UpgradeSlotViewModel.SelectedUpgradeComponent = args;
         Customizing = false;
+        RemoveCommand.OnCanExecuteChanged();
     }
 
     private void Removed(object sender, EventArgs args)
     {
         UpgradeSlotViewModel.SelectedUpgradeComponent = null;
         Customizing = false;
+        RemoveCommand.OnCanExecuteChanged();
     }
 
     private void OnCustomize()
@@ -64,4 +74,15 @@ public sealed class UpgradeEditorViewModel(
     {
         Customizing = false;
     }
+
+    private void OnRemove()
+    {
+        UpgradeSlotViewModel.SelectedUpgradeComponent = null;
+    }
+
+    private bool CanRemove()
+    {
+        return UpgradeSlotViewModel.SelectedUpgradeComponent is not null;
+    }
+
 }
