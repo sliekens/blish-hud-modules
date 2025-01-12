@@ -170,14 +170,14 @@ public sealed class ChatLinkEditor : FlowPanel
 
     private void MaxQuantityClicked(object sender, MouseEventArgs e)
     {
-        _viewModel.MaxQuantityCommand.Execute(null);
         Soundboard.Click.Play();
+        _viewModel.MaxQuantityCommand.Execute(null);
     }
 
     private void ResetQuantityClicked(object sender, MouseEventArgs e)
     {
-        _viewModel.MinQuantityCommand.Execute(null);
         Soundboard.Click.Play();
+        _viewModel.MinQuantityCommand.Execute(null);
     }
 
     private void IconMouseEntered(object sender, MouseEventArgs e)
