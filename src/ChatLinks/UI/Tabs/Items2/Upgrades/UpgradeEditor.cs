@@ -32,24 +32,25 @@ public sealed class UpgradeEditor : FlowPanel
 
         _upgradeSlot = CreateUpgradeSlot();
         _upgradeSlot.Click += UpgradeSlotClicked;
-        _upgradeSlot.Menu = new ContextMenuStrip(ContextMenu);
-
+        _upgradeSlot.Menu = new ContextMenuStrip();
+        _upgradeSlot.Menu.AddMenuItems(ContextMenu());
     }
 
     private IEnumerable<ContextMenuStripItem> ContextMenu()
     {
-        yield return MenuItem("Customize", ViewModel.CustomizeCommand);
-        yield return MenuItem(ViewModel.RemoveItemText, ViewModel.RemoveCommand);
+        yield return MenuItem(ViewModel.CustomizeCommand, () => "Customize");
+        yield return MenuItem(ViewModel.RemoveCommand, () => ViewModel.RemoveItemText);
     }
 
-    private ContextMenuStripItem MenuItem(string itemText, ICommand command)
+    private ContextMenuStripItem MenuItem(ICommand command, Func<string> itemText)
     {
-        var item = new ContextMenuStripItem(itemText);
+        var item = new ContextMenuStripItem(itemText());
         item.Click += (_, _) => command.Execute(null);
         item.Enabled = command.CanExecute(null);
         command.CanExecuteChanged += (_, _) =>
         {
             item.Enabled = command.CanExecute(null);
+            item.Text = itemText();
         };
         return item;
     }

@@ -13,6 +13,8 @@ public sealed class UpgradeEditorViewModel(
 {
     private bool _customizing;
 
+    private event EventHandler? CanRemoveChanged;
+
     public bool Customizing
     {
         get => _customizing;
@@ -21,7 +23,17 @@ public sealed class UpgradeEditorViewModel(
 
     public RelayCommand CustomizeCommand => new(OnCustomize);
 
-    public RelayCommand RemoveCommand => new(OnRemove, CanRemove);
+    public RelayCommand RemoveCommand => new(
+        OnRemove,
+        CanRemove,
+        (handler) =>
+        {
+            CanRemoveChanged += handler;
+        },
+        handler =>
+        {
+            CanRemoveChanged -= handler;
+        });
 
     public RelayCommand HideCommand => new(OnHide);
 
@@ -55,14 +67,14 @@ public sealed class UpgradeEditorViewModel(
     {
         UpgradeSlotViewModel.SelectedUpgradeComponent = args;
         Customizing = false;
-        RemoveCommand.OnCanExecuteChanged();
+        CanRemoveChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private void Removed(object sender, EventArgs args)
     {
         UpgradeSlotViewModel.SelectedUpgradeComponent = null;
         Customizing = false;
-        RemoveCommand.OnCanExecuteChanged();
+        CanRemoveChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private void OnCustomize()
@@ -78,6 +90,7 @@ public sealed class UpgradeEditorViewModel(
     private void OnRemove()
     {
         UpgradeSlotViewModel.SelectedUpgradeComponent = null;
+        CanRemoveChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private bool CanRemove()
