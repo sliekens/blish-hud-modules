@@ -2,13 +2,39 @@
 
 namespace SL.Common.ModelBinding;
 
-public sealed class RelayCommand<T>(Action<T> execute, Func<T, bool>? canExecute = null) : ICommand
+public sealed class RelayCommand<T>(Action<T> execute) : ICommand
 {
+    private readonly Func<T, bool>? _canExecute;
+
+    public RelayCommand(Action<T> execute, Func<T, bool> canExecute)
+        : this(execute)
+    {
+        _canExecute = canExecute;
+    }
+
+    public RelayCommand(
+        Action<T> execute,
+        Func<T, bool> canExecute,
+        Action<EventHandler> subscribeCanExecuteChanged,
+        Action<EventHandler> unsubscribeCanExecuteChanged
+    ) : this(execute, canExecute)
+    {
+        subscribeCanExecuteChanged.Invoke((sender, args) =>
+        {
+            CanExecuteChanged?.Invoke(sender, args);
+        });
+
+        unsubscribeCanExecuteChanged.Invoke(((sender, args) =>
+        {
+            CanExecuteChanged?.Invoke(sender, args);
+        }));
+    }
+
     public event EventHandler? CanExecuteChanged;
 
     public bool CanExecute(T parameter)
     {
-        return canExecute == null || canExecute(parameter);
+        return _canExecute == null || _canExecute(parameter);
     }
 
     bool ICommand.CanExecute(object parameter)
