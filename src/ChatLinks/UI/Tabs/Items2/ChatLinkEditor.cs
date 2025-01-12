@@ -124,7 +124,8 @@ public sealed class ChatLinkEditor : FlowPanel
             Width = 32,
             Height = 32,
             Icon = AsyncTexture2D.FromAssetId(157324),
-            ActiveIcon = AsyncTexture2D.FromAssetId(157325)
+            ActiveIcon = AsyncTexture2D.FromAssetId(157325),
+            BasicTooltipText = "Reset"
         };
 
         resetQuantity.Click += ResetQuantityClicked;
