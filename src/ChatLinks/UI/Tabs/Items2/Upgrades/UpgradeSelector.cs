@@ -10,8 +10,11 @@ namespace SL.ChatLinks.UI.Tabs.Items2.Upgrades;
 
 public sealed class UpgradeSelector : FlowPanel
 {
+    public UpgradeSelectorViewModel ViewModel { get; }
+
     public UpgradeSelector(UpgradeSelectorViewModel viewModel)
     {
+        ViewModel = viewModel;
         WidthSizingMode = SizingMode.Fill;
         HeightSizingMode = SizingMode.AutoSize;
         var accordion = new Accordion
@@ -19,7 +22,7 @@ public sealed class UpgradeSelector : FlowPanel
             Parent = this
         };
 
-        foreach (var group in viewModel.GetOptions())
+        foreach (var group in viewModel.Options)
         {
             var list = new ItemsList
             {
@@ -28,8 +31,17 @@ public sealed class UpgradeSelector : FlowPanel
 
             accordion.AddSection(group.Key, list);
 
+            list.SelectionChanged += SelectionChanged;
             list.MouseEntered += MouseEnteredList;
             list.MouseLeft += MouseLeftList;
+        }
+    }
+
+    private void SelectionChanged(ListBox<ItemsListViewModel> sender, ListBoxSelectionChangedEventArgs<ItemsListViewModel> args)
+    {
+        if (args.AddedItems is [{ } item])
+        {
+            ViewModel.SelectCommand.Execute(item.Data);
         }
     }
 

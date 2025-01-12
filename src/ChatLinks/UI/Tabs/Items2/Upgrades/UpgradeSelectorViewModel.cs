@@ -1,8 +1,11 @@
-﻿using GuildWars2.Items;
+﻿using System.Windows.Input;
+
+using GuildWars2.Items;
 
 using SL.ChatLinks.UI.Tabs.Items2.Collections;
 using SL.Common;
 using SL.Common.Controls.Items.Upgrades;
+using SL.Common.ModelBinding;
 
 namespace SL.ChatLinks.UI.Tabs.Items2.Upgrades;
 
@@ -13,7 +16,23 @@ public sealed class UpgradeSelectorViewModel(
     UpgradeSlotType slotType
 ) : ViewModel
 {
-    public IEnumerable<IGrouping<string, ItemsListViewModel>> GetOptions()
+    private List<IGrouping<string, ItemsListViewModel>>? _options;
+
+    public IReadOnlyList<IGrouping<string, ItemsListViewModel>> Options => _options ??= GetOptions();
+
+    public IEnumerable<ItemsListViewModel> AllOptions => Options.SelectMany(group => group);
+
+    public ICommand SelectCommand => new RelayCommand<ItemsListViewModel>(OnSelect);
+
+    private void OnSelect(ItemsListViewModel selection)
+    {
+        foreach (ItemsListViewModel option in AllOptions.Where(o => o.IsSelected))
+        {
+            option.IsSelected = option == selection;
+        }
+    }
+
+    private List<IGrouping<string, ItemsListViewModel>> GetOptions()
     {
         var groupOrder = new Dictionary<string, int>
         {
@@ -27,38 +46,41 @@ public sealed class UpgradeSelectorViewModel(
             { "Uncategorized", 5 }
         };
 
-        return from upgrade in customizer.GetUpgradeComponents(target, slotType)
-               let rank = upgrade.Rarity.IsDefined()
-                  ? upgrade.Rarity.ToEnum() switch
-                  {
-                      Rarity.Junk => 0,
-                      Rarity.Basic => 1,
-                      Rarity.Fine => 2,
-                      Rarity.Masterwork => 3,
-                      Rarity.Rare => 4,
-                      Rarity.Exotic => 5,
-                      Rarity.Ascended => 6,
-                      Rarity.Legendary => 7,
-                      _ => 99
-                  }
-                  : 99
-               let vm = itemsListViewModelFactory.Create(upgrade)
-               orderby rank, upgrade.Level, upgrade.Name
-               group vm by upgrade switch
-               {
-                   Gem => "Universal Upgrades",
-                   Rune when upgrade.GameTypes.All(
-                       type => type.IsDefined() && type.ToEnum() is GameType.Pvp or GameType.PvpLobby) => "Runes (PvP)",
-                   Sigil when upgrade.GameTypes.All(
-                       type => type.IsDefined() && type.ToEnum() is GameType.Pvp or GameType.PvpLobby) => "Sigils (PvP)",
-                   Rune => "Runes",
-                   Sigil => "Sigils",
-                   _ when upgrade.InfusionUpgradeFlags.Infusion => "Infusions",
-                   _ when upgrade.InfusionUpgradeFlags.Enrichment => "Enrichments",
-                   _ => "Uncategorized"
-               }
-            into grouped
-               orderby groupOrder[grouped.Key]
-               select grouped;
+        var groups =
+            from upgrade in customizer.GetUpgradeComponents(target, slotType)
+            let rank = upgrade.Rarity.IsDefined()
+                ? upgrade.Rarity.ToEnum() switch
+                {
+                    Rarity.Junk => 0,
+                    Rarity.Basic => 1,
+                    Rarity.Fine => 2,
+                    Rarity.Masterwork => 3,
+                    Rarity.Rare => 4,
+                    Rarity.Exotic => 5,
+                    Rarity.Ascended => 6,
+                    Rarity.Legendary => 7,
+                    _ => 99
+                }
+                : 99
+            let vm = itemsListViewModelFactory.Create(upgrade)
+            orderby rank, upgrade.Level, upgrade.Name
+            group vm by upgrade switch
+            {
+                Gem => "Universal Upgrades",
+                Rune when upgrade.GameTypes.All(
+                    type => type.IsDefined() && type.ToEnum() is GameType.Pvp or GameType.PvpLobby) => "Runes (PvP)",
+                Sigil when upgrade.GameTypes.All(
+                    type => type.IsDefined() && type.ToEnum() is GameType.Pvp or GameType.PvpLobby) => "Sigils (PvP)",
+                Rune => "Runes",
+                Sigil => "Sigils",
+                _ when upgrade.InfusionUpgradeFlags.Infusion => "Infusions",
+                _ when upgrade.InfusionUpgradeFlags.Enrichment => "Enrichments",
+                _ => "Uncategorized"
+            }
+               into grouped
+            orderby groupOrder[grouped.Key]
+            select grouped;
+
+        return groups.ToList();
     }
 }
