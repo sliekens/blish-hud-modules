@@ -7,6 +7,8 @@ using Blish_HUD.Input;
 
 using Microsoft.Xna.Framework;
 
+using SL.Common;
+
 namespace SL.ChatLinks.UI.Tabs.Items2.Upgrades;
 
 public sealed class UpgradeEditor : FlowPanel
@@ -44,6 +46,7 @@ public sealed class UpgradeEditor : FlowPanel
 
     private void UpgradeSlotClicked(object sender, MouseEventArgs e)
     {
+        Soundboard.Click.Play();
         ViewModel.CustomizeCommand.Execute(null);
     }
 
