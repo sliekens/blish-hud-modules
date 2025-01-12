@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 
+using MonoGame.Extended;
 using MonoGame.Extended.BitmapFonts;
 
 using Mouse = Microsoft.Xna.Framework.Input.Mouse;
@@ -244,7 +245,7 @@ public class NumberInput : TextInputBase
                 (int)highlightStart - 1,
                 _textRectangle.Y,
                 (int)highlightWidth,
-                _font.LineHeight - 1);
+                _font.LineHeight - 1).Clip(_textBoxRectangle);
         }
     }
 
@@ -366,6 +367,21 @@ public class NumberInput : TextInputBase
         EnterPressed?.Invoke(this, EventArgs.Empty);
     }
 
+    /// <remarks>
+    /// Direct copy of <see cref="TextInputBase.PaintText(SpriteBatch, Rectangle, HorizontalAlignment)"/>
+    /// that also exposes the clippingRectangle parameter of
+    /// <see cref="BitmapFontExtensions.DrawString(SpriteBatch, BitmapFont, string, Vector2, Color, Rectangle?)"/>.
+    /// </remarks>
+    protected virtual void PaintText(SpriteBatch spriteBatch, Rectangle textRegion, HorizontalAlignment horizontalAlignment = HorizontalAlignment.Left, Rectangle? clippingRectangle = null)
+    {
+        if (!_focused && _text.Length == 0)
+        {
+            spriteBatch.DrawStringOnCtrl(this, _placeholderText, _font, textRegion, Color.LightGray, false, false, 0, horizontalAlignment, VerticalAlignment.Top, clippingRectangle);
+        }
+
+        spriteBatch.DrawStringOnCtrl(this, _text, _font, textRegion, _foreColor, false, false, 0, horizontalAlignment, VerticalAlignment.Top, clippingRectangle);
+    }
+
     protected override void Paint(SpriteBatch spriteBatch, Rectangle bounds)
     {
         #region Text
@@ -390,8 +406,8 @@ public class NumberInput : TextInputBase
                 }
             }
         }
-
-        PaintText(spriteBatch, _textRectangle, HorizontalAlignment.Right);
+        
+        PaintText(spriteBatch, _textRectangle, HorizontalAlignment.Right, _textBoxRectangle);
 
         #endregion Text
 
