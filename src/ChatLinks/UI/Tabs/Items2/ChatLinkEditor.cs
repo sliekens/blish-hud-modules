@@ -13,6 +13,7 @@ using Blish_HUD.Input;
 using SL.ChatLinks.UI.Tabs.Items2.Tooltips;
 using SL.Common.ModelBinding;
 using SL.Common;
+using SL.Common.Controls.Items.Upgrades;
 
 namespace SL.ChatLinks.UI.Tabs.Items2;
 
@@ -34,7 +35,6 @@ public sealed class ChatLinkEditor : FlowPanel
     {
         _viewModel = viewModel;
         ShowTint = true;
-        ShowBorder = true;
         FlowDirection = ControlFlowDirection.SingleTopToBottom;
         ControlPadding = new Vector2(0f, 15f);
         OuterControlPadding = new Vector2(10f);
@@ -156,6 +156,21 @@ public sealed class ChatLinkEditor : FlowPanel
         _chatLink.Menu = new ContextMenuStrip();
         var copy = _chatLink.Menu.AddMenuItem("Copy");
         copy.Click += CopyClicked;
+
+        Label infusionWarning = new()
+        {
+            Parent = this,
+            Width = Width - 20,
+            AutoSizeHeight = true,
+            WrapText = true,
+            TextColor = Color.Yellow,
+            Text = """
+                   Due to technical restrictions, the game only
+                   shows the item's default infusion(s) instead of
+                   the selected infusion(s).
+                   """,
+            Visible = false // TODO: warn when infusions are selected
+        };
 
         MessageBus.Register("item editor", MessageReceived);
 
