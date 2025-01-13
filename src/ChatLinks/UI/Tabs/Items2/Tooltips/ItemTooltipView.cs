@@ -771,9 +771,10 @@ public sealed class ItemTooltipView : View, ITooltipView
         }
     }
 
-    public void PrintVendorValue(Item item)
+    public void PrintVendorValue(Item _)
     {
-        if (item.VendorValue == Coin.Zero || item.Flags.NoSell)
+        var totalValue = ViewModel.TotalVendorValue;
+        if (totalValue == Coin.Zero || ViewModel.Item.Flags.NoSell)
         {
             return;
         }
@@ -782,9 +783,9 @@ public sealed class ItemTooltipView : View, ITooltipView
             .SetWidth(_layout.Width)
             .AutoSizeHeight();
 
-        if (item.VendorValue.Amount >= 10_000)
+        if (totalValue.Amount >= 10_000)
         {
-            FormattedLabelPartBuilder? gold = builder.CreatePart(item.VendorValue.Gold.ToString("N0"));
+            FormattedLabelPartBuilder? gold = builder.CreatePart(totalValue.Gold.ToString("N0"));
             gold.SetTextColor(new Color(0xDD, 0xBB, 0x44));
             gold.SetFontSize(ContentService.FontSize.Size16);
             gold.SetSuffixImage(AsyncTexture2D.FromAssetId(156904));
@@ -793,9 +794,9 @@ public sealed class ItemTooltipView : View, ITooltipView
             builder.CreatePart("  ", _ => { });
         }
 
-        if (item.VendorValue.Amount >= 100)
+        if (totalValue.Amount >= 100)
         {
-            FormattedLabelPartBuilder? silver = builder.CreatePart(item.VendorValue.Silver.ToString("N0"));
+            FormattedLabelPartBuilder? silver = builder.CreatePart(totalValue.Silver.ToString("N0"));
             silver.SetTextColor(new Color(0xC0, 0xC0, 0xC0));
             silver.SetFontSize(ContentService.FontSize.Size16);
             silver.SetSuffixImage(AsyncTexture2D.FromAssetId(156907));
@@ -804,7 +805,7 @@ public sealed class ItemTooltipView : View, ITooltipView
             builder.CreatePart("  ", _ => { });
         }
 
-        FormattedLabelPartBuilder? copper = builder.CreatePart(item.VendorValue.Copper.ToString("N0"));
+        FormattedLabelPartBuilder? copper = builder.CreatePart(totalValue.Copper.ToString("N0"));
         copper.SetTextColor(new Color(0xCD, 0x7F, 0x32));
         copper.SetFontSize(ContentService.FontSize.Size16);
         copper.SetSuffixImage(AsyncTexture2D.FromAssetId(156902));

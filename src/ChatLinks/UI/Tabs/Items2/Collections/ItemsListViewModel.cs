@@ -47,7 +47,7 @@ public sealed class ItemsListViewModel(
             upgrades.AddRange(InfusionSlots(upgradable));
         }
 
-        return tooltipViewModelFactory.Create(item, upgrades);
+        return tooltipViewModelFactory.Create(item, 1, upgrades);
     }
 
     private IEnumerable<UpgradeSlot> UpgradeSlots(IUpgradable upgradable)

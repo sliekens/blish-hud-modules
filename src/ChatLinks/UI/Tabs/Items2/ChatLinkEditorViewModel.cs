@@ -211,7 +211,7 @@ public sealed class ChatLinkEditorViewModel : ViewModel
                 Type = vm.UpgradeSlotType,
                 UpgradeComponent = vm.EffectiveUpgradeComponent
             });
-        return _tooltipViewModelFactory.Create(Item, upgrades);
+        return _tooltipViewModelFactory.Create(Item, Quantity, upgrades);
     }
 
     public AsyncTexture2D? GetIcon()

@@ -13,15 +13,17 @@ using SL.Common.Controls.Items.Upgrades;
 namespace SL.ChatLinks.UI.Tabs.Items2.Tooltips;
 
 public sealed class ItemTooltipViewModel(
-    ItemIcons icons,
-    Customizer customizer,
     Item item,
-    IEnumerable<UpgradeSlot> upgrades
-) : ViewModel
+    int quantity,
+    IEnumerable<UpgradeSlot> upgrades,
+    ItemIcons icons,
+    Customizer customizer) : ViewModel
 {
     public IReadOnlyList<UpgradeSlot> UpgradesSlots { get; } = upgrades.ToList();
 
     public Item Item { get; } = item;
+
+    public int Quantity { get; } = quantity;
 
     public string? DefaultSuffixName { get; } = customizer.DefaultSuffixItem(item)?.SuffixName;
 
@@ -65,7 +67,7 @@ public sealed class ItemTooltipViewModel(
         })
         ?.UpgradeComponent?.SuffixName ?? DefaultSuffixName;
 
-    public int Quantity { get; set; }
+    public Coin TotalVendorValue => Item.VendorValue * Quantity;
 
     public string AttributeName(Extensible<AttributeName> stat)
     {

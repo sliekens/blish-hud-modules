@@ -1,4 +1,6 @@
-﻿using Blish_HUD;
+﻿using System.ComponentModel;
+
+using Blish_HUD;
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
 
@@ -156,6 +158,18 @@ public sealed class ChatLinkEditor : FlowPanel
         copy.Click += CopyClicked;
 
         MessageBus.Register("item editor", MessageReceived);
+
+        viewModel.PropertyChanged += PropertyChanged;
+    }
+
+    private new void PropertyChanged(object sender, PropertyChangedEventArgs args)
+    {
+        switch (args.PropertyName)
+        {
+            case nameof(_viewModel.Quantity):
+                _itemIcon.Tooltip = null;
+                break;
+        }
     }
 
     protected override void OnMouseWheelScrolled(MouseEventArgs e)
