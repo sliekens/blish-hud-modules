@@ -575,6 +575,7 @@
           "GW2SDK": "[2.1.0, )",
           "Gw2Sharp": "[1.7.4, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[3.1.32, )",
+          "Microsoft.Extensions.Logging.Abstractions": "[3.1.32, )",
           "System.ComponentModel.Composition": "[6.0.0, )"
         }
       }

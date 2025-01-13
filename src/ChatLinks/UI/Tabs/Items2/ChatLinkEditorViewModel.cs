@@ -21,6 +21,8 @@ namespace SL.ChatLinks.UI.Tabs.Items2;
 
 public sealed class ChatLinkEditorViewModel : ViewModel
 {
+    private bool _allowScroll = true;
+
     private int _quantity = 1;
 
     private UpgradeComponent? _suffixItem;
@@ -40,6 +42,7 @@ public sealed class ChatLinkEditorViewModel : ViewModel
     private readonly IClipBoard _clipboard;
 
     public ChatLinkEditorViewModel(
+        IEventAggregator eventAggregator,
         ItemTooltipViewModelFactory tooltipViewModelFactory,
         UpgradeEditorViewModelFactory upgradeEditorViewModelFactory,
         ItemIcons icons,
@@ -90,6 +93,24 @@ public sealed class ChatLinkEditorViewModel : ViewModel
                 }
             };
         }
+
+        eventAggregator.Subscribe<MouseEnteredUpgradeSelector>(OnMouseEnteredUpgradeSelector);
+        eventAggregator.Subscribe<MouseLeftUpgradeSelector>(OnMouseLeftUpgradeSelector);
+    }
+    private void OnMouseEnteredUpgradeSelector(MouseEnteredUpgradeSelector obj)
+    {
+        AllowScroll = false;
+    }
+
+    private void OnMouseLeftUpgradeSelector(MouseLeftUpgradeSelector obj)
+    {
+        AllowScroll = true;
+    }
+
+    public bool AllowScroll
+    {
+        get => _allowScroll;
+        set => SetField(ref _allowScroll, value);
     }
 
     public Item Item { get; }

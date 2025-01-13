@@ -2,16 +2,16 @@
 using GuildWars2.Items;
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 using SL.ChatLinks.Storage;
+using SL.Common;
 using SL.Common.Controls.Items.Upgrades;
 
 namespace SL.ChatLinks.UI.Tabs.Items2;
 
 public sealed class Customizer(
-    ILogger<Customizer> logger,
-    ChatLinksContext context
+    ChatLinksContext context,
+    IEventAggregator eventAggregator
 ) : IDisposable, IAsyncDisposable
 {
     public IReadOnlyDictionary<int, UpgradeComponent> UpgradeComponents { get; private set; } =
@@ -21,32 +21,25 @@ public sealed class Customizer(
     {
         UpgradeComponents =
             await context.Set<UpgradeComponent>().AsNoTracking().ToDictionaryAsync(upgrade => upgrade.Id);
-        MessageBus.Register("customizer", async void (message) =>
-        {
-            try
-            {
-                if (message == "refresh")
-                {
-                    UpgradeComponents = await context.Set<UpgradeComponent>().AsNoTracking()
-                        .ToDictionaryAsync(upgrade => upgrade.Id);
-                }
-            }
-            catch (Exception reason)
-            {
-                logger.LogError(reason, "Failed to process message: {Message}", message);
-            }
-        });
+
+        eventAggregator.Subscribe<DatabaseSyncCompleted>(OnDatabaseSyncCompleted);
+    }
+
+    private async ValueTask OnDatabaseSyncCompleted(DatabaseSyncCompleted _)
+    {
+        UpgradeComponents = await context.Set<UpgradeComponent>().AsNoTracking()
+            .ToDictionaryAsync(upgrade => upgrade.Id);
     }
 
     public void Dispose()
     {
-        MessageBus.Unregister("customizer");
+        eventAggregator.Unsubscribe<DatabaseSyncCompleted>(OnDatabaseSyncCompleted);
         context.Dispose();
     }
 
     public async ValueTask DisposeAsync()
     {
-        MessageBus.Unregister("customizer");
+        eventAggregator.Unsubscribe<DatabaseSyncCompleted>(OnDatabaseSyncCompleted);
         await context.DisposeAsync();
     }
 

@@ -32,8 +32,8 @@ public sealed class UpgradeSelector : FlowPanel
             accordion.AddSection(group.Key, list);
 
             list.SelectionChanged += SelectionChanged;
-            list.MouseEntered += MouseEnteredList;
-            list.MouseLeft += MouseLeftList;
+            list.MouseEntered += MouseEnteredUpgradeSelectorCommand;
+            list.MouseLeft += MouseLeftUpgradeSelectorCommand;
         }
     }
 
@@ -49,13 +49,13 @@ public sealed class UpgradeSelector : FlowPanel
         }
     }
 
-    private void MouseEnteredList(object sender, MouseEventArgs e)
+    private void MouseEnteredUpgradeSelectorCommand(object sender, MouseEventArgs e)
     {
-        MessageBus.Send("item editor", "prevent scroll");
+        ViewModel.MouseEnteredUpgradeSelectorCommand.Execute();
     }
 
-    private void MouseLeftList(object sender, MouseEventArgs e)
+    private void MouseLeftUpgradeSelectorCommand(object sender, MouseEventArgs e)
     {
-        MessageBus.Send("item editor", "allow scroll");
+        ViewModel.MouseLeftUpgradeSelectorCommand.Execute();
     }
 }

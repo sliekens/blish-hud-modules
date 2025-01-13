@@ -57,6 +57,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 
         services.AddTransient<ItemSeeder>();
 
+        services.AddSingleton<IEventAggregator, DefaultEventAggregator>();
         services.AddTransient<MainIcon>();
         services.AddTransient<MainIconViewModel>();
         services.AddTransient<MainWindow>();

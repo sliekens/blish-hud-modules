@@ -98,27 +98,8 @@ public class ItemsTabView : View<ItemsTabPresenter>, IItemsTabView
         };
     }
 
-    protected override void OnPresenterAssigned(ItemsTabPresenter presenter)
-    {
-        MessageBus.Register("items_tab", async void (message) =>
-        {
-            try
-            {
-                if (message == "refresh")
-                {
-                    await presenter.RefreshUpgrades();
-                }
-            }
-            catch (Exception reason)
-            {
-                _logger.LogError(reason, "Failed to process message: {Message}", message);
-            }
-        });
-    }
-
     protected override void Unload()
     {
-        MessageBus.Unregister("items_tab");
         if (_searchBox is not null)
         {
             _searchBox.TextChanged -= SearchInput;

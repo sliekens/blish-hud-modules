@@ -12,12 +12,13 @@ public sealed class ChatLinkEditorViewModelFactory(
     UpgradeEditorViewModelFactory upgradeEditorViewModelFactory,
     ItemIcons icons,
     Customizer customizer,
-    IClipBoard clipboard
-)
+    IClipBoard clipboard,
+    IEventAggregator eventAggregator)
 {
     public ChatLinkEditorViewModel Create(Item item)
     {
         return new ChatLinkEditorViewModel(
+            eventAggregator,
             itemTooltipViewModelFactory,
             upgradeEditorViewModelFactory,
             icons,

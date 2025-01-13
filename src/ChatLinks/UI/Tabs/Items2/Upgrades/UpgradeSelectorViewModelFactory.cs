@@ -1,11 +1,15 @@
 ﻿using GuildWars2.Items;
 
 using SL.ChatLinks.UI.Tabs.Items2.Collections;
+using SL.Common;
 using SL.Common.Controls.Items.Upgrades;
 
 namespace SL.ChatLinks.UI.Tabs.Items2.Upgrades;
 
-public sealed class UpgradeSelectorViewModelFactory(Customizer customizer, ItemsListViewModelFactory itemsListViewModelFactory)
+public sealed class UpgradeSelectorViewModelFactory(
+    Customizer customizer,
+    ItemsListViewModelFactory itemsListViewModelFactory,
+    IEventAggregator eventAggregator)
 {
     public UpgradeSelectorViewModel Create(
         Item targetItem,
@@ -18,7 +22,8 @@ public sealed class UpgradeSelectorViewModelFactory(Customizer customizer, Items
             itemsListViewModelFactory, 
             targetItem, 
             slotType, 
-            selectedUpgradeComponent
+            selectedUpgradeComponent,
+            eventAggregator
         );
     }
 }

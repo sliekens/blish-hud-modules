@@ -1,6 +1,4 @@
-﻿using System.Windows.Input;
-
-using GuildWars2.Items;
+﻿using GuildWars2.Items;
 
 using SL.ChatLinks.UI.Tabs.Items2.Collections;
 using SL.Common;
@@ -14,7 +12,8 @@ public sealed class UpgradeSelectorViewModel(
     ItemsListViewModelFactory itemsListViewModelFactory,
     Item target,
     UpgradeSlotType slotType,
-    UpgradeComponent? selectedUpgradeComponent
+    UpgradeComponent? selectedUpgradeComponent,
+    IEventAggregator eventAggregator
 ) : ViewModel
 {
     public event EventHandler<UpgradeComponent>? Selected;
@@ -27,10 +26,6 @@ public sealed class UpgradeSelectorViewModel(
 
     public RelayCommand<ItemsListViewModel> SelectCommand => new(OnSelect);
 
-    public RelayCommand DeselectCommand => new(OnRemove);
-
-    private List<IGrouping<string, ItemsListViewModel>>? _options;
-
     private void OnSelect(ItemsListViewModel selection)
     {
         foreach (ItemsListViewModel option in AllOptions.Where(o => o.IsSelected))
@@ -41,10 +36,28 @@ public sealed class UpgradeSelectorViewModel(
         Selected?.Invoke(this, (UpgradeComponent)selection.Item);
     }
 
+    public RelayCommand DeselectCommand => new(OnRemove);
+
     private void OnRemove()
     {
         Deselected?.Invoke(this, EventArgs.Empty);
     }
+
+    public RelayCommand MouseEnteredUpgradeSelectorCommand => new(OnMouseEnteredUpgradeSelector);
+
+    private void OnMouseEnteredUpgradeSelector()
+    {
+        eventAggregator.Publish(new MouseEnteredUpgradeSelector());
+    }
+
+    public RelayCommand MouseLeftUpgradeSelectorCommand => new(OnMouseLeftUpgradeSelector);
+
+    private void OnMouseLeftUpgradeSelector()
+    {
+        eventAggregator.Publish(new MouseLeftUpgradeSelector());
+    }
+
+    private List<IGrouping<string, ItemsListViewModel>>? _options;
 
     private List<IGrouping<string, ItemsListViewModel>> GetOptions()
     {

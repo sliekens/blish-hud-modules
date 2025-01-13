@@ -6,12 +6,16 @@ using GuildWars2.Items;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
+using SL.Common;
+
 namespace SL.ChatLinks.Storage;
 
 public sealed class ItemSeeder(
     ILogger<ItemSeeder> logger,
     ChatLinksContext context,
-    Gw2Client gw2Client)
+    Gw2Client gw2Client,
+    IEventAggregator eventAggregator
+)
 {
     public async Task Seed(IProgress<string> progress, CancellationToken cancellationToken)
     {
@@ -59,8 +63,9 @@ public sealed class ItemSeeder(
         }
 
         logger.LogInformation("Finished seeding {Count} items.", index.Count);
-        MessageBus.Send("items_tab", "refresh");
+        await eventAggregator.PublishAsync(new DatabaseSyncCompleted(), cancellationToken);
     }
+
     private static void DetachAllEntities(ChatLinksContext context)
     {
         var entries = context.ChangeTracker.Entries().ToList();

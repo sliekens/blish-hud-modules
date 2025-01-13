@@ -13,7 +13,6 @@ using Blish_HUD.Input;
 using SL.ChatLinks.UI.Tabs.Items2.Tooltips;
 using SL.Common.ModelBinding;
 using SL.Common;
-using SL.Common.Controls.Items.Upgrades;
 
 namespace SL.ChatLinks.UI.Tabs.Items2;
 
@@ -27,13 +26,9 @@ public sealed class ChatLinkEditor : FlowPanel
 
     private readonly TextBox _chatLink;
 
-    private readonly ChatLinkEditorViewModel _viewModel;
-
-    private bool _allowScroll = true;
-
     public ChatLinkEditor(ChatLinkEditorViewModel viewModel)
     {
-        _viewModel = viewModel;
+        ViewModel = viewModel;
         ShowTint = true;
         FlowDirection = ControlFlowDirection.SingleTopToBottom;
         ControlPadding = new Vector2(0f, 15f);
@@ -150,7 +145,7 @@ public sealed class ChatLinkEditor : FlowPanel
             Width = 200
         };
 
-        Binder.Bind(_viewModel, vm => vm.ChatLink, _chatLink);
+        Binder.Bind(ViewModel, vm => vm.ChatLink, _chatLink);
 
         _chatLink.Click += ChatLinkClicked;
         _chatLink.Menu = new ContextMenuStrip();
@@ -172,16 +167,16 @@ public sealed class ChatLinkEditor : FlowPanel
             Visible = false // TODO: warn when infusions are selected
         };
 
-        MessageBus.Register("item editor", MessageReceived);
-
         viewModel.PropertyChanged += PropertyChanged;
     }
+
+    public ChatLinkEditorViewModel ViewModel { get; }
 
     private new void PropertyChanged(object sender, PropertyChangedEventArgs args)
     {
         switch (args.PropertyName)
         {
-            case nameof(_viewModel.Quantity):
+            case nameof(ViewModel.Quantity):
                 _itemIcon.Tooltip = null;
                 break;
         }
@@ -189,40 +184,27 @@ public sealed class ChatLinkEditor : FlowPanel
 
     protected override void OnMouseWheelScrolled(MouseEventArgs e)
     {
-        if (_allowScroll)
+        if (ViewModel.AllowScroll)
         {
             base.OnMouseWheelScrolled(e);
-        }
-    }
-
-    private void MessageReceived(string message)
-    {
-        switch (message)
-        {
-            case "prevent scroll":
-                _allowScroll = false;
-                break;
-            case "allow scroll":
-                _allowScroll = true;
-                break;
         }
     }
 
     private void MaxQuantityClicked(object sender, MouseEventArgs e)
     {
         Soundboard.Click.Play();
-        _viewModel.MaxQuantityCommand.Execute(null);
+        ViewModel.MaxQuantityCommand.Execute(null);
     }
 
     private void ResetQuantityClicked(object sender, MouseEventArgs e)
     {
         Soundboard.Click.Play();
-        _viewModel.MinQuantityCommand.Execute(null);
+        ViewModel.MinQuantityCommand.Execute(null);
     }
 
     private void IconMouseEntered(object sender, MouseEventArgs e)
     {
-        _itemIcon.Tooltip ??= new Tooltip(new ItemTooltipView(_viewModel.CreateTooltipViewModel()));
+        _itemIcon.Tooltip ??= new Tooltip(new ItemTooltipView(ViewModel.CreateTooltipViewModel()));
     }
 
     private void ChatLinkClicked(object sender, MouseEventArgs e)
@@ -233,12 +215,6 @@ public sealed class ChatLinkEditor : FlowPanel
 
     private void CopyClicked(object sender, MouseEventArgs e)
     {
-        _viewModel.CopyCommand.Execute(null);
-    }
-
-    protected override void DisposeControl()
-    {
-        MessageBus.Unregister("item editor");
-        base.DisposeControl();
+        ViewModel.CopyCommand.Execute(null);
     }
 }
