@@ -40,6 +40,7 @@ public sealed class ChatLinkEditorViewModel : ViewModel
     private readonly Customizer _customizer;
 
     private readonly IClipBoard _clipboard;
+    private bool _showInfusionWarning;
 
     public ChatLinkEditorViewModel(
         IEventAggregator eventAggregator,
@@ -96,7 +97,15 @@ public sealed class ChatLinkEditorViewModel : ViewModel
 
         eventAggregator.Subscribe<MouseEnteredUpgradeSelector>(OnMouseEnteredUpgradeSelector);
         eventAggregator.Subscribe<MouseLeftUpgradeSelector>(OnMouseLeftUpgradeSelector);
+        eventAggregator.Subscribe<UpgradeSlotChanged>(OnUpgradeSlotChanged);
     }
+
+    private void OnUpgradeSlotChanged(UpgradeSlotChanged obj)
+    {
+        ShowInfusionWarning = UpgradeEditorViewModels.Where(editor => editor.UpgradeSlotType != UpgradeSlotType.Default)
+            .Any(editor => editor.UpgradeSlotViewModel.SelectedUpgradeComponent is not null);
+    }
+
     private void OnMouseEnteredUpgradeSelector(MouseEnteredUpgradeSelector obj)
     {
         AllowScroll = false;
@@ -111,6 +120,12 @@ public sealed class ChatLinkEditorViewModel : ViewModel
     {
         get => _allowScroll;
         set => SetField(ref _allowScroll, value);
+    }
+
+    public bool ShowInfusionWarning
+    {
+        get => _showInfusionWarning;
+        private set => SetField(ref _showInfusionWarning, value);
     }
 
     public Item Item { get; }

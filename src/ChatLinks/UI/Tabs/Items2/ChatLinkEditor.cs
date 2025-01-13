@@ -25,6 +25,7 @@ public sealed class ChatLinkEditor : FlowPanel
     private readonly NumberInput _quantity;
 
     private readonly TextBox _chatLink;
+    private Label _infusionWarning;
 
     public ChatLinkEditor(ChatLinkEditorViewModel viewModel)
     {
@@ -152,7 +153,7 @@ public sealed class ChatLinkEditor : FlowPanel
         var copy = _chatLink.Menu.AddMenuItem("Copy");
         copy.Click += CopyClicked;
 
-        Label infusionWarning = new()
+        _infusionWarning = new Label
         {
             Parent = this,
             Width = Width - 20,
@@ -164,13 +165,18 @@ public sealed class ChatLinkEditor : FlowPanel
                    shows the item's default infusion(s) instead of
                    the selected infusion(s).
                    """,
-            Visible = false // TODO: warn when infusions are selected
+            Visible = ViewModel.ShowInfusionWarning
         };
 
         viewModel.PropertyChanged += PropertyChanged;
     }
 
     public ChatLinkEditorViewModel ViewModel { get; }
+
+    public override void UpdateContainer(GameTime gameTime)
+    {
+        _infusionWarning.Visible = ViewModel.ShowInfusionWarning;
+    }
 
     private new void PropertyChanged(object sender, PropertyChangedEventArgs args)
     {

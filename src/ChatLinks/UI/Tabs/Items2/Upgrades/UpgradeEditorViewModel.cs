@@ -7,10 +7,10 @@ using SL.Common.ModelBinding;
 namespace SL.ChatLinks.UI.Tabs.Items2.Upgrades;
 
 public sealed class UpgradeEditorViewModel(
+    IEventAggregator eventAggregator,
     UpgradeSlotViewModel upgradeSlotViewModel,
     UpgradeSelectorViewModelFactory upgradeComponentListViewModelFactory,
-    Item target
-) : ViewModel
+    Item target) : ViewModel
 {
     private bool _customizing;
 
@@ -70,22 +70,6 @@ public sealed class UpgradeEditorViewModel(
         return upgradeComponentListViewModel;
     }
 
-    private void Selected(object sender, UpgradeComponent args)
-    {
-        UpgradeSlotViewModel.SelectedUpgradeComponent = args;
-        Customizing = false;
-        CanRemoveChanged?.Invoke(this, EventArgs.Empty);
-        OnPropertyChanged(nameof(EffectiveUpgradeComponent));
-    }
-
-    private void Deselected(object sender, EventArgs args)
-    {
-        UpgradeSlotViewModel.SelectedUpgradeComponent = null;
-        Customizing = false;
-        CanRemoveChanged?.Invoke(this, EventArgs.Empty);
-        OnPropertyChanged(nameof(EffectiveUpgradeComponent));
-    }
-
     private void OnCustomize()
     {
         Customizing = !Customizing;
@@ -96,11 +80,30 @@ public sealed class UpgradeEditorViewModel(
         Customizing = false;
     }
 
+    private void Selected(object sender, UpgradeComponent args)
+    {
+        UpgradeSlotViewModel.SelectedUpgradeComponent = args;
+        Customizing = false;
+        CanRemoveChanged?.Invoke(this, EventArgs.Empty);
+        OnPropertyChanged(nameof(EffectiveUpgradeComponent));
+        eventAggregator.Publish(new UpgradeSlotChanged());
+    }
+
+    private void Deselected(object sender, EventArgs args)
+    {
+        UpgradeSlotViewModel.SelectedUpgradeComponent = null;
+        Customizing = false;
+        CanRemoveChanged?.Invoke(this, EventArgs.Empty);
+        OnPropertyChanged(nameof(EffectiveUpgradeComponent));
+        eventAggregator.Publish(new UpgradeSlotChanged());
+    }
+
     private void OnRemove()
     {
         UpgradeSlotViewModel.SelectedUpgradeComponent = null;
         CanRemoveChanged?.Invoke(this, EventArgs.Empty);
         OnPropertyChanged(nameof(EffectiveUpgradeComponent));
+        eventAggregator.Publish(new UpgradeSlotChanged());
     }
 
     private bool CanRemove()

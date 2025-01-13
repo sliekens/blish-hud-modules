@@ -1,12 +1,14 @@
 ﻿using GuildWars2.Items;
 
 using SL.ChatLinks.UI.Tabs.Items2.Tooltips;
+using SL.Common;
 using SL.Common.Controls.Items.Services;
 using SL.Common.Controls.Items.Upgrades;
 
 namespace SL.ChatLinks.UI.Tabs.Items2.Upgrades;
 
 public sealed class UpgradeEditorViewModelFactory(
+    IEventAggregator eventAggregator,
     ItemIcons icons,
     Customizer customizer,
     UpgradeSelectorViewModelFactory upgradeComponentListViewModelFactory,
@@ -25,6 +27,6 @@ public sealed class UpgradeEditorViewModelFactory(
             DefaultUpgradeComponent = defaultUpgradeComponent
         };
 
-        return new UpgradeEditorViewModel(upgradeSlotViewModel, upgradeComponentListViewModelFactory, targetItem);
+        return new UpgradeEditorViewModel(eventAggregator, upgradeSlotViewModel, upgradeComponentListViewModelFactory, targetItem);
     }
 }
