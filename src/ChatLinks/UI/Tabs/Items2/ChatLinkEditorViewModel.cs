@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Input;
 
 using Blish_HUD.Content;
@@ -16,6 +15,8 @@ using SL.Common.Controls.Items.Services;
 using SL.Common.Controls.Items.Upgrades;
 using SL.Common.ModelBinding;
 
+using UpgradeSlot = SL.ChatLinks.UI.Tabs.Items2.Tooltips.UpgradeSlot;
+
 namespace SL.ChatLinks.UI.Tabs.Items2;
 
 public sealed class ChatLinkEditorViewModel : ViewModel
@@ -26,8 +27,6 @@ public sealed class ChatLinkEditorViewModel : ViewModel
 
     private UpgradeComponent? _secondarySuffixItem;
 
-    private ItemLink _chatLinkBuilder;
-
     private readonly List<UpgradeEditorViewModel> _upgradeEditorViewModels;
 
     private readonly ItemTooltipViewModelFactory _tooltipViewModelFactory;
@@ -36,20 +35,23 @@ public sealed class ChatLinkEditorViewModel : ViewModel
 
     private readonly ItemIcons _icons;
 
+    private readonly Customizer _customizer;
+
     private readonly IClipBoard _clipboard;
 
     public ChatLinkEditorViewModel(
         ItemTooltipViewModelFactory tooltipViewModelFactory,
         UpgradeEditorViewModelFactory upgradeEditorViewModelFactory,
         ItemIcons icons,
+        Customizer customizer,
         IClipBoard clipboard,
         Item item)
     {
         _tooltipViewModelFactory = tooltipViewModelFactory;
         _upgradeEditorViewModelFactory = upgradeEditorViewModelFactory;
         _icons = icons;
+        _customizer = customizer;
         _clipboard = clipboard;
-        _chatLinkBuilder = new ItemLink { ItemId = item.Id };
         Item = item;
         ItemNameColor = ItemColors.Rarity(item.Rarity);
         _upgradeEditorViewModels = CreateUpgradeEditorViewModels().ToList();
@@ -99,14 +101,42 @@ public sealed class ChatLinkEditorViewModel : ViewModel
     {
         get
         {
-            if (Quantity <= 1)
+            var name = Item.Name;
+
+            if (!Item.Flags.HideSuffix)
             {
-                return Item.Name;
+                var defaultSuffix = _customizer.DefaultSuffixItem(Item);
+                if (!string.IsNullOrEmpty(defaultSuffix?.SuffixName) && name.EndsWith(defaultSuffix!.SuffixName))
+                {
+                    name = name[..^defaultSuffix.SuffixName.Length];
+                    name = name.TrimEnd();
+                }
+
+                var newSuffix = SuffixName ?? defaultSuffix?.SuffixName;
+                if (!string.IsNullOrEmpty(newSuffix))
+                {
+                    name += $" {newSuffix}";
+                }
             }
 
-            return $"{Quantity} {Item.Name}";
+            if (Quantity > 1)
+            {
+                name = $"{Quantity} {name}";
+            }
+
+            return name;
         }
     }
+
+    public string? SuffixName => UpgradeEditorViewModels
+        .FirstOrDefault(u => u is
+        {
+            UpgradeSlotViewModel:
+            {
+                Type: UpgradeSlotType.Default,
+                SelectedUpgradeComponent: not null
+            }
+        })?.UpgradeSlotViewModel.SelectedUpgradeComponent?.SuffixName;
 
     public Color ItemNameColor { get; }
 
@@ -118,7 +148,6 @@ public sealed class ChatLinkEditorViewModel : ViewModel
             OnPropertyChanging(nameof(ItemName));
             OnPropertyChanging(nameof(ChatLink));
             SetField(ref _quantity, value);
-            _chatLinkBuilder = _chatLinkBuilder with { Count = value };
             OnPropertyChanged(nameof(ItemName));
             OnPropertyChanged(nameof(ChatLink));
         }
@@ -132,10 +161,6 @@ public sealed class ChatLinkEditorViewModel : ViewModel
             OnPropertyChanging(nameof(ItemName));
             OnPropertyChanging(nameof(ChatLink));
             SetField(ref _suffixItem, value);
-            _chatLinkBuilder = _chatLinkBuilder with
-            {
-                SuffixItemId = value?.Id
-            };
             OnPropertyChanged(nameof(ItemName));
             OnPropertyChanged(nameof(ChatLink));
         }
@@ -149,10 +174,6 @@ public sealed class ChatLinkEditorViewModel : ViewModel
             OnPropertyChanging(nameof(ItemName));
             OnPropertyChanging(nameof(ChatLink));
             SetField(ref _secondarySuffixItem, value);
-            _chatLinkBuilder = _chatLinkBuilder with
-            {
-                SecondarySuffixItemId = value?.Id
-            };
             OnPropertyChanged(nameof(ItemName));
             OnPropertyChanged(nameof(ChatLink));
         }
@@ -160,13 +181,19 @@ public sealed class ChatLinkEditorViewModel : ViewModel
 
     public string ChatLink
     {
-        get => _chatLinkBuilder.ToString();
-        [MemberNotNull(nameof(_chatLinkBuilder))]
+        get => new ItemLink
+        {
+            ItemId = Item.Id,
+            Count = Quantity,
+            SuffixItemId = SuffixItem?.Id,
+            SecondarySuffixItemId = SecondarySuffixItem?.Id
+        }.ToString();
+
+        // ReSharper disable once ValueParameterNotUsed
         set
         {
-            OnPropertyChanging();
-            _chatLinkBuilder = ItemLink.Parse(value);
-            OnPropertyChanged();
+            // Need a setter because this is bound to a writable TextBox
+            // TODO: read-only TextBox with one-way binding and a Copy button
         }
     }
 
@@ -178,7 +205,13 @@ public sealed class ChatLinkEditorViewModel : ViewModel
 
     public ItemTooltipViewModel CreateTooltipViewModel()
     {
-        return _tooltipViewModelFactory.Create(Item);
+        var upgrades = UpgradeEditorViewModels
+            .Select(vm => new UpgradeSlot
+            {
+                Type = vm.UpgradeSlotType,
+                UpgradeComponent = vm.EffectiveUpgradeComponent
+            });
+        return _tooltipViewModelFactory.Create(Item, upgrades);
     }
 
     public AsyncTexture2D? GetIcon()

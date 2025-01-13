@@ -41,5 +41,5 @@ public sealed class UpgradeSlotViewModel(
 
     public AsyncTexture2D? GetIcon(UpgradeComponent item) => icons.GetIcon(item);
 
-    public ItemTooltipViewModel CreateTooltipViewModel(UpgradeComponent item) => itemTooltipViewModelFactory.Create(item);
+    public ItemTooltipViewModel CreateTooltipViewModel(UpgradeComponent item) => itemTooltipViewModelFactory.Create(item, []);
 }

@@ -6,8 +6,8 @@ namespace SL.ChatLinks.UI.Tabs.Items2.Tooltips;
 
 public sealed class ItemTooltipViewModelFactory(ItemIcons icons, Customizer customizer)
 {
-    public ItemTooltipViewModel Create(Item item)
+    public ItemTooltipViewModel Create(Item item, IEnumerable<UpgradeSlot> upgrades)
     {
-        return new ItemTooltipViewModel(icons, customizer, item);
+        return new ItemTooltipViewModel(icons, customizer, item, upgrades);
     }
 }

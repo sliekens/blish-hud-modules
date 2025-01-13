@@ -11,6 +11,7 @@ public sealed class ChatLinkEditorViewModelFactory(
     ItemTooltipViewModelFactory itemTooltipViewModelFactory,
     UpgradeEditorViewModelFactory upgradeEditorViewModelFactory,
     ItemIcons icons,
+    Customizer customizer,
     IClipBoard clipboard
 )
 {
@@ -20,6 +21,7 @@ public sealed class ChatLinkEditorViewModelFactory(
             itemTooltipViewModelFactory,
             upgradeEditorViewModelFactory,
             icons,
+            customizer,
             clipboard,
             item
         );

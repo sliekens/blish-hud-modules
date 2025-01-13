@@ -1,17 +1,71 @@
-﻿using GuildWars2;
+﻿using Blish_HUD.Content;
+
+using GuildWars2;
 using GuildWars2.Hero;
 using GuildWars2.Items;
 
+using Microsoft.Xna.Framework;
+
 using SL.Common;
 using SL.Common.Controls.Items.Services;
+using SL.Common.Controls.Items.Upgrades;
 
 namespace SL.ChatLinks.UI.Tabs.Items2.Tooltips;
 
-public sealed class ItemTooltipViewModel(ItemIcons icons, Customizer customizer, Item item) : ViewModel
+public sealed class ItemTooltipViewModel(
+    ItemIcons icons,
+    Customizer customizer,
+    Item item,
+    IEnumerable<UpgradeSlot> upgrades
+) : ViewModel
 {
+    public IReadOnlyList<UpgradeSlot> UpgradesSlots { get; } = upgrades.ToList();
+
     public Item Item { get; } = item;
 
-    public IReadOnlyDictionary<int, UpgradeComponent> Upgrades => customizer.UpgradeComponents;
+    public string? DefaultSuffixName { get; } = customizer.DefaultSuffixItem(item)?.SuffixName;
+
+    public Color ItemNameColor { get; } = ItemColors.Rarity(item.Rarity);
+
+    public string ItemName
+    {
+        get
+        {
+            var name = Item.Name;
+
+            if (!Item.Flags.HideSuffix)
+            {
+                if (!string.IsNullOrEmpty(DefaultSuffixName) && name.EndsWith(DefaultSuffixName!))
+                {
+                    name = name[..^DefaultSuffixName!.Length];
+                    name = name.TrimEnd();
+                }
+
+                var newSuffix = SuffixName ?? DefaultSuffixName;
+                if (!string.IsNullOrEmpty(newSuffix))
+                {
+                    name += $" {newSuffix}";
+                }
+            }
+
+            if (Quantity > 1)
+            {
+                name = $"{Quantity} {name}";
+            }
+
+            return name;
+        }
+    }
+
+    public string? SuffixName => UpgradesSlots
+        .FirstOrDefault(u => u is
+        {
+            Type: UpgradeSlotType.Default,
+            UpgradeComponent: not null
+        })
+        ?.UpgradeComponent?.SuffixName ?? DefaultSuffixName;
+
+    public int Quantity { get; set; }
 
     public string AttributeName(Extensible<AttributeName> stat)
     {
@@ -33,8 +87,8 @@ public sealed class ItemTooltipViewModel(ItemIcons icons, Customizer customizer,
             : stat.ToString();
     }
 
-    public ItemUpgradeBuilder UpgradeBuilder(ItemFlags flags)
+    public AsyncTexture2D? GetIcon(Item item)
     {
-        return new ItemUpgradeBuilder(flags, icons, customizer);
+        return icons.GetIcon(item);
     }
 }

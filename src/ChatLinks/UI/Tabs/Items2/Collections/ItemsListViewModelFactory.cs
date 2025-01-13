@@ -5,10 +5,14 @@ using SL.Common.Controls.Items.Services;
 
 namespace SL.ChatLinks.UI.Tabs.Items2.Collections;
 
-public sealed class ItemsListViewModelFactory(ItemIcons icons, ItemTooltipViewModelFactory tooltipViewModelFactory)
+public sealed class ItemsListViewModelFactory(
+    ItemIcons icons,
+    Customizer customizer,
+    ItemTooltipViewModelFactory tooltipViewModelFactory
+)
 {
     public ItemsListViewModel Create(Item item, bool isSelected)
     {
-        return new ItemsListViewModel(icons, item, tooltipViewModelFactory, isSelected);
+        return new ItemsListViewModel(icons, customizer, item, tooltipViewModelFactory, isSelected);
     }
 }

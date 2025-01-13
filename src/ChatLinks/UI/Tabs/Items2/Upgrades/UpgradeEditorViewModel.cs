@@ -1,6 +1,7 @@
 ﻿using GuildWars2.Items;
 
 using SL.Common;
+using SL.Common.Controls.Items.Upgrades;
 using SL.Common.ModelBinding;
 
 namespace SL.ChatLinks.UI.Tabs.Items2.Upgrades;
@@ -41,6 +42,10 @@ public sealed class UpgradeEditorViewModel(
 
     public Item TargetItem { get; } = target;
 
+    public UpgradeComponent? EffectiveUpgradeComponent =>
+        UpgradeSlotViewModel.SelectedUpgradeComponent
+        ?? UpgradeSlotViewModel.DefaultUpgradeComponent;
+
     public string RemoveItemText =>
         UpgradeSlotViewModel switch
         {
@@ -48,6 +53,8 @@ public sealed class UpgradeEditorViewModel(
             { DefaultUpgradeComponent: not null } => $"Remove {UpgradeSlotViewModel.DefaultUpgradeComponent.Name}",
             _ => "Remove"
         };
+
+    public UpgradeSlotType UpgradeSlotType => UpgradeSlotViewModel.Type;
 
     public UpgradeSelectorViewModel CreateUpgradeComponentListViewModel()
     {
@@ -58,7 +65,7 @@ public sealed class UpgradeEditorViewModel(
         );
 
         upgradeComponentListViewModel.Selected += Selected;
-        upgradeComponentListViewModel.Deselected += Removed;
+        upgradeComponentListViewModel.Deselected += Deselected;
 
         return upgradeComponentListViewModel;
     }
@@ -68,13 +75,15 @@ public sealed class UpgradeEditorViewModel(
         UpgradeSlotViewModel.SelectedUpgradeComponent = args;
         Customizing = false;
         CanRemoveChanged?.Invoke(this, EventArgs.Empty);
+        OnPropertyChanged(nameof(EffectiveUpgradeComponent));
     }
 
-    private void Removed(object sender, EventArgs args)
+    private void Deselected(object sender, EventArgs args)
     {
         UpgradeSlotViewModel.SelectedUpgradeComponent = null;
         Customizing = false;
         CanRemoveChanged?.Invoke(this, EventArgs.Empty);
+        OnPropertyChanged(nameof(EffectiveUpgradeComponent));
     }
 
     private void OnCustomize()
@@ -91,6 +100,7 @@ public sealed class UpgradeEditorViewModel(
     {
         UpgradeSlotViewModel.SelectedUpgradeComponent = null;
         CanRemoveChanged?.Invoke(this, EventArgs.Empty);
+        OnPropertyChanged(nameof(EffectiveUpgradeComponent));
     }
 
     private bool CanRemove()

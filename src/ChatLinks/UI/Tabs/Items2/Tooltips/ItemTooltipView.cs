@@ -14,7 +14,8 @@ using Microsoft.Xna.Framework;
 
 using SL.Common;
 using SL.Common.Controls;
-using SL.Common.Controls.Items;
+using SL.Common.Controls.Items.Upgrades;
+using SL.Common.ModelBinding;
 
 using Color = Microsoft.Xna.Framework.Color;
 using Container = Blish_HUD.Controls.Container;
@@ -107,7 +108,7 @@ public sealed class ItemTooltipView : View, ITooltipView
             stat => stat.Value
         ));
 
-        PrintUpgrades(armor, armor.Flags);
+        PrintUpgrades();
         PrintItemSkin(armor.DefaultSkinId);
         PrintItemRarity(armor.Rarity);
         PrintWeightClass(armor.WeightClass);
@@ -151,7 +152,7 @@ public sealed class ItemTooltipView : View, ITooltipView
             stat => stat.Value
         ));
 
-        PrintUpgrades(back, back.Flags);
+        PrintUpgrades();
 
         PrintItemSkin(back.DefaultSkinId);
 
@@ -275,7 +276,7 @@ public sealed class ItemTooltipView : View, ITooltipView
             stat => stat.Value
         ));
 
-        PrintUpgrades(trinket, trinket.Flags);
+        PrintUpgrades();
         PrintItemRarity(trinket.Rarity);
 
         switch (trinket)
@@ -424,7 +425,7 @@ public sealed class ItemTooltipView : View, ITooltipView
             stat => stat.Value
         ));
 
-        PrintUpgrades(weapon, weapon.Flags);
+        PrintUpgrades();
         PrintItemSkin(weapon.DefaultSkinId);
         PrintItemRarity(weapon.Rarity);
         switch (weapon)
@@ -542,18 +543,25 @@ public sealed class ItemTooltipView : View, ITooltipView
             Height = 50
         };
 
-        ItemImage icon = new(item) { Parent = header };
-
-        ItemName name = new(item, ViewModel.Upgrades)
+        Image icon = new()
         {
             Parent = header,
+            Texture = ViewModel.GetIcon(ViewModel.Item),
+            Size = new Point(50)
+        };
+
+        Label name = new()
+        {
+            Parent = header,
+            TextColor = ViewModel.ItemNameColor,
             Width = _layout.Width - 55,
             Height = 50,
             VerticalAlignment = VerticalAlignment.Middle,
             Font = GameService.Content.DefaultFont18,
             WrapText = true,
-            SuffixItem = item.SuffixItem(ViewModel.Upgrades) ?? item.SecondarySuffixItem(ViewModel.Upgrades)
         };
+
+        Binder.Bind(ViewModel, vm => vm.ItemName, name);
 
         name.Text = name.Text.Replace(" ", "  ");
     }
@@ -585,18 +593,102 @@ public sealed class ItemTooltipView : View, ITooltipView
         }
     }
 
-    public void PrintUpgrades(IUpgradable item, ItemFlags flags)
+    public void PrintUpgrades()
     {
-        ItemUpgradeBuilder upgradeBuilder = ViewModel.UpgradeBuilder(flags);
-        upgradeBuilder.AddSuffixItem(item.SuffixItemId);
-        upgradeBuilder.AddSecondarySuffixItemId(item.SecondarySuffixItemId);
-        upgradeBuilder.AddInfusionSlots(item.InfusionSlots);
-        if (item is Weapon { TwoHanded: true })
+        foreach (var slot in ViewModel.UpgradesSlots)
         {
-            upgradeBuilder.TwoHanded();
+            FormattedLabelBuilder builder = new FormattedLabelBuilder()
+                .SetWidth(_layout.Width)
+                .AutoSizeHeight()
+                .Wrap();
+
+            if (slot.UpgradeComponent is not null)
+            {
+                builder
+                    .CreatePart("\r\n", _ => { })
+                    .CreatePart(" " + slot.UpgradeComponent.Name, part =>
+                    {
+                        if (!string.IsNullOrEmpty(slot.UpgradeComponent.IconHref))
+                        {
+                            part.SetPrefixImage(ViewModel.GetIcon(slot.UpgradeComponent));
+                            part.SetPrefixImageSize(new Point(16));
+                        }
+
+                        part.SetFontSize(ContentService.FontSize.Size16);
+                        part.SetTextColor(new Color(0x55, 0x99, 0xFF));
+                    });
+
+                if (slot.UpgradeComponent is Rune rune)
+                {
+                    foreach ((string? bonus, int ordinal) in (rune.Bonuses ?? []).Select((value, index) => (value, index + 1)))
+                    {
+                        builder.CreatePart($"\r\n({ordinal:0}): {bonus}", part =>
+                        {
+                            part.SetFontSize(ContentService.FontSize.Size16);
+                            part.SetTextColor(new Color(0x99, 0x99, 0x99));
+                        });
+                    }
+                }
+                else if (slot.UpgradeComponent.Buff is { Description.Length: > 0 })
+                {
+                    builder.CreatePart("\r\n", part => part.SetFontSize(ContentService.FontSize.Size16));
+                    builder.AddMarkup(slot.UpgradeComponent.Buff.Description, new Color(0x55, 0x99, 0xFF));
+                }
+                else
+                {
+                    foreach (KeyValuePair<Extensible<AttributeName>, int> stat in slot.UpgradeComponent.Attributes)
+                    {
+                        builder.CreatePart("\r\n", part => part.SetFontSize(ContentService.FontSize.Size16));
+                        builder.CreatePart($"+{stat.Value:N0} {ViewModel.AttributeName(stat.Key)}", part =>
+                        {
+                            part.SetFontSize(ContentService.FontSize.Size16);
+                            part.SetTextColor(new Color(0x55, 0x99, 0xFF));
+                        });
+                    }
+                }
+            }
+            else
+            {
+                switch (slot.Type)
+                {
+                    case UpgradeSlotType.Infusion:
+                        builder
+                            .CreatePart("\r\n", _ => { })
+                            .CreatePart(" Unused Infusion Slot", part =>
+                            {
+                                part.SetPrefixImage(Resources.Texture("unused_infusion_slot.png"));
+                                part.SetPrefixImageSize(new Point(16));
+                                part.SetFontSize(ContentService.FontSize.Size16);
+                            });
+                        break;
+                    case UpgradeSlotType.Enrichment:
+                        builder
+                            .CreatePart("\r\n", _ => { })
+                            .CreatePart(" Unused Enrichment Slot", part =>
+                            {
+                                part.SetPrefixImage(Resources.Texture("unused_enrichment_slot.png"));
+                                part.SetPrefixImageSize(new Point(16));
+                                part.SetFontSize(ContentService.FontSize.Size16);
+                            });
+                        break;
+                    case UpgradeSlotType.Default:
+                    default:
+                        builder
+                            .CreatePart("\r\n", _ => { })
+                            .CreatePart(" Unused Upgrade Slot", part =>
+                            {
+                                part.SetPrefixImage(Resources.Texture("unused_upgrade_slot.png"));
+                                part.SetPrefixImageSize(new Point(16));
+                                part.SetFontSize(ContentService.FontSize.Size16);
+                            });
+                        break;
+                }
+            }
+
+            var upgradeSlot = builder.Build();
+            upgradeSlot.Parent = _layout;
         }
 
-        upgradeBuilder.Build(_layout);
     }
 
     public void PrintItemSkin(int skinId)

@@ -78,6 +78,16 @@ public sealed class ChatLinkEditor : FlowPanel
             {
                 Parent = this
             };
+
+            upgradeEditorViewModel.PropertyChanged += (sender, args) =>
+            {
+                switch (args.PropertyName)
+                {
+                    case nameof(upgradeEditorViewModel.EffectiveUpgradeComponent):
+                        _itemIcon.Tooltip = null;
+                        break;
+                }
+            };
         }
 
         var quantityGroup = new FlowPanel
@@ -102,8 +112,8 @@ public sealed class ChatLinkEditor : FlowPanel
             Parent = quantityGroup,
             Width = 80,
             Value = 1,
-            //MinValue = 1,
-            //MaxValue = 250
+            MinValue = 1,
+            MaxValue = 250
         };
 
         Binder.Bind(viewModel, vm => vm.Quantity, _quantity);

@@ -55,6 +55,27 @@ public sealed class Customizer(
         return UpgradeComponents.Values.Where(component => FilterUpgradeSlot(targetItem, slotType, component));
     }
 
+    public UpgradeComponent? DefaultSuffixItem(Item item)
+    {
+        if (item is not IUpgradable upgradable)
+        {
+            return null;
+        }
+
+        return GetUpgradeComponent(upgradable.SuffixItemId)
+            ?? GetUpgradeComponent(upgradable.SecondarySuffixItemId);
+    }
+
+    public UpgradeComponent? GetUpgradeComponent(int? upgradeComponentId)
+    {
+        if (upgradeComponentId.HasValue && UpgradeComponents.TryGetValue(upgradeComponentId.Value, out var upgradeComponent))
+        {
+            return upgradeComponent;
+        }
+
+        return null;
+    }
+
     private bool FilterUpgradeSlot(Item targetItem, UpgradeSlotType slotType, UpgradeComponent component)
     {
         if (slotType == UpgradeSlotType.Infusion)
