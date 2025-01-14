@@ -8,36 +8,25 @@ using SQLitePCL;
 
 namespace SL.ChatLinks;
 
-public class ModuleGetFunctionPointer : IGetFunctionPointer
+public class ModuleGetFunctionPointer(ProcessModule module) : IGetFunctionPointer
 {
-    private readonly ProcessModule _module;
+    private readonly ProcessModule _module = module ?? throw new ArgumentNullException(nameof(module));
+
+    public ModuleGetFunctionPointer(string moduleName)
+        : this(GetModule(moduleName))
+    {
+    }
 
     public static ProcessModule GetModule(string moduleName)
     {
         var modules = Process.GetCurrentProcess().Modules.Cast<ProcessModule>()
             .Where(e => Path.GetFileNameWithoutExtension(e.ModuleName) == moduleName).ToList();
-        if (modules.Count == 0)
+        return modules switch
         {
-            throw new ArgumentException($"Found no modules named '{moduleName}' in the current process.",
-                nameof(moduleName));
-        }
-
-        if (modules.Count > 1)
-        {
-            throw new ArgumentException($"Found several modules named '{moduleName}' in the current process.",
-                nameof(moduleName));
-        }
-
-        return modules[0];
-    }
-
-    public ModuleGetFunctionPointer(string moduleName) : this(GetModule(moduleName))
-    {
-    }
-
-    public ModuleGetFunctionPointer(ProcessModule module)
-    {
-        _module = module ?? throw new ArgumentNullException(nameof(module));
+        [var module] => module,
+        [] => throw new ArgumentException($"Found no modules named '{moduleName}' in the current process.", nameof(moduleName)),
+            _ => throw new ArgumentException($"Found several modules named '{moduleName}' in the current process."),
+        };
     }
 
     public IntPtr GetFunctionPointer(string name)

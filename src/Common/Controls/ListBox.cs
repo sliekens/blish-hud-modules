@@ -63,16 +63,6 @@ public class ListBox<T> : FlowPanel
             ShowTint = Children.Count % 2 == 1
         };
 
-        listItem.Resized += (sender, args) =>
-        {
-            Invalidate();
-        };
-
-        listItem.ContentResized += (sender, args) =>
-        {
-            Invalidate();
-        };
-
         Bind(data, listItem);
 
         SelectionChanging += (sender, args) =>

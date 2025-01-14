@@ -84,7 +84,7 @@ public sealed class ChatLinkEditor : FlowPanel
                 Parent = this
             };
 
-            upgradeEditorViewModel.PropertyChanged += (sender, args) =>
+            upgradeEditorViewModel.PropertyChanged += (_, args) =>
             {
                 switch (args.PropertyName)
                 {

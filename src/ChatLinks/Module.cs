@@ -93,7 +93,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 
         _serviceProvider = services.BuildServiceProvider();
 
-        SetupSQLite3();
+        SetupSqlite3();
     }
 
     protected override async Task LoadAsync()
@@ -141,7 +141,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         _syncButton.Click += SyncClicked;
     }
 
-    private void SetupSQLite3()
+    private static void SetupSqlite3()
     {
         SQLite3Provider_dynamic_cdecl.Setup("e_sqlite3", new ModuleGetFunctionPointer("sliekens.e_sqlite3"));
         raw.SetProvider(new SQLite3Provider_dynamic_cdecl());

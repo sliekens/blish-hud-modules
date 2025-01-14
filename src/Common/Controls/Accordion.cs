@@ -33,7 +33,7 @@ public sealed class Accordion : FlowPanel
         section.PropertyChanged += OnPropertyChanged;
         content.Parent = section;
 
-        Expanding += (sender, args) =>
+        Expanding += (_, _) =>
         {
             if (section != _active)
             {
@@ -41,7 +41,7 @@ public sealed class Accordion : FlowPanel
             }
         };
 
-        section.Resized += (sender, args) =>
+        section.Resized += (_, _) =>
         {
             if (section.Height >= 300)
             {

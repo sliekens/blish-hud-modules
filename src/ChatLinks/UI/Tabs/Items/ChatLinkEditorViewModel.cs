@@ -74,7 +74,7 @@ public sealed class ChatLinkEditorViewModel : ViewModel
                 }
             };
 
-            vm.UpgradeSlotViewModel.PropertyChanged += (sender, args) =>
+            vm.UpgradeSlotViewModel.PropertyChanged += (_, args) =>
             {
                 switch (args.PropertyName)
                 {

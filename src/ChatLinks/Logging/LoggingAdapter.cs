@@ -7,7 +7,7 @@ namespace SL.ChatLinks.Logging;
 
 public class LoggingAdapter<T>(string categoryName, IOptionsMonitor<LoggerFilterOptions> options) : ILogger
 {
-	private readonly Logger Sink = Logger.GetLogger<T>();
+	private readonly Logger _sink = Logger.GetLogger<T>();
 
 	public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception,
 		Func<TState, Exception?, string> formatter)
@@ -25,22 +25,22 @@ public class LoggingAdapter<T>(string categoryName, IOptionsMonitor<LoggerFilter
 			switch (logLevel)
 			{
 				case LogLevel.Trace:
-					Sink.Trace(exception, logMessage);
+					_sink.Trace(exception, logMessage);
 					break;
 				case LogLevel.Debug:
-					Sink.Debug(exception, logMessage);
+					_sink.Debug(exception, logMessage);
 					break;
 				case LogLevel.Information:
-					Sink.Info(exception, logMessage);
+					_sink.Info(exception, logMessage);
 					break;
 				case LogLevel.Warning:
-					Sink.Warn(exception, logMessage);
+					_sink.Warn(exception, logMessage);
 					break;
 				case LogLevel.Error:
-					Sink.Error(exception, logMessage);
+					_sink.Error(exception, logMessage);
 					break;
 				case LogLevel.Critical:
-					Sink.Fatal(exception, logMessage);
+					_sink.Fatal(exception, logMessage);
 					break;
 			}
 		});

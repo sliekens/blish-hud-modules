@@ -8,8 +8,8 @@ namespace SL.ChatLinks.UI.Tabs.Items.Collections;
 
 public sealed class ItemsListEntry : FlowPanel
 {
-    private static readonly Color ActiveColor = new Color(109,100,69, 0);
-    private static readonly Color HoverColor = new Color(109, 100, 69, 127);
+    private static readonly Color ActiveColor = new(109,100,69, 0);
+    private static readonly Color HoverColor = new(109, 100, 69, 127);
     public ItemsListViewModel ViewModel { get; }
 
     private readonly Image _image;
