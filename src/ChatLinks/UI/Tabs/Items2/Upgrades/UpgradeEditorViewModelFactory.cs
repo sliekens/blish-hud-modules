@@ -9,6 +9,7 @@ namespace SL.ChatLinks.UI.Tabs.Items2.Upgrades;
 
 public sealed class UpgradeEditorViewModelFactory(
     IEventAggregator eventAggregator,
+    IClipBoard clipboard,
     ItemIcons icons,
     Customizer customizer,
     UpgradeSelectorViewModelFactory upgradeComponentListViewModelFactory,
@@ -27,6 +28,6 @@ public sealed class UpgradeEditorViewModelFactory(
             DefaultUpgradeComponent = defaultUpgradeComponent
         };
 
-        return new UpgradeEditorViewModel(eventAggregator, upgradeSlotViewModel, upgradeComponentListViewModelFactory, targetItem);
+        return new UpgradeEditorViewModel(eventAggregator, clipboard, upgradeSlotViewModel, upgradeComponentListViewModelFactory, targetItem);
     }
 }

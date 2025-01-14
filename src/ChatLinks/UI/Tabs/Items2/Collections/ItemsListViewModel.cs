@@ -1,4 +1,7 @@
-﻿using Blish_HUD.Content;
+﻿using System.Diagnostics;
+using System.Net;
+
+using Blish_HUD.Content;
 
 using GuildWars2.Items;
 
@@ -8,12 +11,14 @@ using SL.ChatLinks.UI.Tabs.Items2.Tooltips;
 using SL.Common;
 using SL.Common.Controls.Items.Services;
 using SL.Common.Controls.Items.Upgrades;
+using SL.Common.ModelBinding;
 
 using UpgradeSlot = SL.ChatLinks.UI.Tabs.Items2.Tooltips.UpgradeSlot;
 
 namespace SL.ChatLinks.UI.Tabs.Items2.Collections;
 
 public sealed class ItemsListViewModel(
+    IClipBoard clipboard,
     ItemIcons icons,
     Customizer customizer,
     Item item,
@@ -32,6 +37,17 @@ public sealed class ItemsListViewModel(
         get => _isSelected;
         set => SetField(ref _isSelected, value);
     }
+
+    public RelayCommand ToggleCommand => new(() => IsSelected = !IsSelected);
+
+    public RelayCommand CopyNameCommand => new(() => clipboard.SetText(Item.Name));
+
+    public RelayCommand CopyChatLinkCommand => new(() => clipboard.SetText(Item.ChatLink));
+
+    public RelayCommand OpenWikiCommand => new(() => Process.Start($"https://wiki.guildwars2.com/wiki/?search={WebUtility.UrlEncode(item.ChatLink)}"));
+
+    public RelayCommand OpenApiCommand =>
+        new(() => Process.Start($"https://api.guildwars2.com/v2/items/{item.Id}?v=latest"));
 
     public AsyncTexture2D? GetIcon()
     {

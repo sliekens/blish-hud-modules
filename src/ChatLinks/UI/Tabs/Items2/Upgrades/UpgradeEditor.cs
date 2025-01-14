@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using System.Windows.Input;
 
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
@@ -8,6 +7,7 @@ using Blish_HUD.Input;
 using Microsoft.Xna.Framework;
 
 using SL.Common;
+using SL.Common.Controls;
 
 namespace SL.ChatLinks.UI.Tabs.Items2.Upgrades;
 
@@ -32,27 +32,15 @@ public sealed class UpgradeEditor : FlowPanel
 
         _upgradeSlot = CreateUpgradeSlot();
         _upgradeSlot.Click += UpgradeSlotClicked;
-        _upgradeSlot.Menu = new ContextMenuStrip();
-        _upgradeSlot.Menu.AddMenuItems(ContextMenu());
-    }
-
-    private IEnumerable<ContextMenuStripItem> ContextMenu()
-    {
-        yield return MenuItem(ViewModel.CustomizeCommand, () => "Customize");
-        yield return MenuItem(ViewModel.RemoveCommand, () => ViewModel.RemoveItemText);
-    }
-
-    private ContextMenuStripItem MenuItem(ICommand command, Func<string> itemText)
-    {
-        var item = new ContextMenuStripItem(itemText());
-        item.Click += (_, _) => command.Execute(null);
-        item.Enabled = command.CanExecute(null);
-        command.CanExecuteChanged += (_, _) =>
-        {
-            item.Enabled = command.CanExecute(null);
-            item.Text = itemText();
-        };
-        return item;
+        _upgradeSlot.Menu = new ContextMenuStrip(() =>
+            [
+                ViewModel.CustomizeCommand.ToMenuItem(() => "Customize"),
+                ViewModel.RemoveCommand.ToMenuItem(() => ViewModel.RemoveItemText),
+                ViewModel.CopyNameCommand.ToMenuItem(() => "Copy Name"),
+                ViewModel.CopyChatLinkCommand.ToMenuItem(() => "Copy Chat Link"),
+                ViewModel.OpenWikiCommand.ToMenuItem(() => "Open Wiki"),
+                ViewModel.OpenApiCommand.ToMenuItem(() => "Open API"),
+            ]);
     }
 
     private void UpgradeSlotClicked(object sender, MouseEventArgs e)

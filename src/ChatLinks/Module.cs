@@ -64,7 +64,6 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         services.AddTransient<MainWindowViewModel>();
         services.AddTransient<ItemsTabView2>();
         services.AddTransient<ItemsTabViewModel>();
-        services.AddTransient<ItemsListViewModel>();
         services.AddTransient<ItemsListViewModelFactory>();
         services.AddTransient<ItemTooltipViewModelFactory>();
         services.AddTransient<ChatLinkEditorViewModelFactory>();

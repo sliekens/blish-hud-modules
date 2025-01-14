@@ -53,7 +53,14 @@ public sealed class ChatLinkEditor : FlowPanel
         {
             Parent = header,
             Texture = viewModel.GetIcon(),
-            Size = new Point(50)
+            Size = new Point(50),
+            Menu = new ContextMenuStrip(
+                () => [
+                    ViewModel.CopyNameCommand.ToMenuItem(() => "Copy Name"),
+                    ViewModel.CopyChatLinkCommand.ToMenuItem(() => "Copy Chat Link"),
+                    ViewModel.OpenWikiCommand.ToMenuItem(() => "Open Wiki"),
+                    ViewModel.OpenApiCommand.ToMenuItem(() => "Open API"),
+                ])
         };
 
         _itemIcon.MouseEntered += IconMouseEntered;
@@ -149,8 +156,7 @@ public sealed class ChatLinkEditor : FlowPanel
 
         _chatLink.Click += ChatLinkClicked;
         _chatLink.Menu = new ContextMenuStrip();
-        var copy = _chatLink.Menu.AddMenuItem("Copy");
-        copy.Click += CopyClicked;
+        _chatLink.Menu.AddMenuItem(viewModel.CopyChatLinkCommand.ToMenuItem(() => "Copy"));
 
         _infusionWarning = new Label
         {
@@ -198,13 +204,13 @@ public sealed class ChatLinkEditor : FlowPanel
     private void MaxQuantityClicked(object sender, MouseEventArgs e)
     {
         Soundboard.Click.Play();
-        ViewModel.MaxQuantityCommand.Execute(null);
+        ViewModel.MaxQuantityCommand.Execute();
     }
 
     private void ResetQuantityClicked(object sender, MouseEventArgs e)
     {
         Soundboard.Click.Play();
-        ViewModel.MinQuantityCommand.Execute(null);
+        ViewModel.MinQuantityCommand.Execute();
     }
 
     private void IconMouseEntered(object sender, MouseEventArgs e)
@@ -216,10 +222,5 @@ public sealed class ChatLinkEditor : FlowPanel
     {
         _chatLink.SelectionStart = 0;
         _chatLink.SelectionEnd = _chatLink.Text.Length;
-    }
-
-    private void CopyClicked(object sender, MouseEventArgs e)
-    {
-        ViewModel.CopyCommand.Execute(null);
     }
 }

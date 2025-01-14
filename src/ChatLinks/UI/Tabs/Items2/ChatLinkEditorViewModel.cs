@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Net;
 using System.Windows.Input;
 
 using Blish_HUD.Content;
@@ -233,11 +235,18 @@ public sealed class ChatLinkEditorViewModel : ViewModel
         }
     }
 
-    public ICommand CopyCommand => new RelayCommand(OnCopy);
+    public RelayCommand CopyNameCommand => new(() => _clipboard.SetText(Item.Name));
 
-    public ICommand MinQuantityCommand => new RelayCommand(OnMinQuantity);
+    public RelayCommand CopyChatLinkCommand => new (() => _clipboard.SetText(ChatLink));
+    
+    public RelayCommand OpenWikiCommand => new(() => Process.Start($"https://wiki.guildwars2.com/wiki/?search={WebUtility.UrlEncode(Item.ChatLink)}"));
 
-    public ICommand MaxQuantityCommand => new RelayCommand(OnMaxQuantity);
+    public RelayCommand OpenApiCommand =>
+        new(() => Process.Start($"https://api.guildwars2.com/v2/items/{Item.Id}?v=latest"));
+
+    public RelayCommand MinQuantityCommand => new (() => Quantity = 1);
+
+    public RelayCommand MaxQuantityCommand => new (() => Quantity = 250);
 
     public ItemTooltipViewModel CreateTooltipViewModel()
     {
@@ -284,20 +293,5 @@ public sealed class ChatLinkEditorViewModel : ViewModel
                 infusionSlot.ItemId
             );
         }
-    }
-
-    private void OnCopy()
-    {
-        _clipboard.SetText(ChatLink);
-    }
-
-    private void OnMinQuantity()
-    {
-        Quantity = 1;
-    }
-
-    private void OnMaxQuantity()
-    {
-        Quantity = 250;
     }
 }

@@ -1,4 +1,7 @@
-﻿using GuildWars2.Items;
+﻿using System.Diagnostics;
+using System.Net;
+
+using GuildWars2.Items;
 
 using SL.Common;
 using SL.Common.Controls.Items.Upgrades;
@@ -8,13 +11,12 @@ namespace SL.ChatLinks.UI.Tabs.Items2.Upgrades;
 
 public sealed class UpgradeEditorViewModel(
     IEventAggregator eventAggregator,
+    IClipBoard clipboard,
     UpgradeSlotViewModel upgradeSlotViewModel,
     UpgradeSelectorViewModelFactory upgradeComponentListViewModelFactory,
     Item target) : ViewModel
 {
     private bool _customizing;
-
-    private event EventHandler? CanRemoveChanged;
 
     public bool Customizing
     {
@@ -22,21 +24,62 @@ public sealed class UpgradeEditorViewModel(
         set => SetField(ref _customizing, value);
     }
 
-    public RelayCommand CustomizeCommand => new(OnCustomize);
+    public RelayCommand CustomizeCommand => new(() => Customizing = !Customizing);
 
     public RelayCommand RemoveCommand => new(
-        OnRemove,
-        CanRemove,
-        (handler) =>
+        () =>
         {
-            CanRemoveChanged += handler;
+            UpgradeSlotViewModel.SelectedUpgradeComponent = null;
+            OnPropertyChanged(nameof(EffectiveUpgradeComponent));
+            eventAggregator.Publish(new UpgradeSlotChanged());
         },
-        handler =>
-        {
-            CanRemoveChanged -= handler;
-        });
+        () => UpgradeSlotViewModel.SelectedUpgradeComponent is not null);
 
-    public RelayCommand HideCommand => new(OnHide);
+    public RelayCommand CopyNameCommand => new(
+        () =>
+        {
+            var name = EffectiveUpgradeComponent?.Name;
+            if (name is not null)
+            {
+                clipboard.SetText(name);
+            }
+        },
+        () => EffectiveUpgradeComponent is not null);
+
+    public RelayCommand CopyChatLinkCommand => new(
+        () =>
+        {
+            var chatLink = EffectiveUpgradeComponent?.ChatLink;
+            if (chatLink is not null)
+            {
+                clipboard.SetText(chatLink);
+            }
+        },
+        () => EffectiveUpgradeComponent is not null);
+
+    public RelayCommand OpenWikiCommand => new(
+        () =>
+        {
+            var chatLink = EffectiveUpgradeComponent?.ChatLink;
+            if (chatLink is not null)
+            {
+                Process.Start($"https://wiki.guildwars2.com/wiki/?search={WebUtility.UrlEncode(chatLink)}");
+            }
+        },
+        () => EffectiveUpgradeComponent is not null);
+
+    public RelayCommand OpenApiCommand => new(
+        () =>
+        {
+            var id = EffectiveUpgradeComponent?.Id;
+            if (id is not null)
+            {
+                Process.Start($"https://api.guildwars2.com/v2/items/{id}?v=latest");
+            }
+        },
+        () => EffectiveUpgradeComponent is not null);
+
+    public RelayCommand HideCommand => new(() => Customizing = false);
 
     public UpgradeSlotViewModel UpgradeSlotViewModel { get; } = upgradeSlotViewModel;
 
@@ -70,21 +113,10 @@ public sealed class UpgradeEditorViewModel(
         return upgradeComponentListViewModel;
     }
 
-    private void OnCustomize()
-    {
-        Customizing = !Customizing;
-    }
-
-    private void OnHide()
-    {
-        Customizing = false;
-    }
-
     private void Selected(object sender, UpgradeComponent args)
     {
         UpgradeSlotViewModel.SelectedUpgradeComponent = args;
         Customizing = false;
-        CanRemoveChanged?.Invoke(this, EventArgs.Empty);
         OnPropertyChanged(nameof(EffectiveUpgradeComponent));
         eventAggregator.Publish(new UpgradeSlotChanged());
     }
@@ -93,22 +125,7 @@ public sealed class UpgradeEditorViewModel(
     {
         UpgradeSlotViewModel.SelectedUpgradeComponent = null;
         Customizing = false;
-        CanRemoveChanged?.Invoke(this, EventArgs.Empty);
         OnPropertyChanged(nameof(EffectiveUpgradeComponent));
         eventAggregator.Publish(new UpgradeSlotChanged());
     }
-
-    private void OnRemove()
-    {
-        UpgradeSlotViewModel.SelectedUpgradeComponent = null;
-        CanRemoveChanged?.Invoke(this, EventArgs.Empty);
-        OnPropertyChanged(nameof(EffectiveUpgradeComponent));
-        eventAggregator.Publish(new UpgradeSlotChanged());
-    }
-
-    private bool CanRemove()
-    {
-        return UpgradeSlotViewModel.SelectedUpgradeComponent is not null;
-    }
-
 }

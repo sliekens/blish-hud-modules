@@ -16,5 +16,13 @@ public class ItemsList : ListBox<ItemsListViewModel>
     protected override void Bind(ItemsListViewModel data, ListItem<ItemsListViewModel> listItem)
     {
         Binder.Bind(data, vm => vm.IsSelected, listItem);
+        listItem.Menu = new ContextMenuStrip(() =>
+        [
+            data.ToggleCommand.ToMenuItem(() => data.IsSelected ? "Deselect" : "Select"),
+            data.CopyNameCommand.ToMenuItem(() => "Copy Name"),
+            data.CopyChatLinkCommand.ToMenuItem(() => "Copy Chat Link"),
+            data.OpenWikiCommand.ToMenuItem(() => "Open Wiki"),
+            data.OpenApiCommand.ToMenuItem(() => "Open API")
+        ]);
     }
 }
