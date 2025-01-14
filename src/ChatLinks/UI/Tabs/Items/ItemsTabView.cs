@@ -1,151 +1,117 @@
-﻿using Blish_HUD.Controls;
+﻿using Blish_HUD;
+using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 
-using SL.ChatLinks.UI.Tabs.Items.Controls;
-using SL.Common;
+using SL.ChatLinks.UI.Tabs.Items.Collections;
+using SL.Common.Controls;
+using SL.Common.ModelBinding;
 
 using Container = Blish_HUD.Controls.Container;
-using Item = GuildWars2.Items.Item;
 
 namespace SL.ChatLinks.UI.Tabs.Items;
 
-public class ItemsTabView : View<ItemsTabPresenter>, IItemsTabView
+public class ItemsTabView : View
 {
-    private Container? _root;
+    public ItemsTabViewModel ViewModel { get; }
 
-    private TextBox? _searchBox;
+    private readonly TextBox _searchBox;
 
-    private ItemsList? _searchResults;
+    private readonly LoadingSpinner _loadingSpinner;
 
-    private ItemWidget? _selectedItem;
+    private readonly ItemsList _searchResults;
 
-    private readonly ILogger<ItemsTabView> _logger;
+    private readonly ViewContainer _editor;
 
-    public ItemsTabView(ILogger<ItemsTabView> logger)
+    public ItemsTabView(ILogger<ItemsTabView> logger, ItemsTabViewModel viewModel)
     {
-        _logger = logger;
-        this.AutoWire();
-    }
+        ViewModel = viewModel;
+        _searchBox = new TextBox { Width = 400, PlaceholderText = "Enter item name or chat link..." };
 
-    public void SetSearchLoading(bool loading)
-    {
-        _searchResults?.SetLoading(loading);
-    }
+        _loadingSpinner = new LoadingSpinner { Size = new Point(_searchBox.Height), Right = _searchBox.Right };
 
-    public void AddOption(Item item)
-    {
-        _searchResults?.AddOption(item);
-    }
-
-    public void SetOptions(IEnumerable<Item> items)
-    {
-        var list = items.ToList();
-        _searchResults?.SetOptions(list);
-    }
-
-    public void ClearOptions()
-    {
-        _searchResults?.ClearOptions();
-    }
-
-    public void Select(Item item)
-    {
-        _selectedItem?.Dispose();
-        _selectedItem = new ItemWidget(item, Presenter.Model.Upgrades)
+        _searchResults = new ItemsList
         {
-            Parent = _root,
-            Left = _searchResults!.Right
+            WidthSizingMode = SizingMode.Standard,
+            Width = 400,
+            HeightSizingMode = SizingMode.Fill,
+            Top = _searchBox.Bottom,
+            Entries = ViewModel.SearchResults
         };
+
+        _editor = new ViewContainer
+        {
+            Left = _searchResults.Right + 20,
+            Width = 450,
+            HeightSizingMode = SizingMode.Fill,
+            FadeView = true
+        };
+
+        _searchResults.SelectionChanged += SelectionChanged;
+    }
+
+    private void SelectionChanged(ListBox<ItemsListViewModel> sender, ListBoxSelectionChangedEventArgs<ItemsListViewModel> args)
+    {
+        if (args.AddedItems is [{ Data: { } listItem }])
+        {
+            _editor.Show(new ChatLinkEditorView(ViewModel.CreateChatLinkEditorViewModel(listItem.Item)));
+        }
+        else
+        {
+            _editor.Clear();
+        }
+    }
+
+    protected override async Task<bool> Load(IProgress<string> progress)
+    {
+        await ViewModel.LoadAsync();
+        return true;
     }
 
     protected override void Build(Container buildPanel)
     {
-        _root = buildPanel;
-        _searchBox = new TextBox
-        {
-            Parent = buildPanel,
-            Width = 450,
-            PlaceholderText = "Enter item name or chat link..."
-        };
-        _searchResults = new ItemsList(Presenter.Model.Upgrades)
-        {
-            Parent = buildPanel,
-            Size = new Point(450, 500),
-            Top = _searchBox.Bottom
-        };
+        _searchBox.Parent = buildPanel;
+        _loadingSpinner.Parent = buildPanel;
+        _searchResults.Parent = buildPanel;
+        _editor.Parent = buildPanel;
+
+        Binder.Bind(ViewModel, vm => vm.SearchText, _searchBox);
+        Binder.Bind(ViewModel, vm => vm.Searching, _loadingSpinner);
 
         _searchBox.TextChanged += SearchTextChanged;
-        _searchBox.EnterPressed += SearchInput;
-        _searchBox.InputFocusChanged += (sender, args) =>
-        {
-            if (args.Value)
-            {
-                _searchBox.SelectionStart = 0;
-                _searchBox.SelectionEnd = _searchBox.Length;
-            }
-            else
-            {
-                _searchBox.SelectionStart = _searchBox.SelectionEnd;
-            }
-        };
-
-        _searchResults.OptionClicked += (sender, item) =>
-        {
-            Presenter.ViewOptionSelected(item);
-        };
+        _searchBox.EnterPressed += SearchEnterPressed;
+        _searchBox.InputFocusChanged += SearchInputFocusChanged;
     }
 
     protected override void Unload()
     {
-        if (_searchBox is not null)
-        {
-            _searchBox.TextChanged -= SearchInput;
-        }
-
-        _searchBox?.Dispose();
-        _searchResults?.Dispose();
-        base.Unload();
+        _searchBox.TextChanged -= SearchEnterPressed;
+        _searchBox.EnterPressed -= SearchEnterPressed;
+        _searchBox.InputFocusChanged -= SearchInputFocusChanged;
     }
 
-    private async void SearchTextChanged(object sender, EventArgs e)
+    private void SearchTextChanged(object sender, EventArgs e)
     {
-        try
-        {
-            if (_searchBox is null)
-            {
-                return;
-            }
-
-            if (_searchBox.Focused)
-            {
-                await Presenter.Search(_searchBox.Text);
-            }
-        }
-        catch (Exception reason)
-        {
-            _logger.LogError(reason, "Failed to search for items");
-            ScreenNotification.ShowNotification("Something went wrong", ScreenNotification.NotificationType.Red);
-        }
+        ViewModel.SearchCommand.Execute(null);
     }
 
-    private async void SearchInput(object sender, EventArgs e)
+    private void SearchEnterPressed(object sender, EventArgs e)
     {
-        try
-        {
-            if (_searchBox is null)
-            {
-                return;
-            }
+        ViewModel.SearchCommand.Execute(null);
+    }
 
-            await Presenter.Search(_searchBox.Text);
-        }
-        catch (Exception reason)
+    private void SearchInputFocusChanged(object sender, ValueEventArgs<bool> args)
+    {
+        if (args.Value)
         {
-            _logger.LogError(reason, "Failed to search for items");
-            ScreenNotification.ShowNotification("Something went wrong", ScreenNotification.NotificationType.Red);
+            _searchBox.SelectionStart = 0;
+            _searchBox.SelectionEnd = _searchBox.Length;
+        }
+        else
+        {
+            _searchBox.SelectionStart = _searchBox.SelectionEnd;
         }
     }
 }

@@ -15,13 +15,11 @@ using SL.ChatLinks.Integrations;
 using SL.ChatLinks.Logging;
 using SL.ChatLinks.Storage;
 using SL.ChatLinks.UI;
-using SL.ChatLinks.UI.Tabs.Items.Services;
-using SL.ChatLinks.UI.Tabs.Items2;
-using SL.ChatLinks.UI.Tabs.Items2.Collections;
-using SL.ChatLinks.UI.Tabs.Items2.Tooltips;
-using SL.ChatLinks.UI.Tabs.Items2.Upgrades;
+using SL.ChatLinks.UI.Tabs.Items;
+using SL.ChatLinks.UI.Tabs.Items.Collections;
+using SL.ChatLinks.UI.Tabs.Items.Tooltips;
+using SL.ChatLinks.UI.Tabs.Items.Upgrades;
 using SL.Common;
-using SL.Common.Controls.Items.Services;
 
 using SQLitePCL;
 
@@ -43,7 +41,6 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
     {
         ServiceCollection services = new();
         services.AddSingleton(ModuleParameters);
-        services.AddSingleton<IViewsFactory, ViewsFactory>();
         services.AddGw2Client();
 
         services.AddDbContext<ChatLinksContext>(optionsBuilder =>
@@ -62,8 +59,10 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         services.AddTransient<MainIconViewModel>();
         services.AddTransient<MainWindow>();
         services.AddTransient<MainWindowViewModel>();
-        services.AddTransient<ItemsTabView2>();
+        services.AddTransient<ItemsTabView>();
+        services.AddTransient<ItemsTabViewFactory>();
         services.AddTransient<ItemsTabViewModel>();
+        services.AddTransient<ItemsTabViewModelFactory>();
         services.AddTransient<ItemsListViewModelFactory>();
         services.AddTransient<ItemTooltipViewModelFactory>();
         services.AddTransient<ChatLinkEditorViewModelFactory>();
@@ -92,9 +91,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
             }
         });
 
-        ServiceProvider serviceProvider = services.BuildServiceProvider();
-        ServiceLocator.ServiceProvider = serviceProvider;
-        _serviceProvider = serviceProvider;
+        _serviceProvider = services.BuildServiceProvider();
 
         SetupSQLite3();
     }
@@ -229,6 +226,5 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         _cornerIcon?.Dispose();
         _mainWindow?.Dispose();
         _serviceProvider?.Dispose();
-        ServiceLocator.ServiceProvider = null;
     }
 }

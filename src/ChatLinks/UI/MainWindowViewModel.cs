@@ -1,11 +1,12 @@
 ﻿using Blish_HUD.Content;
 using Blish_HUD.Controls;
 
+using SL.ChatLinks.UI.Tabs.Items;
 using SL.Common;
 
 namespace SL.ChatLinks.UI;
 
-public sealed class MainWindowViewModel(IViewsFactory viewFactory) : ViewModel
+public sealed class MainWindowViewModel(ItemsTabViewFactory itemsTabViewFactory) : ViewModel
 {
     public string Id => "sliekens.chat-links.main-window";
     public string Title => "Chat Links";
@@ -18,14 +19,8 @@ public sealed class MainWindowViewModel(IViewsFactory viewFactory) : ViewModel
     {
         yield return new Tab(
             AsyncTexture2D.FromAssetId(156699),
-            viewFactory.CreateItemsTabView2,
+            itemsTabViewFactory.Create,
             "Items",
             1);
-
-        yield return new Tab(
-            AsyncTexture2D.FromAssetId(156699),
-            viewFactory.CreateItemsTabView,
-            "Items (old)",
-            2);
     }
 }
