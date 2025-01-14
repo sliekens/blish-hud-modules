@@ -8,12 +8,3 @@ public sealed class ListComparer<T>() : ValueComparer<IReadOnlyList<T>>((left, r
 {
     private static IReadOnlyList<T> GetSnapshot(IReadOnlyList<T> list) => [.. list];
 }
-
-
-public sealed class CollectionComparer<T>() : ValueComparer<IReadOnlyCollection<T>>((left, right) => left.SequenceEqual(right),
-    collection => collection.GetHashCode(),
-    collection => GetSnapshot(collection))
-{
-    private static IReadOnlyCollection<T> GetSnapshot(IReadOnlyCollection<T> collection) => [.. collection];
-}
-

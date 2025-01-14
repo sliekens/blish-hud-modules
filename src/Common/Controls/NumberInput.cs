@@ -17,26 +17,6 @@ using MouseEventArgs = Blish_HUD.Input.MouseEventArgs;
 
 namespace SL.Common.Controls;
 
-internal enum NumberInputAction
-{
-    None,
-
-    Increment,
-
-    Decrement,
-
-    Drag
-}
-
-internal enum SpinnerGlow
-{
-    None,
-
-    Up,
-
-    Down
-}
-
 public class NumberInput : TextInputBase
 {
     public event EventHandler<EventArgs>? EnterPressed;
@@ -55,7 +35,7 @@ public class NumberInput : TextInputBase
 
     private static readonly Texture2D TextBoxSprite = Resources.Texture("textbox.png");
 
-    private SpinnerGlow _glow = SpinnerGlow.None;
+    private NumberInputSpinnerGlow _glow = NumberInputSpinnerGlow.None;
 
     private NumberInputAction _action = NumberInputAction.None;
 
@@ -274,12 +254,12 @@ public class NumberInput : TextInputBase
         if (e.MousePosition.X > AbsoluteBounds.Right - SpinnerWidth)
         {
             _glow = e.MousePosition.Y < AbsoluteBounds.Top + SpinnerButtonHeight
-                ? SpinnerGlow.Up
-                : SpinnerGlow.Down;
+                ? NumberInputSpinnerGlow.Up
+                : NumberInputSpinnerGlow.Down;
         }
         else
         {
-            _glow = SpinnerGlow.None;
+            _glow = NumberInputSpinnerGlow.None;
         }
 
         base.OnMouseMoved(e);
@@ -287,7 +267,7 @@ public class NumberInput : TextInputBase
 
     protected override void OnMouseLeft(MouseEventArgs e)
     {
-        _glow = SpinnerGlow.None;
+        _glow = NumberInputSpinnerGlow.None;
         base.OnMouseLeft(e);
     }
 
@@ -416,7 +396,7 @@ public class NumberInput : TextInputBase
         var buttonsRectangle = new Rectangle(bounds.Right - SpinnerWidth, 0, SpinnerWidth, SpinnerButtonHeight * 2);
         switch ((hoverButton: _glow, pressedButton: _action))
         {
-            case (SpinnerGlow.Up, NumberInputAction.None):
+            case (NumberInputSpinnerGlow.Up, NumberInputAction.None):
                 spriteBatch.DrawOnCtrl(
                     this,
                     SpinnerGlowSprite,
@@ -434,7 +414,7 @@ public class NumberInput : TextInputBase
                     SpriteEffects.FlipVertically
                 );
                 break;
-            case (SpinnerGlow.Down, NumberInputAction.None):
+            case (NumberInputSpinnerGlow.Down, NumberInputAction.None):
                 spriteBatch.DrawOnCtrl(
                     this,
                     SpinnerSprite,
