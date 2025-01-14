@@ -18,7 +18,6 @@ public class ListBox<T> : FlowPanel
 
     public ListBox()
     {
-        ShowBorder = true;
         CanScroll = true;
 
         // ReSharper disable VirtualMemberCallInConstructor

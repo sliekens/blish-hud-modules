@@ -25,19 +25,20 @@ public sealed class ChatLinkEditor : FlowPanel
     private readonly NumberInput _quantity;
 
     private readonly TextBox _chatLink;
-    private Label _infusionWarning;
+
+    private readonly Label _infusionWarning;
 
     public ChatLinkEditor(ChatLinkEditorViewModel viewModel)
     {
         ViewModel = viewModel;
-        ShowTint = true;
         FlowDirection = ControlFlowDirection.SingleTopToBottom;
         ControlPadding = new Vector2(0f, 15f);
-        OuterControlPadding = new Vector2(10f);
+        OuterControlPadding = new Vector2(20f);
         AutoSizePadding = new Point(10);
-        Width = 350;
+        WidthSizingMode = SizingMode.Fill;
         HeightSizingMode = SizingMode.Fill;
         CanScroll = true;
+        ShowBorder = true;
 
         var header = new FlowPanel
         {
@@ -61,7 +62,7 @@ public sealed class ChatLinkEditor : FlowPanel
         {
             Parent = header,
             TextColor = viewModel.ItemNameColor,
-            Width = 250,
+            Width = 300,
             Height = 50,
             VerticalAlignment = VerticalAlignment.Middle,
             Font = GameService.Content.DefaultFont18,
@@ -138,12 +139,10 @@ public sealed class ChatLinkEditor : FlowPanel
 
         resetQuantity.Click += ResetQuantityClicked;
 
-        _ = new Label { Parent = this, Text = "Chat Link:", AutoSizeWidth = true, AutoSizeHeight = true };
-
         _chatLink = new TextBox
         {
             Parent = this,
-            Width = 200
+            Width = 350
         };
 
         Binder.Bind(ViewModel, vm => vm.ChatLink, _chatLink);
@@ -156,7 +155,7 @@ public sealed class ChatLinkEditor : FlowPanel
         _infusionWarning = new Label
         {
             Parent = this,
-            Width = Width - 20,
+            Width = 350,
             AutoSizeHeight = true,
             WrapText = true,
             TextColor = Color.Yellow,

@@ -12,7 +12,7 @@ public sealed class MainWindow : TabbedWindow2
     public MainWindow(MainWindowViewModel vm) : base(
         vm.BackgroundTexture,
         new Rectangle(0, 26, 953, 691),
-        new Rectangle(70, 71, 839, 605)
+        new Rectangle(70, 35, 880, 650)
     )
     {
         _emblem = AsyncEmblem.Attach(this, vm.EmblemTexture);

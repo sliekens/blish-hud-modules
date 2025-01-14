@@ -24,7 +24,7 @@ public sealed class UpgradeEditor : FlowPanel
     public UpgradeEditor(UpgradeEditorViewModel viewModel)
     {
         FlowDirection = ControlFlowDirection.SingleTopToBottom;
-        Width = 300;
+        Width = 350;
         HeightSizingMode = SizingMode.AutoSize;
         ControlPadding = new Vector2(10);
         ViewModel = viewModel;
@@ -66,7 +66,7 @@ public sealed class UpgradeEditor : FlowPanel
         _cancelButton = new StandardButton
         {
             Parent = this,
-            Width = 300,
+            Width = 350,
             Text = "Cancel",
             Icon = AsyncTexture2D.FromAssetId(155149)
         };
