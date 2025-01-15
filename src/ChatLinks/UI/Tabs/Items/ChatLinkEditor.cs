@@ -118,7 +118,17 @@ public sealed class ChatLinkEditor : FlowPanel
             Width = 80,
             Value = 1,
             MinValue = 1,
-            MaxValue = 250
+            MaxValue = ViewModel.MaxStackSize
+        };
+
+        ViewModel.PropertyChanged += (_, args) =>
+        {
+            switch (args.PropertyName)
+            {
+                case nameof(ViewModel.MaxStackSize):
+                    _quantity.MaxValue = ViewModel.MaxStackSize;
+                    break;
+            }
         };
 
         Binder.Bind(viewModel, vm => vm.Quantity, _quantity);

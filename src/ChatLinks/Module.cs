@@ -5,11 +5,13 @@ using Blish_HUD;
 using Blish_HUD.Controls;
 using Blish_HUD.Input;
 using Blish_HUD.Modules;
+using Blish_HUD.Settings;
 
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 using SL.ChatLinks.Integrations;
 using SL.ChatLinks.Logging;
@@ -37,10 +39,28 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 
     private ContextMenuStripItem? _syncButton;
 
+    private SettingEntry<bool>? _raiseStackSize;
+
+    protected override void DefineSettings(SettingCollection settings)
+    {
+        _raiseStackSize = settings.DefineSetting(
+            "RaiseStackSize",
+            false,
+            () => "Raise the maximum item stack size from 250 to 255",
+            () => "When enabled, you can generate chat links with stacks of 255 items."
+        );
+    }
+
     protected override void Initialize()
     {
         ServiceCollection services = new();
-        services.AddSingleton(ModuleParameters);
+        services.AddSingleton(ModuleParameters.SettingsManager.ModuleSettings);
+        services.Configure<ChatLinkOptions>(options =>
+        {
+            options.RaiseStackSize = _raiseStackSize!.Value;
+        });
+        services.AddSingleton<IOptionsChangeTokenSource<ChatLinkOptions>, ChatLinkOptionsAdapter>();
+
         services.AddGw2Client();
 
         services.AddDbContext<ChatLinksContext>(optionsBuilder =>
@@ -72,7 +92,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         services.AddSingleton<Customizer>();
         services.AddHttpClient<ItemIcons>();
         services.AddTransient<IClipBoard, WpfClipboard>();
-        
+
         services.AddLogging(builder =>
         {
             builder.Services.AddSingleton<ILoggerProvider, LoggingAdapterProvider<Module>>();

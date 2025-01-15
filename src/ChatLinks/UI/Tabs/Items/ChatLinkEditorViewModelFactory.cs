@@ -1,5 +1,7 @@
 ﻿using GuildWars2.Items;
 
+using Microsoft.Extensions.Options;
+
 using SL.ChatLinks.UI.Tabs.Items.Tooltips;
 using SL.ChatLinks.UI.Tabs.Items.Upgrades;
 using SL.Common;
@@ -12,11 +14,13 @@ public sealed class ChatLinkEditorViewModelFactory(
     ItemIcons icons,
     Customizer customizer,
     IClipBoard clipboard,
-    IEventAggregator eventAggregator)
+    IEventAggregator eventAggregator,
+    IOptionsMonitor<ChatLinkOptions> options)
 {
     public ChatLinkEditorViewModel Create(Item item)
     {
         return new ChatLinkEditorViewModel(
+            options,
             eventAggregator,
             itemTooltipViewModelFactory,
             upgradeEditorViewModelFactory,

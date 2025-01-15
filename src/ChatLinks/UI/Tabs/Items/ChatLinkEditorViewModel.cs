@@ -7,6 +7,7 @@ using Blish_HUD.Content;
 using GuildWars2.Chat;
 using GuildWars2.Items;
 
+using Microsoft.Extensions.Options;
 using Microsoft.Xna.Framework;
 
 using SL.ChatLinks.UI.Tabs.Items.Tooltips;
@@ -40,8 +41,10 @@ public sealed class ChatLinkEditorViewModel : ViewModel
 
     private readonly IClipBoard _clipboard;
     private bool _showInfusionWarning;
+    private int _maxStackSize;
 
     public ChatLinkEditorViewModel(
+        IOptionsMonitor<ChatLinkOptions> options,
         IEventAggregator eventAggregator,
         ItemTooltipViewModelFactory tooltipViewModelFactory,
         UpgradeEditorViewModelFactory upgradeEditorViewModelFactory,
@@ -94,9 +97,21 @@ public sealed class ChatLinkEditorViewModel : ViewModel
             };
         }
 
+        MaxStackSize = options.CurrentValue.RaiseStackSize ? 255 : 250;
+        options.OnChange(current =>
+        {
+            MaxStackSize = current.RaiseStackSize ? 255 : 250;
+        });
+
         eventAggregator.Subscribe<MouseEnteredUpgradeSelector>(OnMouseEnteredUpgradeSelector);
         eventAggregator.Subscribe<MouseLeftUpgradeSelector>(OnMouseLeftUpgradeSelector);
         eventAggregator.Subscribe<UpgradeSlotChanged>(OnUpgradeSlotChanged);
+    }
+
+    public int MaxStackSize
+    {
+        get => _maxStackSize;
+        set => SetField(ref _maxStackSize, value);
     }
 
     private void OnUpgradeSlotChanged(UpgradeSlotChanged obj)
