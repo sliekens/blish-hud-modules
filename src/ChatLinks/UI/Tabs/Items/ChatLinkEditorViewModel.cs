@@ -21,6 +21,8 @@ namespace SL.ChatLinks.UI.Tabs.Items;
 
 public sealed class ChatLinkEditorViewModel : ViewModel
 {
+    private readonly IOptionsMonitor<ChatLinkOptions> _options;
+
     private bool _allowScroll = true;
 
     private int _quantity = 1;
@@ -53,6 +55,7 @@ public sealed class ChatLinkEditorViewModel : ViewModel
         IClipBoard clipboard,
         Item item)
     {
+        _options = options;
         _tooltipViewModelFactory = tooltipViewModelFactory;
         _upgradeEditorViewModelFactory = upgradeEditorViewModelFactory;
         _icons = icons;
@@ -280,6 +283,14 @@ public sealed class ChatLinkEditorViewModel : ViewModel
     {
         if (Item is not IUpgradable upgradable)
         {
+            if (_options.CurrentValue.BananaMode)
+            {
+                yield return _upgradeEditorViewModelFactory.Create(
+                    Item,
+                    UpgradeSlotType.Default,
+                    null
+                );
+            }
             yield break;
         }
 

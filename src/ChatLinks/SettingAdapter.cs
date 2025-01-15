@@ -22,6 +22,16 @@ internal sealed class ChatLinkOptionsAdapter : IOptionsChangeTokenSource<ChatLin
                 previousCts.Dispose();
             };
         }
+
+        if (settings.TryGetSetting("BananaMode", out SettingEntry<bool> bananaMode))
+        {
+            bananaMode.SettingChanged += (sender, args) =>
+            {
+                var previousCts = Interlocked.Exchange(ref _cts, new CancellationTokenSource());
+                previousCts.Cancel();
+                previousCts.Dispose();
+            };
+        }
     }
 
     public IChangeToken GetChangeToken()

@@ -41,6 +41,8 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 
     private SettingEntry<bool>? _raiseStackSize;
 
+    private SettingEntry<bool>? _bananaMode;
+
     protected override void DefineSettings(SettingCollection settings)
     {
         _raiseStackSize = settings.DefineSetting(
@@ -48,6 +50,13 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
             false,
             () => "Raise the maximum item stack size from 250 to 255",
             () => "When enabled, you can generate chat links with stacks of 255 items."
+        );
+
+        _bananaMode = settings.DefineSetting(
+            "BananaMode",
+            false,
+            () => "Banana of Imagination-mode",
+            () => "When enabled, you can add an upgrade component to any item."
         );
     }
 
@@ -58,7 +67,9 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         services.Configure<ChatLinkOptions>(options =>
         {
             options.RaiseStackSize = _raiseStackSize!.Value;
+            options.BananaMode = _bananaMode!.Value;
         });
+
         services.AddSingleton<IOptionsChangeTokenSource<ChatLinkOptions>, ChatLinkOptionsAdapter>();
 
         services.AddGw2Client();
