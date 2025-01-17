@@ -90,7 +90,6 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         services.AddTransient<MainIconViewModel>();
         services.AddTransient<MainWindow>();
         services.AddTransient<MainWindowViewModel>();
-        services.AddTransient<ItemsTabView>();
         services.AddTransient<ItemsTabViewFactory>();
         services.AddTransient<ItemsTabViewModel>();
         services.AddTransient<ItemsTabViewModelFactory>();
