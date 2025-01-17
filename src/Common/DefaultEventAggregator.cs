@@ -70,6 +70,12 @@ public sealed class DefaultEventAggregator : IEventAggregator
         }
     }
 
+    public async Task PublishAsync<TEvent>(TEvent eventToPublish)
+    {
+        await PublishAsync(eventToPublish, CancellationToken.None)
+            .ConfigureAwait(false);
+    }
+
     public async Task PublishAsync<TEvent>(TEvent eventToPublish, CancellationToken cancellationToken)
     {
         if (!_eventHandlers.TryGetValue(typeof(TEvent), out var handlers))

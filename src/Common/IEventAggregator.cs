@@ -29,5 +29,10 @@ public interface IEventAggregator
     /// <summary>
     /// Publishes an event of type TEvent to all subscribers asynchronously.
     /// </summary>
+    Task PublishAsync<TEvent>(TEvent eventToPublish);
+
+    /// <summary>
+    /// Publishes an event of type TEvent to all subscribers asynchronously.
+    /// </summary>
     Task PublishAsync<TEvent>(TEvent eventToPublish, CancellationToken cancellationToken);
 }
