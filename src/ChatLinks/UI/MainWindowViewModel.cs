@@ -6,8 +6,30 @@ using SL.Common;
 
 namespace SL.ChatLinks.UI;
 
-public sealed class MainWindowViewModel(ItemsTabViewFactory itemsTabViewFactory) : ViewModel
+public sealed class MainWindowViewModel(
+    IEventAggregator eventAggregator,
+    ItemsTabViewFactory itemsTabViewFactory
+) : ViewModel
 {
+    private bool _visible;
+
+    public void Initialize()
+    {
+        eventAggregator.Subscribe<MainIconClicked>(MainIconClicked);
+        eventAggregator.Subscribe<ModuleUnloading>(ModuleUnloading);
+    }
+
+    private void MainIconClicked(MainIconClicked obj)
+    {
+        Visible = !Visible;
+    }
+
+    public bool Visible
+    {
+        get => _visible;
+        set => SetField(ref _visible, value);
+    }
+
     public string Id => "sliekens.chat-links.main-window";
     public string Title => "Chat Links";
 
@@ -22,5 +44,11 @@ public sealed class MainWindowViewModel(ItemsTabViewFactory itemsTabViewFactory)
             itemsTabViewFactory.Create,
             "Items",
             1);
+    }
+
+    private void ModuleUnloading(ModuleUnloading obj)
+    {
+        eventAggregator.Unsubscribe<MainIconClicked>(MainIconClicked);
+        eventAggregator.Unsubscribe<ModuleUnloading>(ModuleUnloading);
     }
 }

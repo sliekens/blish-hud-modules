@@ -1,13 +1,23 @@
 ﻿using Blish_HUD.Controls;
+using Blish_HUD.Input;
 
 namespace SL.ChatLinks.UI;
 
 public sealed class MainIcon : CornerIcon
 {
-    public MainIcon(MainIconViewModel vm)
-        : base(vm.Texture, vm.HoverTexture, vm.Name)
+    public MainIconViewModel ViewModel { get; }
+
+    public MainIcon(MainIconViewModel viewModel)
+        : base(viewModel.Texture, viewModel.HoverTexture, viewModel.Name)
     {
+        ViewModel = viewModel;
         Parent = Graphics.SpriteScreen;
-        Priority = vm.Priority;
+        Priority = viewModel.Priority;
+    }
+
+    protected override void OnClick(MouseEventArgs e)
+    {
+        ViewModel.ClickCommand.Execute();
+        base.OnClick(e);
     }
 }

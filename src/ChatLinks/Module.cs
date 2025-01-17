@@ -31,6 +31,8 @@ namespace SL.ChatLinks;
 [method: ImportingConstructor]
 public class Module([Import("ModuleParameters")] ModuleParameters parameters) : Blish_HUD.Modules.Module(parameters)
 {
+    private IEventAggregator? _eventAggregator;
+
     private MainIcon? _cornerIcon;
 
     private MainWindow? _mainWindow;
@@ -122,7 +124,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         });
 
         _serviceProvider = services.BuildServiceProvider();
-
+        _eventAggregator = Resolve<IEventAggregator>();
         SetupSqlite3();
     }
 
@@ -143,7 +145,6 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 
         _cornerIcon = Resolve<MainIcon>();
         _mainWindow = Resolve<MainWindow>();
-        _cornerIcon.Click += CornerIcon_Click;
 
         ItemSeeder seeder = Resolve<ItemSeeder>();
         Progress<string> progress = new(report =>
@@ -246,13 +247,9 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         }
     }
 
-    private void CornerIcon_Click(object sender, EventArgs e)
-    {
-        _mainWindow?.ToggleWindow();
-    }
-
     protected override void Unload()
     {
+        _eventAggregator?.Publish(new ModuleUnloading());
         _cornerIcon?.Dispose();
         _mainWindow?.Dispose();
         _serviceProvider?.Dispose();
