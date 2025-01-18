@@ -116,13 +116,13 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         });
 
         _serviceProvider = services.BuildServiceProvider();
-        _eventAggregator = Resolve<IEventAggregator>();
+        _eventAggregator = _serviceProvider.GetRequiredService<IEventAggregator>();
         SetupSqlite3();
     }
 
     protected override async Task LoadAsync()
     {
-        var logger = Resolve<ILogger<Module>>();
+        var logger = _serviceProvider.GetRequiredService<ILogger<Module>>();
         try
         {
             await FirstTimeSetup();
@@ -132,13 +132,13 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
             logger.LogError(reason, "First-time setup failed.");
         }
 
-        await using ChatLinksContext context = Resolve<ChatLinksContext>();
+        _ = _serviceProvider.GetRequiredService<MainIcon>();
+        _ = _serviceProvider.GetRequiredService<MainWindow>();
+
+        using var scope = _serviceProvider.CreateScope();
+        await using ChatLinksContext context = scope.ServiceProvider.GetRequiredService<ChatLinksContext>();
         await context.Database.MigrateAsync();
-
-        _ = Resolve<MainIcon>();
-        _ = Resolve<MainWindow>();
-
-        ItemSeeder seeder = Resolve<ItemSeeder>();
+        ItemSeeder seeder = scope.ServiceProvider.GetRequiredService<ItemSeeder>();
         await seeder.Seed(CancellationToken.None);
     }
 
@@ -163,11 +163,6 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
                 await dataStream.CopyToAsync(fileStream);
             }
         }
-    }
-
-    private T Resolve<T>() where T : notnull
-    {
-        return _serviceProvider.GetRequiredService<T>();
     }
 
     private string DatabaseLocation()
