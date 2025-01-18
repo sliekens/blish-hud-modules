@@ -1,82 +1,83 @@
-﻿using Blish_HUD.Controls;
+﻿using Blish_HUD;
+using Blish_HUD.Content;
+using Blish_HUD.Controls;
 
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 using SL.ChatLinks.UI.Tabs.Items.Tooltips;
+using SL.Common;
 
 namespace SL.ChatLinks.UI.Tabs.Items.Collections;
 
-public sealed class ItemsListEntry : FlowPanel
+public sealed class ItemsListEntry(ItemsListViewModel viewModel) : Control
 {
-    private static readonly Color ActiveColor = new(109,100,69, 0);
+    private static readonly Color ActiveColor = new(109, 100, 69, 0);
+
     private static readonly Color HoverColor = new(109, 100, 69, 127);
-    public ItemsListViewModel ViewModel { get; }
 
-    private readonly Image _image;
+    private readonly AsyncTexture2D? _icon = viewModel.GetIcon();
 
-    private readonly Panel _labelHolder;
+    private readonly Rectangle _iconBounds = new(0, 0, 35, 35);
 
-    private readonly Label _name;
+    private Rectangle _textBounds = Rectangle.Empty;
 
-    public ItemsListEntry(ItemsListViewModel viewModel)
+    public override void DoUpdate(GameTime gameTime)
     {
-        ViewModel = viewModel;
-        WidthSizingMode = SizingMode.Fill;
-        HeightSizingMode = SizingMode.AutoSize;
-        FlowDirection = ControlFlowDirection.SingleLeftToRight;
-        _image = new Image { Parent = this, Size = new Point(35), Texture = viewModel.GetIcon() };
-
-        _labelHolder = new Panel
+        BackgroundColor = viewModel.IsSelected switch
         {
-            Parent = this,
-            WidthSizingMode = SizingMode.Fill,
-            Height = 35,
-            HorizontalScrollOffset = -5
+            true => ActiveColor,
+            false when MouseOver => HoverColor,
+            _ => Color.Transparent
         };
-
-        _name = new Label
-        {
-            Parent = _labelHolder,
-            Text = viewModel.Item.Name,
-            TextColor = viewModel.Color,
-            Height = 35,
-            Width = 395,
-            WrapText = true,
-            VerticalAlignment = VerticalAlignment.Middle
-        };
-    }
-
-    public override void UpdateContainer(GameTime gameTime)
-    {
-        if (ViewModel.IsSelected)
-        {
-            _labelHolder.BackgroundColor = ActiveColor;
-            _name.ShowShadow = true;
-        }
-        else if (MouseOver)
-        {
-            _labelHolder.BackgroundColor = HoverColor;
-            _name.ShowShadow = true;
-        }
-        else
-        {
-            _labelHolder.BackgroundColor = Color.Transparent;
-            _name.ShowShadow = false;
-        }
 
         if (MouseOver)
         {
-            _image.Tooltip ??= new Tooltip(new ItemTooltipView(ViewModel.CreateTooltipViewModel()));
-            _name.Tooltip ??= new Tooltip(new ItemTooltipView(ViewModel.CreateTooltipViewModel()));
+            Tooltip ??= new Tooltip(new ItemTooltipView(viewModel.CreateTooltipViewModel()));
         }
-
-        base.UpdateContainer(gameTime);
     }
 
-    protected override void DisposeControl()
+    public override void RecalculateLayout()
     {
-        _image.Dispose();
-        _name.Dispose();
-        base.DisposeControl();
+        var parent = Parent;
+        if (parent is null)
+        {
+            return;
+        }
+
+        Width = parent.ContentRegion.Width;
+        Height = 35;
+
+        _textBounds = new Rectangle(40, 0, Width - 40, 35);
+    }
+
+    protected override void Paint(SpriteBatch spriteBatch, Rectangle bounds)
+    {
+        if (_icon is not null)
+        {
+            spriteBatch.DrawOnCtrl(this, _icon, _iconBounds, Color.White);
+        }
+
+        if (MouseOver || viewModel.IsSelected)
+        {
+            foreach ((int x, int y) in (ReadOnlySpan<(int, int)>)[(1, 1), (-1, 1), (-1, -1), (1, -1)])
+                spriteBatch.DrawStringOnCtrl(
+                    this,
+                    viewModel.Item.Name,
+                    Content.DefaultFont14,
+                    _textBounds.OffsetBy(x, y),
+                    new Color(Color.Black, .4f),
+                    true
+                );
+        }
+
+        spriteBatch.DrawStringOnCtrl(
+            this,
+            viewModel.Item.Name,
+            Content.DefaultFont14,
+            _textBounds,
+            viewModel.Color,
+            true
+        );
     }
 }
