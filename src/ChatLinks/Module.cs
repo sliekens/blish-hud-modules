@@ -31,10 +31,6 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 {
     private IEventAggregator? _eventAggregator;
 
-    private MainIcon? _cornerIcon;
-
-    private MainWindow? _mainWindow;
-
     private ServiceProvider? _serviceProvider;
 
     private SettingEntry<bool>? _raiseStackSize;
@@ -139,8 +135,8 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         await using ChatLinksContext context = Resolve<ChatLinksContext>();
         await context.Database.MigrateAsync();
 
-        _cornerIcon = Resolve<MainIcon>();
-        _mainWindow = Resolve<MainWindow>();
+        _ = Resolve<MainIcon>();
+        _ = Resolve<MainWindow>();
 
         ItemSeeder seeder = Resolve<ItemSeeder>();
         await seeder.Seed(CancellationToken.None);
@@ -183,8 +179,6 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
     protected override void Unload()
     {
         _eventAggregator?.Publish(new ModuleUnloading());
-        _cornerIcon?.Dispose();
-        _mainWindow?.Dispose();
         _serviceProvider?.Dispose();
     }
 }
