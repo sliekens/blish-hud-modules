@@ -46,7 +46,7 @@ public sealed class MainWindow : TabbedWindow2
         }
     }
 
-    private new void ModelPropertyChanged(object sender, PropertyChangedEventArgs args)
+    private void ModelPropertyChanged(object sender, PropertyChangedEventArgs args)
     {
         switch (args.PropertyName)
         {
