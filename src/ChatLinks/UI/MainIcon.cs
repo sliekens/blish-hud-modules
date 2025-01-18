@@ -26,6 +26,9 @@ public sealed class MainIcon : CornerIcon
             case nameof(ViewModel.LoadingMessage):
                 LoadingMessage = ViewModel.LoadingMessage;
                 break;
+            case nameof(ViewModel.TooltipText):
+                BasicTooltipText = ViewModel.TooltipText;
+                break;
         }
     }
 

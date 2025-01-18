@@ -9,6 +9,7 @@ namespace SL.ChatLinks.UI;
 public class MainIconViewModel(IEventAggregator eventAggregator) : ViewModel
 {
     private string? _loadingMessage;
+    private string? _tooltipText;
 
     public void Initialize()
     {
@@ -33,6 +34,12 @@ public class MainIconViewModel(IEventAggregator eventAggregator) : ViewModel
         set => SetField(ref _loadingMessage, value);
     }
 
+    public string? TooltipText
+    {
+        get => _tooltipText;
+        set => SetField(ref _tooltipText, value);
+    }
+
     public AsyncRelayCommand ClickCommand => new(async () =>
     {
         await eventAggregator.PublishAsync(new MainIconClicked(), CancellationToken.None);
@@ -46,5 +53,6 @@ public class MainIconViewModel(IEventAggregator eventAggregator) : ViewModel
     private void DatabaseSyncCompleted(DatabaseSyncCompleted args)
     {
         LoadingMessage = null;
+        TooltipText = null;
     }
 }
