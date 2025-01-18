@@ -1,4 +1,6 @@
-﻿using Blish_HUD.Controls;
+﻿using System.ComponentModel;
+
+using Blish_HUD.Controls;
 using Blish_HUD.Input;
 
 namespace SL.ChatLinks.UI;
@@ -13,6 +15,18 @@ public sealed class MainIcon : CornerIcon
         ViewModel = viewModel;
         Parent = Graphics.SpriteScreen;
         Priority = viewModel.Priority;
+        viewModel.Initialize();
+        viewModel.PropertyChanged += ModelPropertyChanged;
+    }
+
+    private void ModelPropertyChanged(object sender, PropertyChangedEventArgs args)
+    {
+        switch (args.PropertyName)
+        {
+            case nameof(ViewModel.LoadingMessage):
+                LoadingMessage = ViewModel.LoadingMessage;
+                break;
+        }
     }
 
     protected override void OnClick(MouseEventArgs e)

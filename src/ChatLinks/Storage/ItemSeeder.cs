@@ -17,7 +17,7 @@ public sealed class ItemSeeder(
     IEventAggregator eventAggregator
 )
 {
-    public async Task Seed(IProgress<string> progress, CancellationToken cancellationToken)
+    public async Task Seed(CancellationToken cancellationToken)
     {
         context.ChangeTracker.AutoDetectChangesEnabled = false;
 
@@ -36,7 +36,7 @@ public sealed class ItemSeeder(
             logger.LogDebug("Start seeding {Count} items.", index.Count);
             Progress<BulkProgress> bulkProgress = new(report =>
             {
-                progress.Report($"Fetching items... ({report.ResultCount} of {report.ResultTotal})");
+                eventAggregator.Publish(new DatabaseSyncProgress(report));
             });
 
             context.ChangeTracker.AutoDetectChangesEnabled = false;
@@ -76,3 +76,5 @@ public sealed class ItemSeeder(
     }
 
 }
+
+public record DatabaseSyncProgress(BulkProgress Report);

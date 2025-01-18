@@ -147,23 +147,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         _mainWindow = Resolve<MainWindow>();
 
         ItemSeeder seeder = Resolve<ItemSeeder>();
-        Progress<string> progress = new(report =>
-        {
-            _cornerIcon.LoadingMessage = report;
-        });
-
-        if (Program.IsMainThread)
-        {
-            var seederTask = await Task.Factory.StartNew(async () =>
-            {
-                await seeder.Seed(progress, CancellationToken.None);
-            }, TaskCreationOptions.LongRunning);
-            await seederTask;
-        }
-        else
-        {
-            await seeder.Seed(progress, CancellationToken.None);
-        }
+        await seeder.Seed(CancellationToken.None);
 
         _cornerIcon.LoadingMessage = null;
         _cornerIcon.BasicTooltipText = null;
@@ -213,22 +197,17 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         {
             _syncButton!.Enabled = false;
             ItemSeeder seeder = Resolve<ItemSeeder>();
-            Progress<string> progress = new(report =>
-            {
-                _cornerIcon!.LoadingMessage = report;
-            });
-
             if (Program.IsMainThread)
             {
                 var seederTask = await Task.Factory.StartNew(async () =>
                 {
-                    await seeder.Seed(progress, CancellationToken.None);
+                    await seeder.Seed(CancellationToken.None);
                 }, TaskCreationOptions.LongRunning);
                 await seederTask;
             }
             else
             {
-                await seeder.Seed(progress, CancellationToken.None);
+                await seeder.Seed(CancellationToken.None);
             }
 
             ScreenNotification.ShowNotification("Everything is up-to-date.", ScreenNotification.NotificationType.Green);
