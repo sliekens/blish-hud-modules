@@ -85,7 +85,8 @@ public sealed class UpgradeEditor : FlowPanel
         return new UpgradeSlot(ViewModel.UpgradeSlotViewModel)
         {
             Parent = this,
-            WidthSizingMode = SizingMode.Fill
+            WidthSizingMode = SizingMode.Fill,
+            Opacity = ViewModel.IsCustomizable ? 1f : .33f
         };
     }
 

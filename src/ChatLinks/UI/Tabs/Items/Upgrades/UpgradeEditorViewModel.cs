@@ -23,6 +23,8 @@ public sealed class UpgradeEditorViewModel(
         set => SetField(ref _customizing, value);
     }
 
+    public bool IsCustomizable => TargetItem is IUpgradable;
+
     public RelayCommand CustomizeCommand => new(() => Customizing = !Customizing);
 
     public RelayCommand RemoveCommand => new(
