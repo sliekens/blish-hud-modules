@@ -2,8 +2,6 @@
 using System.IO.Compression;
 
 using Blish_HUD;
-using Blish_HUD.Controls;
-using Blish_HUD.Input;
 using Blish_HUD.Modules;
 using Blish_HUD.Settings;
 
@@ -38,8 +36,6 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
     private MainWindow? _mainWindow;
 
     private ServiceProvider? _serviceProvider;
-
-    private ContextMenuStripItem? _syncButton;
 
     private SettingEntry<bool>? _raiseStackSize;
 
@@ -148,10 +144,6 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 
         ItemSeeder seeder = Resolve<ItemSeeder>();
         await seeder.Seed(CancellationToken.None);
-
-        _cornerIcon.Menu = new ContextMenuStrip();
-        _syncButton = _cornerIcon.Menu.AddMenuItem("Sync database");
-        _syncButton.Click += SyncClicked;
     }
 
     private static void SetupSqlite3()
@@ -186,40 +178,6 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
     {
         string directory = ModuleParameters.DirectoriesManager.GetFullDirectoryPath("chat-links-data");
         return Path.Combine(directory, "data.db");
-    }
-
-    private async void SyncClicked(object sender, MouseEventArgs e)
-    {
-        var logger = Resolve<ILogger<Module>>();
-        try
-        {
-            _syncButton!.Enabled = false;
-            ItemSeeder seeder = Resolve<ItemSeeder>();
-            if (Program.IsMainThread)
-            {
-                var seederTask = await Task.Factory.StartNew(async () =>
-                {
-                    await seeder.Seed(CancellationToken.None);
-                }, TaskCreationOptions.LongRunning);
-                await seederTask;
-            }
-            else
-            {
-                await seeder.Seed(CancellationToken.None);
-            }
-
-            ScreenNotification.ShowNotification("Everything is up-to-date.", ScreenNotification.NotificationType.Green);
-        }
-        catch (Exception reason)
-        {
-            logger.LogError(reason, "Sync failed");
-            ScreenNotification.ShowNotification("Sync failed, try again later.",
-                ScreenNotification.NotificationType.Warning);
-        }
-        finally
-        {
-            _syncButton!.Enabled = true;
-        }
     }
 
     protected override void Unload()

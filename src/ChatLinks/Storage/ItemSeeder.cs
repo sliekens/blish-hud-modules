@@ -63,7 +63,10 @@ public sealed class ItemSeeder(
         }
 
         logger.LogInformation("Finished seeding {Count} items.", index.Count);
-        await eventAggregator.PublishAsync(new DatabaseSyncCompleted(), cancellationToken);
+        ThreadPool.QueueUserWorkItem(_ =>
+        {
+            eventAggregator.Publish(new DatabaseSyncCompleted());
+        });
     }
 
     private static void DetachAllEntities(ChatLinksContext context)
