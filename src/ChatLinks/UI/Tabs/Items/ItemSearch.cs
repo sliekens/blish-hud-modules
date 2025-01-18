@@ -64,7 +64,7 @@ public sealed class ItemSearch(ChatLinksContext context)
 
         yield return item;
 
-        HashSet<int> relatedItems = new();
+        HashSet<int> relatedItems = [];
         if (link.SuffixItemId.HasValue)
         {
             relatedItems.Add(link.SuffixItemId.Value);
