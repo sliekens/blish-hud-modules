@@ -654,7 +654,11 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
     public void PrintItemRarity(Extensible<Rarity> rarity)
     {
-        if (rarity != Rarity.Basic)
+        if (rarity == Rarity.Basic)
+        {
+            PrintPlainText(" ");
+        }
+        else
         {
             PrintPlainText($"\r\n{rarity}", ItemColors.Rarity(rarity));
         }
