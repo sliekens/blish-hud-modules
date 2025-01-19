@@ -1,8 +1,10 @@
-﻿using Blish_HUD;
+﻿using System.Diagnostics;
+
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Primitives;
 
 using SL.ChatLinks.Storage;
 using SL.Common;
@@ -13,11 +15,17 @@ namespace SL.ChatLinks.UI;
 public class MainIconViewModel(
     ILogger<MainIconViewModel> logger,
     IEventAggregator eventAggregator,
-    ItemSeeder seeder
+    ItemSeeder seeder,
+    ModuleSettings settings
 ) : ViewModel
 {
     private string? _loadingMessage;
+
     private string? _tooltipText;
+
+    private bool _raiseStackSize = settings.RaiseStackSize;
+
+    private bool _bananaMode = settings.BananaMode;
 
     private event EventHandler? DatabaseUpdated;
 
@@ -25,6 +33,12 @@ public class MainIconViewModel(
     {
         eventAggregator.Subscribe<DatabaseSyncProgress>(DatabaseSyncProgress);
         eventAggregator.Subscribe<DatabaseSyncCompleted>(DatabaseSyncCompleted);
+
+        ChangeToken.OnChange(settings.GetChangeToken, moduleSettings =>
+        {
+            BananaMode = moduleSettings.BananaMode;
+            RaiseStackSize = moduleSettings.RaiseStackSize;
+        }, settings);
     }
 
 
@@ -49,6 +63,30 @@ public class MainIconViewModel(
     {
         get => _tooltipText;
         set => SetField(ref _tooltipText, value);
+    }
+
+    public bool RaiseStackSize
+    {
+        get => _raiseStackSize;
+        set
+        {
+            if (SetField(ref _raiseStackSize, value))
+            {
+                settings.RaiseStackSize = value;
+            }
+        }
+    }
+
+    public bool BananaMode
+    {
+        get => _bananaMode;
+        set
+        {
+            if (SetField(ref _bananaMode, value))
+            {
+                settings.BananaMode = value;
+            }
+        }
     }
 
     public AsyncRelayCommand ClickCommand => new(async () =>
@@ -97,4 +135,9 @@ public class MainIconViewModel(
         TooltipText = null;
         DatabaseUpdated?.Invoke(this, EventArgs.Empty);
     }
+
+    public RelayCommand KoFiCommand => new(() =>
+    {
+        Process.Start("https://ko-fi.com/sliekens");
+    });
 }
