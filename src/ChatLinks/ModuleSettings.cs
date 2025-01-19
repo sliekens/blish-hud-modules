@@ -13,6 +13,8 @@ public class ModuleSettings : IConfigureOptions<ChatLinkOptions>, IOptionsChange
 
     private readonly SettingEntry<bool> _raiseStackSize;
 
+    private readonly SettingEntry<int> _maxResultCount;
+
     private readonly ChangeTokenSource _changeTokenSource = new();
 
     public ModuleSettings(SettingCollection settings)
@@ -34,6 +36,15 @@ public class ModuleSettings : IConfigureOptions<ChatLinkOptions>, IOptionsChange
         );
 
         _raiseStackSize.SettingChanged += (_, _) => _changeTokenSource.OnChange();
+
+        _maxResultCount = settings.DefineSetting(
+            "MaxResultCount",
+            50,
+            () => "Maximum Result Count",
+            () => "The maximum number of search results to display. WARNING! High numbers can slow down or even freeze Blish HUD."
+        );
+
+        _maxResultCount.SettingChanged += (_, _) => _changeTokenSource.OnChange();
     }
 
     public bool BananaMode
@@ -60,10 +71,23 @@ public class ModuleSettings : IConfigureOptions<ChatLinkOptions>, IOptionsChange
         }
     }
 
+    public int MaxResultCount
+    {
+        get
+        {
+            return _maxResultCount.Value;
+        }
+        set
+        {
+            _maxResultCount.Value = value;
+        }
+    }
+
     public void Configure(ChatLinkOptions options)
     {
         options.RaiseStackSize = RaiseStackSize;
         options.BananaMode = BananaMode;
+        options.MaxResultCount = MaxResultCount;
     }
 
     public IChangeToken GetChangeToken() => _changeTokenSource.Token;
