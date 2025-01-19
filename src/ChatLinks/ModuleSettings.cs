@@ -44,6 +44,7 @@ public class ModuleSettings : IConfigureOptions<ChatLinkOptions>, IOptionsChange
             () => "The maximum number of search results to display. WARNING! High numbers can slow down or even freeze Blish HUD."
         );
 
+        _maxResultCount.SetRange(50, 1000);
         _maxResultCount.SettingChanged += (_, _) => _changeTokenSource.OnChange();
     }
 
