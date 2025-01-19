@@ -23,81 +23,24 @@ using Item = GuildWars2.Items.Item;
 
 namespace SL.ChatLinks.UI.Tabs.Items.Tooltips;
 
-public sealed class ItemTooltipView : View, ITooltipView
+public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, ITooltipView
 {
-    private readonly FlowPanel _layout;
-
-    public ItemTooltipView(ItemTooltipViewModel viewModel)
+    private static readonly Color Gray = new Color(0x99, 0x99, 0x99);
+    private static readonly Color ActiveBuffColor = new Color(0x55, 0x99, 0xFF);
+    private readonly FlowPanel _layout = new()
     {
-        ViewModel = viewModel;
-        _layout = new FlowPanel
-        {
-            FlowDirection = ControlFlowDirection.SingleTopToBottom,
-            Width = 350,
-            HeightSizingMode = SizingMode.AutoSize,
-        };
+        FlowDirection = ControlFlowDirection.SingleTopToBottom,
+        Width = 350,
+        HeightSizingMode = SizingMode.AutoSize,
+    };
 
-        switch (viewModel.Item)
-        {
-            case Armor armor:
-                PrintArmor(armor);
-                break;
-            case Backpack back:
-                PrintBackpack(back);
-                break;
-            case Bag bag:
-                PrintBag(bag);
-                break;
-            case Consumable consumable:
-                PrintConsumable(consumable);
-                break;
-            case GuildWars2.Items.Container container:
-                PrintContainer(container);
-                break;
-            case CraftingMaterial craftingMaterial:
-                PrintCraftingMaterial(craftingMaterial);
-                break;
-            case GatheringTool gatheringTool:
-                PrintGatheringTool(gatheringTool);
-                break;
-            case Trinket trinket:
-                PrintTrinket(trinket);
-                break;
-            case Gizmo gizmo:
-                PrintGizmo(gizmo);
-                break;
-            case JadeTechModule jadeTechModule:
-                PrintJadeTechModule(jadeTechModule);
-                break;
-            case Miniature miniature:
-                PrintMiniature(miniature);
-                break;
-            case PowerCore powerCore:
-                PrintPowerCore(powerCore);
-                break;
-            case Relic relic:
-                PrintRelic(relic);
-                break;
-            case SalvageTool salvageTool:
-                PrintSalvageTool(salvageTool);
-                break;
-            case Trophy trophy:
-                PrintTrophy(trophy);
-                break;
-            case UpgradeComponent upgradeComponent:
-                PrintUpgradeComponent(upgradeComponent);
-                break;
-            case Weapon weapon:
-                PrintWeapon(weapon);
-                break;
-            default:
-                Print(viewModel.Item);
-                break;
-        }
+    public ItemTooltipViewModel ViewModel { get; } = viewModel;
+
+    protected override async Task<bool> Load(IProgress<string> progress)
+    {
+        await ViewModel.Load(progress);
+        return true;
     }
-
-    public ItemTooltipViewModel ViewModel { get; }
-
 
     private void PrintArmor(Armor armor)
     {
@@ -108,7 +51,7 @@ public sealed class ItemTooltipView : View, ITooltipView
         ));
 
         PrintUpgrades();
-        PrintItemSkin(armor.DefaultSkinId);
+        PrintItemSkin();
         PrintItemRarity(armor.Rarity);
         PrintWeightClass(armor.WeightClass);
         switch (armor)
@@ -153,7 +96,7 @@ public sealed class ItemTooltipView : View, ITooltipView
 
         PrintUpgrades();
 
-        PrintItemSkin(back.DefaultSkinId);
+        PrintItemSkin();
 
         PrintItemRarity(back.Rarity);
         PrintPlainText("Back Item");
@@ -213,7 +156,7 @@ public sealed class ItemTooltipView : View, ITooltipView
                 PrintPlainText(string.IsNullOrEmpty(consumable.Description) ? "Service" : "\r\nService");
                 break;
             case Transmutation transmutation:
-                PrintItemSkin(transmutation.SkinIds.First());
+                PrintItemSkin();
                 PrintPlainText("\r\nConsumable");
                 break;
             case Booze:
@@ -425,7 +368,7 @@ public sealed class ItemTooltipView : View, ITooltipView
         ));
 
         PrintUpgrades();
-        PrintItemSkin(weapon.DefaultSkinId);
+        PrintItemSkin();
         PrintItemRarity(weapon.Rarity);
         switch (weapon)
         {
@@ -614,7 +557,7 @@ public sealed class ItemTooltipView : View, ITooltipView
                         }
 
                         part.SetFontSize(ContentService.FontSize.Size16);
-                        part.SetTextColor(new Color(0x55, 0x99, 0xFF));
+                        part.SetTextColor(ActiveBuffColor);
                     });
 
                 if (slot.UpgradeComponent is Rune rune)
@@ -624,14 +567,14 @@ public sealed class ItemTooltipView : View, ITooltipView
                         builder.CreatePart($"\r\n({ordinal:0}): {bonus}", part =>
                         {
                             part.SetFontSize(ContentService.FontSize.Size16);
-                            part.SetTextColor(new Color(0x99, 0x99, 0x99));
+                            part.SetTextColor(Gray);
                         });
                     }
                 }
                 else if (slot.UpgradeComponent.Buff is { Description.Length: > 0 })
                 {
                     builder.CreatePart("\r\n", part => part.SetFontSize(ContentService.FontSize.Size16));
-                    builder.AddMarkup(slot.UpgradeComponent.Buff.Description, new Color(0x55, 0x99, 0xFF));
+                    builder.AddMarkup(slot.UpgradeComponent.Buff.Description, ActiveBuffColor);
                 }
                 else
                 {
@@ -641,7 +584,7 @@ public sealed class ItemTooltipView : View, ITooltipView
                         builder.CreatePart($"+{stat.Value:N0} {ViewModel.AttributeName(stat.Key)}", part =>
                         {
                             part.SetFontSize(ContentService.FontSize.Size16);
-                            part.SetTextColor(new Color(0x55, 0x99, 0xFF));
+                            part.SetTextColor(ActiveBuffColor);
                         });
                     }
                 }
@@ -690,9 +633,19 @@ public sealed class ItemTooltipView : View, ITooltipView
 
     }
 
-    public void PrintItemSkin(int skinId)
+    public void PrintItemSkin()
     {
-        // TODO: unlock status
+        if (ViewModel.SkinUnlocked.HasValue)
+        {
+            if (ViewModel.SkinUnlocked.Value)
+            {
+                PrintPlainText("\r\nSkin Unlocked");
+            }
+            else
+            {
+                PrintPlainText("\r\nSkin Locked", Gray);
+            }
+        }
     }
 
     public void PrintItemRarity(Extensible<Rarity> rarity)
@@ -876,7 +829,7 @@ public sealed class ItemTooltipView : View, ITooltipView
             .AutoSizeHeight()
             .Wrap()
             .CreatePart("\r\n", part => part.SetFontSize(ContentService.FontSize.Size16))
-            .AddMarkup(buff.Description, new Color(0x55, 0x99, 0xFF))
+            .AddMarkup(buff.Description, ActiveBuffColor)
             .Build();
         label.Parent = _layout;
     }
@@ -890,7 +843,7 @@ public sealed class ItemTooltipView : View, ITooltipView
             text.Append($"\r\n({ordinal:0}): {bonus}");
         }
 
-        PrintPlainText(text.ToString(), new Color(0x99, 0x99, 0x99));
+        PrintPlainText(text.ToString(), Gray);
     }
 
     public void PrintWeaponStrength(Weapon weapon)
@@ -913,28 +866,28 @@ public sealed class ItemTooltipView : View, ITooltipView
                     builder.CreatePart(" (Choking)", static part =>
                     {
                         part.SetFontSize(ContentService.FontSize.Size16);
-                        part.SetTextColor(new Color(0x99, 0x99, 0x99));
+                        part.SetTextColor(Gray);
                     });
                     break;
                 case DamageType.Fire:
                     builder.CreatePart(" (Fire)", static part =>
                     {
                         part.SetFontSize(ContentService.FontSize.Size16);
-                        part.SetTextColor(new Color(0x99, 0x99, 0x99));
+                        part.SetTextColor(Gray);
                     });
                     break;
                 case DamageType.Ice:
                     builder.CreatePart(" (Ice)", static part =>
                     {
                         part.SetFontSize(ContentService.FontSize.Size16);
-                        part.SetTextColor(new Color(0x99, 0x99, 0x99));
+                        part.SetTextColor(Gray);
                     });
                     break;
                 case DamageType.Lightning:
                     builder.CreatePart(" (Lightning)", static part =>
                     {
                         part.SetFontSize(ContentService.FontSize.Size16);
-                        part.SetTextColor(new Color(0x99, 0x99, 0x99));
+                        part.SetTextColor(Gray);
                     });
                     break;
             }
@@ -962,6 +915,64 @@ public sealed class ItemTooltipView : View, ITooltipView
 
     protected override void Build(Container buildPanel)
     {
+        switch (ViewModel.Item)
+        {
+            case Armor armor:
+                PrintArmor(armor);
+                break;
+            case Backpack back:
+                PrintBackpack(back);
+                break;
+            case Bag bag:
+                PrintBag(bag);
+                break;
+            case Consumable consumable:
+                PrintConsumable(consumable);
+                break;
+            case GuildWars2.Items.Container container:
+                PrintContainer(container);
+                break;
+            case CraftingMaterial craftingMaterial:
+                PrintCraftingMaterial(craftingMaterial);
+                break;
+            case GatheringTool gatheringTool:
+                PrintGatheringTool(gatheringTool);
+                break;
+            case Trinket trinket:
+                PrintTrinket(trinket);
+                break;
+            case Gizmo gizmo:
+                PrintGizmo(gizmo);
+                break;
+            case JadeTechModule jadeTechModule:
+                PrintJadeTechModule(jadeTechModule);
+                break;
+            case Miniature miniature:
+                PrintMiniature(miniature);
+                break;
+            case PowerCore powerCore:
+                PrintPowerCore(powerCore);
+                break;
+            case Relic relic:
+                PrintRelic(relic);
+                break;
+            case SalvageTool salvageTool:
+                PrintSalvageTool(salvageTool);
+                break;
+            case Trophy trophy:
+                PrintTrophy(trophy);
+                break;
+            case UpgradeComponent upgradeComponent:
+                PrintUpgradeComponent(upgradeComponent);
+                break;
+            case Weapon weapon:
+                PrintWeapon(weapon);
+                break;
+            default:
+                Print(ViewModel.Item);
+                break;
+        }
+
         _layout.Parent = buildPanel;
     }
 }

@@ -1,9 +1,12 @@
 ﻿using Blish_HUD.Content;
 
 using GuildWars2;
+using GuildWars2.Authorization;
 using GuildWars2.Hero;
+using GuildWars2.Hero.Equipment.Wardrobe;
 using GuildWars2.Items;
 
+using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 
 using SL.Common;
@@ -11,15 +14,34 @@ using SL.Common;
 namespace SL.ChatLinks.UI.Tabs.Items.Tooltips;
 
 public sealed class ItemTooltipViewModel(
+    ILogger<ItemTooltipViewModel> logger,
+    Gw2Client gw2Client,
+    ITokenProvider tokenProvider,
+    ItemIcons icons,
+    Customizer customizer,
     Item item,
     int quantity,
-    IEnumerable<UpgradeSlot> upgrades,
-    ItemIcons icons,
-    Customizer customizer) : ViewModel
+    IEnumerable<UpgradeSlot> upgrades
+) : ViewModel
 {
+    private EquipmentSkin? _skin;
+    private bool? _skinUnlocked;
+
     public IReadOnlyList<UpgradeSlot> UpgradesSlots { get; } = upgrades.ToList();
 
     public Item Item { get; } = item;
+
+    public EquipmentSkin? Skin
+    {
+        get => _skin;
+        private set => SetField(ref _skin, value);
+    }
+
+    public bool? SkinUnlocked
+    {
+        get => _skinUnlocked;
+        set => SetField(ref _skinUnlocked, value);
+    }
 
     public int Quantity { get; } = quantity;
 
@@ -90,5 +112,49 @@ public sealed class ItemTooltipViewModel(
     public AsyncTexture2D? GetIcon(Item item)
     {
         return icons.GetIcon(item);
+    }
+
+    public async Task Load(IProgress<string> progress)
+    {
+        switch (Item)
+        {
+            case Transmutation transmutation:
+                progress.Report("Checking unlock status...");
+                await LoadSkin(transmutation.SkinIds.First());
+                break;
+            case Armor armor:
+                progress.Report("Checking unlock status...");
+                await LoadSkin(armor.DefaultSkinId);
+                break;
+            case Backpack back:
+                progress.Report("Checking unlock status...");
+                await LoadSkin(back.DefaultSkinId);
+                break;
+            case Weapon weapon:
+                progress.Report("Checking unlock status...");
+                await LoadSkin(weapon.DefaultSkinId);
+                break;
+        }
+    }
+
+    private async Task LoadSkin(int skinId)
+    {
+        Skin = await gw2Client.Hero.Equipment.Wardrobe
+            .GetSkinById(skinId)
+            .ValueOnly();
+
+        try
+        {
+            if (tokenProvider.Grants.Contains(Permission.Unlocks))
+            {
+                var token = await tokenProvider.GetTokenAsync(CancellationToken.None);
+                var unlock = await gw2Client.Hero.Equipment.Wardrobe.GetUnlockedSkins(token).ValueOnly();
+                SkinUnlocked = unlock.Contains(skinId);
+            }
+        }
+        catch (Exception reason)
+        {
+            logger.LogWarning(reason, "Couldn't get wardrobe unlocks.");
+        }
     }
 }

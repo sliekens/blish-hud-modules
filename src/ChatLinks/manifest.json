@@ -20,9 +20,9 @@
         "chat-links-data"
     ],
     "api_permissions": {
-        "account": {
+        "unlocks": {
             "optional": true,
-            "details": "Used to enrich tooltips with account information."
+            "details": "Used to enrich tooltips with account unlocks."
         }
     }
 }
