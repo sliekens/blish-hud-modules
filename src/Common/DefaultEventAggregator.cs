@@ -63,8 +63,8 @@ public sealed class DefaultEventAggregator : IEventAggregator
                 case Action<TEvent> syncHandler:
                     syncHandler(eventToPublish);
                     break;
-                case Func<TEvent, Task> asyncHandler:
-                    _ = asyncHandler(eventToPublish);
+                case Func<TEvent, ValueTask> asyncHandler:
+                    asyncHandler(eventToPublish);
                     break;
             }
         }
