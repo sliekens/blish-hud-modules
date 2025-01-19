@@ -527,6 +527,15 @@
         "resolved": "4.5.0",
         "contentHash": "okurQJO6NRE/apDIP23ajJ0hpiNmJ+f0BwOlB/cSqTLQlw5upkf+5+96+iG2Jw40G1fCVCyPz/FhIABUjMR+RQ=="
       },
+      "SL.Adapters": {
+        "type": "Project",
+        "dependencies": {
+          "GW2SDK": "[2.1.0, )",
+          "Gw2Sharp": "[1.7.4, )",
+          "SL.Common": "[1.0.0, )",
+          "System.Collections.Immutable": "[1.7.1, )"
+        }
+      },
       "SL.ChatLinks": {
         "type": "Project",
         "dependencies": {
@@ -536,6 +545,7 @@
           "Microsoft.Extensions.Http": "[3.1.32, )",
           "Newtonsoft.Json": "[13.0.1, )",
           "Polly": "[8.5.0, )",
+          "SL.Adapters": "[1.0.0, )",
           "SL.Common": "[1.0.0, )",
           "SQLitePCLRaw.lib.e_sqlite3": "[2.1.10, )",
           "SQLitePCLRaw.provider.dynamic_cdecl": "[2.1.10, )",

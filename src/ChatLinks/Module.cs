@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
+using SL.Adapters;
 using SL.ChatLinks.Integrations;
 using SL.ChatLinks.Logging;
 using SL.ChatLinks.Storage;
@@ -48,6 +49,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         }
 
         ServiceCollection services = new();
+        services.AddSingleton(ModuleParameters);
         services.AddSingleton(_moduleSettings);
         services.ConfigureOptions(_moduleSettings);
         services.AddSingleton<IOptionsChangeTokenSource<ChatLinkOptions>>(_moduleSettings);
@@ -100,6 +102,8 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
                 builder.AddFilter("Microsoft.EntityFrameworkCore.Query", LogLevel.Critical);
             }
         });
+
+        services.AddSingleton<ITokenProvider, Gw2SharpTokenProvider>();
 
         _serviceProvider = services.BuildServiceProvider();
         _eventAggregator = _serviceProvider.GetRequiredService<IEventAggregator>();

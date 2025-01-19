@@ -18,5 +18,11 @@
     ],
     "directories": [
         "chat-links-data"
-    ]
+    ],
+    "api_permissions": {
+        "account": {
+            "optional": true,
+            "details": "Used to enrich tooltips with account information."
+        }
+    }
 }
