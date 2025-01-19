@@ -28,6 +28,8 @@ public class ItemsTabView : View
     public ItemsTabView(ILogger<ItemsTabView> logger, ItemsTabViewModel viewModel)
     {
         ViewModel = viewModel;
+        ViewModel.Initialize();
+
         _searchBox = new TextBox { Width = 400, PlaceholderText = "Enter item name or chat link..." };
 
         _loadingSpinner = new LoadingSpinner { Size = new Point(_searchBox.Height), Right = _searchBox.Right };
@@ -90,6 +92,7 @@ public class ItemsTabView : View
         _searchBox.TextChanged -= SearchEnterPressed;
         _searchBox.EnterPressed -= SearchEnterPressed;
         _searchBox.InputFocusChanged -= SearchInputFocusChanged;
+        ViewModel.Dispose();
     }
 
     private void SearchTextChanged(object sender, EventArgs e)

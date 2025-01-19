@@ -5,6 +5,7 @@ using GuildWars2.Items;
 
 using Microsoft.Extensions.Logging;
 
+using SL.ChatLinks.Storage;
 using SL.ChatLinks.UI.Tabs.Items.Collections;
 using SL.Common;
 using SL.Common.ModelBinding;
@@ -13,11 +14,12 @@ namespace SL.ChatLinks.UI.Tabs.Items;
 
 public sealed class ItemsTabViewModel(
     ILogger<ItemsTabViewModel> logger,
+    IEventAggregator eventAggregator,
     ItemSearch search,
     Customizer customizer,
     ItemsListViewModelFactory itemsListViewModelFactory,
     ChatLinkEditorViewModelFactory chatLinkEditorViewModelFactory)
-    : ViewModel
+    : ViewModel, IDisposable
 {
     private string _searchText = "";
 
@@ -26,6 +28,19 @@ public sealed class ItemsTabViewModel(
     private EventHandler? _searchCancelled;
 
     private readonly SemaphoreSlim _searchLock = new(1, 1);
+
+    public void Initialize()
+    {
+        eventAggregator.Subscribe<DatabaseSyncCompleted>(OnDatabaseSyncCompleted);
+    }
+
+    private async ValueTask OnDatabaseSyncCompleted(DatabaseSyncCompleted _)
+    {
+        if (!Searching && SearchText == "")
+        {
+            await NewItems(CancellationToken.None);
+        }
+    }
 
     public string SearchText
     {
@@ -163,5 +178,10 @@ public sealed class ItemsTabViewModel(
         {
             Searching = false;
         }
+    }
+
+    public void Dispose()
+    {
+        eventAggregator.Unsubscribe<DatabaseSyncCompleted>(OnDatabaseSyncCompleted);
     }
 }
