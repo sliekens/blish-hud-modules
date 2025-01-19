@@ -33,38 +33,24 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 
     private ServiceProvider? _serviceProvider;
 
-    private SettingEntry<bool>? _raiseStackSize;
-
-    private SettingEntry<bool>? _bananaMode;
+    private ModuleSettings? _moduleSettings;
 
     protected override void DefineSettings(SettingCollection settings)
     {
-        _raiseStackSize = settings.DefineSetting(
-            "RaiseStackSize",
-            false,
-            () => "Raise the maximum item stack size from 250 to 255",
-            () => "When enabled, you can generate chat links with stacks of 255 items."
-        );
-
-        _bananaMode = settings.DefineSetting(
-            "BananaMode",
-            false,
-            () => "Banana of Imagination-mode",
-            () => "When enabled, you can add an upgrade component to any item."
-        );
+        _moduleSettings = new ModuleSettings(settings);
     }
 
     protected override void Initialize()
     {
-        ServiceCollection services = new();
-        services.AddSingleton(ModuleParameters.SettingsManager.ModuleSettings);
-        services.Configure<ChatLinkOptions>(options =>
+        if (_moduleSettings is null)
         {
-            options.RaiseStackSize = _raiseStackSize!.Value;
-            options.BananaMode = _bananaMode!.Value;
-        });
+            throw new InvalidOperationException("Module settings not defined.");
+        }
 
-        services.AddSingleton<IOptionsChangeTokenSource<ChatLinkOptions>, ChatLinkOptionsAdapter>();
+        ServiceCollection services = new();
+        services.AddSingleton(_moduleSettings);
+        services.ConfigureOptions(_moduleSettings);
+        services.AddSingleton<IOptionsChangeTokenSource<ChatLinkOptions>>(_moduleSettings);
 
         services.AddGw2Client();
 
