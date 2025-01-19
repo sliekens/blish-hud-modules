@@ -635,9 +635,9 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
     public void PrintItemSkin()
     {
-        if (ViewModel.SkinUnlocked.HasValue)
+        if (ViewModel.UnlocksAvailable)
         {
-            if (ViewModel.SkinUnlocked.Value)
+            if (ViewModel.SkinUnlocked!.Value)
             {
                 PrintPlainText("\r\nSkin Unlocked");
             }
@@ -645,6 +645,10 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
             {
                 PrintPlainText("\r\nSkin Locked", Gray);
             }
+        }
+        else
+        {
+            PrintPlainText("\r\nGrant 'unlocks' permission in settings to see unlock status", Gray);
         }
     }
 

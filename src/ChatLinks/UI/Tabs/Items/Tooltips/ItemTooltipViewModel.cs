@@ -27,6 +27,8 @@ public sealed class ItemTooltipViewModel(
 
     public Item Item { get; } = item;
 
+    public bool UnlocksAvailable => hero.UnlocksAvailable;
+
     public bool? SkinUnlocked
     {
         get => _skinUnlocked;
