@@ -1,9 +1,7 @@
 ﻿using Blish_HUD.Content;
 
 using GuildWars2;
-using GuildWars2.Authorization;
 using GuildWars2.Hero;
-using GuildWars2.Hero.Equipment.Wardrobe;
 using GuildWars2.Items;
 
 using Microsoft.Extensions.Logging;
@@ -15,27 +13,19 @@ namespace SL.ChatLinks.UI.Tabs.Items.Tooltips;
 
 public sealed class ItemTooltipViewModel(
     ILogger<ItemTooltipViewModel> logger,
-    Gw2Client gw2Client,
-    ITokenProvider tokenProvider,
     ItemIcons icons,
     Customizer customizer,
+    Hero hero,
     Item item,
     int quantity,
     IEnumerable<UpgradeSlot> upgrades
 ) : ViewModel
 {
-    private EquipmentSkin? _skin;
     private bool? _skinUnlocked;
 
     public IReadOnlyList<UpgradeSlot> UpgradesSlots { get; } = upgrades.ToList();
 
     public Item Item { get; } = item;
-
-    public EquipmentSkin? Skin
-    {
-        get => _skin;
-        private set => SetField(ref _skin, value);
-    }
 
     public bool? SkinUnlocked
     {
@@ -139,17 +129,12 @@ public sealed class ItemTooltipViewModel(
 
     private async Task LoadSkin(int skinId)
     {
-        Skin = await gw2Client.Hero.Equipment.Wardrobe
-            .GetSkinById(skinId)
-            .ValueOnly();
-
         try
         {
-            if (tokenProvider.Grants.Contains(Permission.Unlocks))
+            if (hero.UnlocksAvailable)
             {
-                var token = await tokenProvider.GetTokenAsync(CancellationToken.None);
-                var unlock = await gw2Client.Hero.Equipment.Wardrobe.GetUnlockedSkins(token).ValueOnly();
-                SkinUnlocked = unlock.Contains(skinId);
+                var wardrobe = await hero.GetWardrobe(CancellationToken.None);
+                SkinUnlocked = wardrobe.Contains(skinId);
             }
         }
         catch (Exception reason)

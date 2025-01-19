@@ -82,6 +82,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         services.AddTransient<UpgradeSelectorViewModelFactory>();
         services.AddTransient<ItemSearch>();
         services.AddSingleton<Customizer>();
+        services.AddSingleton<Hero>();
         services.AddHttpClient<ItemIcons>();
         services.AddTransient<IClipBoard, WpfClipboard>();
 

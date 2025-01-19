@@ -22,6 +22,7 @@ public sealed class ItemSeeder(
         context.ChangeTracker.AutoDetectChangesEnabled = false;
 
         logger.LogInformation("Start seeding items.");
+
         HashSet<int> index = await gw2Client.Items
             .GetItemsIndex(cancellationToken)
             .ValueOnly();
@@ -79,5 +80,3 @@ public sealed class ItemSeeder(
     }
 
 }
-
-public record DatabaseSyncProgress(BulkProgress Report);
