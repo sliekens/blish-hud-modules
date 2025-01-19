@@ -247,6 +247,40 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
     {
         PrintHeader(gizmo);
         PrintDescription(gizmo.Description, gizmo.Level > 0);
+
+        if (ViewModel.DefaultLocked)
+        {
+            if (ViewModel.UnlocksAvailable)
+            {
+                if (ViewModel.Unlocked!.Value)
+                {
+                    PrintPlainText("""
+
+                        Novelty Unlocked
+                        """);
+                }
+                else
+                {
+                    PrintPlainText("""
+
+                        Novelty Locked
+                        """, Gray);
+                }
+            }
+            else
+            {
+                PrintPlainText("""
+
+                    Grant 'unlocks' permission in settings to see unlock status
+                    """, Gray);
+            }
+
+            PrintPlainText("""
+
+                Consumable
+                """);
+        }
+
         PrintRequiredLevel(gizmo.Level);
         PrintInBank();
         PrintUniqueness(gizmo);
@@ -635,20 +669,23 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
     public void PrintItemSkin()
     {
-        if (ViewModel.UnlocksAvailable)
+        if (ViewModel.DefaultLocked)
         {
-            if (ViewModel.SkinUnlocked!.Value)
+            if (ViewModel.UnlocksAvailable)
             {
-                PrintPlainText("\r\nSkin Unlocked");
+                if (ViewModel.Unlocked!.Value)
+                {
+                    PrintPlainText("\r\nSkin Unlocked");
+                }
+                else
+                {
+                    PrintPlainText("\r\nSkin Locked", Gray);
+                }
             }
             else
             {
-                PrintPlainText("\r\nSkin Locked", Gray);
+                PrintPlainText("\r\nGrant 'unlocks' permission in settings to see unlock status", Gray);
             }
-        }
-        else
-        {
-            PrintPlainText("\r\nGrant 'unlocks' permission in settings to see unlock status", Gray);
         }
     }
 

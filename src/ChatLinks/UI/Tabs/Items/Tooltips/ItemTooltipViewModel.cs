@@ -21,7 +21,9 @@ public sealed class ItemTooltipViewModel(
     IEnumerable<UpgradeSlot> upgrades
 ) : ViewModel
 {
-    private bool? _skinUnlocked;
+    private bool? _unlocked;
+
+    private bool _locked;
 
     public IReadOnlyList<UpgradeSlot> UpgradesSlots { get; } = upgrades.ToList();
 
@@ -29,10 +31,16 @@ public sealed class ItemTooltipViewModel(
 
     public bool UnlocksAvailable => hero.UnlocksAvailable;
 
-    public bool? SkinUnlocked
+    public bool DefaultLocked
     {
-        get => _skinUnlocked;
-        set => SetField(ref _skinUnlocked, value);
+        get => _locked;
+        set => SetField(ref _locked, value);
+    }
+
+    public bool? Unlocked
+    {
+        get => _unlocked;
+        set => SetField(ref _unlocked, value);
     }
 
     public int Quantity { get; } = quantity;
@@ -112,36 +120,67 @@ public sealed class ItemTooltipViewModel(
         {
             case Transmutation transmutation:
                 progress.Report("Checking unlock status...");
-                await LoadSkin(transmutation.SkinIds.First());
+                await SkinUnlock(transmutation.SkinIds.First());
                 break;
             case Armor armor:
                 progress.Report("Checking unlock status...");
-                await LoadSkin(armor.DefaultSkinId);
+                await SkinUnlock(armor.DefaultSkinId);
                 break;
             case Backpack back:
                 progress.Report("Checking unlock status...");
-                await LoadSkin(back.DefaultSkinId);
+                await SkinUnlock(back.DefaultSkinId);
                 break;
             case Weapon weapon:
                 progress.Report("Checking unlock status...");
-                await LoadSkin(weapon.DefaultSkinId);
+                await SkinUnlock(weapon.DefaultSkinId);
+                break;
+            case Gizmo gizmo:
+                progress.Report("Checking unlock status...");
+                await NoveltyUnlock(item.Id);
                 break;
         }
     }
 
-    private async Task LoadSkin(int skinId)
+    private async Task SkinUnlock(int skinId)
     {
         try
         {
+            DefaultLocked = true;
+
             if (hero.UnlocksAvailable)
             {
-                var wardrobe = await hero.GetWardrobe(CancellationToken.None);
-                SkinUnlocked = wardrobe.Contains(skinId);
+                var unlocks = await hero.GetUnlockedWardrobe(CancellationToken.None);
+                Unlocked = unlocks.Contains(skinId);
             }
         }
         catch (Exception reason)
         {
-            logger.LogWarning(reason, "Couldn't get wardrobe unlocks.");
+            logger.LogWarning(reason, "Couldn't get unlocked wardrobe.");
+        }
+    }
+
+    private async Task NoveltyUnlock(int itemId)
+    {
+        try
+        {
+            var novelties = await hero.GetNovelties(CancellationToken.None);
+            var match = novelties.FirstOrDefault(novelty => novelty.UnlockItemIds.Contains(itemId));
+            if (match is null)
+            {
+                return;
+            }
+
+            DefaultLocked = true;
+
+            if (hero.UnlocksAvailable)
+            {
+                var unlocks = await hero.GetUnlockedNovelties(CancellationToken.None);
+                Unlocked = unlocks.Contains(match.Id);
+            }
+        }
+        catch (Exception reason)
+        {
+            logger.LogWarning(reason, "Couldn't get unlocked novelties.");
         }
     }
 }
