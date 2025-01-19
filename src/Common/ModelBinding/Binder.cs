@@ -18,6 +18,11 @@ public sealed class Binder
         return new LabelBinding<TViewModel>(viewModel, propertySelector, label);
     }
 
+    public static ViewModelBinding<TViewModel, string> Bind<TViewModel>(TViewModel viewModel, Expression<Func<TViewModel, string>> propertySelector, Scrollbar scrollbar) where TViewModel : ViewModel
+    {
+        return new ScrollbarTooltipBinding<TViewModel>(viewModel, propertySelector, scrollbar);
+    }
+
     public static ViewModelBinding<TViewModel, int> Bind<TViewModel>(TViewModel viewModel, Expression<Func<TViewModel, int>> propertySelector, NumberInput numberInput) where TViewModel : ViewModel
     {
         return new NumberInputBinding<TViewModel>(viewModel, propertySelector, numberInput);

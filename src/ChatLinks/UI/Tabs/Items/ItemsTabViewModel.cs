@@ -4,6 +4,7 @@ using System.Windows.Input;
 using GuildWars2.Items;
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 using SL.ChatLinks.Storage;
 using SL.ChatLinks.UI.Tabs.Items.Collections;
@@ -14,6 +15,7 @@ namespace SL.ChatLinks.UI.Tabs.Items;
 
 public sealed class ItemsTabViewModel(
     ILogger<ItemsTabViewModel> logger,
+    IOptionsMonitor<ChatLinkOptions> options,
     IEventAggregator eventAggregator,
     ItemSearch search,
     Customizer customizer,
@@ -24,6 +26,10 @@ public sealed class ItemsTabViewModel(
     private string _searchText = "";
 
     private bool _searching;
+
+    private int _resultTotal;
+
+    private string _resultText = "";
 
     private EventHandler? _searchCancelled;
 
@@ -54,7 +60,19 @@ public sealed class ItemsTabViewModel(
         set => SetField(ref _searching, value);
     }
 
+    public string ResultText
+    {
+        get => _resultText;
+        set => SetField(ref _resultText, value);
+    }
+
     public ObservableCollection<ItemsListViewModel> SearchResults { get; } = [];
+
+    public int ResultTotal
+    {
+        get => _resultTotal;
+        private set => SetField(ref _resultTotal, value);
+    }
 
     public ICommand SearchCommand => new AsyncRelayCommand(OnSearch);
 
@@ -139,7 +157,9 @@ public sealed class ItemsTabViewModel(
         {
             SearchResults.Clear();
 
-            await foreach (Item item in search.Search(text, 100, cancellationToken))
+            int maxResults = options.CurrentValue.MaxResultCount;
+            var context = new ResultContext();
+            await foreach (Item item in search.Search(text, maxResults, context, cancellationToken))
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
@@ -149,6 +169,11 @@ public sealed class ItemsTabViewModel(
                 var viewModel = itemsListViewModelFactory.Create(item, false);
                 SearchResults.Add(viewModel);
             }
+
+            ResultTotal = context.ResultTotal;
+            ResultText = ResultTotal <= maxResults
+                ? $"{ResultTotal:N0} matches"
+                : $"{maxResults:N0} of {ResultTotal:N0} matches displayed";
         }
         finally
         {
@@ -163,7 +188,8 @@ public sealed class ItemsTabViewModel(
         {
             SearchResults.Clear();
 
-            await foreach (Item item in search.NewItems(50).WithCancellation(cancellationToken))
+            int maxResults = options.CurrentValue.MaxResultCount;
+            await foreach (Item item in search.NewItems(maxResults).WithCancellation(cancellationToken))
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
@@ -173,6 +199,12 @@ public sealed class ItemsTabViewModel(
                 var viewModel = itemsListViewModelFactory.Create(item, false);
                 SearchResults.Add(viewModel);
             }
+
+            ResultTotal = await search.CountItems();
+            ResultText = ResultTotal <= maxResults
+                ? $"{ResultTotal:N0} items"
+                : $"{maxResults:N0} of {ResultTotal:N0} items displayed";
+
         }
         finally
         {

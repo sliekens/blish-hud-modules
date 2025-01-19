@@ -10,11 +10,21 @@ using SL.ChatLinks.Storage;
 
 namespace SL.ChatLinks.UI.Tabs.Items;
 
+public sealed record ResultContext
+{
+    public int ResultTotal { get; set; }
+}
+
 public sealed class ItemSearch(ChatLinksContext context)
 {
     private static readonly Regex ChatLinkPattern = new(@"^\[&[A-Za-z0-9+/=]+\]$", RegexOptions.Compiled);
 
     private readonly IQueryable<Item> _items = context.Items.AsNoTracking();
+
+    public async ValueTask<int> CountItems()
+    {
+        return await context.Items.CountAsync();
+    }
 
     public IAsyncEnumerable<Item> NewItems(int limit)
     {
@@ -24,36 +34,46 @@ public sealed class ItemSearch(ChatLinksContext context)
             .AsAsyncEnumerable();
     }
 
-    public async IAsyncEnumerable<Item> Search(string query, int limit,
+    public async IAsyncEnumerable<Item> Search(
+        string searchText,
+        int limit,
+        ResultContext resultContext,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        if (ChatLinkPattern.IsMatch(query))
+        if (ChatLinkPattern.IsMatch(searchText))
         {
-            ItemLink chatLink = ItemLink.Parse(query);
-            await foreach (Item item in SearchByChatLink(chatLink, cancellationToken))
+            ItemLink chatLink = ItemLink.Parse(searchText);
+            await foreach (Item item in SearchByChatLink(chatLink, resultContext, cancellationToken))
             {
                 yield return item;
             }
         }
         else
         {
-            await foreach (Item? item in context.Items.FromSqlInterpolated(
+            IQueryable<Item> query = context.Items.FromSqlInterpolated(
                 $"""
-                SELECT * FROM Items
-                WHERE Name LIKE '%' || {query} || '%'
-                ORDER BY LevenshteinDistance({query}, Name)
-                """)
-                .AsNoTracking()
-                .Take(limit)
-                .AsAsyncEnumerable()
-                .WithCancellation(cancellationToken))
+                 SELECT * FROM Items
+                 WHERE Name LIKE '%' || {searchText} || '%'
+                 ORDER BY LevenshteinDistance({searchText}, Name)
+                 """);
+
+            resultContext.ResultTotal = await query.CountAsync(cancellationToken: cancellationToken);
+
+            await foreach (Item? item in query
+               .AsNoTracking()
+               .Take(limit)
+               .AsAsyncEnumerable()
+               .WithCancellation(cancellationToken))
             {
                 yield return item;
             }
+
         }
     }
 
-    private async IAsyncEnumerable<Item> SearchByChatLink(ItemLink link,
+    private async IAsyncEnumerable<Item> SearchByChatLink(
+        ItemLink link,
+        ResultContext resultContext,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         Item item = await _items.SingleOrDefaultAsync(row => row.Id == link.ItemId, cancellationToken);
@@ -62,6 +82,7 @@ public sealed class ItemSearch(ChatLinksContext context)
             yield break;
         }
 
+        resultContext.ResultTotal++;
         yield return item;
 
         HashSet<int> relatedItems = [];
@@ -164,6 +185,7 @@ public sealed class ItemSearch(ChatLinksContext context)
                 break;
         }
 
+        resultContext.ResultTotal += relatedItems.Count;
         await foreach (Item? relatedItem in _items
                            .Where(i => relatedItems.Contains(i.Id))
                            .AsAsyncEnumerable()

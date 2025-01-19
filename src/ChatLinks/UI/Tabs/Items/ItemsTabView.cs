@@ -1,5 +1,4 @@
-﻿using Blish_HUD;
-using Blish_HUD.Controls;
+﻿using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
 
 using Microsoft.Extensions.Logging;
@@ -17,11 +16,7 @@ public class ItemsTabView : View
 {
     public ItemsTabViewModel ViewModel { get; }
 
-    private readonly TextBox _searchBox;
-
-    private readonly LoadingSpinner _loadingSpinner;
-
-    private readonly ItemsList _searchResults;
+    private readonly FlowPanel _layout;
 
     private readonly ViewContainer _editor;
 
@@ -30,28 +25,79 @@ public class ItemsTabView : View
         ViewModel = viewModel;
         ViewModel.Initialize();
 
-        _searchBox = new TextBox { Width = 400, PlaceholderText = "Enter item name or chat link..." };
-
-        _loadingSpinner = new LoadingSpinner { Size = new Point(_searchBox.Height), Right = _searchBox.Right };
-
-        _searchResults = new ItemsList
+        _layout = new FlowPanel
         {
+            FlowDirection = ControlFlowDirection.SingleLeftToRight,
+            WidthSizingMode = SizingMode.Fill,
+            HeightSizingMode = SizingMode.Fill
+        };
+
+        var searchLayout = new FlowPanel
+        {
+            Parent = _layout,
+            FlowDirection = ControlFlowDirection.SingleTopToBottom,
+            Width = 400,
+            HeightSizingMode = SizingMode.Fill
+        };
+
+        var searchBoxPanel = new Panel
+        {
+            Parent = searchLayout,
+            WidthSizingMode = SizingMode.Fill,
+            HeightSizingMode = SizingMode.AutoSize,
+        };
+
+        var searchBox = new TextBox
+        {
+            Parent = searchBoxPanel,
+            Width = 400,
+            PlaceholderText = "Enter item name or chat link..."
+        };
+
+        searchBox.TextChanged += SearchTextChanged;
+        searchBox.EnterPressed += SearchEnterPressed;
+        searchBox.InputFocusChanged += (sender, args) =>
+        {
+            if (args.Value)
+            {
+                searchBox.SelectionStart = 0;
+                searchBox.SelectionEnd = searchBox.Length;
+            }
+            else
+            {
+                searchBox.SelectionStart = searchBox.SelectionEnd;
+            }
+        };
+
+        var loadingSpinner = new LoadingSpinner
+        {
+            Parent = searchBoxPanel,
+            Size = new Point(searchBox.Height),
+            Right = searchBox.Right
+        };
+
+        var searchResults = new ItemsList
+        {
+            Parent = searchLayout,
             WidthSizingMode = SizingMode.Standard,
             Width = 400,
             HeightSizingMode = SizingMode.Fill,
-            Top = _searchBox.Bottom,
             Entries = ViewModel.SearchResults
         };
 
+        searchResults.SelectionChanged += SelectionChanged;
+
         _editor = new ViewContainer
         {
-            Left = _searchResults.Right + 20,
+            Parent = _layout,
             Width = 450,
             HeightSizingMode = SizingMode.Fill,
             FadeView = true
         };
 
-        _searchResults.SelectionChanged += SelectionChanged;
+        Binder.Bind(ViewModel, vm => vm.SearchText, searchBox);
+        Binder.Bind(ViewModel, vm => vm.Searching, loadingSpinner);
+        Binder.Bind(ViewModel, vm => vm.ResultText, searchLayout.Children.OfType<Scrollbar>().Single());
     }
 
     private void SelectionChanged(ListBox<ItemsListViewModel> sender, ListBoxSelectionChangedEventArgs<ItemsListViewModel> args)
@@ -74,24 +120,11 @@ public class ItemsTabView : View
 
     protected override void Build(Container buildPanel)
     {
-        _searchBox.Parent = buildPanel;
-        _loadingSpinner.Parent = buildPanel;
-        _searchResults.Parent = buildPanel;
-        _editor.Parent = buildPanel;
-
-        Binder.Bind(ViewModel, vm => vm.SearchText, _searchBox);
-        Binder.Bind(ViewModel, vm => vm.Searching, _loadingSpinner);
-
-        _searchBox.TextChanged += SearchTextChanged;
-        _searchBox.EnterPressed += SearchEnterPressed;
-        _searchBox.InputFocusChanged += SearchInputFocusChanged;
+        _layout.Parent = buildPanel;
     }
 
     protected override void Unload()
     {
-        _searchBox.TextChanged -= SearchEnterPressed;
-        _searchBox.EnterPressed -= SearchEnterPressed;
-        _searchBox.InputFocusChanged -= SearchInputFocusChanged;
         ViewModel.Dispose();
     }
 
@@ -103,18 +136,5 @@ public class ItemsTabView : View
     private void SearchEnterPressed(object sender, EventArgs e)
     {
         ViewModel.SearchCommand.Execute(null);
-    }
-
-    private void SearchInputFocusChanged(object sender, ValueEventArgs<bool> args)
-    {
-        if (args.Value)
-        {
-            _searchBox.SelectionStart = 0;
-            _searchBox.SelectionEnd = _searchBox.Length;
-        }
-        else
-        {
-            _searchBox.SelectionStart = _searchBox.SelectionEnd;
-        }
     }
 }
