@@ -2,6 +2,7 @@
 
 using GuildWars2;
 using GuildWars2.Hero;
+using GuildWars2.Hero.Equipment.Finishers;
 using GuildWars2.Items;
 
 using Microsoft.Extensions.Logging;
@@ -134,9 +135,13 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 await SkinUnlock(weapon.DefaultSkinId);
                 break;
+            case ContentUnlocker contentUnlocker:
+                progress.Report("Checking unlock status...");
+                await FinisherUnlock(contentUnlocker.Id);
+                break;
             case Gizmo gizmo:
                 progress.Report("Checking unlock status...");
-                await NoveltyUnlock(item.Id);
+                await NoveltyUnlock(gizmo.Id);
                 break;
         }
     }
@@ -156,6 +161,31 @@ public sealed class ItemTooltipViewModel(
         catch (Exception reason)
         {
             logger.LogWarning(reason, "Couldn't get unlocked wardrobe.");
+        }
+    }
+
+    private async Task FinisherUnlock(int itemId)
+    {
+        try
+        {
+            var finishers = await hero.GetFinishers(CancellationToken.None);
+            var match = finishers.FirstOrDefault(finisher => finisher.UnlockItemIds.Contains(itemId));
+            if (match is null)
+            {
+                return;
+            }
+
+            DefaultLocked = true;
+
+            if (hero.UnlocksAvailable)
+            {
+                var unlocks = await hero.GetUnlockedFinishers(CancellationToken.None);
+                Unlocked = unlocks.Contains(match.Id);
+            }
+        }
+        catch (Exception reason)
+        {
+            logger.LogWarning(reason, "Couldn't get unlocked finishers.");
         }
     }
 
