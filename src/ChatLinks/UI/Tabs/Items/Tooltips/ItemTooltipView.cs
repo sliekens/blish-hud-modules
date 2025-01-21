@@ -168,40 +168,41 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                                """);
                 break;
             case ContentUnlocker unlocker:
+                if (!string.IsNullOrEmpty(unlocker.Description))
+                {
+                    PrintPlainText(" ");
+                }
+
                 if (ViewModel.DefaultLocked)
                 {
                     if (ViewModel.UnlocksAvailable)
                     {
                         if (ViewModel.Unlocked!.Value)
                         {
-
                             PrintPlainText("""
-
-                                You already have that content unlocked.
-                                """, Color.Red);
+                                           You already have that content unlocked.
+                                           
+                                           """, Color.Red);
                         }
 
                     }
                     else
                     {
                         PrintPlainText("""
-
                             Grant 'unlocks' permission in settings to see unlock status
+                            
                             """, Gray);
                     }
                 }
                 else
                 {
                     PrintPlainText("""
-
                         Unlock status unavailable.
+                        
                         """, Gray);
                 }
 
-                PrintPlainText("""
-                              
-                    Consumable
-                    """);
+                PrintPlainText("Consumable");
                 break;
             default:
                 PrintPlainText(string.IsNullOrEmpty(consumable.Description) ? "Consumable" : "\r\nConsumable");

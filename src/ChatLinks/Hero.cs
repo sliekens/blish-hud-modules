@@ -3,8 +3,8 @@
 using GuildWars2;
 using GuildWars2.Authorization;
 using GuildWars2.Hero.Equipment.Finishers;
+using GuildWars2.Hero.Equipment.MailCarriers;
 using GuildWars2.Hero.Equipment.Novelties;
-using GuildWars2.Items;
 
 using SL.ChatLinks.Storage;
 using SL.Common;
@@ -21,13 +21,18 @@ public sealed class Hero : IDisposable
 
     private IReadOnlyList<int>? _unlockedFinishers;
 
+    private IReadOnlyList<int>? _unlockedMailCarriers;
+
     private IReadOnlyList<int>? _unlockedNovelties;
 
     private IReadOnlyList<int>? _unlockedWardrobe;
 
+    private IReadOnlyList<Finisher>? _finishers;
+
+    private IReadOnlyList<MailCarrier>? _mailCarriers;
+
     private IReadOnlyList<Novelty>? _novelties;
 
-    private IReadOnlyList<Finisher>? _finishers;
 
     public Hero(Gw2Client gw2Client,
         ITokenProvider tokenProvider,
@@ -44,7 +49,7 @@ public sealed class Hero : IDisposable
 
     public async ValueTask<IReadOnlyList<Finisher>> GetFinishers(CancellationToken cancellationToken)
     {
-        return _finishers ?? await GetFinishersInternal(cancellationToken);
+        return _finishers ??= await GetFinishersInternal(cancellationToken);
     }
 
     private async Task<IReadOnlyList<Finisher>> GetFinishersInternal(CancellationToken cancellationToken)
@@ -55,14 +60,9 @@ public sealed class Hero : IDisposable
         return finishers.ToImmutableList();
     }
 
-    public async ValueTask<IReadOnlyList<Novelty>> GetNovelties(CancellationToken cancellationToken)
-    {
-        return _novelties ?? await GetNoveltiesInternal(cancellationToken);
-    }
-
     public async ValueTask<IReadOnlyList<int>> GetUnlockedFinishers(CancellationToken cancellationToken)
     {
-        return _unlockedFinishers ?? await GetUnlockedFinishersInternal(cancellationToken);
+        return _unlockedFinishers ??= await GetUnlockedFinishersInternal(cancellationToken);
     }
 
     private async Task<IReadOnlyList<int>> GetUnlockedFinishersInternal(CancellationToken cancellationToken)
@@ -80,6 +80,44 @@ public sealed class Hero : IDisposable
         return values.Select(finisher => finisher.Id).ToImmutableList();
     }
 
+    public async ValueTask<IReadOnlyList<MailCarrier>> GetMailCarriers(CancellationToken cancellationToken)
+    {
+        return _mailCarriers ??= await GetMailCarriersInternal(cancellationToken);
+    }
+
+    private async Task<IReadOnlyList<MailCarrier>> GetMailCarriersInternal(CancellationToken cancellationToken)
+    {
+        var finishers = await _gw2Client.Hero.Equipment.MailCarriers
+            .GetMailCarriers(cancellationToken: cancellationToken)
+            .ValueOnly();
+        return finishers.ToImmutableList();
+    }
+
+    public async ValueTask<IReadOnlyList<int>> GetUnlockedMailCarriers(CancellationToken cancellationToken)
+    {
+        return _unlockedMailCarriers ??= await GetUnlockedMailCarriersInternal(cancellationToken);
+    }
+
+    private async Task<IReadOnlyList<int>> GetUnlockedMailCarriersInternal(CancellationToken cancellationToken)
+    {
+        if (!_tokenProvider.Grants.Contains(Permission.Unlocks))
+        {
+            return [];
+        }
+
+        var token = await _tokenProvider.GetTokenAsync(cancellationToken);
+        var values = await _gw2Client.Hero.Equipment.MailCarriers
+            .GetUnlockedMailCarriers(token, cancellationToken: cancellationToken)
+            .ValueOnly();
+
+        return values.ToImmutableList();
+    }
+
+    public async ValueTask<IReadOnlyList<Novelty>> GetNovelties(CancellationToken cancellationToken)
+    {
+        return _novelties ??= await GetNoveltiesInternal(cancellationToken);
+    }
+
     private async Task<IReadOnlyList<Novelty>> GetNoveltiesInternal(CancellationToken cancellationToken)
     {
         var novelties = await _gw2Client.Hero.Equipment.Novelties
@@ -90,7 +128,7 @@ public sealed class Hero : IDisposable
 
     public async ValueTask<IReadOnlyList<int>> GetUnlockedNovelties(CancellationToken cancellationToken)
     {
-        return _unlockedNovelties ?? await GetUnlockedNoveltiesInternal(cancellationToken);
+        return _unlockedNovelties ??= await GetUnlockedNoveltiesInternal(cancellationToken);
     }
 
     private async Task<IReadOnlyList<int>> GetUnlockedNoveltiesInternal(CancellationToken cancellationToken)
@@ -110,7 +148,7 @@ public sealed class Hero : IDisposable
 
     public async ValueTask<IReadOnlyList<int>> GetUnlockedWardrobe(CancellationToken cancellationToken)
     {
-        return _unlockedWardrobe ?? await GetUnlockedWardrobeInternal(cancellationToken);
+        return _unlockedWardrobe ??= await GetUnlockedWardrobeInternal(cancellationToken);
     }
 
     private async Task<IReadOnlyList<int>> GetUnlockedWardrobeInternal(CancellationToken cancellationToken)
@@ -131,12 +169,14 @@ public sealed class Hero : IDisposable
     private async ValueTask OnDatabaseSyncCompleted(DatabaseSyncCompleted _)
     {
         _finishers = await GetFinishersInternal(CancellationToken.None);
+        _mailCarriers = await GetMailCarriersInternal(CancellationToken.None);
         _novelties = await GetNoveltiesInternal(CancellationToken.None);
     }
 
     private async ValueTask OnAuthorizationInvalidated(AuthorizationInvalidated _)
     {
         _unlockedFinishers = await GetUnlockedFinishersInternal(CancellationToken.None);
+        _unlockedMailCarriers = await GetUnlockedMailCarriersInternal(CancellationToken.None);
         _unlockedNovelties = await GetUnlockedNoveltiesInternal(CancellationToken.None);
         _unlockedWardrobe = await GetUnlockedWardrobeInternal(CancellationToken.None);
     }

@@ -137,6 +137,7 @@ public sealed class ItemTooltipViewModel(
                 break;
             case ContentUnlocker contentUnlocker:
                 progress.Report("Checking unlock status...");
+                await MailCarrierUnlock(contentUnlocker.Id);
                 await FinisherUnlock(contentUnlocker.Id);
                 break;
             case Gizmo gizmo:
@@ -186,6 +187,31 @@ public sealed class ItemTooltipViewModel(
         catch (Exception reason)
         {
             logger.LogWarning(reason, "Couldn't get unlocked finishers.");
+        }
+    }
+
+    private async Task MailCarrierUnlock(int itemId)
+    {
+        try
+        {
+            var mailCarriers = await hero.GetMailCarriers(CancellationToken.None);
+            var match = mailCarriers.FirstOrDefault(mailCarrier => mailCarrier.UnlockItemIds.Contains(itemId));
+            if (match is null)
+            {
+                return;
+            }
+
+            DefaultLocked = true;
+
+            if (hero.UnlocksAvailable)
+            {
+                var unlocks = await hero.GetUnlockedMailCarriers(CancellationToken.None);
+                Unlocked = unlocks.Contains(match.Id);
+            }
+        }
+        catch (Exception reason)
+        {
+            logger.LogWarning(reason, "Couldn't get unlocked mail carriers.");
         }
     }
 
