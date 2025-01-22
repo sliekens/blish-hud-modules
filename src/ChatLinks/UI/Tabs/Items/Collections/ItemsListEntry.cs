@@ -6,7 +6,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 using SL.ChatLinks.UI.Tabs.Items.Tooltips;
-using SL.Common;
 
 namespace SL.ChatLinks.UI.Tabs.Items.Collections;
 

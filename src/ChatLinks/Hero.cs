@@ -1,38 +1,18 @@
-﻿using System.Collections.Immutable;
-
-using GuildWars2;
+﻿using GuildWars2;
 using GuildWars2.Authorization;
-using GuildWars2.Hero.Equipment.Finishers;
-using GuildWars2.Hero.Equipment.MailCarriers;
-using GuildWars2.Hero.Equipment.Novelties;
 
 using SL.ChatLinks.Storage;
 using SL.Common;
 
 namespace SL.ChatLinks;
 
-public sealed class Hero : IDisposable
+public sealed partial class Hero : IDisposable
 {
     private readonly Gw2Client _gw2Client;
 
     private readonly ITokenProvider _tokenProvider;
 
     private readonly IEventAggregator _eventAggregator;
-
-    private IReadOnlyList<int>? _unlockedFinishers;
-
-    private IReadOnlyList<int>? _unlockedMailCarriers;
-
-    private IReadOnlyList<int>? _unlockedNovelties;
-
-    private IReadOnlyList<int>? _unlockedWardrobe;
-
-    private IReadOnlyList<Finisher>? _finishers;
-
-    private IReadOnlyList<MailCarrier>? _mailCarriers;
-
-    private IReadOnlyList<Novelty>? _novelties;
-
 
     public Hero(Gw2Client gw2Client,
         ITokenProvider tokenProvider,
@@ -45,140 +25,54 @@ public sealed class Hero : IDisposable
         eventAggregator.Subscribe<AuthorizationInvalidated>(OnAuthorizationInvalidated);
     }
 
+    public bool InventoriesAvailable => _tokenProvider.Grants.Contains(Permission.Inventories);
+
     public bool UnlocksAvailable => _tokenProvider.Grants.Contains(Permission.Unlocks);
-
-    public async ValueTask<IReadOnlyList<Finisher>> GetFinishers(CancellationToken cancellationToken)
-    {
-        return _finishers ??= await GetFinishersInternal(cancellationToken);
-    }
-
-    private async Task<IReadOnlyList<Finisher>> GetFinishersInternal(CancellationToken cancellationToken)
-    {
-        var finishers = await _gw2Client.Hero.Equipment.Finishers
-            .GetFinishers(cancellationToken: cancellationToken)
-            .ValueOnly();
-        return finishers.ToImmutableList();
-    }
-
-    public async ValueTask<IReadOnlyList<int>> GetUnlockedFinishers(CancellationToken cancellationToken)
-    {
-        return _unlockedFinishers ??= await GetUnlockedFinishersInternal(cancellationToken);
-    }
-
-    private async Task<IReadOnlyList<int>> GetUnlockedFinishersInternal(CancellationToken cancellationToken)
-    {
-        if (!_tokenProvider.Grants.Contains(Permission.Unlocks))
-        {
-            return [];
-        }
-
-        var token = await _tokenProvider.GetTokenAsync(cancellationToken);
-        var values = await _gw2Client.Hero.Equipment.Finishers
-            .GetUnlockedFinishers(token, cancellationToken: cancellationToken)
-            .ValueOnly();
-
-        return values.Select(finisher => finisher.Id).ToImmutableList();
-    }
-
-    public async ValueTask<IReadOnlyList<MailCarrier>> GetMailCarriers(CancellationToken cancellationToken)
-    {
-        return _mailCarriers ??= await GetMailCarriersInternal(cancellationToken);
-    }
-
-    private async Task<IReadOnlyList<MailCarrier>> GetMailCarriersInternal(CancellationToken cancellationToken)
-    {
-        var finishers = await _gw2Client.Hero.Equipment.MailCarriers
-            .GetMailCarriers(cancellationToken: cancellationToken)
-            .ValueOnly();
-        return finishers.ToImmutableList();
-    }
-
-    public async ValueTask<IReadOnlyList<int>> GetUnlockedMailCarriers(CancellationToken cancellationToken)
-    {
-        return _unlockedMailCarriers ??= await GetUnlockedMailCarriersInternal(cancellationToken);
-    }
-
-    private async Task<IReadOnlyList<int>> GetUnlockedMailCarriersInternal(CancellationToken cancellationToken)
-    {
-        if (!_tokenProvider.Grants.Contains(Permission.Unlocks))
-        {
-            return [];
-        }
-
-        var token = await _tokenProvider.GetTokenAsync(cancellationToken);
-        var values = await _gw2Client.Hero.Equipment.MailCarriers
-            .GetUnlockedMailCarriers(token, cancellationToken: cancellationToken)
-            .ValueOnly();
-
-        return values.ToImmutableList();
-    }
-
-    public async ValueTask<IReadOnlyList<Novelty>> GetNovelties(CancellationToken cancellationToken)
-    {
-        return _novelties ??= await GetNoveltiesInternal(cancellationToken);
-    }
-
-    private async Task<IReadOnlyList<Novelty>> GetNoveltiesInternal(CancellationToken cancellationToken)
-    {
-        var novelties = await _gw2Client.Hero.Equipment.Novelties
-            .GetNovelties(cancellationToken: cancellationToken)
-            .ValueOnly();
-        return novelties.ToImmutableList();
-    }
-
-    public async ValueTask<IReadOnlyList<int>> GetUnlockedNovelties(CancellationToken cancellationToken)
-    {
-        return _unlockedNovelties ??= await GetUnlockedNoveltiesInternal(cancellationToken);
-    }
-
-    private async Task<IReadOnlyList<int>> GetUnlockedNoveltiesInternal(CancellationToken cancellationToken)
-    {
-        if (!_tokenProvider.Grants.Contains(Permission.Unlocks))
-        {
-            return [];
-        }
-
-        var token = await _tokenProvider.GetTokenAsync(cancellationToken);
-        var values = await _gw2Client.Hero.Equipment.Novelties
-            .GetUnlockedNovelties(token, cancellationToken)
-            .ValueOnly();
-
-        return values.ToImmutableList();
-    }
-
-    public async ValueTask<IReadOnlyList<int>> GetUnlockedWardrobe(CancellationToken cancellationToken)
-    {
-        return _unlockedWardrobe ??= await GetUnlockedWardrobeInternal(cancellationToken);
-    }
-
-    private async Task<IReadOnlyList<int>> GetUnlockedWardrobeInternal(CancellationToken cancellationToken)
-    {
-        if (!_tokenProvider.Grants.Contains(Permission.Unlocks))
-        {
-            return [];
-        }
-
-        var token = await _tokenProvider.GetTokenAsync(cancellationToken);
-        var values = await _gw2Client.Hero.Equipment.Wardrobe
-            .GetUnlockedSkins(token, cancellationToken)
-            .ValueOnly();
-
-        return values.ToImmutableList();
-    }
 
     private async ValueTask OnDatabaseSyncCompleted(DatabaseSyncCompleted _)
     {
-        _finishers = await GetFinishersInternal(CancellationToken.None);
-        _mailCarriers = await GetMailCarriersInternal(CancellationToken.None);
-        _novelties = await GetNoveltiesInternal(CancellationToken.None);
+        var finishersTask = GetFinishersInternal(CancellationToken.None);
+        var gliderSkinsTask = GetGliderSkinsInternal(CancellationToken.None);
+        var jadeBotSkinsTask = GetJadeBotSkinsInternal(CancellationToken.None);
+        var mailCarriersTask = GetMailCarriersInternal(CancellationToken.None);
+        var mistChampionSkinsTask = GetMistChampionSkins(CancellationToken.None);
+        var noveltiesTask = GetNoveltiesInternal(CancellationToken.None);
+        var outfitsTask = GetOutfitsInternal(CancellationToken.None);
+        var wardrobeTask = GetWardrobeInternal(CancellationToken.None);
+        var recipesTask = GetRecipesInternal(CancellationToken.None);
+
+        _finishers = await finishersTask;
+        _gliderSkins = await gliderSkinsTask;
+        _jadeBotSkins = await jadeBotSkinsTask;
+        _mailCarriers = await mailCarriersTask;
+        _mistChampionSkins = await mistChampionSkinsTask;
+        _novelties = await noveltiesTask;
+        _outfits = await outfitsTask;
+        _wardrobe = await wardrobeTask;
+        _recipes = await recipesTask;
     }
 
     private async ValueTask OnAuthorizationInvalidated(AuthorizationInvalidated _)
     {
-        _unlockedFinishers = await GetUnlockedFinishersInternal(CancellationToken.None);
-        _unlockedMailCarriers = await GetUnlockedMailCarriersInternal(CancellationToken.None);
-        _unlockedNovelties = await GetUnlockedNoveltiesInternal(CancellationToken.None);
-        _unlockedWardrobe = await GetUnlockedWardrobeInternal(CancellationToken.None);
+        var unlockedFinishersTask = GetUnlockedFinishersInternal(CancellationToken.None);
+        var unlockedGliderSkinsTask = GetUnlockedGliderSkinsInternal(CancellationToken.None);
+        var unlockedJadeBotSkinsTask = GetUnlockedJadeBotSkinsInternal(CancellationToken.None);
+        var unlockedMailCarriersTask = GetUnlockedMailCarriersInternal(CancellationToken.None);
+        var unlockedMistChampionSkinsTask = GetUnlockedMistChampionSkinsInternal(CancellationToken.None);
+        var unlockedNoveltiesTask = GetUnlockedNoveltiesInternal(CancellationToken.None);
+        var unlockedOutfitsTask = GetUnlockedOutfitsInternal(CancellationToken.None);
+        var unlockedWardrobeTask = GetUnlockedWardrobeInternal(CancellationToken.None);
+        var unlockedRecipesTask = GetUnlockedRecipesInternal(CancellationToken.None);
+
+        _unlockedFinishers = await unlockedFinishersTask;
+        _unlockedGliderSkins = await unlockedGliderSkinsTask;
+        _unlockedJadeBotSkins = await unlockedJadeBotSkinsTask;
+        _unlockedMailCarriers = await unlockedMailCarriersTask;
+        _unlockedMistChampionSkins = await unlockedMistChampionSkinsTask;
+        _unlockedNovelties = await unlockedNoveltiesTask;
+        _unlockedOutfits = await unlockedOutfitsTask;
+        _unlockedWardrobe = await unlockedWardrobeTask;
+        _unlockedRecipes = await unlockedRecipesTask;
     }
 
     public void Dispose()

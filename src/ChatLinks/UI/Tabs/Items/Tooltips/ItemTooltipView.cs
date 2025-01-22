@@ -156,7 +156,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                 PrintPlainText(string.IsNullOrEmpty(consumable.Description) ? "Service" : "\r\nService");
                 break;
             case Transmutation transmutation:
-                PrintItemSkin();
+                PrintTransmutation();
                 PrintPlainText("\r\nConsumable");
                 break;
             case Booze:
@@ -175,31 +175,253 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
                 if (ViewModel.DefaultLocked)
                 {
-                    if (ViewModel.UnlocksAvailable)
+                    if (ViewModel.ContentUnlocksAvailable)
                     {
                         if (ViewModel.Unlocked!.Value)
                         {
                             PrintPlainText("""
                                            You already have that content unlocked.
-                                           
+
                                            """, Color.Red);
                         }
 
                     }
                     else
                     {
-                        PrintPlainText("""
-                            Grant 'unlocks' permission in settings to see unlock status
-                            
-                            """, Gray);
+                        PrintPlainText($"""
+                                        {ViewModel.AuthorizationText}
+
+                                        """, Gray);
                     }
                 }
                 else
                 {
                     PrintPlainText("""
-                        Unlock status unavailable.
-                        
-                        """, Gray);
+                                   Unlock status unknown.
+
+                                   """, Gray);
+                }
+
+                PrintPlainText("Consumable");
+                break;
+            case Dye unlocker:
+                if (!string.IsNullOrEmpty(unlocker.Description))
+                {
+                    PrintPlainText(" ");
+                }
+
+                if (ViewModel.DefaultLocked)
+                {
+                    if (ViewModel.DyeUnlocksAvailable)
+                    {
+                        if (ViewModel.Unlocked!.Value)
+                        {
+                            PrintPlainText("""
+                                           You have already unlocked this dye!
+
+                                           """, Color.Red);
+                        }
+
+                    }
+                    else
+                    {
+                        PrintPlainText($"""
+                                        {ViewModel.AuthorizationText}
+
+                                        """, Gray);
+                    }
+                }
+                else
+                {
+                    PrintPlainText("""
+                                   Unlock status unknown.
+
+                                   """, Gray);
+                }
+
+                PrintPlainText("Consumable");
+                break;
+            case GliderSkinUnlocker unlocker:
+                if (!string.IsNullOrEmpty(unlocker.Description))
+                {
+                    PrintPlainText(" ");
+                }
+
+                if (ViewModel.DefaultLocked)
+                {
+                    if (ViewModel.GliderSkinUnlocksAvailable)
+                    {
+                        if (ViewModel.Unlocked!.Value)
+                        {
+                            PrintPlainText("""
+                                           You have already unlocked this glider!
+
+                                           """, Color.Red);
+                        }
+
+                    }
+                    else
+                    {
+                        PrintPlainText($"""
+                                        {ViewModel.AuthorizationText}
+
+                                        """, Gray);
+                    }
+                }
+                else
+                {
+                    PrintPlainText("""
+                                   Unlock status unknown.
+
+                                   """, Gray);
+                }
+
+                PrintPlainText("Consumable");
+                break;
+            case JadeBotSkinUnlocker unlocker:
+                if (!string.IsNullOrEmpty(unlocker.Description))
+                {
+                    PrintPlainText(" ");
+                }
+
+                if (ViewModel.DefaultLocked)
+                {
+                    if (ViewModel.JadeBotSkinUnlocksAvailable)
+                    {
+                        if (ViewModel.Unlocked!.Value)
+                        {
+                            PrintPlainText("""
+                                           You have already unlocked this Jade Bot!
+
+                                           """, Color.Red);
+                        }
+
+                    }
+                    else
+                    {
+                        PrintPlainText($"""
+                                        {ViewModel.AuthorizationText}
+
+                                        """, Gray);
+                    }
+                }
+                else
+                {
+                    PrintPlainText("""
+                                   Unlock status unknown.
+
+                                   """, Gray);
+                }
+
+                PrintPlainText("Consumable");
+                break;
+            case MistChampionSkinUnlocker unlocker:
+                if (!string.IsNullOrEmpty(unlocker.Description))
+                {
+                    PrintPlainText(" ");
+                }
+
+                if (ViewModel.DefaultLocked)
+                {
+                    if (ViewModel.MistChampionSkinUnlocksAvailable)
+                    {
+                        if (ViewModel.Unlocked!.Value)
+                        {
+                            PrintPlainText("""
+                                           You have already unlocked this outfit!
+
+                                           """, Color.Red);
+                        }
+
+                    }
+                    else
+                    {
+                        PrintPlainText($"""
+                                        {ViewModel.AuthorizationText}
+
+                                        """, Gray);
+                    }
+                }
+                else
+                {
+                    PrintPlainText("""
+                                   Unlock status unknown.
+
+                                   """, Gray);
+                }
+
+                PrintPlainText("Consumable");
+                break;
+            case OutfitUnlocker unlocker:
+                if (!string.IsNullOrEmpty(unlocker.Description))
+                {
+                    PrintPlainText(" ");
+                }
+
+                if (ViewModel.DefaultLocked)
+                {
+                    if (ViewModel.OutfitUnlocksAvailable)
+                    {
+                        if (ViewModel.Unlocked!.Value)
+                        {
+                            PrintPlainText("""
+                                           You have already unlocked this outfit!
+
+                                           """, Color.Red);
+                        }
+
+                    }
+                    else
+                    {
+                        PrintPlainText($"""
+                                        {ViewModel.AuthorizationText}
+
+                                        """, Gray);
+                    }
+                }
+                else
+                {
+                    PrintPlainText("""
+                                   Unlock status unknown.
+
+                                   """, Gray);
+                }
+
+                PrintPlainText("Consumable");
+                break;
+            case RecipeSheet unlocker:
+                if (!string.IsNullOrEmpty(unlocker.Description))
+                {
+                    PrintPlainText(" ");
+                }
+
+                if (ViewModel.DefaultLocked)
+                {
+                    if (ViewModel.RecipeUnlocksAvailable)
+                    {
+                        if (ViewModel.Unlocked!.Value)
+                        {
+                            PrintPlainText($"""
+                                           {ViewModel.UnlockedText}
+
+                                           """, Color.Red);
+                        }
+
+                    }
+                    else
+                    {
+                        PrintPlainText($"""
+                                        {ViewModel.AuthorizationText}
+
+                                        """, Gray);
+                    }
+                }
+                else
+                {
+                    PrintPlainText("""
+                                   Unlock status unknown.
+
+                                   """, Gray);
                 }
 
                 PrintPlainText("Consumable");
@@ -287,7 +509,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
         if (ViewModel.DefaultLocked)
         {
-            if (ViewModel.UnlocksAvailable)
+            if (ViewModel.NoveltyUnlocksAvailable)
             {
                 if (ViewModel.Unlocked!.Value)
                 {
@@ -306,9 +528,9 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
             }
             else
             {
-                PrintPlainText("""
+                PrintPlainText($"""
 
-                    Grant 'unlocks' permission in settings to see unlock status
+                    {ViewModel.AuthorizationText}
                     """, Gray);
             }
 
@@ -708,20 +930,63 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
     {
         if (ViewModel.DefaultLocked)
         {
-            if (ViewModel.UnlocksAvailable)
+            if (ViewModel.WardrobeUnlocksAvailable)
             {
                 if (ViewModel.Unlocked!.Value)
                 {
-                    PrintPlainText("\r\nSkin Unlocked");
+                    PrintPlainText($"""
+
+                                    Skin Unlocked
+                                    {ViewModel.SkinName}
+                                    """);
                 }
                 else
                 {
-                    PrintPlainText("\r\nSkin Locked", Gray);
+                    PrintPlainText($"""
+
+                                    Skin Locked
+                                    {ViewModel.SkinName}
+                                    """, Gray);
                 }
             }
             else
             {
-                PrintPlainText("\r\nGrant 'unlocks' permission in settings to see unlock status", Gray);
+                PrintPlainText($"""
+
+                                {ViewModel.AuthorizationText}
+                                {ViewModel.SkinName}
+                                """, Gray);
+            }
+        }
+    }
+
+    public void PrintTransmutation()
+    {
+        if (ViewModel.DefaultLocked)
+        {
+            if (ViewModel.WardrobeUnlocksAvailable)
+            {
+                if (ViewModel.Unlocked!.Value)
+                {
+                    PrintPlainText($"""
+
+                                    Skin Unlocked
+                                    """);
+                }
+                else
+                {
+                    PrintPlainText($"""
+
+                                    Skin Locked
+                                    """, Gray);
+                }
+            }
+            else
+            {
+                PrintPlainText($"""
+
+                                {ViewModel.AuthorizationText}
+                                """, Gray);
             }
         }
     }

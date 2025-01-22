@@ -23,6 +23,10 @@
         "unlocks": {
             "optional": true,
             "details": "Used to enrich tooltips with account unlocks."
+        },
+        "inventories": {
+            "optional": true,
+            "details":  "Used to enrich tooltips with inventory data."
         }
     }
 }

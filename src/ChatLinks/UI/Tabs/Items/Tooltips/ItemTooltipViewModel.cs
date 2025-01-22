@@ -2,7 +2,6 @@
 
 using GuildWars2;
 using GuildWars2.Hero;
-using GuildWars2.Hero.Equipment.Finishers;
 using GuildWars2.Items;
 
 using Microsoft.Extensions.Logging;
@@ -26,11 +25,30 @@ public sealed class ItemTooltipViewModel(
 
     private bool _locked;
 
+    private string? _unlockedText;
+    private string _skinName;
+
     public IReadOnlyList<UpgradeSlot> UpgradesSlots { get; } = upgrades.ToList();
 
     public Item Item { get; } = item;
 
-    public bool UnlocksAvailable => hero.UnlocksAvailable;
+    public bool ContentUnlocksAvailable => hero.UnlocksAvailable;
+
+    public bool DyeUnlocksAvailable => hero.UnlocksAvailable;
+
+    public bool GliderSkinUnlocksAvailable => hero.UnlocksAvailable;
+
+    public bool JadeBotSkinUnlocksAvailable => hero is { UnlocksAvailable: true, InventoriesAvailable: true };
+
+    public bool MistChampionSkinUnlocksAvailable => hero.UnlocksAvailable;
+
+    public bool NoveltyUnlocksAvailable => hero.UnlocksAvailable;
+
+    public bool OutfitUnlocksAvailable => hero.UnlocksAvailable;
+
+    public bool RecipeUnlocksAvailable => hero.UnlocksAvailable;
+
+    public bool WardrobeUnlocksAvailable => hero.UnlocksAvailable;
 
     public bool DefaultLocked
     {
@@ -42,6 +60,18 @@ public sealed class ItemTooltipViewModel(
     {
         get => _unlocked;
         set => SetField(ref _unlocked, value);
+    }
+
+    public string? UnlockedText
+    {
+        get => _unlockedText;
+        set => SetField(ref _unlockedText, value);
+    }
+
+    public string SkinName
+    {
+        get => _skinName;
+        set => SetField(ref _skinName, value);
     }
 
     public int Quantity { get; } = quantity;
@@ -90,6 +120,8 @@ public sealed class ItemTooltipViewModel(
 
     public Coin TotalVendorValue => Item.VendorValue * Quantity;
 
+    public string AuthorizationText { get; private set; }
+
     public string AttributeName(Extensible<AttributeName> stat)
     {
         return stat.IsDefined()
@@ -135,14 +167,256 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 await SkinUnlock(weapon.DefaultSkinId);
                 break;
-            case ContentUnlocker contentUnlocker:
+            case ContentUnlocker unlocker:
                 progress.Report("Checking unlock status...");
-                await MailCarrierUnlock(contentUnlocker.Id);
-                await FinisherUnlock(contentUnlocker.Id);
+                try
+                {
+                    var finishers = await hero.GetFinishers(CancellationToken.None);
+                    var finisher = finishers.FirstOrDefault(finisher => finisher.UnlockItemIds.Contains(unlocker.Id));
+                    if (finisher is not null)
+                    {
+                        if (ContentUnlocksAvailable)
+                        {
+                            var unlocks = await hero.GetUnlockedFinishers(CancellationToken.None);
+                            Unlocked = unlocks.Contains(finisher.Id);
+                        }
+                        else
+                        {
+                            AuthorizationText =
+                                "Grant 'unlocks' permission in settings to see unlock status";
+                        }
+
+                        DefaultLocked = true;
+                        break;
+                    }
+
+                    var mailCarriers = await hero.GetMailCarriers(CancellationToken.None);
+                    var mailCarrier = mailCarriers.FirstOrDefault(mailCarrier => mailCarrier.UnlockItemIds.Contains(unlocker.Id));
+                    if (mailCarrier is not null)
+                    {
+                        if (hero.UnlocksAvailable)
+                        {
+                            var unlocks = await hero.GetUnlockedMailCarriers(CancellationToken.None);
+                            Unlocked = unlocks.Contains(mailCarrier.Id);
+                        }
+                        else
+                        {
+                            AuthorizationText =
+                                "Grant 'unlocks' permission in settings to see unlock status";
+                        }
+
+                        DefaultLocked = true;
+                        break;
+                    }
+                }
+                catch (Exception reason)
+                {
+                    logger.LogWarning(reason, "Couldn't get unlocks.");
+                }
+
+                break;
+            case Dye unlocker:
+                progress.Report("Checking unlock status...");
+                try
+                {
+                    var dyes = await hero.GetDyes(CancellationToken.None);
+                    var dye = dyes.FirstOrDefault(dye => dye.ItemId == unlocker.Id);
+                    if (dye is not null)
+                    {
+                        if (DyeUnlocksAvailable)
+                        {
+                            var unlocks = await hero.GetUnlockedDyes(CancellationToken.None);
+                            Unlocked = unlocks.Contains(dye.Id);
+                        }
+                        else
+                        {
+                            AuthorizationText =
+                                "Grant 'unlocks' permission in settings to see unlock status";
+                        }
+
+                        DefaultLocked = true;
+                    }
+                }
+                catch (Exception reason)
+                {
+                    logger.LogWarning(reason, "Couldn't get unlocks.");
+                }
+
+                break;
+            case GliderSkinUnlocker unlocker:
+                progress.Report("Checking unlock status...");
+                try
+                {
+                    var gliderSkins = await hero.GetGliderSkins(CancellationToken.None);
+                    var gliderSkin = gliderSkins.FirstOrDefault(gliderSkin => gliderSkin.UnlockItemIds.Contains(unlocker.Id));
+                    if (gliderSkin is not null)
+                    {
+                        if (GliderSkinUnlocksAvailable)
+                        {
+                            var unlocks = await hero.GetUnlockedGliderSkins(CancellationToken.None);
+                            Unlocked = unlocks.Contains(gliderSkin.Id);
+                        }
+                        else
+                        {
+                            AuthorizationText =
+                                "Grant 'unlocks' permission in settings to see unlock status";
+                        }
+
+                        DefaultLocked = true;
+                    }
+                }
+                catch (Exception reason)
+                {
+                    logger.LogWarning(reason, "Couldn't get unlocks.");
+                }
+
+                break;
+            case JadeBotSkinUnlocker unlocker:
+                progress.Report("Checking unlock status...");
+                try
+                {
+                    var jadeBotSkins = await hero.GetJadeBotSkins(CancellationToken.None);
+                    var jadeBotSkin = jadeBotSkins.FirstOrDefault(jadeBotSkin => jadeBotSkin.UnlockItemId == unlocker.Id);
+                    if (jadeBotSkin is not null)
+                    {
+                        if (JadeBotSkinUnlocksAvailable)
+                        {
+                            var unlocks = await hero.GetUnlockedJadeBotSkins(CancellationToken.None);
+                            Unlocked = unlocks.Contains(jadeBotSkin.Id);
+                        }
+                        else
+                        {
+                            AuthorizationText =
+                                "Grant 'unlocks' and 'inventories' permission in settings to see unlock status";
+                        }
+
+                        DefaultLocked = true;
+                    }
+                }
+                catch (Exception reason)
+                {
+                    logger.LogWarning(reason, "Couldn't get unlocks.");
+                }
+                break;
+            case OutfitUnlocker unlocker:
+                progress.Report("Checking unlock status...");
+                try
+                {
+                    var outfits = await hero.GetOutfits(CancellationToken.None);
+                    var outfit = outfits.FirstOrDefault(outfit => outfit.UnlockItemIds.Contains(unlocker.Id));
+                    if (outfit is not null)
+                    {
+                        if (OutfitUnlocksAvailable)
+                        {
+                            var unlocks = await hero.GetUnlockedOutfits(CancellationToken.None);
+                            Unlocked = unlocks.Contains(outfit.Id);
+                        }
+                        else
+                        {
+                            AuthorizationText =
+                                "Grant 'unlocks' permission in settings to see unlock status";
+                        }
+
+                        DefaultLocked = true;
+                        break;
+                    }
+                }
+                catch (Exception reason)
+                {
+                    logger.LogWarning(reason, "Couldn't get unlocks.");
+                }
+
+                break;
+            case MistChampionSkinUnlocker unlocker:
+                progress.Report("Checking unlock status...");
+                try
+                {
+                    var mistChampionSkins = await hero.GetMistChampionSkins(CancellationToken.None);
+                    var mistChampionSkin = mistChampionSkins.FirstOrDefault(mistChampionSkin => mistChampionSkin.UnlockItemIds.Contains(unlocker.Id));
+                    if (mistChampionSkin is not null)
+                    {
+                        if (MistChampionSkinUnlocksAvailable)
+                        {
+                            var unlocks = await hero.GetUnlockedMistChampionSkins(CancellationToken.None);
+                            Unlocked = unlocks.Contains(mistChampionSkin.Id);
+                        }
+                        else
+                        {
+                            AuthorizationText =
+                                "Grant 'unlocks' permission in settings to see unlock status";
+                        }
+
+                        DefaultLocked = true;
+                        break;
+                    }
+                }
+                catch (Exception reason)
+                {
+                    logger.LogWarning(reason, "Couldn't get unlocks.");
+                }
+
+                break;
+            case RecipeSheet unlocker:
+                progress.Report("Checking unlock status...");
+                try
+                {
+                    if (RecipeUnlocksAvailable)
+                    {
+                        var unlocks = await hero.GetUnlockedRecipes(CancellationToken.None);
+                        Unlocked = unlocks.Contains(unlocker.RecipeId);
+                        UnlockedText = "You already know this recipe!";
+                        if (unlocker.ExtraRecipeIds.Count > 0)
+                        {
+                            if (unlocker.ExtraRecipeIds.All(extra => unlocks.Contains(extra)))
+                            {
+                                UnlockedText = "You already know all of these recipes!";
+                            }
+                            else
+                            {
+                                // TODO: handle count of unlocked recipes
+                                UnlockedText = "You already some of these recipes!";
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        AuthorizationText =
+                            "Grant 'unlocks' permission in settings to see unlock status";
+                    }
+
+                    DefaultLocked = true;
+                    break;
+                }
+                catch (Exception reason)
+                {
+                    logger.LogWarning(reason, "Couldn't get unlocks.");
+                }
+
+                break;
+            case Unlocker other:
+                logger.LogInformation("No handling for: {@Other}", other);
                 break;
             case Gizmo gizmo:
                 progress.Report("Checking unlock status...");
-                await NoveltyUnlock(gizmo.Id);
+                var novelties = await hero.GetNovelties(CancellationToken.None);
+                var novelty = novelties.FirstOrDefault(novelty => novelty.UnlockItemIds.Contains(gizmo.Id));
+                if (novelty is not null)
+                {
+                    if (NoveltyUnlocksAvailable)
+                    {
+                        var unlocks = await hero.GetUnlockedNovelties(CancellationToken.None);
+                        Unlocked = unlocks.Contains(novelty.Id);
+                    }
+                    else
+                    {
+                        AuthorizationText =
+                            "Grant 'unlocks' permission in settings to see unlock status";
+                    }
+
+                    DefaultLocked = true;
+                }
+
                 break;
         }
     }
@@ -153,65 +427,26 @@ public sealed class ItemTooltipViewModel(
         {
             DefaultLocked = true;
 
-            if (hero.UnlocksAvailable)
+            var wardrobe = await hero.GetWardrobe(CancellationToken.None);
+            var skin = wardrobe.FirstOrDefault(skin => skin.Id == skinId);
+            if (skin is not null)
+            {
+                SkinName = skin.Name;
+            }
+
+            if (WardrobeUnlocksAvailable)
             {
                 var unlocks = await hero.GetUnlockedWardrobe(CancellationToken.None);
                 Unlocked = unlocks.Contains(skinId);
+            }
+            else
+            {
+                AuthorizationText = "Grant 'unlocks' permission in settings to see unlock status";
             }
         }
         catch (Exception reason)
         {
             logger.LogWarning(reason, "Couldn't get unlocked wardrobe.");
-        }
-    }
-
-    private async Task FinisherUnlock(int itemId)
-    {
-        try
-        {
-            var finishers = await hero.GetFinishers(CancellationToken.None);
-            var match = finishers.FirstOrDefault(finisher => finisher.UnlockItemIds.Contains(itemId));
-            if (match is null)
-            {
-                return;
-            }
-
-            DefaultLocked = true;
-
-            if (hero.UnlocksAvailable)
-            {
-                var unlocks = await hero.GetUnlockedFinishers(CancellationToken.None);
-                Unlocked = unlocks.Contains(match.Id);
-            }
-        }
-        catch (Exception reason)
-        {
-            logger.LogWarning(reason, "Couldn't get unlocked finishers.");
-        }
-    }
-
-    private async Task MailCarrierUnlock(int itemId)
-    {
-        try
-        {
-            var mailCarriers = await hero.GetMailCarriers(CancellationToken.None);
-            var match = mailCarriers.FirstOrDefault(mailCarrier => mailCarrier.UnlockItemIds.Contains(itemId));
-            if (match is null)
-            {
-                return;
-            }
-
-            DefaultLocked = true;
-
-            if (hero.UnlocksAvailable)
-            {
-                var unlocks = await hero.GetUnlockedMailCarriers(CancellationToken.None);
-                Unlocked = unlocks.Contains(match.Id);
-            }
-        }
-        catch (Exception reason)
-        {
-            logger.LogWarning(reason, "Couldn't get unlocked mail carriers.");
         }
     }
 
