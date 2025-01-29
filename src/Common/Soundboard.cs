@@ -4,5 +4,5 @@ namespace SL.Common;
 
 public static class Soundboard
 {
-    public static SoundEffect Click { get; } = Resources.Sound("click.wav");
+    public static SoundEffect Click { get; } = EmbeddedResources.Sound("click.wav");
 }

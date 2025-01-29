@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace SL.Common;
 
-public static class Resources
+public static class EmbeddedResources
 {
     public static Texture2D Texture(string name)
     {

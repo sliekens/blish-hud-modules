@@ -28,12 +28,12 @@ public class NumberInput : TextInputBase
     private const int SpinnerButtonHeight = 16;
 
     // Points up
-    private static readonly Texture2D SpinnerSprite = Resources.Texture("spinner.png");
+    private static readonly Texture2D SpinnerSprite = EmbeddedResources.Texture("spinner.png");
 
     // Points up
-    private static readonly Texture2D SpinnerGlowSprite = Resources.Texture("spinner-glow.png");
+    private static readonly Texture2D SpinnerGlowSprite = EmbeddedResources.Texture("spinner-glow.png");
 
-    private static readonly Texture2D TextBoxSprite = Resources.Texture("textbox.png");
+    private static readonly Texture2D TextBoxSprite = EmbeddedResources.Texture("textbox.png");
 
     private NumberInputSpinnerGlow _glow = NumberInputSpinnerGlow.None;
 

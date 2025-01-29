@@ -891,7 +891,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                             .CreatePart("\r\n", _ => { })
                             .CreatePart(" Unused Infusion Slot", part =>
                             {
-                                part.SetPrefixImage(Resources.Texture("unused_infusion_slot.png"));
+                                part.SetPrefixImage(EmbeddedResources.Texture("unused_infusion_slot.png"));
                                 part.SetPrefixImageSize(new Point(16));
                                 part.SetFontSize(ContentService.FontSize.Size16);
                             });
@@ -901,7 +901,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                             .CreatePart("\r\n", _ => { })
                             .CreatePart(" Unused Enrichment Slot", part =>
                             {
-                                part.SetPrefixImage(Resources.Texture("unused_enrichment_slot.png"));
+                                part.SetPrefixImage(EmbeddedResources.Texture("unused_enrichment_slot.png"));
                                 part.SetPrefixImageSize(new Point(16));
                                 part.SetFontSize(ContentService.FontSize.Size16);
                             });
@@ -912,7 +912,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                             .CreatePart("\r\n", _ => { })
                             .CreatePart(" Unused Upgrade Slot", part =>
                             {
-                                part.SetPrefixImage(Resources.Texture("unused_upgrade_slot.png"));
+                                part.SetPrefixImage(EmbeddedResources.Texture("unused_upgrade_slot.png"));
                                 part.SetPrefixImageSize(new Point(16));
                                 part.SetFontSize(ContentService.FontSize.Size16);
                             });
