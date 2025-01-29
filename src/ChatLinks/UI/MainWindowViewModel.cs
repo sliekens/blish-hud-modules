@@ -1,6 +1,8 @@
 ﻿using Blish_HUD.Content;
 using Blish_HUD.Controls;
 
+using Microsoft.Extensions.Localization;
+
 using SL.ChatLinks.UI.Tabs.Items;
 using SL.Common;
 
@@ -8,11 +10,10 @@ namespace SL.ChatLinks.UI;
 
 public sealed class MainWindowViewModel(
     IEventAggregator eventAggregator,
-    ItemsTabViewFactory itemsTabViewFactory
-) : ViewModel
+    ItemsTabViewFactory itemsTabViewFactory,
+    IStringLocalizer<MainWindow> localizer) : ViewModel
 {
     private bool _visible;
-
     public void Initialize()
     {
         eventAggregator.Subscribe<MainIconClicked>(MainIconClicked);
@@ -31,7 +32,7 @@ public sealed class MainWindowViewModel(
     }
 
     public string Id => "sliekens.chat-links.main-window";
-    public string Title => "Chat Links";
+    public string Title => localizer["Title"];
 
     public AsyncTexture2D BackgroundTexture => AsyncTexture2D.FromAssetId(155985);
 

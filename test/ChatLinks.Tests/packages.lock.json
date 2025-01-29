@@ -254,6 +254,22 @@
           "Microsoft.Extensions.Options": "3.1.32"
         }
       },
+      "Microsoft.Extensions.Localization": {
+        "type": "Transitive",
+        "resolved": "3.1.32",
+        "contentHash": "TkKxkAFMvVtD214XqnKMCMhfvfYmci2XzZe4JImnPiWb0E/kN3Q7Xgp57sXEFZB3fNJgTpbjCnTmuHnRalPr4A==",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "3.1.32",
+          "Microsoft.Extensions.Localization.Abstractions": "3.1.32",
+          "Microsoft.Extensions.Logging.Abstractions": "3.1.32",
+          "Microsoft.Extensions.Options": "3.1.32"
+        }
+      },
+      "Microsoft.Extensions.Localization.Abstractions": {
+        "type": "Transitive",
+        "resolved": "3.1.32",
+        "contentHash": "jjYbWzxsD4sg8/oe3ZOzlueYRIvkPtlnHDys05Muh5AGRu5d8IM5q0QiPz0Abaa9yLxWn9N2s0fJl4CH8rXmhw=="
+      },
       "Microsoft.Extensions.Logging": {
         "type": "Transitive",
         "resolved": "3.1.32",
@@ -623,6 +639,7 @@
           "Gw2Sharp": "[1.7.4, )",
           "Microsoft.EntityFrameworkCore.Sqlite.Core": "[3.1.32, )",
           "Microsoft.Extensions.Http": "[3.1.32, )",
+          "Microsoft.Extensions.Localization": "[3.1.32, )",
           "Newtonsoft.Json": "[13.0.1, )",
           "Polly": "[8.5.0, )",
           "SL.Adapters": "[1.0.0, )",

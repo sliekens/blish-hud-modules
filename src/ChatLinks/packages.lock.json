@@ -77,6 +77,18 @@
           "Microsoft.Extensions.Options": "3.1.32"
         }
       },
+      "Microsoft.Extensions.Localization": {
+        "type": "Direct",
+        "requested": "[3.1.32, )",
+        "resolved": "3.1.32",
+        "contentHash": "TkKxkAFMvVtD214XqnKMCMhfvfYmci2XzZe4JImnPiWb0E/kN3Q7Xgp57sXEFZB3fNJgTpbjCnTmuHnRalPr4A==",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "3.1.32",
+          "Microsoft.Extensions.Localization.Abstractions": "3.1.32",
+          "Microsoft.Extensions.Logging.Abstractions": "3.1.32",
+          "Microsoft.Extensions.Options": "3.1.32"
+        }
+      },
       "Microsoft.Windows.CsWin32": {
         "type": "Direct",
         "requested": "[0.3.106, )",
@@ -289,6 +301,11 @@
           "Newtonsoft.Json": "9.0.1",
           "System.Runtime.InteropServices.RuntimeInformation": "4.0.0"
         }
+      },
+      "Microsoft.Extensions.Localization.Abstractions": {
+        "type": "Transitive",
+        "resolved": "3.1.32",
+        "contentHash": "jjYbWzxsD4sg8/oe3ZOzlueYRIvkPtlnHDys05Muh5AGRu5d8IM5q0QiPz0Abaa9yLxWn9N2s0fJl4CH8rXmhw=="
       },
       "Microsoft.Extensions.Logging": {
         "type": "Transitive",

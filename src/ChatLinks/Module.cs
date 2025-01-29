@@ -106,6 +106,11 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 
         services.AddSingleton<ITokenProvider, Gw2SharpTokenProvider>();
 
+        services.AddLocalization(options =>
+        {
+            options.ResourcesPath = "Resources";
+        });
+
         _serviceProvider = services.BuildServiceProvider();
         _eventAggregator = _serviceProvider.GetRequiredService<IEventAggregator>();
         SetupSqlite3();
