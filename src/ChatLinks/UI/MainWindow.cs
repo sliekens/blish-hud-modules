@@ -50,6 +50,10 @@ public sealed class MainWindow : TabbedWindow2
     {
         switch (args.PropertyName)
         {
+            case nameof(ViewModel.Title):
+                Title = ViewModel.Title;
+                break;
+
             case nameof(ViewModel.Visible):
                 if (ViewModel.Visible)
                 {

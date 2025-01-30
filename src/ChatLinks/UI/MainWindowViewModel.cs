@@ -14,10 +14,17 @@ public sealed class MainWindowViewModel(
     IStringLocalizer<MainWindow> localizer) : ViewModel
 {
     private bool _visible;
+
     public void Initialize()
     {
+        eventAggregator.Subscribe<LocaleChanged>(OnLocaleChanged);
         eventAggregator.Subscribe<MainIconClicked>(MainIconClicked);
         eventAggregator.Subscribe<ModuleUnloading>(ModuleUnloading);
+    }
+
+    private void OnLocaleChanged(LocaleChanged obj)
+    {
+        OnPropertyChanged(nameof(Title));
     }
 
     private void MainIconClicked(MainIconClicked obj)
@@ -32,6 +39,7 @@ public sealed class MainWindowViewModel(
     }
 
     public string Id => "sliekens.chat-links.main-window";
+
     public string Title => localizer["Title"];
 
     public AsyncTexture2D BackgroundTexture => AsyncTexture2D.FromAssetId(155985);
@@ -49,6 +57,7 @@ public sealed class MainWindowViewModel(
 
     private void ModuleUnloading(ModuleUnloading obj)
     {
+        eventAggregator.Unsubscribe<LocaleChanged>(OnLocaleChanged);
         eventAggregator.Unsubscribe<MainIconClicked>(MainIconClicked);
         eventAggregator.Unsubscribe<ModuleUnloading>(ModuleUnloading);
     }

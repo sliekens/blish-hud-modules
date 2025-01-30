@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.Composition;
+using System.Globalization;
 using System.IO.Compression;
 
 using Blish_HUD;
@@ -114,6 +115,13 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         _serviceProvider = services.BuildServiceProvider();
         _eventAggregator = _serviceProvider.GetRequiredService<IEventAggregator>();
         SetupSqlite3();
+
+        GameService.Overlay.UserLocaleChanged += OnUserLocaleChanged;
+    }
+
+    private void OnUserLocaleChanged(object sender, ValueEventArgs<CultureInfo> args)
+    {
+        _eventAggregator?.Publish(new LocaleChanged(args.Value));
     }
 
     protected override async Task LoadAsync()
@@ -169,6 +177,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 
     protected override void Unload()
     {
+        GameService.Overlay.UserLocaleChanged -= OnUserLocaleChanged;
         _eventAggregator?.Publish(new ModuleUnloading());
         _serviceProvider?.Dispose();
     }
