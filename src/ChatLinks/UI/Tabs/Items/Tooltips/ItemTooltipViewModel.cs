@@ -26,7 +26,8 @@ public sealed class ItemTooltipViewModel(
     private bool _locked;
 
     private string? _unlockedText;
-    private string _skinName;
+
+    private string? _skinName;
 
     public IReadOnlyList<UpgradeSlot> UpgradesSlots { get; } = upgrades.ToList();
 
@@ -68,7 +69,7 @@ public sealed class ItemTooltipViewModel(
         set => SetField(ref _unlockedText, value);
     }
 
-    public string SkinName
+    public string? SkinName
     {
         get => _skinName;
         set => SetField(ref _skinName, value);
