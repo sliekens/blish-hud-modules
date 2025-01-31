@@ -404,7 +404,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                             PrintPlainText($"""
                                            {ViewModel.UnlockedText}
 
-                                           """, Color.Red);
+                                           """, ViewModel.UnlockedTextColor);
                         }
 
                     }

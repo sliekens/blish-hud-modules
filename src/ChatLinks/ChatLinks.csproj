@@ -59,6 +59,15 @@
         <Reference Include="System.IO.Compression" />
     </ItemGroup>
 
+    <ItemGroup>
+      <EmbeddedResource Update="Resources\UI\MainWindow.resx">
+        <Generator></Generator>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\UI\Tabs\Items\Tooltips\ItemTooltipViewModel.resx">
+        <Generator></Generator>
+      </EmbeddedResource>
+    </ItemGroup>
+
     <Target Name="EnsureRestore" BeforeTargets="ResolvePackageAssets">
         <MSBuild Projects="$(MSBuildProjectFile)" Targets="Restore" />
     </Target>

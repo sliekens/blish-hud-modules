@@ -4,6 +4,7 @@ using GuildWars2;
 using GuildWars2.Hero;
 using GuildWars2.Items;
 
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 
@@ -18,7 +19,8 @@ public sealed class ItemTooltipViewModel(
     Hero hero,
     Item item,
     int quantity,
-    IEnumerable<UpgradeSlot> upgrades
+    IEnumerable<UpgradeSlot> upgrades,
+    IStringLocalizer<ItemTooltipViewModel> localizer
 ) : ViewModel
 {
     private bool? _unlocked;
@@ -28,6 +30,7 @@ public sealed class ItemTooltipViewModel(
     private string? _unlockedText;
 
     private string? _skinName;
+    private Color? _unlockedTextColor;
 
     public IReadOnlyList<UpgradeSlot> UpgradesSlots { get; } = upgrades.ToList();
 
@@ -67,6 +70,12 @@ public sealed class ItemTooltipViewModel(
     {
         get => _unlockedText;
         set => SetField(ref _unlockedText, value);
+    }
+
+    public Color? UnlockedTextColor
+    {
+        get => _unlockedTextColor;
+        set => SetField(ref _unlockedTextColor, value);
     }
 
     public string? SkinName
@@ -121,7 +130,7 @@ public sealed class ItemTooltipViewModel(
 
     public Coin TotalVendorValue => Item.VendorValue * Quantity;
 
-    public string AuthorizationText { get; private set; }
+    public string? AuthorizationText { get; private set; }
 
     public string AttributeName(Extensible<AttributeName> stat)
     {
@@ -364,26 +373,29 @@ public sealed class ItemTooltipViewModel(
                     if (RecipeUnlocksAvailable)
                     {
                         var unlocks = await hero.GetUnlockedRecipes(CancellationToken.None);
-                        Unlocked = unlocks.Contains(unlocker.RecipeId);
-                        UnlockedText = "You already know this recipe!";
-                        if (unlocker.ExtraRecipeIds.Count > 0)
+                        if (unlocks.Contains(unlocker.RecipeId))
                         {
-                            if (unlocker.ExtraRecipeIds.All(extra => unlocks.Contains(extra)))
-                            {
-                                UnlockedText = "You already know all of these recipes!";
-                            }
-                            else
-                            {
-                                // TODO: handle count of unlocked recipes
-                                UnlockedText = "You already some of these recipes!";
-                            }
+                            Unlocked = true;
+                            UnlockedText = unlocker.ExtraRecipeIds.Any()
+                                ? localizer["All recipes unlocked"]
+                                : localizer["Recipe unlocked"];
+                            UnlockedTextColor = Color.Red;
                         }
-
+                        else if (unlocker.ExtraRecipeIds.Any(unlocks.Contains))
+                        {
+                            Unlocked = true;
+                            var known = unlocker.ExtraRecipeIds.Count(unlocks.Contains);
+                            UnlockedText = localizer["Recipes unlocked", known, unlocker.ExtraRecipeIds.Count + 1];
+                            UnlockedTextColor = Color.Yellow;
+                        }
+                        else
+                        {
+                            Unlocked = false;
+                        }
                     }
                     else
                     {
-                        AuthorizationText =
-                            "Grant 'unlocks' permission in settings to see unlock status";
+                        AuthorizationText = localizer["Grant unlocks permission"];
                     }
 
                     DefaultLocked = true;
