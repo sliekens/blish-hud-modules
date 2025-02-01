@@ -1,19 +1,24 @@
-﻿using Blish_HUD.Content;
+﻿using System.Globalization;
+
+using Blish_HUD.Content;
 
 using GuildWars2;
 using GuildWars2.Hero;
 using GuildWars2.Items;
 
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 
+using SL.ChatLinks.Storage;
 using SL.Common;
 
 namespace SL.ChatLinks.UI.Tabs.Items.Tooltips;
 
 public sealed class ItemTooltipViewModel(
     ILogger<ItemTooltipViewModel> logger,
+    IDbContextFactory contextFactory,
     ItemIcons icons,
     Customizer customizer,
     Hero hero,
@@ -440,8 +445,8 @@ public sealed class ItemTooltipViewModel(
         {
             DefaultLocked = true;
 
-            var wardrobe = await hero.GetWardrobe(CancellationToken.None);
-            var skin = wardrobe.FirstOrDefault(skin => skin.Id == skinId);
+            await using var context = contextFactory.CreateDbContext(CultureInfo.CurrentUICulture);
+            var skin = await context.Skins.FirstOrDefaultAsync(skin => skin.Id == skinId);
             if (skin is not null)
             {
                 SkinName = skin.Name;
