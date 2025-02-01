@@ -210,7 +210,6 @@ public sealed class DatabaseSeeder : IDisposable
                 context.Add(color);
             }
 
-            await context.AddRangeAsync(colors, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
             DetachAllEntities(context);
         }
@@ -262,7 +261,8 @@ public sealed class DatabaseSeeder : IDisposable
         }
 
         _logger.LogInformation("Finished seeding {Count} recipes.", index.Count);
-    }
+	}
+
     private async Task SeedFinishers(ChatLinksContext context, Language language, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Start seeding finishers.");
@@ -289,7 +289,6 @@ public sealed class DatabaseSeeder : IDisposable
                 context.Add(finisher);
             }
 
-            await context.AddRangeAsync(finishers, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
             DetachAllEntities(context);
         }
