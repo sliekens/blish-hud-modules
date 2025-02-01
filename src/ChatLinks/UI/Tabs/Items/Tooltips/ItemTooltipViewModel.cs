@@ -269,8 +269,15 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    var gliderSkins = await hero.GetGliderSkins(CancellationToken.None);
-                    var gliderSkin = gliderSkins.FirstOrDefault(gliderSkin => gliderSkin.UnlockItemIds.Contains(unlocker.Id));
+                    await using var context = contextFactory.CreateDbContext(CultureInfo.CurrentUICulture);
+
+                    var gliderSkin = await context.Gliders
+                        .FromSqlInterpolated($"""
+                                              SELECT *
+                                              FROM Gliders, json_each(Gliders.UnlockItemIds)
+                                              WHERE json_each.value = {unlocker.Id}
+                                              """)
+                        .FirstOrDefaultAsync();
                     if (gliderSkin is not null)
                     {
                         if (GliderSkinUnlocksAvailable)

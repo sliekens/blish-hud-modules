@@ -87,6 +87,7 @@ public sealed class DatabaseSeeder : IDisposable
         await SeedRecipes(context, language, cancellationToken);
         await SeedColors(context, language, cancellationToken);
         await SeedFinishers(context, language, cancellationToken);
+        await SeedGliders(context, language, cancellationToken);
         await _eventAggregator.PublishAsync(new DatabaseSyncCompleted(), cancellationToken);
     }
 
@@ -296,7 +297,41 @@ public sealed class DatabaseSeeder : IDisposable
         _logger.LogInformation("Finished seeding {Count} finishers.", index.Count);
     }
 
-    private static void DetachAllEntities(ChatLinksContext context)
+
+    private async Task SeedGliders(ChatLinksContext context, Language language, CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Start seeding gliders.");
+
+        HashSet<int> index = await _gw2Client.Hero.Equipment.Gliders
+            .GetGliderSkinsIndex(cancellationToken)
+            .ValueOnly();
+
+        _logger.LogDebug("Found {Count} gliders in the API.", index.Count);
+        var existing = await context.Gliders.Select(glider => glider.Id)
+            .ToListAsync(cancellationToken: cancellationToken);
+
+        index.ExceptWith(existing);
+        if (index.Count != 0)
+        {
+            _logger.LogDebug("Start seeding {Count} gliders.", index.Count);
+
+            var gliders = await _gw2Client.Hero.Equipment.Gliders
+                .GetGliderSkinsByIds(index, language, MissingMemberBehavior.Undefined, cancellationToken)
+                .ValueOnly();
+
+            foreach (var glider in gliders)
+            {
+                context.Add(glider);
+            }
+
+            await context.SaveChangesAsync(cancellationToken);
+            DetachAllEntities(context);
+        }
+
+        _logger.LogInformation("Finished seeding {Count} gliders.", index.Count);
+    }
+
+	private static void DetachAllEntities(ChatLinksContext context)
     {
         var entries = context.ChangeTracker.Entries().ToList();
         foreach (var entry in entries)

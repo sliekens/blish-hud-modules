@@ -32,14 +32,12 @@ public sealed partial class Hero : IDisposable
 
     private async ValueTask OnDatabaseSyncCompleted(DatabaseSyncCompleted _)
     {
-        var gliderSkinsTask = GetGliderSkinsInternal(CancellationToken.None);
         var jadeBotSkinsTask = GetJadeBotSkinsInternal(CancellationToken.None);
         var mailCarriersTask = GetMailCarriersInternal(CancellationToken.None);
         var mistChampionSkinsTask = GetMistChampionSkins(CancellationToken.None);
         var noveltiesTask = GetNoveltiesInternal(CancellationToken.None);
         var outfitsTask = GetOutfitsInternal(CancellationToken.None);
 
-        _gliderSkins = await gliderSkinsTask;
         _jadeBotSkins = await jadeBotSkinsTask;
         _mailCarriers = await mailCarriersTask;
         _mistChampionSkins = await mistChampionSkinsTask;
