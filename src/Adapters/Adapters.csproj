@@ -14,7 +14,7 @@
 
         <PackageReference Include="Gw2Sharp" Version="1.7.4" />
 
-        <PackageReference Include="GW2SDK" Version="2.1.0" />
+        <PackageReference Include="GW2SDK" Version="2.2.0" />
         
         <PackageReference Include="PolySharp" Version="1.15.0">
             <PrivateAssets>all</PrivateAssets>
@@ -22,6 +22,8 @@
         </PackageReference>
         
         <PackageReference Include="System.Collections.Immutable" Version="1.7.1" />
+        
+        <PackageReference Include="System.Text.Json" Version="9.0.1" />
     </ItemGroup>
     
     <ItemGroup>
