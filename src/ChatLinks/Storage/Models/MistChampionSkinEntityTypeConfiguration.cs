@@ -16,7 +16,7 @@ public sealed class MistChampionSkinEntityTypeConfiguration : IEntityTypeConfigu
         builder.HasKey(mistChampion => mistChampion.Id);
         builder.HasIndex(mistChampion => mistChampion.Name);
 
-        builder.Property(mailCarrier => mailCarrier.UnlockItemIds)
+        builder.Property(mistChampion => mistChampion.UnlockItemIds)
             .HasJsonValueConversion()
             .Metadata.SetValueComparer(new CollectionComparer<int>());
     }
