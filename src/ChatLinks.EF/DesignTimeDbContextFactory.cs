@@ -3,10 +3,17 @@ using Microsoft.EntityFrameworkCore.Design;
 
 using SL.ChatLinks.Storage;
 
+using SQLitePCL;
+
 namespace SL.ChatLinks.EF;
 
 public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ChatLinksContext>
 {
+    static DesignTimeDbContextFactory()
+    {
+        Batteries_V2.Init();
+    }
+
     public ChatLinksContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<ChatLinksContext>();
