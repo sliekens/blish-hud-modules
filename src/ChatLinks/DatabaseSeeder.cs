@@ -86,6 +86,7 @@ public sealed class DatabaseSeeder : IDisposable
         await SeedSkins(context, language, cancellationToken);
         await SeedRecipes(context, language, cancellationToken);
         await SeedColors(context, language, cancellationToken);
+        await SeedFinishers(context, language, cancellationToken);
         await _eventAggregator.PublishAsync(new DatabaseSyncCompleted(), cancellationToken);
     }
 
@@ -261,6 +262,39 @@ public sealed class DatabaseSeeder : IDisposable
         }
 
         _logger.LogInformation("Finished seeding {Count} recipes.", index.Count);
+    }
+    private async Task SeedFinishers(ChatLinksContext context, Language language, CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Start seeding finishers.");
+
+        HashSet<int> index = await _gw2Client.Hero.Equipment.Finishers
+            .GetFinishersIndex(cancellationToken)
+            .ValueOnly();
+
+        _logger.LogDebug("Found {Count} finishers in the API.", index.Count);
+        var existing = await context.Finishers.Select(finisher => finisher.Id)
+            .ToListAsync(cancellationToken: cancellationToken);
+
+        index.ExceptWith(existing);
+        if (index.Count != 0)
+        {
+            _logger.LogDebug("Start seeding {Count} finishers.", index.Count);
+
+            var finihsers = await _gw2Client.Hero.Equipment.Finishers
+                .GetFinishersByIds(index, language, MissingMemberBehavior.Undefined, cancellationToken)
+                .ValueOnly();
+
+            foreach (var finisher in finihsers)
+            {
+                context.Add(finisher);
+            }
+
+            await context.AddRangeAsync(finihsers, cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+            DetachAllEntities(context);
+        }
+
+        _logger.LogInformation("Finished seeding {Count} finishers.", index.Count);
     }
 
     private static void DetachAllEntities(ChatLinksContext context)

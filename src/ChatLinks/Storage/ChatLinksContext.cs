@@ -4,6 +4,7 @@ using GuildWars2;
 using GuildWars2.Hero;
 using GuildWars2.Hero.Crafting.Recipes;
 using GuildWars2.Hero.Equipment.Dyes;
+using GuildWars2.Hero.Equipment.Finishers;
 using GuildWars2.Hero.Equipment.Wardrobe;
 using GuildWars2.Items;
 
@@ -25,6 +26,8 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
     public DbSet<Recipe> Recipes => Set<Recipe>();
 
     public DbSet<DyeColor> Colors => Set<DyeColor>();
+
+    public DbSet<Finisher> Finishers => Set<Finisher>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -150,5 +153,7 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
         modelBuilder.ApplyConfiguration(new GuildDecorationRecipeEntityTypeConfiguration());
 
         modelBuilder.ApplyConfiguration(new GuildWvwUpgradeRecipeEntityTypeConfiguration());
+
+        modelBuilder.ApplyConfiguration(new FinisherEntityTypeConfiguration());
     }
 }

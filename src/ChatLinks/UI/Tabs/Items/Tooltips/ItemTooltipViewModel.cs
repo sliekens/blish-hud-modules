@@ -186,8 +186,15 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    var finishers = await hero.GetFinishers(CancellationToken.None);
-                    var finisher = finishers.FirstOrDefault(finisher => finisher.UnlockItemIds.Contains(unlocker.Id));
+                    await using var context = contextFactory.CreateDbContext(CultureInfo.CurrentUICulture);
+
+                    var finisher = await context.Finishers
+                        .FromSqlInterpolated($"""
+                            SELECT *
+                            FROM Finishers, json_each(Finishers.UnlockItemIds)
+                            WHERE json_each.value = {unlocker.Id}
+                            """)
+                        .FirstOrDefaultAsync();
                     if (finisher is not null)
                     {
                         if (ContentUnlocksAvailable)
