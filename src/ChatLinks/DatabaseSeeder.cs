@@ -12,6 +12,7 @@ using SL.Common;
 
 using GuildWars2.Items;
 using GuildWars2;
+using GuildWars2.Hero.Crafting.Recipes;
 using GuildWars2.Hero.Equipment.Wardrobe;
 
 using Microsoft.Extensions.Logging;
@@ -83,6 +84,7 @@ public sealed class DatabaseSeeder : IDisposable
         Language language = new(culture.TwoLetterISOLanguageName);
         await SeedItems(context, language, cancellationToken);
         await SeedSkins(context, language, cancellationToken);
+        await SeedRecipes(context, language, cancellationToken);
         await SeedColors(context, language, cancellationToken);
         await _eventAggregator.PublishAsync(new DatabaseSyncCompleted(), cancellationToken);
     }
@@ -108,7 +110,6 @@ public sealed class DatabaseSeeder : IDisposable
                 _eventAggregator.Publish(new DatabaseSyncProgress("items", report));
             });
 
-            context.ChangeTracker.AutoDetectChangesEnabled = false;
             var count = 0;
             await foreach (Item item in _gw2Client.Items
                                .GetItemsBulk(index,
@@ -129,6 +130,7 @@ public sealed class DatabaseSeeder : IDisposable
             }
 
             await context.SaveChangesAsync(cancellationToken);
+            DetachAllEntities(context);
         }
 
         _logger.LogInformation("Finished seeding {Count} items.", index.Count);
@@ -155,7 +157,6 @@ public sealed class DatabaseSeeder : IDisposable
                 _eventAggregator.Publish(new DatabaseSyncProgress("skins", report));
             });
 
-            context.ChangeTracker.AutoDetectChangesEnabled = false;
             var count = 0;
             await foreach (EquipmentSkin skin in _gw2Client.Hero.Equipment.Wardrobe
                                .GetSkinsBulk(index,
@@ -176,6 +177,7 @@ public sealed class DatabaseSeeder : IDisposable
             }
 
             await context.SaveChangesAsync(cancellationToken);
+            DetachAllEntities(context);
         }
 
         _logger.LogInformation("Finished seeding {Count} skins.", index.Count);
@@ -202,17 +204,63 @@ public sealed class DatabaseSeeder : IDisposable
             var colors = await _gw2Client.Hero.Equipment.Dyes
                 .GetColors(language, MissingMemberBehavior.Undefined, cancellationToken).ValueOnly();
 
-            foreach(var color in colors.Where(color => index.Contains(color.Id)))
+            foreach (var color in colors.Where(color => index.Contains(color.Id)))
             {
                 context.Add(color);
             }
 
             await context.AddRangeAsync(colors, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
-            DetachAllEntities(context); 
+            DetachAllEntities(context);
         }
 
         _logger.LogInformation("Finished seeding {Count} colors.", index.Count);
+    }
+
+    private async Task SeedRecipes(ChatLinksContext context, Language language, CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Start seeding recipes.");
+
+        HashSet<int> index = await _gw2Client.Hero.Crafting.Recipes
+            .GetRecipesIndex(cancellationToken)
+            .ValueOnly();
+
+        _logger.LogDebug("Found {Count} recipes in the API.", index.Count);
+        var existing = await context.Recipes.Select(recipe => recipe.Id)
+            .ToListAsync(cancellationToken: cancellationToken);
+
+        index.ExceptWith(existing);
+        if (index.Count != 0)
+        {
+            _logger.LogDebug("Start seeding {Count} recipes.", index.Count);
+            Progress<BulkProgress> bulkProgress = new(report =>
+            {
+                _eventAggregator.Publish(new DatabaseSyncProgress("recipes", report));
+            });
+
+            var count = 0;
+            await foreach (Recipe recipe in _gw2Client.Hero.Crafting.Recipes
+                               .GetRecipesBulk(index,
+                                   MissingMemberBehavior.Undefined,
+                                   3,
+                                   200,
+                                   bulkProgress,
+                                   cancellationToken)
+                               .ValueOnly(cancellationToken: cancellationToken))
+            {
+                context.Add(recipe);
+                if (++count % 333 == 0)
+                {
+                    await context.SaveChangesAsync(cancellationToken);
+                    DetachAllEntities(context);
+                }
+            }
+
+            await context.SaveChangesAsync(cancellationToken);
+            DetachAllEntities(context);
+        }
+
+        _logger.LogInformation("Finished seeding {Count} recipes.", index.Count);
     }
 
     private static void DetachAllEntities(ChatLinksContext context)

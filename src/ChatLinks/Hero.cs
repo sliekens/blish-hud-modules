@@ -8,8 +8,6 @@ namespace SL.ChatLinks;
 
 public sealed partial class Hero : IDisposable
 {
-    private readonly IDbContextFactory _contextFactory;
-
     private readonly Gw2Client _gw2Client;
 
     private readonly ITokenProvider _tokenProvider;
@@ -17,12 +15,10 @@ public sealed partial class Hero : IDisposable
     private readonly IEventAggregator _eventAggregator;
 
     public Hero(
-        IDbContextFactory contextFactory,
         Gw2Client gw2Client,
         ITokenProvider tokenProvider,
         IEventAggregator eventAggregator)
     {
-        _contextFactory = contextFactory;
         _gw2Client = gw2Client;
         _tokenProvider = tokenProvider;
         _eventAggregator = eventAggregator;
@@ -43,7 +39,6 @@ public sealed partial class Hero : IDisposable
         var mistChampionSkinsTask = GetMistChampionSkins(CancellationToken.None);
         var noveltiesTask = GetNoveltiesInternal(CancellationToken.None);
         var outfitsTask = GetOutfitsInternal(CancellationToken.None);
-        var recipesTask = GetRecipesInternal(CancellationToken.None);
 
         _finishers = await finishersTask;
         _gliderSkins = await gliderSkinsTask;
@@ -52,7 +47,6 @@ public sealed partial class Hero : IDisposable
         _mistChampionSkins = await mistChampionSkinsTask;
         _novelties = await noveltiesTask;
         _outfits = await outfitsTask;
-        _recipes = await recipesTask;
     }
 
     private async ValueTask OnAuthorizationInvalidated(AuthorizationInvalidated _)

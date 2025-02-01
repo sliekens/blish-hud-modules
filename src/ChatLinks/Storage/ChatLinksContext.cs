@@ -2,6 +2,7 @@
 
 using GuildWars2;
 using GuildWars2.Hero;
+using GuildWars2.Hero.Crafting.Recipes;
 using GuildWars2.Hero.Equipment.Dyes;
 using GuildWars2.Hero.Equipment.Wardrobe;
 using GuildWars2.Items;
@@ -20,6 +21,8 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
     public DbSet<Item> Items => Set<Item>();
 
     public DbSet<EquipmentSkin> Skins => Set<EquipmentSkin>();
+
+    public DbSet<Recipe> Recipes => Set<Recipe>();
 
     public DbSet<DyeColor> Colors => Set<DyeColor>();
 
@@ -55,8 +58,7 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
 
         ValueComparer<Buff> buffComparer = new ValueObjectComparer<Buff>(buff => new Buff
         {
-            Description = buff.Description,
-            SkillId = buff.SkillId
+            Description = buff.Description, SkillId = buff.SkillId
         });
 
         ValueComparer<IReadOnlyList<InfusionSlot>> infusionSlotsComparer = new ListComparer<InfusionSlot>();
@@ -140,5 +142,13 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
         modelBuilder.ApplyConfiguration(new WeaponSkinEntityTypeConfiguration());
 
         modelBuilder.ApplyConfiguration(new DyeColorEntityTypeConfiguration());
+
+        modelBuilder.ApplyConfiguration(new RecipeEntityTypeConfiguration());
+
+        modelBuilder.ApplyConfiguration(new GuildConsumableRecipeEntityTypeConfiguration());
+
+        modelBuilder.ApplyConfiguration(new GuildDecorationRecipeEntityTypeConfiguration());
+
+        modelBuilder.ApplyConfiguration(new GuildWvwUpgradeRecipeEntityTypeConfiguration());
     }
 }
