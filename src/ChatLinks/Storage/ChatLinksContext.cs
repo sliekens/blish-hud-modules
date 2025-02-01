@@ -2,6 +2,7 @@
 
 using GuildWars2;
 using GuildWars2.Hero;
+using GuildWars2.Hero.Equipment.Dyes;
 using GuildWars2.Hero.Equipment.Wardrobe;
 using GuildWars2.Items;
 
@@ -19,6 +20,8 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
     public DbSet<Item> Items => Set<Item>();
 
     public DbSet<EquipmentSkin> Skins => Set<EquipmentSkin>();
+
+    public DbSet<DyeColor> Colors => Set<DyeColor>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -135,5 +138,7 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
         modelBuilder.ApplyConfiguration(new ArmorSkinEntityTypeConfiguration());
 
         modelBuilder.ApplyConfiguration(new WeaponSkinEntityTypeConfiguration());
+
+        modelBuilder.ApplyConfiguration(new DyeColorEntityTypeConfiguration());
     }
 }

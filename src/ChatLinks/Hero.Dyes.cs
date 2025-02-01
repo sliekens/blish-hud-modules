@@ -2,28 +2,12 @@
 
 using GuildWars2;
 using GuildWars2.Authorization;
-using GuildWars2.Hero.Equipment.Dyes;
 
 namespace SL.ChatLinks;
 
 public sealed partial class Hero
 {
-    private IReadOnlyList<DyeColor>? _dyes;
-
     private IReadOnlyList<int>? _unlockedDyes;
-
-    public async ValueTask<IReadOnlyList<DyeColor>> GetDyes(CancellationToken cancellationToken)
-    {
-        return _dyes ??= await GetDyesInternal(cancellationToken);
-    }
-
-    private async ValueTask<IReadOnlyList<DyeColor>> GetDyesInternal(CancellationToken cancellationToken)
-    {
-        var dyes = await _gw2Client.Hero.Equipment.Dyes
-            .GetColors(cancellationToken: cancellationToken)
-            .ValueOnly();
-        return dyes.ToImmutableList();
-    }
 
     public async ValueTask<IReadOnlyList<int>> GetUnlockedDyes(CancellationToken cancellationToken)
     {

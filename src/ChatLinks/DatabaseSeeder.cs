@@ -83,6 +83,7 @@ public sealed class DatabaseSeeder : IDisposable
         Language language = new(culture.TwoLetterISOLanguageName);
         await SeedItems(context, language, cancellationToken);
         await SeedSkins(context, language, cancellationToken);
+        await SeedColors(context, language, cancellationToken);
         await _eventAggregator.PublishAsync(new DatabaseSyncCompleted(), cancellationToken);
     }
 
@@ -178,6 +179,40 @@ public sealed class DatabaseSeeder : IDisposable
         }
 
         _logger.LogInformation("Finished seeding {Count} skins.", index.Count);
+    }
+
+    private async Task SeedColors(ChatLinksContext context, Language language, CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Start seeding colors.");
+
+        HashSet<int> index = await _gw2Client.Hero.Equipment.Dyes
+            .GetColorsIndex(cancellationToken)
+            .ValueOnly();
+
+        _logger.LogDebug("Found {Count} colors in the API.", index.Count);
+        var existing = await context.Colors.Select(color => color.Id)
+            .ToListAsync(cancellationToken: cancellationToken);
+
+        index.ExceptWith(existing);
+        if (index.Count != 0)
+        {
+            _logger.LogDebug("Start seeding {Count} colors.", index.Count);
+
+            // TODO: incremental query
+            var colors = await _gw2Client.Hero.Equipment.Dyes
+                .GetColors(language, MissingMemberBehavior.Undefined, cancellationToken).ValueOnly();
+
+            foreach(var color in colors.Where(color => index.Contains(color.Id)))
+            {
+                context.Add(color);
+            }
+
+            await context.AddRangeAsync(colors, cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+            DetachAllEntities(context); 
+        }
+
+        _logger.LogInformation("Finished seeding {Count} colors.", index.Count);
     }
 
     private static void DetachAllEntities(ChatLinksContext context)

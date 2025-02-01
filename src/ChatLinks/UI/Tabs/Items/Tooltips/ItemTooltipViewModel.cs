@@ -234,8 +234,8 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    var dyes = await hero.GetDyes(CancellationToken.None);
-                    var dye = dyes.FirstOrDefault(dye => dye.ItemId == unlocker.Id);
+                    await using var context = contextFactory.CreateDbContext(CultureInfo.CurrentUICulture);
+                    var dye = context.Colors.FirstOrDefault(dye => dye.ItemId == unlocker.Id);
                     if (dye is not null)
                     {
                         if (DyeUnlocksAvailable)
