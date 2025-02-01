@@ -126,7 +126,14 @@ public class MainIconViewModel(
 
     private void DatabaseSyncProgress(DatabaseSyncProgress args)
     {
-        LoadingMessage = $"Fetching items... ({args.Report.ResultCount} of {args.Report.ResultTotal})";
+        var step = args.Step switch
+        {
+            "items" => "items",
+            "skins" => "skins",
+            _ => args.Step
+        };
+
+        LoadingMessage = $"Synchronizing {step}... ({args.Report.ResultCount} of {args.Report.ResultTotal})";
         DatabaseUpdated?.Invoke(this, EventArgs.Empty);
     }
 

@@ -2,4 +2,4 @@
 
 namespace SL.ChatLinks.Storage;
 
-public record DatabaseSyncProgress(BulkProgress Report);
+public record DatabaseSyncProgress(string Step, BulkProgress Report);

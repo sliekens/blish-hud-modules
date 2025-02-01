@@ -1,17 +1,15 @@
-﻿using System.Reflection;
-using System.Text.Json;
+﻿using System.Text.Json;
 
 using GuildWars2;
 using GuildWars2.Hero;
+using GuildWars2.Hero.Equipment.Wardrobe;
 using GuildWars2.Items;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 using SL.ChatLinks.Storage.Comparers;
-using SL.ChatLinks.Storage.Converters;
 using SL.ChatLinks.Storage.Models;
 
 namespace SL.ChatLinks.Storage;
@@ -19,6 +17,8 @@ namespace SL.ChatLinks.Storage;
 public class ChatLinksContext(DbContextOptions options) : DbContext(options)
 {
     public DbSet<Item> Items => Set<Item>();
+
+    public DbSet<EquipmentSkin> Skins => Set<EquipmentSkin>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -52,7 +52,8 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
 
         ValueComparer<Buff> buffComparer = new ValueObjectComparer<Buff>(buff => new Buff
         {
-            Description = buff.Description, SkillId = buff.SkillId
+            Description = buff.Description,
+            SkillId = buff.SkillId
         });
 
         ValueComparer<IReadOnlyList<InfusionSlot>> infusionSlotsComparer = new ListComparer<InfusionSlot>();
@@ -128,5 +129,11 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
         modelBuilder.ApplyConfiguration(new GizmoEntityTypeConfiguration());
 
         modelBuilder.ApplyConfiguration(new UtilityEntityTypeConfiguration());
+
+        modelBuilder.ApplyConfiguration(new EquipmentSkinEntityTypeConfiguration());
+
+        modelBuilder.ApplyConfiguration(new ArmorSkinEntityTypeConfiguration());
+
+        modelBuilder.ApplyConfiguration(new WeaponSkinEntityTypeConfiguration());
     }
 }

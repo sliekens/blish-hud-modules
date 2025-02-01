@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 
 using Blish_HUD.Modules;
+
 using System.IO.Compression;
 
 using Microsoft.EntityFrameworkCore;
@@ -8,8 +9,10 @@ using Microsoft.Extensions.Options;
 
 using SL.ChatLinks.Storage;
 using SL.Common;
+
 using GuildWars2.Items;
 using GuildWars2;
+using GuildWars2.Hero.Equipment.Wardrobe;
 
 using Microsoft.Extensions.Logging;
 
@@ -77,7 +80,9 @@ public sealed class DatabaseSeeder : IDisposable
 
     private async Task Seed(ChatLinksContext context, CultureInfo culture, CancellationToken cancellationToken)
     {
-        await SeedItems(context, new Language(culture.TwoLetterISOLanguageName), cancellationToken);
+        Language language = new(culture.TwoLetterISOLanguageName);
+        await SeedItems(context, language, cancellationToken);
+        await SeedSkins(context, language, cancellationToken);
         await _eventAggregator.PublishAsync(new DatabaseSyncCompleted(), cancellationToken);
     }
 
@@ -99,7 +104,7 @@ public sealed class DatabaseSeeder : IDisposable
             _logger.LogDebug("Start seeding {Count} items.", index.Count);
             Progress<BulkProgress> bulkProgress = new(report =>
             {
-                _eventAggregator.Publish(new DatabaseSyncProgress(report));
+                _eventAggregator.Publish(new DatabaseSyncProgress("items", report));
             });
 
             context.ChangeTracker.AutoDetectChangesEnabled = false;
@@ -126,6 +131,53 @@ public sealed class DatabaseSeeder : IDisposable
         }
 
         _logger.LogInformation("Finished seeding {Count} items.", index.Count);
+    }
+
+    private async Task SeedSkins(ChatLinksContext context, Language language, CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Start seeding skins.");
+
+        HashSet<int> index = await _gw2Client.Hero.Equipment.Wardrobe
+            .GetSkinsIndex(cancellationToken)
+            .ValueOnly();
+
+        _logger.LogDebug("Found {Count} skins in the API.", index.Count);
+        var existing = await context.Skins.Select(skin => skin.Id)
+            .ToListAsync(cancellationToken: cancellationToken);
+
+        index.ExceptWith(existing);
+        if (index.Count != 0)
+        {
+            _logger.LogDebug("Start seeding {Count} skins.", index.Count);
+            Progress<BulkProgress> bulkProgress = new(report =>
+            {
+                _eventAggregator.Publish(new DatabaseSyncProgress("skins", report));
+            });
+
+            context.ChangeTracker.AutoDetectChangesEnabled = false;
+            var count = 0;
+            await foreach (EquipmentSkin skin in _gw2Client.Hero.Equipment.Wardrobe
+                               .GetSkinsBulk(index,
+                                   language,
+                                   MissingMemberBehavior.Undefined,
+                                   3,
+                                   200,
+                                   bulkProgress,
+                                   cancellationToken)
+                               .ValueOnly(cancellationToken: cancellationToken))
+            {
+                context.Add(skin);
+                if (++count % 333 == 0)
+                {
+                    await context.SaveChangesAsync(cancellationToken);
+                    DetachAllEntities(context);
+                }
+            }
+
+            await context.SaveChangesAsync(cancellationToken);
+        }
+
+        _logger.LogInformation("Finished seeding {Count} skins.", index.Count);
     }
 
     private static void DetachAllEntities(ChatLinksContext context)
