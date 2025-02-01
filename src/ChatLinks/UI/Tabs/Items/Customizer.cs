@@ -1,4 +1,6 @@
-﻿using GuildWars2.Hero;
+﻿using System.Globalization;
+
+using GuildWars2.Hero;
 using GuildWars2.Items;
 
 using Microsoft.EntityFrameworkCore;
@@ -9,15 +11,16 @@ using SL.Common;
 namespace SL.ChatLinks.UI.Tabs.Items;
 
 public sealed class Customizer(
-    ChatLinksContext context,
+    IDbContextFactory contextFactory,
     IEventAggregator eventAggregator
-) : IDisposable, IAsyncDisposable
+) : IDisposable
 {
     public IReadOnlyDictionary<int, UpgradeComponent> UpgradeComponents { get; private set; } =
         new Dictionary<int, UpgradeComponent>(0);
 
     public async Task LoadAsync()
     {
+        await using var context = contextFactory.CreateDbContext(CultureInfo.CurrentUICulture);
         UpgradeComponents =
             await context.Set<UpgradeComponent>().AsNoTracking().ToDictionaryAsync(upgrade => upgrade.Id);
 
@@ -26,6 +29,7 @@ public sealed class Customizer(
 
     private async ValueTask OnDatabaseSyncCompleted(DatabaseSyncCompleted _)
     {
+        await using var context = contextFactory.CreateDbContext(CultureInfo.CurrentUICulture);
         UpgradeComponents = await context.Set<UpgradeComponent>().AsNoTracking()
             .ToDictionaryAsync(upgrade => upgrade.Id);
     }
@@ -33,13 +37,6 @@ public sealed class Customizer(
     public void Dispose()
     {
         eventAggregator.Unsubscribe<DatabaseSyncCompleted>(OnDatabaseSyncCompleted);
-        context.Dispose();
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        eventAggregator.Unsubscribe<DatabaseSyncCompleted>(OnDatabaseSyncCompleted);
-        await context.DisposeAsync();
     }
 
     public IEnumerable<UpgradeComponent> GetUpgradeComponents(Item targetItem, UpgradeSlotType slotType)

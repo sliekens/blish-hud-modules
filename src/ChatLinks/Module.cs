@@ -6,7 +6,6 @@ using Blish_HUD;
 using Blish_HUD.Modules;
 using Blish_HUD.Settings;
 
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -57,14 +56,12 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 
         services.AddGw2Client();
 
-        services.AddDbContext<ChatLinksContext>(optionsBuilder =>
+        services.Configure<DatabaseOptions>(options =>
         {
-            string file = DatabaseLocation();
-            string connectionString = $"Data Source={file}";
-            var connection = new SqliteConnection(connectionString);
-            Levenshtein.RegisterLevenshteinFunction(connection);
-            optionsBuilder.UseSqlite(connection);
-        }, ServiceLifetime.Transient, ServiceLifetime.Transient);
+            options.Directory = ModuleParameters.DirectoriesManager.GetFullDirectoryPath("chat-links-data");
+        });
+
+        services.AddSingleton<IDbContextFactory, SqliteDbContextFactory>();
 
         services.AddTransient<ItemSeeder>();
 
@@ -139,10 +136,10 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         _ = _serviceProvider.GetRequiredService<MainIcon>();
         _ = _serviceProvider.GetRequiredService<MainWindow>();
 
-        using var scope = _serviceProvider.CreateScope();
-        await using ChatLinksContext context = scope.ServiceProvider.GetRequiredService<ChatLinksContext>();
+        var contextFactory = _serviceProvider.GetRequiredService<IDbContextFactory>();
+        await using var context = contextFactory.CreateDbContext(CultureInfo.CurrentUICulture);
         await context.Database.MigrateAsync();
-        ItemSeeder seeder = scope.ServiceProvider.GetRequiredService<ItemSeeder>();
+        ItemSeeder seeder = _serviceProvider.GetRequiredService<ItemSeeder>();
         await seeder.Seed(CancellationToken.None);
     }
 

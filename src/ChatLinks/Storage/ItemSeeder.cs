@@ -1,5 +1,7 @@
 ﻿
 
+using System.Globalization;
+
 using GuildWars2;
 using GuildWars2.Items;
 
@@ -12,13 +14,14 @@ namespace SL.ChatLinks.Storage;
 
 public sealed class ItemSeeder(
     ILogger<ItemSeeder> logger,
-    ChatLinksContext context,
+    IDbContextFactory contextFactory,
     Gw2Client gw2Client,
     IEventAggregator eventAggregator
 )
 {
     public async Task Seed(CancellationToken cancellationToken)
     {
+        await using var context = contextFactory.CreateDbContext(CultureInfo.CurrentUICulture);
         context.ChangeTracker.AutoDetectChangesEnabled = false;
 
         logger.LogInformation("Start seeding items.");
