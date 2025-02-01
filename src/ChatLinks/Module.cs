@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.Composition;
 using System.Globalization;
-using System.IO.Compression;
 
 using Blish_HUD;
 using Blish_HUD.Modules;
@@ -58,10 +57,12 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 
         services.Configure<DatabaseOptions>(options =>
         {
+            options.RefData = "data.zip";
             options.Directory = ModuleParameters.DirectoriesManager.GetFullDirectoryPath("chat-links-data");
         });
 
         services.AddSingleton<IDbContextFactory, SqliteDbContextFactory>();
+        services.AddSingleton<DatabaseSeeder>();
 
         services.AddTransient<ItemSeeder>();
 
@@ -123,53 +124,20 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 
     protected override async Task LoadAsync()
     {
-        var logger = _serviceProvider.GetRequiredService<ILogger<Module>>();
-        try
-        {
-            await FirstTimeSetup();
-        }
-        catch (Exception reason)
-        {
-            logger.LogError(reason, "First-time setup failed.");
-        }
+        var culture = CultureInfo.CurrentUICulture;
+        var databaseManager = _serviceProvider.GetRequiredService<DatabaseSeeder>();
+        await databaseManager.Migrate(culture);
 
         _ = _serviceProvider.GetRequiredService<MainIcon>();
         _ = _serviceProvider.GetRequiredService<MainWindow>();
 
-        var contextFactory = _serviceProvider.GetRequiredService<IDbContextFactory>();
-        await using var context = contextFactory.CreateDbContext(CultureInfo.CurrentUICulture);
-        await context.Database.MigrateAsync();
-        ItemSeeder seeder = _serviceProvider.GetRequiredService<ItemSeeder>();
-        await seeder.Seed(CancellationToken.None);
+        await databaseManager.Sync(culture, CancellationToken.None);
     }
 
     private static void SetupSqlite3()
     {
         SQLite3Provider_dynamic_cdecl.Setup("e_sqlite3", new ModuleGetFunctionPointer("sliekens.e_sqlite3"));
         raw.SetProvider(new SQLite3Provider_dynamic_cdecl());
-    }
-
-    private async Task FirstTimeSetup()
-    {
-        var databaseLocation = DatabaseLocation();
-        if (new FileInfo(databaseLocation) is { Exists: false } or { Length: 0 })
-        {
-            using var seed = ModuleParameters.ContentsManager.GetFileStream("data.zip");
-            using var unzip = new ZipArchive(seed, ZipArchiveMode.Read);
-            var data = unzip.GetEntry("data.db");
-            if (data is not null)
-            {
-                using var dataStream = data.Open();
-                using var fileStream = File.Create(databaseLocation);
-                await dataStream.CopyToAsync(fileStream);
-            }
-        }
-    }
-
-    private string DatabaseLocation()
-    {
-        string directory = ModuleParameters.DirectoriesManager.GetFullDirectoryPath("chat-links-data");
-        return Path.Combine(directory, "data.db");
     }
 
     protected override void Unload()

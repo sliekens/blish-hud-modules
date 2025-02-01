@@ -6,6 +6,8 @@ public class DatabaseOptions
 {
     public string Directory { get; set; } = System.IO.Directory.GetCurrentDirectory();
 
+    public string? RefData { get; set; }
+
     public string DatabaseFileName(CultureInfo culture) => culture switch
     {
         //{ TwoLetterISOLanguageName: "de" } => "data_de.db",
