@@ -71,13 +71,18 @@ public sealed class DatabaseSeeder : IDisposable
     public async Task Sync(CultureInfo culture, CancellationToken cancellationToken)
     {
         await using var context = _contextFactory.CreateDbContext(culture);
-        await Seed(context, cancellationToken);
+        context.ChangeTracker.AutoDetectChangesEnabled = false;
+        await Seed(context, culture, cancellationToken);
     }
 
-    public async Task Seed(ChatLinksContext context, CancellationToken cancellationToken)
+    private async Task Seed(ChatLinksContext context, CultureInfo culture, CancellationToken cancellationToken)
     {
-        context.ChangeTracker.AutoDetectChangesEnabled = false;
+        await SeedItems(context, new Language(culture.TwoLetterISOLanguageName), cancellationToken);
+        await _eventAggregator.PublishAsync(new DatabaseSyncCompleted(), cancellationToken);
+    }
 
+    private async Task SeedItems(ChatLinksContext context, Language language, CancellationToken cancellationToken)
+    {
         _logger.LogInformation("Start seeding items.");
 
         HashSet<int> index = await _gw2Client.Items
@@ -101,7 +106,7 @@ public sealed class DatabaseSeeder : IDisposable
             var count = 0;
             await foreach (Item item in _gw2Client.Items
                                .GetItemsBulk(index,
-                                   null,
+                                   language,
                                    MissingMemberBehavior.Undefined,
                                    3,
                                    200,
@@ -121,7 +126,6 @@ public sealed class DatabaseSeeder : IDisposable
         }
 
         _logger.LogInformation("Finished seeding {Count} items.", index.Count);
-        await _eventAggregator.PublishAsync(new DatabaseSyncCompleted(), cancellationToken);
     }
 
     private static void DetachAllEntities(ChatLinksContext context)
