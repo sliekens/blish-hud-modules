@@ -366,8 +366,15 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    var mistChampionSkins = await hero.GetMistChampionSkins(CancellationToken.None);
-                    var mistChampionSkin = mistChampionSkins.FirstOrDefault(mistChampionSkin => mistChampionSkin.UnlockItemIds.Contains(unlocker.Id));
+                    await using var context = contextFactory.CreateDbContext(CultureInfo.CurrentUICulture);
+
+                    var mistChampionSkin = await context.MistChampions
+                        .FromSqlInterpolated($"""
+                                              SELECT *
+                                              FROM MistChampions, json_each(MistChampions.UnlockItemIds)
+                                              WHERE json_each.value = {unlocker.Id}
+                                              """)
+                        .FirstOrDefaultAsync();
                     if (mistChampionSkin is not null)
                     {
                         if (MistChampionSkinUnlocksAvailable)

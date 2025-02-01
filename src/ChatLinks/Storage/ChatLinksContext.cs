@@ -10,6 +10,7 @@ using GuildWars2.Hero.Equipment.JadeBots;
 using GuildWars2.Hero.Equipment.MailCarriers;
 using GuildWars2.Hero.Equipment.Wardrobe;
 using GuildWars2.Items;
+using GuildWars2.Pvp.MistChampions;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -37,6 +38,8 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
     public DbSet<JadeBotSkin> JadeBots => Set<JadeBotSkin>();
 
     public DbSet<MailCarrier> MailCarrriers=> Set<MailCarrier>();
+
+    public DbSet<MistChampionSkin> MistChampions => Set<MistChampionSkin>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -170,5 +173,7 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
         modelBuilder.ApplyConfiguration(new JadeBotSkinEntityTypeConfiguration());
 
         modelBuilder.ApplyConfiguration(new MailCarrierEntityTypeConfiguration());
+
+        modelBuilder.ApplyConfiguration(new MistChampionSkinEntityTypeConfiguration());
     }
 }

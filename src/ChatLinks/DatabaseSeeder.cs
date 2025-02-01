@@ -16,8 +16,12 @@ using GuildWars2.Hero.Crafting.Recipes;
 using GuildWars2.Hero.Equipment.Wardrobe;
 
 using Microsoft.Extensions.Logging;
+
 using SL.ChatLinks.Migrations;
+
 using System.Linq;
+
+using GuildWars2.Pvp.MistChampions;
 
 namespace SL.ChatLinks;
 
@@ -92,6 +96,7 @@ public sealed class DatabaseSeeder : IDisposable
         await SeedGliders(context, language, cancellationToken);
         await SeedJadeBots(context, language, cancellationToken);
         await SeedMailCarriers(context, language, cancellationToken);
+        await SeedMistChampions(context, language, cancellationToken);
         await _eventAggregator.PublishAsync(new DatabaseSyncCompleted(), cancellationToken);
     }
 
@@ -262,7 +267,7 @@ public sealed class DatabaseSeeder : IDisposable
         }
 
         _logger.LogInformation("Finished seeding {Count} recipes.", index.Count);
-	}
+    }
 
     private async Task SeedFinishers(ChatLinksContext context, Language language, CancellationToken cancellationToken)
     {
@@ -351,7 +356,8 @@ public sealed class DatabaseSeeder : IDisposable
         _logger.LogInformation("Finished seeding {Count} jade bots.", index.Count);
     }
 
-    private async Task SeedMailCarriers(ChatLinksContext context, Language language, CancellationToken cancellationToken)
+    private async Task SeedMailCarriers(ChatLinksContext context, Language language,
+        CancellationToken cancellationToken)
     {
         _logger.LogInformation("Start seeding mail carriers.");
 
@@ -377,7 +383,39 @@ public sealed class DatabaseSeeder : IDisposable
             DetachAllEntities(context);
         }
 
-        _logger.LogInformation("Finished seeding {Count} jade bots.", index.Count);
+        _logger.LogInformation("Finished seeding {Count} mail carriers.", index.Count);
+    }
+
+    private async Task SeedMistChampions(ChatLinksContext context, Language language,
+        CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Start seeding mist champions.");
+
+        HashSet<MistChampion> champions = await _gw2Client.Pvp
+            .GetMistChampions(language, MissingMemberBehavior.Undefined, cancellationToken: cancellationToken)
+            .ValueOnly();
+
+        var index = champions.SelectMany(champion => champion.Skins.Select(skin => skin.Id)).ToHashSet();
+       
+        _logger.LogDebug("Found {Count} mist champions in the API.", index.Count);
+        var existing = await context.MistChampions.Select(mistChampion => mistChampion.Id)
+            .ToListAsync(cancellationToken: cancellationToken);
+
+        index.ExceptWith(existing);
+        if (index.Count != 0)
+        {
+            _logger.LogDebug("Start seeding {Count} mist champions.", index.Count);
+            var mistChampions = champions
+                .SelectMany(champion => champion.Skins)
+                .Where(skin => index.Contains(skin.Id))
+                .ToList();
+
+            await context.AddRangeAsync(mistChampions, cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+            DetachAllEntities(context);
+        }
+
+        _logger.LogInformation("Finished seeding {Count} mist champions.", index.Count);
     }
 
     private static void DetachAllEntities(ChatLinksContext context)
