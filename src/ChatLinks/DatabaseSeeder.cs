@@ -88,6 +88,7 @@ public sealed class DatabaseSeeder : IDisposable
         await SeedColors(context, language, cancellationToken);
         await SeedFinishers(context, language, cancellationToken);
         await SeedGliders(context, language, cancellationToken);
+        await SeedJadeBots(context, language, cancellationToken);
         await _eventAggregator.PublishAsync(new DatabaseSyncCompleted(), cancellationToken);
     }
 
@@ -297,7 +298,6 @@ public sealed class DatabaseSeeder : IDisposable
         _logger.LogInformation("Finished seeding {Count} finishers.", index.Count);
     }
 
-
     private async Task SeedGliders(ChatLinksContext context, Language language, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Start seeding gliders.");
@@ -329,6 +329,39 @@ public sealed class DatabaseSeeder : IDisposable
         }
 
         _logger.LogInformation("Finished seeding {Count} gliders.", index.Count);
+    }
+
+    private async Task SeedJadeBots(ChatLinksContext context, Language language, CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Start seeding jade bots.");
+
+        HashSet<int> index = await _gw2Client.Hero.Equipment.JadeBots
+            .GetJadeBotSkinsIndex(cancellationToken)
+            .ValueOnly();
+
+        _logger.LogDebug("Found {Count} jade bots in the API.", index.Count);
+        var existing = await context.JadeBots.Select(jadeBot => jadeBot.Id)
+            .ToListAsync(cancellationToken: cancellationToken);
+
+        index.ExceptWith(existing);
+        if (index.Count != 0)
+        {
+            _logger.LogDebug("Start seeding {Count} jade bots.", index.Count);
+
+            var jadeBots = await _gw2Client.Hero.Equipment.JadeBots
+                .GetJadeBotSkinsByIds(index, language, MissingMemberBehavior.Undefined, cancellationToken)
+                .ValueOnly();
+
+            foreach (var jadeBot in jadeBots)
+            {
+                context.Add(jadeBot);
+            }
+
+            await context.SaveChangesAsync(cancellationToken);
+            DetachAllEntities(context);
+        }
+
+        _logger.LogInformation("Finished seeding {Count} jade bots.", index.Count);
     }
 
 	private static void DetachAllEntities(ChatLinksContext context)

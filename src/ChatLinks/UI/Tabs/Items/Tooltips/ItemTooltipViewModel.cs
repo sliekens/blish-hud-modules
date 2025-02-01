@@ -304,8 +304,9 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    var jadeBotSkins = await hero.GetJadeBotSkins(CancellationToken.None);
-                    var jadeBotSkin = jadeBotSkins.FirstOrDefault(jadeBotSkin => jadeBotSkin.UnlockItemId == unlocker.Id);
+                    await using var context = contextFactory.CreateDbContext(CultureInfo.CurrentUICulture);
+
+                    var jadeBotSkin = context.JadeBots.FirstOrDefault(jadeBotSkin => jadeBotSkin.UnlockItemId == unlocker.Id);
                     if (jadeBotSkin is not null)
                     {
                         if (JadeBotSkinUnlocksAvailable)

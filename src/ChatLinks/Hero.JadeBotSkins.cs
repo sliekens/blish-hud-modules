@@ -2,28 +2,12 @@
 
 using GuildWars2;
 using GuildWars2.Authorization;
-using GuildWars2.Hero.Equipment.JadeBots;
 
 namespace SL.ChatLinks;
 
 public sealed partial class Hero
 {
-    private IReadOnlyList<JadeBotSkin>? _jadeBotSkins;
-
     private IReadOnlyList<int>? _unlockedJadeBotSkins;
-
-    public async ValueTask<IReadOnlyList<JadeBotSkin>> GetJadeBotSkins(CancellationToken cancellationToken)
-    {
-        return _jadeBotSkins ??= await GetJadeBotSkinsInternal(cancellationToken);
-    }
-
-    private async ValueTask<IReadOnlyList<JadeBotSkin>> GetJadeBotSkinsInternal(CancellationToken cancellationToken)
-    {
-        var jadeBotSkins = await _gw2Client.Hero.Equipment.JadeBots
-            .GetJadeBotSkins(cancellationToken: cancellationToken)
-            .ValueOnly();
-        return jadeBotSkins.ToImmutableList();
-    }
 
     public async ValueTask<IReadOnlyList<int>> GetUnlockedJadeBotSkins(CancellationToken cancellationToken)
     {
