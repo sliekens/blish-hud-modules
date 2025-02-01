@@ -19,8 +19,6 @@ public sealed class ItemSearch(ChatLinksContext context)
 {
     private static readonly Regex ChatLinkPattern = new(@"^\[&[A-Za-z0-9+/=]+\]$", RegexOptions.Compiled);
 
-    private readonly IQueryable<Item> _items = context.Items.AsNoTracking();
-
     public async ValueTask<int> CountItems()
     {
         return await context.Items.CountAsync();
@@ -28,7 +26,8 @@ public sealed class ItemSearch(ChatLinksContext context)
 
     public IAsyncEnumerable<Item> NewItems(int limit)
     {
-        return _items
+        return context.Items
+            .AsNoTracking()
             .OrderByDescending(item => item.Id)
             .Take(limit)
             .AsAsyncEnumerable();
@@ -76,7 +75,8 @@ public sealed class ItemSearch(ChatLinksContext context)
         ResultContext resultContext,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        Item item = await _items.SingleOrDefaultAsync(row => row.Id == link.ItemId, cancellationToken);
+        Item item = await context.Items.AsNoTracking()
+            .SingleOrDefaultAsync(row => row.Id == link.ItemId, cancellationToken);
         if (item is null)
         {
             yield break;
@@ -186,7 +186,8 @@ public sealed class ItemSearch(ChatLinksContext context)
         }
 
         resultContext.ResultTotal += relatedItems.Count;
-        await foreach (Item? relatedItem in _items
+        await foreach (Item? relatedItem in context.Items
+                           .AsNoTracking()
                            .Where(i => relatedItems.Contains(i.Id))
                            .AsAsyncEnumerable()
                            .WithCancellation(cancellationToken))
