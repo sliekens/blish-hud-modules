@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Globalization;
 
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
@@ -15,7 +16,7 @@ namespace SL.ChatLinks.UI;
 public class MainIconViewModel(
     ILogger<MainIconViewModel> logger,
     IEventAggregator eventAggregator,
-    ItemSeeder seeder,
+    DatabaseSeeder seeder,
     ModuleSettings settings
 ) : ViewModel
 {
@@ -101,7 +102,7 @@ public class MainIconViewModel(
             {
                 await await Task.Factory.StartNew(async () =>
                 {
-                    await seeder.Seed(CancellationToken.None);
+                    await seeder.Sync(CultureInfo.CurrentUICulture, CancellationToken.None);
                 }, TaskCreationOptions.LongRunning);
 
                 ScreenNotification.ShowNotification("Everything is up-to-date.", ScreenNotification.NotificationType.Green);

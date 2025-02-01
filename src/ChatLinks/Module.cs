@@ -64,8 +64,6 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         services.AddSingleton<IDbContextFactory, SqliteDbContextFactory>();
         services.AddSingleton<DatabaseSeeder>();
 
-        services.AddTransient<ItemSeeder>();
-
         services.AddSingleton<IEventAggregator, DefaultEventAggregator>();
         services.AddTransient<MainIcon>();
         services.AddTransient<MainIconViewModel>();
