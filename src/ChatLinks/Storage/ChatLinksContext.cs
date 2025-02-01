@@ -7,6 +7,7 @@ using GuildWars2.Hero.Equipment.Dyes;
 using GuildWars2.Hero.Equipment.Finishers;
 using GuildWars2.Hero.Equipment.Gliders;
 using GuildWars2.Hero.Equipment.JadeBots;
+using GuildWars2.Hero.Equipment.MailCarriers;
 using GuildWars2.Hero.Equipment.Wardrobe;
 using GuildWars2.Items;
 
@@ -34,6 +35,8 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
     public DbSet<GliderSkin> Gliders => Set<GliderSkin>();
 
     public DbSet<JadeBotSkin> JadeBots => Set<JadeBotSkin>();
+
+    public DbSet<MailCarrier> MailCarrriers=> Set<MailCarrier>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -165,5 +168,7 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
         modelBuilder.ApplyConfiguration(new GliderSkinEntityTypeConfiguration());
 
         modelBuilder.ApplyConfiguration(new JadeBotSkinEntityTypeConfiguration());
+
+        modelBuilder.ApplyConfiguration(new MailCarrierEntityTypeConfiguration());
     }
 }

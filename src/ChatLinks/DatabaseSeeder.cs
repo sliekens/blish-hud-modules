@@ -16,6 +16,8 @@ using GuildWars2.Hero.Crafting.Recipes;
 using GuildWars2.Hero.Equipment.Wardrobe;
 
 using Microsoft.Extensions.Logging;
+using SL.ChatLinks.Migrations;
+using System.Linq;
 
 namespace SL.ChatLinks;
 
@@ -89,6 +91,7 @@ public sealed class DatabaseSeeder : IDisposable
         await SeedFinishers(context, language, cancellationToken);
         await SeedGliders(context, language, cancellationToken);
         await SeedJadeBots(context, language, cancellationToken);
+        await SeedMailCarriers(context, language, cancellationToken);
         await _eventAggregator.PublishAsync(new DatabaseSyncCompleted(), cancellationToken);
     }
 
@@ -207,11 +210,7 @@ public sealed class DatabaseSeeder : IDisposable
             var colors = await _gw2Client.Hero.Equipment.Dyes
                 .GetColors(language, MissingMemberBehavior.Undefined, cancellationToken).ValueOnly();
 
-            foreach (var color in colors.Where(color => index.Contains(color.Id)))
-            {
-                context.Add(color);
-            }
-
+            await context.AddRangeAsync(colors.Where(color => index.Contains(color.Id)), cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
             DetachAllEntities(context);
         }
@@ -286,11 +285,7 @@ public sealed class DatabaseSeeder : IDisposable
                 .GetFinishersByIds(index, language, MissingMemberBehavior.Undefined, cancellationToken)
                 .ValueOnly();
 
-            foreach (var finisher in finishers)
-            {
-                context.Add(finisher);
-            }
-
+            await context.AddRangeAsync(finishers, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
             DetachAllEntities(context);
         }
@@ -319,11 +314,7 @@ public sealed class DatabaseSeeder : IDisposable
                 .GetGliderSkinsByIds(index, language, MissingMemberBehavior.Undefined, cancellationToken)
                 .ValueOnly();
 
-            foreach (var glider in gliders)
-            {
-                context.Add(glider);
-            }
-
+            await context.AddRangeAsync(gliders, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
             DetachAllEntities(context);
         }
@@ -352,11 +343,7 @@ public sealed class DatabaseSeeder : IDisposable
                 .GetJadeBotSkinsByIds(index, language, MissingMemberBehavior.Undefined, cancellationToken)
                 .ValueOnly();
 
-            foreach (var jadeBot in jadeBots)
-            {
-                context.Add(jadeBot);
-            }
-
+            await context.AddRangeAsync(jadeBots, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
             DetachAllEntities(context);
         }
@@ -364,7 +351,36 @@ public sealed class DatabaseSeeder : IDisposable
         _logger.LogInformation("Finished seeding {Count} jade bots.", index.Count);
     }
 
-	private static void DetachAllEntities(ChatLinksContext context)
+    private async Task SeedMailCarriers(ChatLinksContext context, Language language, CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Start seeding mail carriers.");
+
+        HashSet<int> index = await _gw2Client.Hero.Equipment.MailCarriers
+            .GetMailCarriersIndex(cancellationToken)
+            .ValueOnly();
+
+        _logger.LogDebug("Found {Count} mail carriers in the API.", index.Count);
+        var existing = await context.MailCarrriers.Select(mailCarrier => mailCarrier.Id)
+            .ToListAsync(cancellationToken: cancellationToken);
+
+        index.ExceptWith(existing);
+        if (index.Count != 0)
+        {
+            _logger.LogDebug("Start seeding {Count} mail carriers.", index.Count);
+
+            var mailCarriers = await _gw2Client.Hero.Equipment.MailCarriers
+                .GetMailCarriersByIds(index, language, MissingMemberBehavior.Undefined, cancellationToken)
+                .ValueOnly();
+
+            await context.AddRangeAsync(mailCarriers, cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+            DetachAllEntities(context);
+        }
+
+        _logger.LogInformation("Finished seeding {Count} jade bots.", index.Count);
+    }
+
+    private static void DetachAllEntities(ChatLinksContext context)
     {
         var entries = context.ChangeTracker.Entries().ToList();
         foreach (var entry in entries)

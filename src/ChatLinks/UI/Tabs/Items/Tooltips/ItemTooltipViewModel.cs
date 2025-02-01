@@ -212,8 +212,13 @@ public sealed class ItemTooltipViewModel(
                         break;
                     }
 
-                    var mailCarriers = await hero.GetMailCarriers(CancellationToken.None);
-                    var mailCarrier = mailCarriers.FirstOrDefault(mailCarrier => mailCarrier.UnlockItemIds.Contains(unlocker.Id));
+                    var mailCarrier = await context.MailCarrriers
+                        .FromSqlInterpolated($"""
+                            SELECT *
+                            FROM MailCarriers, json_each(MailCarriers.UnlockItemIds)
+                            WHERE json_each.value = {unlocker.Id}
+                            """)
+                        .FirstOrDefaultAsync();
                     if (mailCarrier is not null)
                     {
                         if (hero.UnlocksAvailable)
