@@ -280,16 +280,16 @@ public sealed class DatabaseSeeder : IDisposable
         {
             _logger.LogDebug("Start seeding {Count} finishers.", index.Count);
 
-            var finihsers = await _gw2Client.Hero.Equipment.Finishers
+            var finishers = await _gw2Client.Hero.Equipment.Finishers
                 .GetFinishersByIds(index, language, MissingMemberBehavior.Undefined, cancellationToken)
                 .ValueOnly();
 
-            foreach (var finisher in finihsers)
+            foreach (var finisher in finishers)
             {
                 context.Add(finisher);
             }
 
-            await context.AddRangeAsync(finihsers, cancellationToken);
+            await context.AddRangeAsync(finishers, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
             DetachAllEntities(context);
         }
