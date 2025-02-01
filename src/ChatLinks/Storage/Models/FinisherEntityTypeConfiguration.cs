@@ -13,6 +13,9 @@ public sealed class FinisherEntityTypeConfiguration : IEntityTypeConfiguration<F
     public void Configure(EntityTypeBuilder<Finisher> builder)
     {
         builder.ToTable("Finishers");
+        builder.HasKey(finisher => finisher.Id);
+        builder.HasIndex(finisher => finisher.Name);
+        builder.HasIndex(finisher => finisher.Order);
 
         builder.Property(finisher => finisher.UnlockItemIds)
             .HasJsonValueConversion()

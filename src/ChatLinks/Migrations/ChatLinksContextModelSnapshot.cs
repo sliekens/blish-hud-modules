@@ -150,6 +150,10 @@ namespace SL.ChatLinks.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name");
+
+                    b.HasIndex("Order");
+
                     b.ToTable("Finishers");
                 });
 

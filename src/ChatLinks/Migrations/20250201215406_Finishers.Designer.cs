@@ -9,7 +9,7 @@ using SL.ChatLinks.Storage;
 namespace SL.ChatLinks.Migrations
 {
     [DbContext(typeof(ChatLinksContext))]
-    [Migration("20250201212645_Finishers")]
+    [Migration("20250201215406_Finishers")]
     partial class Finishers
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -151,6 +151,10 @@ namespace SL.ChatLinks.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name");
+
+                    b.HasIndex("Order");
 
                     b.ToTable("Finishers");
                 });

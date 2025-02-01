@@ -22,6 +22,16 @@ namespace SL.ChatLinks.Migrations
                 {
                     table.PrimaryKey("PK_Finishers", x => x.Id);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Finishers_Name",
+                table: "Finishers",
+                column: "Name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Finishers_Order",
+                table: "Finishers",
+                column: "Order");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
