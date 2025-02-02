@@ -8,6 +8,7 @@ using Blish_HUD.Graphics.UI;
 
 using GuildWars2;
 using GuildWars2.Hero;
+using GuildWars2.Hero.Equipment.Wardrobe;
 using GuildWars2.Items;
 
 using Microsoft.Xna.Framework;
@@ -937,7 +938,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     PrintPlainText($"""
 
                                     Skin Unlocked
-                                    {ViewModel.SkinName}
+                                    {ViewModel.DefaultSkin?.Name}
                                     """);
                 }
                 else
@@ -945,7 +946,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     PrintPlainText($"""
 
                                     Skin Locked
-                                    {ViewModel.SkinName}
+                                    {ViewModel.DefaultSkin?.Name}
                                     """, Gray);
                 }
             }
@@ -954,7 +955,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                 PrintPlainText($"""
 
                                 {ViewModel.AuthorizationText}
-                                {ViewModel.SkinName}
+                                {ViewModel.DefaultSkin?.Name}
                                 """, Gray);
             }
         }
@@ -1205,9 +1206,15 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
             part.SetFontSize(ContentService.FontSize.Size16);
         });
 
-        if (weapon.DamageType.IsDefined())
+        Extensible<DamageType> damageType = weapon.DamageType;
+        if (ViewModel.DefaultSkin is WeaponSkin defaultSkin)
         {
-            switch (weapon.DamageType.ToEnum())
+            damageType = defaultSkin.DamageType;
+        }
+
+        if (damageType.IsDefined())
+        {
+            switch (damageType.ToEnum())
             {
                 case DamageType.Choking:
                     builder.CreatePart(" (Choking)", static part =>

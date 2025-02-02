@@ -4,6 +4,7 @@ using Blish_HUD.Content;
 
 using GuildWars2;
 using GuildWars2.Hero;
+using GuildWars2.Hero.Equipment.Wardrobe;
 using GuildWars2.Items;
 
 using Microsoft.EntityFrameworkCore;
@@ -34,12 +35,19 @@ public sealed class ItemTooltipViewModel(
 
     private string? _unlockedText;
 
-    private string? _skinName;
     private Color? _unlockedTextColor;
+
+    private EquipmentSkin? _skin;
 
     public IReadOnlyList<UpgradeSlot> UpgradesSlots { get; } = upgrades.ToList();
 
     public Item Item { get; } = item;
+
+    public EquipmentSkin? DefaultSkin
+    {
+        get => _skin;
+        private set => SetField(ref _skin, value);
+    }
 
     public bool ContentUnlocksAvailable => hero.UnlocksAvailable;
 
@@ -81,12 +89,6 @@ public sealed class ItemTooltipViewModel(
     {
         get => _unlockedTextColor;
         set => SetField(ref _unlockedTextColor, value);
-    }
-
-    public string? SkinName
-    {
-        get => _skinName;
-        set => SetField(ref _skinName, value);
     }
 
     public int Quantity { get; } = quantity;
@@ -168,19 +170,19 @@ public sealed class ItemTooltipViewModel(
         {
             case Transmutation transmutation:
                 progress.Report("Checking unlock status...");
-                await SkinUnlock(transmutation.SkinIds.First());
+                await GetSkin(transmutation.SkinIds.First());
                 break;
             case Armor armor:
                 progress.Report("Checking unlock status...");
-                await SkinUnlock(armor.DefaultSkinId);
+                await GetSkin(armor.DefaultSkinId);
                 break;
             case Backpack back:
                 progress.Report("Checking unlock status...");
-                await SkinUnlock(back.DefaultSkinId);
+                await GetSkin(back.DefaultSkinId);
                 break;
             case Weapon weapon:
                 progress.Report("Checking unlock status...");
-                await SkinUnlock(weapon.DefaultSkinId);
+                await GetSkin(weapon.DefaultSkinId);
                 break;
             case ContentUnlocker unlocker:
                 progress.Report("Checking unlock status...");
@@ -190,10 +192,10 @@ public sealed class ItemTooltipViewModel(
 
                     var finisher = await context.Finishers
                         .FromSqlInterpolated($"""
-                            SELECT *
-                            FROM Finishers, json_each(Finishers.UnlockItemIds)
-                            WHERE json_each.value = {unlocker.Id}
-                            """)
+                                              SELECT *
+                                              FROM Finishers, json_each(Finishers.UnlockItemIds)
+                                              WHERE json_each.value = {unlocker.Id}
+                                              """)
                         .FirstOrDefaultAsync();
                     if (finisher is not null)
                     {
@@ -214,10 +216,10 @@ public sealed class ItemTooltipViewModel(
 
                     var mailCarrier = await context.MailCarrriers
                         .FromSqlInterpolated($"""
-                            SELECT *
-                            FROM MailCarriers, json_each(MailCarriers.UnlockItemIds)
-                            WHERE json_each.value = {unlocker.Id}
-                            """)
+                                              SELECT *
+                                              FROM MailCarriers, json_each(MailCarriers.UnlockItemIds)
+                                              WHERE json_each.value = {unlocker.Id}
+                                              """)
                         .FirstOrDefaultAsync();
                     if (mailCarrier is not null)
                     {
@@ -311,7 +313,8 @@ public sealed class ItemTooltipViewModel(
                 {
                     await using var context = contextFactory.CreateDbContext(CultureInfo.CurrentUICulture);
 
-                    var jadeBotSkin = context.JadeBots.FirstOrDefault(jadeBotSkin => jadeBotSkin.UnlockItemId == unlocker.Id);
+                    var jadeBotSkin =
+                        context.JadeBots.FirstOrDefault(jadeBotSkin => jadeBotSkin.UnlockItemId == unlocker.Id);
                     if (jadeBotSkin is not null)
                     {
                         if (JadeBotSkinUnlocksAvailable)
@@ -332,6 +335,7 @@ public sealed class ItemTooltipViewModel(
                 {
                     logger.LogWarning(reason, "Couldn't get unlocks.");
                 }
+
                 break;
             case OutfitUnlocker unlocker:
                 progress.Report("Checking unlock status...");
@@ -477,7 +481,6 @@ public sealed class ItemTooltipViewModel(
 
                         DefaultLocked = true;
                     }
-
                 }
                 catch (Exception reason)
                 {
@@ -488,18 +491,14 @@ public sealed class ItemTooltipViewModel(
         }
     }
 
-    private async Task SkinUnlock(int skinId)
+    private async Task GetSkin(int skinId)
     {
         try
         {
             DefaultLocked = true;
 
             await using var context = contextFactory.CreateDbContext(CultureInfo.CurrentUICulture);
-            var skin = await context.Skins.FirstOrDefaultAsync(skin => skin.Id == skinId);
-            if (skin is not null)
-            {
-                SkinName = skin.Name;
-            }
+            DefaultSkin = await context.Skins.FirstOrDefaultAsync(skin => skin.Id == skinId);
 
             if (WardrobeUnlocksAvailable)
             {
