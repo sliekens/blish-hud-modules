@@ -14,6 +14,6 @@ public class SqliteDbContextFactory(IOptions<DatabaseOptions> options) : IDbCont
         var connection = new SqliteConnection(options.Value.ConnectionString(culture));
         optionsBuilder.UseSqlite(connection);
         Levenshtein.RegisterLevenshteinFunction(connection);
-        return new ChatLinksContext(optionsBuilder.Options);
+        return new ChatLinksContext(optionsBuilder.Options, culture);
     }
 }
