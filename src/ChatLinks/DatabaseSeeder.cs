@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-using Blish_HUD.Modules;
+﻿using Blish_HUD.Modules;
 
 using System.IO.Compression;
 
@@ -49,9 +47,11 @@ public sealed class DatabaseSeeder : IDisposable
 
     private async ValueTask OnLocaleChanged(LocaleChanged args)
     {
-        await Task.Delay(60000);
-        await Migrate(args.Language);
-        await Sync(args.Language, CancellationToken.None);
+        await Task.Run(async () =>
+        {
+            await Migrate(args.Language);
+            await Sync(args.Language, CancellationToken.None);
+        });
     }
 
     public async Task Migrate(Language language)
