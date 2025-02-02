@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+﻿using GuildWars2;
 
 namespace SL.ChatLinks.Storage;
 
@@ -8,13 +8,13 @@ public class DatabaseOptions
 
     public string? RefData { get; set; }
 
-    public string DatabaseFileName(CultureInfo culture) => culture switch
+    public string DatabaseFileName(Language language) => language switch
     {
-        { TwoLetterISOLanguageName: "de" } => "data_de.db",
-        { TwoLetterISOLanguageName: "es" } => "data_es.db",
-        { TwoLetterISOLanguageName: "fr" } => "data_fr.db",
+        { Alpha2Code: "de" } => "data_de.db",
+        { Alpha2Code: "es" } => "data_es.db",
+        { Alpha2Code: "fr" } => "data_fr.db",
         _ => "data.db"
     };
 
-    public string ConnectionString(CultureInfo culture) => $"Data Source={Path.Combine(Directory, DatabaseFileName(culture))}";
+    public string ConnectionString(Language language) => $"Data Source={Path.Combine(Directory, DatabaseFileName(language))}";
 }

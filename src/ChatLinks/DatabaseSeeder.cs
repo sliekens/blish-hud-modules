@@ -49,13 +49,13 @@ public sealed class DatabaseSeeder : IDisposable
 
     private async ValueTask OnLocaleChanged(LocaleChanged args)
     {
-        await Migrate(args.CultureInfo);
-        await Sync(args.CultureInfo, CancellationToken.None);
+        await Migrate(args.Language);
+        await Sync(args.Language, CancellationToken.None);
     }
 
-    public async Task Migrate(CultureInfo culture)
+    public async Task Migrate(Language language)
     {
-        var fileName = _options.Value.DatabaseFileName(culture);
+        var fileName = _options.Value.DatabaseFileName(language);
         var location = Path.Combine(_options.Value.Directory, fileName);
         if (new FileInfo(location) is { Exists: false } or { Length: 0 })
         {
@@ -70,20 +70,19 @@ public sealed class DatabaseSeeder : IDisposable
             }
         }
 
-        await using var context = _contextFactory.CreateDbContext(culture);
+        await using var context = _contextFactory.CreateDbContext(language);
         await context.Database.MigrateAsync();
     }
 
-    public async Task Sync(CultureInfo culture, CancellationToken cancellationToken)
+    public async Task Sync(Language language, CancellationToken cancellationToken)
     {
-        await using var context = _contextFactory.CreateDbContext(culture);
+        await using var context = _contextFactory.CreateDbContext(language);
         context.ChangeTracker.AutoDetectChangesEnabled = false;
-        await Seed(context, culture, cancellationToken);
+        await Seed(context, language, cancellationToken);
     }
 
-    private async Task Seed(ChatLinksContext context, CultureInfo culture, CancellationToken cancellationToken)
+    private async Task Seed(ChatLinksContext context, Language language, CancellationToken cancellationToken)
     {
-        Language language = new(culture.TwoLetterISOLanguageName);
         await SeedItems(context, language, cancellationToken);
         await SeedSkins(context, language, cancellationToken);
         await SeedRecipes(context, language, cancellationToken);

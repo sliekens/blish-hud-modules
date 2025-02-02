@@ -20,6 +20,7 @@ namespace SL.ChatLinks.UI.Tabs.Items.Tooltips;
 public sealed class ItemTooltipViewModel(
     ILogger<ItemTooltipViewModel> logger,
     IDbContextFactory contextFactory,
+    ILocale locale,
     ItemIcons icons,
     Customizer customizer,
     Hero hero,
@@ -188,7 +189,7 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    await using var context = contextFactory.CreateDbContext(CultureInfo.CurrentUICulture);
+                    await using var context = contextFactory.CreateDbContext(locale.Current);
 
                     var finisher = await context.Finishers
                         .FromSqlInterpolated($"""
@@ -248,7 +249,7 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    await using var context = contextFactory.CreateDbContext(CultureInfo.CurrentUICulture);
+                    await using var context = contextFactory.CreateDbContext(locale.Current);
                     var dye = context.Colors.FirstOrDefault(dye => dye.ItemId == unlocker.Id);
                     if (dye is not null)
                     {
@@ -276,7 +277,7 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    await using var context = contextFactory.CreateDbContext(CultureInfo.CurrentUICulture);
+                    await using var context = contextFactory.CreateDbContext(locale.Current);
 
                     var gliderSkin = await context.Gliders
                         .FromSqlInterpolated($"""
@@ -311,7 +312,7 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    await using var context = contextFactory.CreateDbContext(CultureInfo.CurrentUICulture);
+                    await using var context = contextFactory.CreateDbContext(locale.Current);
 
                     var jadeBotSkin =
                         context.JadeBots.FirstOrDefault(jadeBotSkin => jadeBotSkin.UnlockItemId == unlocker.Id);
@@ -341,7 +342,7 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    await using var context = contextFactory.CreateDbContext(CultureInfo.CurrentUICulture);
+                    await using var context = contextFactory.CreateDbContext(locale.Current);
 
                     var outfit = await context.Outfits
                         .FromSqlInterpolated($"""
@@ -377,7 +378,7 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    await using var context = contextFactory.CreateDbContext(CultureInfo.CurrentUICulture);
+                    await using var context = contextFactory.CreateDbContext(locale.Current);
 
                     var mistChampionSkin = await context.MistChampions
                         .FromSqlInterpolated($"""
@@ -457,7 +458,7 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    await using var context = contextFactory.CreateDbContext(CultureInfo.CurrentUICulture);
+                    await using var context = contextFactory.CreateDbContext(locale.Current);
 
                     var novelty = await context.Novelties
                         .FromSqlInterpolated($"""
@@ -497,7 +498,7 @@ public sealed class ItemTooltipViewModel(
         {
             DefaultLocked = true;
 
-            await using var context = contextFactory.CreateDbContext(CultureInfo.CurrentUICulture);
+            await using var context = contextFactory.CreateDbContext(locale.Current);
             DefaultSkin = await context.Skins.FirstOrDefaultAsync(skin => skin.Id == skinId);
 
             if (WardrobeUnlocksAvailable)

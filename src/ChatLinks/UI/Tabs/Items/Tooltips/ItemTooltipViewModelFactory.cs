@@ -4,12 +4,14 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
 using SL.ChatLinks.Storage;
+using SL.Common;
 
 namespace SL.ChatLinks.UI.Tabs.Items.Tooltips;
 
 public sealed class ItemTooltipViewModelFactory(
     ILoggerFactory loggerFactory,
     IDbContextFactory contextFactory,
+    ILocale locale,
     ItemIcons icons,
     Customizer customizer,
     Hero hero,
@@ -20,6 +22,7 @@ public sealed class ItemTooltipViewModelFactory(
         return new ItemTooltipViewModel(
             loggerFactory.CreateLogger<ItemTooltipViewModel>(),
             contextFactory,
+            locale,
             icons,
             customizer,
             hero,

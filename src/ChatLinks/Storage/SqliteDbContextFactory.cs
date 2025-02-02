@@ -1,5 +1,7 @@
 ﻿using System.Globalization;
 
+using GuildWars2;
+
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -8,12 +10,12 @@ namespace SL.ChatLinks.Storage;
 
 public class SqliteDbContextFactory(IOptions<DatabaseOptions> options) : IDbContextFactory
 {
-    public ChatLinksContext CreateDbContext(CultureInfo culture)
+    public ChatLinksContext CreateDbContext(Language language)
     {
         var optionsBuilder = new DbContextOptionsBuilder<ChatLinksContext>();
-        var connection = new SqliteConnection(options.Value.ConnectionString(culture));
+        var connection = new SqliteConnection(options.Value.ConnectionString(language));
         optionsBuilder.UseSqlite(connection);
         Levenshtein.RegisterLevenshteinFunction(connection);
-        return new ChatLinksContext(optionsBuilder.Options, culture);
+        return new ChatLinksContext(optionsBuilder.Options, language.CultureInfo);
     }
 }

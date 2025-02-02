@@ -12,7 +12,8 @@ namespace SL.ChatLinks.UI.Tabs.Items;
 
 public sealed class Customizer(
     IDbContextFactory contextFactory,
-    IEventAggregator eventAggregator
+    IEventAggregator eventAggregator,
+    ILocale locale
 ) : IDisposable
 {
     public IReadOnlyDictionary<int, UpgradeComponent> UpgradeComponents { get; private set; } =
@@ -20,7 +21,7 @@ public sealed class Customizer(
 
     public async Task LoadAsync()
     {
-        await using var context = contextFactory.CreateDbContext(CultureInfo.CurrentUICulture);
+        await using var context = contextFactory.CreateDbContext(locale.Current);
         UpgradeComponents =
             await context.Set<UpgradeComponent>().AsNoTracking().ToDictionaryAsync(upgrade => upgrade.Id);
 
@@ -29,7 +30,7 @@ public sealed class Customizer(
 
     private async ValueTask OnDatabaseSyncCompleted(DatabaseSyncCompleted _)
     {
-        await using var context = contextFactory.CreateDbContext(CultureInfo.CurrentUICulture);
+        await using var context = contextFactory.CreateDbContext(locale.Current);
         UpgradeComponents = await context.Set<UpgradeComponent>().AsNoTracking()
             .ToDictionaryAsync(upgrade => upgrade.Id);
     }

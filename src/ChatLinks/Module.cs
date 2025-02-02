@@ -53,6 +53,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         services.ConfigureOptions(_moduleSettings);
         services.AddSingleton<IOptionsChangeTokenSource<ChatLinkOptions>>(_moduleSettings);
 
+        services.AddSingleton<ILocale, OverlayLocale>();
         services.AddGw2Client();
 
         services.Configure<DatabaseOptions>(options =>
@@ -111,25 +112,18 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         _serviceProvider = services.BuildServiceProvider();
         _eventAggregator = _serviceProvider.GetRequiredService<IEventAggregator>();
         SetupSqlite3();
-
-        GameService.Overlay.UserLocaleChanged += OnUserLocaleChanged;
-    }
-
-    private void OnUserLocaleChanged(object sender, ValueEventArgs<CultureInfo> args)
-    {
-        _eventAggregator?.Publish(new LocaleChanged(args.Value));
     }
 
     protected override async Task LoadAsync()
     {
-        var culture = CultureInfo.CurrentUICulture;
         var databaseManager = _serviceProvider.GetRequiredService<DatabaseSeeder>();
-        await databaseManager.Migrate(culture);
+        var locale = _serviceProvider.GetRequiredService<ILocale>();
+        await databaseManager.Migrate(locale.Current);
 
         _ = _serviceProvider.GetRequiredService<MainIcon>();
         _ = _serviceProvider.GetRequiredService<MainWindow>();
 
-        await databaseManager.Sync(culture, CancellationToken.None);
+        await databaseManager.Sync(locale.Current, CancellationToken.None);
     }
 
     private static void SetupSqlite3()
@@ -140,7 +134,6 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 
     protected override void Unload()
     {
-        GameService.Overlay.UserLocaleChanged -= OnUserLocaleChanged;
         _eventAggregator?.Publish(new ModuleUnloading());
         _serviceProvider?.Dispose();
     }

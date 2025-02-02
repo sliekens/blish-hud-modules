@@ -8,6 +8,7 @@ using GuildWars2.Items;
 using Microsoft.EntityFrameworkCore;
 
 using SL.ChatLinks.Storage;
+using SL.Common;
 
 namespace SL.ChatLinks.UI.Tabs.Items;
 
@@ -16,19 +17,19 @@ public sealed record ResultContext
     public int ResultTotal { get; set; }
 }
 
-public sealed class ItemSearch(IDbContextFactory contextFactory)
+public sealed class ItemSearch(IDbContextFactory contextFactory, ILocale locale)
 {
     private static readonly Regex ChatLinkPattern = new(@"^\[&[A-Za-z0-9+/=]+\]$", RegexOptions.Compiled);
 
     public async ValueTask<int> CountItems()
     {
-        await using var context = contextFactory.CreateDbContext(CultureInfo.CurrentUICulture);
+        await using var context = contextFactory.CreateDbContext(locale.Current);
         return await context.Items.CountAsync();
     }
 
     public async IAsyncEnumerable<Item> NewItems(int limit)
     {
-        await using var context = contextFactory.CreateDbContext(CultureInfo.CurrentUICulture);
+        await using var context = contextFactory.CreateDbContext(locale.Current);
         await foreach (var item in context.Items
            .AsNoTracking()
            .OrderByDescending(item => item.Id)
@@ -55,7 +56,7 @@ public sealed class ItemSearch(IDbContextFactory contextFactory)
         }
         else
         {
-            await using var context = contextFactory.CreateDbContext(CultureInfo.CurrentUICulture);
+            await using var context = contextFactory.CreateDbContext(locale.Current);
             IQueryable<Item> query = context.Items.FromSqlInterpolated(
                 $"""
                  SELECT * FROM Items
@@ -82,7 +83,7 @@ public sealed class ItemSearch(IDbContextFactory contextFactory)
         ResultContext resultContext,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        await using var context = contextFactory.CreateDbContext(CultureInfo.CurrentUICulture);
+        await using var context = contextFactory.CreateDbContext(locale.Current);
         Item item = await context.Items.AsNoTracking()
             .SingleOrDefaultAsync(row => row.Id == link.ItemId, cancellationToken);
         if (item is null)

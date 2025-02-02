@@ -16,6 +16,7 @@ namespace SL.ChatLinks.UI;
 public class MainIconViewModel(
     ILogger<MainIconViewModel> logger,
     IEventAggregator eventAggregator,
+    ILocale locale,
     DatabaseSeeder seeder,
     ModuleSettings settings
 ) : ViewModel
@@ -102,7 +103,7 @@ public class MainIconViewModel(
             {
                 await await Task.Factory.StartNew(async () =>
                 {
-                    await seeder.Sync(CultureInfo.CurrentUICulture, CancellationToken.None);
+                    await seeder.Sync(locale.Current, CancellationToken.None);
                 }, TaskCreationOptions.LongRunning);
 
                 ScreenNotification.ShowNotification("Everything is up-to-date.", ScreenNotification.NotificationType.Green);
