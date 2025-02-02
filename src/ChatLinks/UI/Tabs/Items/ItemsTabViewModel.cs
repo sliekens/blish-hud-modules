@@ -37,15 +37,18 @@ public sealed class ItemsTabViewModel(
 
     public void Initialize()
     {
+        eventAggregator.Subscribe<LocaleChanged>(OnLocaleChanged);
         eventAggregator.Subscribe<DatabaseSyncCompleted>(OnDatabaseSyncCompleted);
+    }
+
+    private async ValueTask OnLocaleChanged(LocaleChanged args)
+    {
+        await OnSearch();
     }
 
     private async ValueTask OnDatabaseSyncCompleted(DatabaseSyncCompleted _)
     {
-        if (!Searching && SearchText == "")
-        {
-            await NewItems(CancellationToken.None);
-        }
+        await OnSearch();
     }
 
     public string SearchText
