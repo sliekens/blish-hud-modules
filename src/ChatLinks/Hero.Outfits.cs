@@ -2,28 +2,12 @@
 
 using GuildWars2;
 using GuildWars2.Authorization;
-using GuildWars2.Hero.Equipment.Outfits;
 
 namespace SL.ChatLinks;
 
 public sealed partial class Hero
 {
-    private IReadOnlyList<Outfit>? _outfits;
-
     private IReadOnlyList<int>? _unlockedOutfits;
-
-    public async ValueTask<IReadOnlyList<Outfit>> GetOutfits(CancellationToken cancellationToken)
-    {
-        return _outfits ??= await GetOutfitsInternal(cancellationToken);
-    }
-
-    private async ValueTask<IReadOnlyList<Outfit>> GetOutfitsInternal(CancellationToken cancellationToken)
-    {
-        var outfits = await _gw2Client.Hero.Equipment.Outfits
-            .GetOutfits(cancellationToken: cancellationToken)
-            .ValueOnly();
-        return outfits.ToImmutableList();
-    }
 
     public async ValueTask<IReadOnlyList<int>> GetUnlockedOutfits(CancellationToken cancellationToken)
     {

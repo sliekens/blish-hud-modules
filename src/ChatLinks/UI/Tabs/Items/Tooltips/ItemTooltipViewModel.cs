@@ -337,8 +337,15 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    var outfits = await hero.GetOutfits(CancellationToken.None);
-                    var outfit = outfits.FirstOrDefault(outfit => outfit.UnlockItemIds.Contains(unlocker.Id));
+                    await using var context = contextFactory.CreateDbContext(CultureInfo.CurrentUICulture);
+
+                    var outfit = await context.Outfits
+                        .FromSqlInterpolated($"""
+                                              SELECT *
+                                              FROM Outfits, json_each(Outfits.UnlockItemIds)
+                                              WHERE json_each.value = {unlocker.Id}
+                                              """)
+                        .FirstOrDefaultAsync();
                     if (outfit is not null)
                     {
                         if (OutfitUnlocksAvailable)

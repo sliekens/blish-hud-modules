@@ -94,6 +94,7 @@ public sealed class DatabaseSeeder : IDisposable
         await SeedMailCarriers(context, language, cancellationToken);
         await SeedMistChampions(context, language, cancellationToken);
         await SeedNovelties(context, language, cancellationToken);
+        await SeedOutfits(context, language, cancellationToken);
         await _eventAggregator.PublishAsync(new DatabaseSyncCompleted(), cancellationToken);
     }
 
@@ -443,6 +444,36 @@ public sealed class DatabaseSeeder : IDisposable
         }
 
         _logger.LogInformation("Finished seeding {Count} novelties.", index.Count);
+    }
+
+    private async Task SeedOutfits(ChatLinksContext context, Language language,
+        CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Start seeding outfits.");
+
+        HashSet<int> index = await _gw2Client.Hero.Equipment.Outfits
+            .GetOutfitsIndex(cancellationToken)
+            .ValueOnly();
+
+        _logger.LogDebug("Found {Count} outfits in the API.", index.Count);
+        var existing = await context.Outfits.Select(outfit => outfit.Id)
+            .ToListAsync(cancellationToken: cancellationToken);
+
+        index.ExceptWith(existing);
+        if (index.Count != 0)
+        {
+            _logger.LogDebug("Start seeding {Count} outfits.", index.Count);
+
+            // TODO: incremental query
+            var outfits = await _gw2Client.Hero.Equipment.Outfits
+                .GetOutfits(language, MissingMemberBehavior.Undefined, cancellationToken).ValueOnly();
+
+            await context.AddRangeAsync(outfits.Where(outfit => index.Contains(outfit.Id)), cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+            DetachAllEntities(context);
+        }
+
+        _logger.LogInformation("Finished seeding {Count} outfits.", index.Count);
     }
 
     private static void DetachAllEntities(ChatLinksContext context)

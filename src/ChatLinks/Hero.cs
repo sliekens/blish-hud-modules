@@ -1,7 +1,6 @@
 ﻿using GuildWars2;
 using GuildWars2.Authorization;
 
-using SL.ChatLinks.Storage;
 using SL.Common;
 
 namespace SL.ChatLinks;
@@ -22,20 +21,12 @@ public sealed partial class Hero : IDisposable
         _gw2Client = gw2Client;
         _tokenProvider = tokenProvider;
         _eventAggregator = eventAggregator;
-        eventAggregator.Subscribe<DatabaseSyncCompleted>(OnDatabaseSyncCompleted);
         eventAggregator.Subscribe<AuthorizationInvalidated>(OnAuthorizationInvalidated);
     }
 
     public bool InventoriesAvailable => _tokenProvider.Grants.Contains(Permission.Inventories);
 
     public bool UnlocksAvailable => _tokenProvider.Grants.Contains(Permission.Unlocks);
-
-    private async ValueTask OnDatabaseSyncCompleted(DatabaseSyncCompleted _)
-    {
-        var outfitsTask = GetOutfitsInternal(CancellationToken.None);
-
-        _outfits = await outfitsTask;
-    }
 
     private async ValueTask OnAuthorizationInvalidated(AuthorizationInvalidated _)
     {
@@ -62,7 +53,6 @@ public sealed partial class Hero : IDisposable
 
     public void Dispose()
     {
-        _eventAggregator.Unsubscribe<DatabaseSyncCompleted>(OnDatabaseSyncCompleted);
         _eventAggregator.Unsubscribe<AuthorizationInvalidated>(OnAuthorizationInvalidated);
     }
 }
