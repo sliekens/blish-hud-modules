@@ -1,32 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="..\..\Common.props" />
-
-    <PropertyGroup>
-        <OutputType>Library</OutputType>
-        <TargetFramework>net472</TargetFramework>
-    </PropertyGroup>
-    
-    <ItemGroup>
-        <PackageReference Include="BlishHUD" Version="1.2.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>compile</IncludeAssets>
-        </PackageReference>
-
-        <PackageReference Include="Gw2Sharp" Version="1.7.4" />
-
-        <PackageReference Include="GW2SDK" Version="2.2.0" />
-        
-        <PackageReference Include="PolySharp" Version="1.15.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        
-        <PackageReference Include="System.Collections.Immutable" Version="1.7.1" />
-        
-        <PackageReference Include="System.Text.Json" Version="9.0.1" />
-    </ItemGroup>
-    
-    <ItemGroup>
-      <ProjectReference Include="..\Common\Common.csproj" />
-    </ItemGroup>
+  <Import Project="..\..\Common.props" />
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net472</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="BlishHUD">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>compile</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Gw2Sharp" />
+    <PackageReference Include="GW2SDK" />
+    <PackageReference Include="PolySharp">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="System.Collections.Immutable" />
+    <PackageReference Include="System.Text.Json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj" />
+  </ItemGroup>
 </Project>

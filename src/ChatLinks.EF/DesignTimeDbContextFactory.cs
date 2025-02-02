@@ -17,7 +17,7 @@ public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ChatLinksC
     public ChatLinksContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<ChatLinksContext>();
-        optionsBuilder.UseSqlite("Data Source=data.db", sqliteOptionsBuilder =>
+        optionsBuilder.UseSqlite("Data Source=X:\\src\\my-blish-modules\\Blish.HUD\\1.2.0\\Settings\\chat-links-data\\data.db", sqliteOptionsBuilder =>
         {
             sqliteOptionsBuilder.MigrationsAssembly("SL.ChatLinks");
         });

@@ -1,34 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="..\..\Common.props" />
-
-    <PropertyGroup>
-        <OutputType>Exe</OutputType>
-        <TargetFramework>net472</TargetFramework>
-    </PropertyGroup>
-
-    <ItemGroup>
-        <PackageReference Include="BlishHUD" Version="1.2.0">
-            <ExcludeAssets>build</ExcludeAssets>
-        </PackageReference>
-        <PackageReference Include="gw2sdk" Version="2.2.0" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.32">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-        <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.10" />
-        <PackageReference Include="System.ComponentModel.Composition" Version="6.0.0" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\ChatLinks\ChatLinks.csproj" />
-    </ItemGroup>
-
-    <Target Name="WriteDirsToFile" BeforeTargets="Build">
-        <ConvertToAbsolutePath Paths="..\ChatLinks">
-            <Output TaskParameter="AbsolutePaths" PropertyName="ModuleDirectory" />
-        </ConvertToAbsolutePath>
-        <WriteLinesToFile File="$(OutDir)ModuleDirectory.txt" Lines="$(ModuleDirectory)" Overwrite="true" />
-        <WriteLinesToFile File="$(OutDir)DesignDirectory.txt" Lines="$(MSBuildProjectDirectory)" Overwrite="true" />
-    </Target>
+  <Import Project="..\..\Common.props" />
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net472</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="BlishHUD">
+      <ExcludeAssets>build</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="gw2sdk" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" />
+    <PackageReference Include="System.ComponentModel.Composition" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ChatLinks\ChatLinks.csproj" />
+  </ItemGroup>
+  <Target Name="WriteDirsToFile" BeforeTargets="Build">
+    <ConvertToAbsolutePath Paths="..\ChatLinks">
+      <Output TaskParameter="AbsolutePaths" PropertyName="ModuleDirectory" />
+    </ConvertToAbsolutePath>
+    <WriteLinesToFile File="$(OutDir)ModuleDirectory.txt" Lines="$(ModuleDirectory)" Overwrite="true" />
+    <WriteLinesToFile File="$(OutDir)DesignDirectory.txt" Lines="$(MSBuildProjectDirectory)" Overwrite="true" />
+  </Target>
 </Project>
