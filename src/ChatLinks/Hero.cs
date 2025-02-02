@@ -32,10 +32,8 @@ public sealed partial class Hero : IDisposable
 
     private async ValueTask OnDatabaseSyncCompleted(DatabaseSyncCompleted _)
     {
-        var noveltiesTask = GetNoveltiesInternal(CancellationToken.None);
         var outfitsTask = GetOutfitsInternal(CancellationToken.None);
 
-        _novelties = await noveltiesTask;
         _outfits = await outfitsTask;
     }
 

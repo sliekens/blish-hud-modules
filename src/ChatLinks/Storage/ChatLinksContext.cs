@@ -8,6 +8,7 @@ using GuildWars2.Hero.Equipment.Finishers;
 using GuildWars2.Hero.Equipment.Gliders;
 using GuildWars2.Hero.Equipment.JadeBots;
 using GuildWars2.Hero.Equipment.MailCarriers;
+using GuildWars2.Hero.Equipment.Novelties;
 using GuildWars2.Hero.Equipment.Wardrobe;
 using GuildWars2.Items;
 using GuildWars2.Pvp.MistChampions;
@@ -37,9 +38,11 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
 
     public DbSet<JadeBotSkin> JadeBots => Set<JadeBotSkin>();
 
-    public DbSet<MailCarrier> MailCarrriers=> Set<MailCarrier>();
+    public DbSet<MailCarrier> MailCarrriers => Set<MailCarrier>();
 
     public DbSet<MistChampionSkin> MistChampions => Set<MistChampionSkin>();
+
+    public DbSet<Novelty> Novelties => Set<Novelty>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -73,7 +76,8 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
 
         ValueComparer<Buff> buffComparer = new ValueObjectComparer<Buff>(buff => new Buff
         {
-            Description = buff.Description, SkillId = buff.SkillId
+            Description = buff.Description,
+            SkillId = buff.SkillId
         });
 
         ValueComparer<IReadOnlyList<InfusionSlot>> infusionSlotsComparer = new ListComparer<InfusionSlot>();
@@ -175,5 +179,7 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
         modelBuilder.ApplyConfiguration(new MailCarrierEntityTypeConfiguration());
 
         modelBuilder.ApplyConfiguration(new MistChampionSkinEntityTypeConfiguration());
+
+        modelBuilder.ApplyConfiguration(new NoveltyEntityTypeConfiguration());
     }
 }

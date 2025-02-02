@@ -444,22 +444,37 @@ public sealed class ItemTooltipViewModel(
                 break;
             case Gizmo gizmo:
                 progress.Report("Checking unlock status...");
-                var novelties = await hero.GetNovelties(CancellationToken.None);
-                var novelty = novelties.FirstOrDefault(novelty => novelty.UnlockItemIds.Contains(gizmo.Id));
-                if (novelty is not null)
+                try
                 {
-                    if (NoveltyUnlocksAvailable)
+                    await using var context = contextFactory.CreateDbContext(CultureInfo.CurrentUICulture);
+
+                    var novelty = await context.Novelties
+                        .FromSqlInterpolated($"""
+                                              SELECT *
+                                              FROM Novelties, json_each(Novelties.UnlockItemIds)
+                                              WHERE json_each.value = {gizmo.Id}
+                                              """)
+                        .FirstOrDefaultAsync();
+                    if (novelty is not null)
                     {
-                        var unlocks = await hero.GetUnlockedNovelties(CancellationToken.None);
-                        Unlocked = unlocks.Contains(novelty.Id);
-                    }
-                    else
-                    {
-                        AuthorizationText =
-                            "Grant 'unlocks' permission in settings to see unlock status";
+                        if (NoveltyUnlocksAvailable)
+                        {
+                            var unlocks = await hero.GetUnlockedNovelties(CancellationToken.None);
+                            Unlocked = unlocks.Contains(novelty.Id);
+                        }
+                        else
+                        {
+                            AuthorizationText =
+                                "Grant 'unlocks' permission in settings to see unlock status";
+                        }
+
+                        DefaultLocked = true;
                     }
 
-                    DefaultLocked = true;
+                }
+                catch (Exception reason)
+                {
+                    logger.LogWarning(reason, "Couldn't get unlocks.");
                 }
 
                 break;
@@ -492,31 +507,6 @@ public sealed class ItemTooltipViewModel(
         catch (Exception reason)
         {
             logger.LogWarning(reason, "Couldn't get unlocked wardrobe.");
-        }
-    }
-
-    private async Task NoveltyUnlock(int itemId)
-    {
-        try
-        {
-            var novelties = await hero.GetNovelties(CancellationToken.None);
-            var match = novelties.FirstOrDefault(novelty => novelty.UnlockItemIds.Contains(itemId));
-            if (match is null)
-            {
-                return;
-            }
-
-            DefaultLocked = true;
-
-            if (hero.UnlocksAvailable)
-            {
-                var unlocks = await hero.GetUnlockedNovelties(CancellationToken.None);
-                Unlocked = unlocks.Contains(match.Id);
-            }
-        }
-        catch (Exception reason)
-        {
-            logger.LogWarning(reason, "Couldn't get unlocked novelties.");
         }
     }
 }
