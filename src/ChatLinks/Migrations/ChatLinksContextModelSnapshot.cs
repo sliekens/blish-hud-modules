@@ -565,7 +565,7 @@ namespace SL.ChatLinks.Migrations
 
                     b.Property<string>("GuildIngredients")
                         .IsRequired()
-                        .HasColumnName("GuildConsumableRecipe_GuildIngredients")
+                        .HasColumnName("GuildIngredients")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("OutputUpgradeId")

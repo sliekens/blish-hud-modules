@@ -22,7 +22,6 @@ namespace SL.ChatLinks.Migrations
                     Ingredients = table.Column<string>(nullable: false),
                     ChatLink = table.Column<string>(nullable: false),
                     Type = table.Column<string>(nullable: false),
-                    GuildConsumableRecipe_GuildIngredients = table.Column<string>(nullable: true),
                     OutputUpgradeId = table.Column<int>(nullable: true),
                     GuildIngredients = table.Column<string>(nullable: true),
                     OutputWvwUpgradeId = table.Column<int>(nullable: true)
