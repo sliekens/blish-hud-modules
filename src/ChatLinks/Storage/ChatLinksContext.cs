@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using System.Text.Json;
+﻿using System.Text.Json;
 
 using GuildWars2;
 using GuildWars2.Hero;
@@ -24,10 +23,8 @@ using SL.ChatLinks.Storage.Models;
 
 namespace SL.ChatLinks.Storage;
 
-public class ChatLinksContext(DbContextOptions options, CultureInfo culture) : DbContext(options)
+public class ChatLinksContext(DbContextOptions options) : DbContext(options)
 {
-    public CultureInfo Culture { get; } = culture;
-
     public DbSet<Item> Items => Set<Item>();
 
     public DbSet<EquipmentSkin> Skins => Set<EquipmentSkin>();

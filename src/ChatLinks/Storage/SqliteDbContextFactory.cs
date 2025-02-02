@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-using GuildWars2;
+﻿using GuildWars2;
 
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +14,15 @@ public class SqliteDbContextFactory(IOptions<DatabaseOptions> options) : IDbCont
         var connection = new SqliteConnection(options.Value.ConnectionString(language));
         optionsBuilder.UseSqlite(connection);
         Levenshtein.RegisterLevenshteinFunction(connection);
-        return new ChatLinksContext(optionsBuilder.Options, language.CultureInfo);
+        return new ChatLinksContext(optionsBuilder.Options);
+    }
+
+    public ChatLinksContext CreateDbContext(string file)
+    {
+        var optionsBuilder = new DbContextOptionsBuilder<ChatLinksContext>();
+        var connection = new SqliteConnection(options.Value.ConnectionString(file));
+        optionsBuilder.UseSqlite(connection);
+        Levenshtein.RegisterLevenshteinFunction(connection);
+        return new ChatLinksContext(optionsBuilder.Options);
     }
 }

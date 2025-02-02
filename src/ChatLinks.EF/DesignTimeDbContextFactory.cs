@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
 using SL.ChatLinks.Storage;
@@ -24,6 +22,6 @@ public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ChatLinksC
             sqliteOptionsBuilder.MigrationsAssembly("SL.ChatLinks");
         });
 
-        return new ChatLinksContext(optionsBuilder.Options, CultureInfo.InvariantCulture);
+        return new ChatLinksContext(optionsBuilder.Options);
     }
 }

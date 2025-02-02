@@ -6,11 +6,23 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Polly;
 
+using SL.ChatLinks.Storage;
+
 namespace SL.ChatLinks.Integrations;
 
-internal static class Integrations
+public static class Integrations
 {
-    internal static void AddGw2Client(this IServiceCollection services)
+    public static void AddDatabase(
+        this IServiceCollection services,
+        Action<DatabaseOptions> configureOptions
+    )
+    {
+        services.Configure(configureOptions);
+
+        services.AddSingleton<IDbContextFactory, SqliteDbContextFactory>();
+    }
+
+    public static void AddGw2Client(this IServiceCollection services)
     {
         IHttpClientBuilder httpClientBuilder = services.AddHttpClient<Gw2Client>(
             static httpClient =>

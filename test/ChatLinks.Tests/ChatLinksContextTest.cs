@@ -1,4 +1,3 @@
-using System.Globalization;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -13,7 +12,7 @@ public class ChatLinksContextTest
     {
         var options = new DbContextOptionsBuilder<ChatLinksContext>()
             .Options;
-        var sut = new ChatLinksContext(options, CultureInfo.InvariantCulture);
+        var sut = new ChatLinksContext(options);
 
         await sut.Database.EnsureDeletedAsync();
         await sut.Database.MigrateAsync();

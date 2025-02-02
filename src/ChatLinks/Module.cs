@@ -54,15 +54,14 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         services.AddSingleton<IOptionsChangeTokenSource<ChatLinkOptions>>(_moduleSettings);
 
         services.AddSingleton<ILocale, OverlayLocale>();
+        services.AddSingleton<IIntrospection, ModuleIntrospection>();
         services.AddGw2Client();
 
-        services.Configure<DatabaseOptions>(options =>
+        services.AddDatabase(options =>
         {
-            options.RefData = "data.zip";
             options.Directory = ModuleParameters.DirectoriesManager.GetFullDirectoryPath("chat-links-data");
         });
 
-        services.AddSingleton<IDbContextFactory, SqliteDbContextFactory>();
         services.AddSingleton<DatabaseSeeder>();
 
         services.AddSingleton<IEventAggregator, DefaultEventAggregator>();

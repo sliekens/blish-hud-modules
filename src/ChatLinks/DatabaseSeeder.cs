@@ -1,6 +1,4 @@
-﻿using Blish_HUD.Modules;
-
-using System.IO.Compression;
+﻿using System.Text.Json;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -16,6 +14,9 @@ using GuildWars2.Hero.Equipment.Wardrobe;
 using Microsoft.Extensions.Logging;
 
 using GuildWars2.Pvp.MistChampions;
+using SL.ChatLinks.Storage.Metadata;
+
+using Language = GuildWars2.Language;
 
 namespace SL.ChatLinks;
 
@@ -25,21 +26,21 @@ public sealed class DatabaseSeeder : IDisposable
     private readonly IOptions<DatabaseOptions> _options;
     private readonly IDbContextFactory _contextFactory;
     private readonly IEventAggregator _eventAggregator;
-    private readonly ModuleParameters _moduleParameters;
+    private readonly IIntrospection _introspection;
     private readonly Gw2Client _gw2Client;
 
     public DatabaseSeeder(ILogger<DatabaseSeeder> logger,
         IOptions<DatabaseOptions> options,
         IDbContextFactory contextFactory,
         IEventAggregator eventAggregator,
-        ModuleParameters moduleParameters,
+        IIntrospection introspection,
         Gw2Client gw2Client)
     {
         _logger = logger;
         _options = options;
         _contextFactory = contextFactory;
         _eventAggregator = eventAggregator;
-        _moduleParameters = moduleParameters;
+        _introspection = introspection;
         _gw2Client = gw2Client;
 
         eventAggregator.Subscribe<LocaleChanged>(OnLocaleChanged);
@@ -54,24 +55,98 @@ public sealed class DatabaseSeeder : IDisposable
         });
     }
 
+    private async ValueTask<DataManifest?> SeedDataManifest()
+    {
+        using var stream = _introspection.GetFileStream("manifest.json");
+        if (stream is null)
+        {
+            _logger.LogError("Failed to find seed manifest.json.");
+            return null;
+        }
+
+        return await JsonSerializer.DeserializeAsync<DataManifest>(stream);
+    }
+
+    private async ValueTask<DataManifest?> DataManifest()
+    {
+        try
+        {
+            var path = Path.Combine(_options.Value.Directory, "manifest.json");
+            if (!File.Exists(path))
+            {
+                return null;
+            }
+
+            using var stream = File.OpenRead(path);
+            return await JsonSerializer.DeserializeAsync<DataManifest>(stream);
+        }
+        catch (Exception reason)
+        {
+            _logger.LogError(reason, "Failed to read manifest.");
+            return null;
+        }
+    }
+
+    public async ValueTask SaveManifest(DataManifest manifest)
+    {
+        try
+        {
+            var path = Path.Combine(_options.Value.Directory, "manifest.json");
+            using var stream = File.OpenWrite(path);
+            await JsonSerializer.SerializeAsync(stream, manifest);
+        }
+        catch (Exception reason)
+        {
+            _logger.LogError(reason, "Failed to save updated manifest.");
+        }
+    }
+
+    private bool IsEmpty(Database database)
+    {
+        var location = Path.Combine(_options.Value.Directory, database.Name);
+        return new FileInfo(location) is { Exists: false } or { Length: 0 };
+    }
+
+    private async ValueTask Unpack(Database database, string location)
+    {
+        using var data = _introspection.GetFileStream(database.Name);
+        if (data is not null)
+        {
+            using var fileStream = File.OpenWrite(location);
+            await data.CopyToAsync(fileStream);
+        }
+    }
+
     public async Task Migrate(Language language)
     {
-        var fileName = _options.Value.DatabaseFileName(language);
-        var location = Path.Combine(_options.Value.Directory, fileName);
-        if (new FileInfo(location) is { Exists: false } or { Length: 0 })
+        var currentDataManifest = await DataManifest();
+        var currentDatabase = currentDataManifest?.Databases[language.Alpha2Code];
+
+        var seedDataManifest = await SeedDataManifest();
+        if (seedDataManifest?.Databases.TryGetValue(language.Alpha2Code, out var seedDatabase) ?? false)
         {
-            using var seed = _moduleParameters.ContentsManager.GetFileStream(_options.Value.RefData);
-            using var unzip = new ZipArchive(seed, ZipArchiveMode.Read);
-            var data = unzip.GetEntry(fileName);
-            if (data is not null)
+            bool unpack = currentDatabase is null
+                          || seedDatabase.Seed > currentDatabase.Seed
+                          || IsEmpty(currentDatabase);
+
+            if (unpack)
             {
-                using var dataStream = data.Open();
-                using var fileStream = File.Create(location);
-                await dataStream.CopyToAsync(fileStream);
+                var location = Path.Combine(_options.Value.Directory, seedDatabase.Name);
+                await Unpack(seedDatabase, location);
+                currentDataManifest ??= new DataManifest
+                {
+                    Version = 1,
+                    Databases = []
+                };
+
+                currentDatabase = seedDatabase;
+                currentDataManifest.Databases[language.Alpha2Code] = seedDatabase;
+
+                await SaveManifest(currentDataManifest);
             }
         }
 
-        await using var context = _contextFactory.CreateDbContext(language);
+        await using var context = _contextFactory.CreateDbContext(currentDatabase!.Name);
         await context.Database.MigrateAsync();
     }
 
@@ -82,7 +157,34 @@ public sealed class DatabaseSeeder : IDisposable
         await Seed(context, language, cancellationToken);
     }
 
-    private async Task Seed(ChatLinksContext context, Language language, CancellationToken cancellationToken)
+    public async Task SeedAll()
+    {
+        var seed = DateTime.UtcNow.Ticks;
+        var manifest = new DataManifest
+        {
+            Version = 1,
+            Databases = []
+        };
+
+        foreach (var language in (Language[])[Language.English, Language.German, Language.French, Language.Spanish])
+        {
+            Database database = new()
+            {
+                Name = _options.Value.DatabaseFileName(language),
+                Seed = seed
+            };
+
+            await using var context = _contextFactory.CreateDbContext(database.Name);
+            await context.Database.MigrateAsync();
+            await Seed(context, language, CancellationToken.None);
+
+            manifest.Databases[language.Alpha2Code] = database;
+        }
+
+        await SaveManifest(manifest);
+    }
+
+    public async Task Seed(ChatLinksContext context, Language language, CancellationToken cancellationToken)
     {
         var inserted = new Dictionary<string, int>
         {

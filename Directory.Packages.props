@@ -14,6 +14,7 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.32" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="3.1.32" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.32" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="3.1.32" />
     <PackageVersion Include="Microsoft.Extensions.Http" Version="3.1.32" />
     <PackageVersion Include="Microsoft.Extensions.Localization" Version="3.1.32" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.32" />

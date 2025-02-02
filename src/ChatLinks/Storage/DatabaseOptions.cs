@@ -6,8 +6,6 @@ public class DatabaseOptions
 {
     public string Directory { get; set; } = System.IO.Directory.GetCurrentDirectory();
 
-    public string? RefData { get; set; }
-
     public string DatabaseFileName(Language language) => language switch
     {
         { Alpha2Code: "de" } => "data_de.db",
@@ -16,5 +14,7 @@ public class DatabaseOptions
         _ => "data.db"
     };
 
-    public string ConnectionString(Language language) => $"Data Source={Path.Combine(Directory, DatabaseFileName(language))}";
+    public string ConnectionString(Language language) => ConnectionString(DatabaseFileName(language));
+
+    public string ConnectionString(string file) => $"Data Source={Path.Combine(Directory, file)}";
 }
