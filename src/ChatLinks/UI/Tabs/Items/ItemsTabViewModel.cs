@@ -1,6 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
 
+using Blish_HUD;
+
 using GuildWars2.Items;
 
 using Microsoft.Extensions.Logging;
@@ -43,14 +45,14 @@ public sealed class ItemsTabViewModel(
 
     private async ValueTask OnLocaleChanged(LocaleChanged args)
     {
-        await OnSearch();
+        await Task.Run(OnSearch);
     }
 
     private async ValueTask OnDatabaseSyncCompleted(DatabaseSyncCompleted args)
     {
         if (args.Updated["items"] > 0)
         {
-            await OnSearch();
+            await Task.Run(OnSearch);
         }
     }
 
@@ -80,7 +82,10 @@ public sealed class ItemsTabViewModel(
         private set => SetField(ref _resultTotal, value);
     }
 
-    public ICommand SearchCommand => new AsyncRelayCommand(OnSearch);
+    public ICommand SearchCommand => new AsyncRelayCommand(async () =>
+    {
+        await Task.Run(OnSearch);
+    });
 
     public async Task LoadAsync()
     {
@@ -144,6 +149,7 @@ public sealed class ItemsTabViewModel(
 
     private async Task DoSearch(CancellationToken cancellationToken)
     {
+        var main = Program.IsMainThread;
         string query = SearchText.Trim();
         switch (query.Length)
         {

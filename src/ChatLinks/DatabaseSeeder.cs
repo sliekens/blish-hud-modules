@@ -49,6 +49,7 @@ public sealed class DatabaseSeeder : IDisposable
 
     private async ValueTask OnLocaleChanged(LocaleChanged args)
     {
+        await Task.Delay(60000);
         await Migrate(args.Language);
         await Sync(args.Language, CancellationToken.None);
     }
