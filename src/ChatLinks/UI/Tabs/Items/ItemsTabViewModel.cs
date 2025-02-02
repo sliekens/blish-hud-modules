@@ -46,9 +46,12 @@ public sealed class ItemsTabViewModel(
         await OnSearch();
     }
 
-    private async ValueTask OnDatabaseSyncCompleted(DatabaseSyncCompleted _)
+    private async ValueTask OnDatabaseSyncCompleted(DatabaseSyncCompleted args)
     {
-        await OnSearch();
+        if (args.Updated["items"] > 0)
+        {
+            await OnSearch();
+        }
     }
 
     public string SearchText

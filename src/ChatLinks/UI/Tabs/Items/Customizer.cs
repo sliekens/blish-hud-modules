@@ -28,11 +28,14 @@ public sealed class Customizer(
         eventAggregator.Subscribe<DatabaseSyncCompleted>(OnDatabaseSyncCompleted);
     }
 
-    private async ValueTask OnDatabaseSyncCompleted(DatabaseSyncCompleted _)
+    private async ValueTask OnDatabaseSyncCompleted(DatabaseSyncCompleted args)
     {
-        await using var context = contextFactory.CreateDbContext(locale.Current);
-        UpgradeComponents = await context.Set<UpgradeComponent>().AsNoTracking()
-            .ToDictionaryAsync(upgrade => upgrade.Id);
+        if (args.Updated["items"] > 0)
+        {
+            await using var context = contextFactory.CreateDbContext(locale.Current);
+            UpgradeComponents = await context.Set<UpgradeComponent>().AsNoTracking()
+                .ToDictionaryAsync(upgrade => upgrade.Id);
+        }
     }
 
     public void Dispose()

@@ -83,21 +83,25 @@ public sealed class DatabaseSeeder : IDisposable
 
     private async Task Seed(ChatLinksContext context, Language language, CancellationToken cancellationToken)
     {
-        await SeedItems(context, language, cancellationToken);
-        await SeedSkins(context, language, cancellationToken);
-        await SeedRecipes(context, language, cancellationToken);
-        await SeedColors(context, language, cancellationToken);
-        await SeedFinishers(context, language, cancellationToken);
-        await SeedGliders(context, language, cancellationToken);
-        await SeedJadeBots(context, language, cancellationToken);
-        await SeedMailCarriers(context, language, cancellationToken);
-        await SeedMistChampions(context, language, cancellationToken);
-        await SeedNovelties(context, language, cancellationToken);
-        await SeedOutfits(context, language, cancellationToken);
-        await _eventAggregator.PublishAsync(new DatabaseSyncCompleted(), cancellationToken);
+        var inserted = new Dictionary<string, int>
+        {
+            ["items"] = await SeedItems(context, language, cancellationToken),
+            ["skins"] = await SeedSkins(context, language, cancellationToken),
+            ["recipes"] = await SeedRecipes(context, language, cancellationToken),
+            ["colors"] = await SeedColors(context, language, cancellationToken),
+            ["finishers"] = await SeedFinishers(context, language, cancellationToken),
+            ["gliders"] = await SeedGliders(context, language, cancellationToken),
+            ["jadeBots"] = await SeedJadeBots(context, language, cancellationToken),
+            ["mailCarriers"] = await SeedMailCarriers(context, language, cancellationToken),
+            ["mistChampions"] = await SeedMistChampions(context, language, cancellationToken),
+            ["novelties"] = await SeedNovelties(context, language, cancellationToken),
+            ["outfits"] = await SeedOutfits(context, language, cancellationToken)
+        };
+
+        await _eventAggregator.PublishAsync(new DatabaseSyncCompleted(inserted), cancellationToken);
     }
 
-    private async Task SeedItems(ChatLinksContext context, Language language, CancellationToken cancellationToken)
+    private async Task<int> SeedItems(ChatLinksContext context, Language language, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Start seeding items.");
 
@@ -142,9 +146,10 @@ public sealed class DatabaseSeeder : IDisposable
         }
 
         _logger.LogInformation("Finished seeding {Count} items.", index.Count);
+        return index.Count;
     }
 
-    private async Task SeedSkins(ChatLinksContext context, Language language, CancellationToken cancellationToken)
+    private async Task<int> SeedSkins(ChatLinksContext context, Language language, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Start seeding skins.");
 
@@ -189,9 +194,10 @@ public sealed class DatabaseSeeder : IDisposable
         }
 
         _logger.LogInformation("Finished seeding {Count} skins.", index.Count);
+        return index.Count;
     }
 
-    private async Task SeedColors(ChatLinksContext context, Language language, CancellationToken cancellationToken)
+    private async Task<int> SeedColors(ChatLinksContext context, Language language, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Start seeding colors.");
 
@@ -218,9 +224,10 @@ public sealed class DatabaseSeeder : IDisposable
         }
 
         _logger.LogInformation("Finished seeding {Count} colors.", index.Count);
+        return index.Count;
     }
 
-    private async Task SeedRecipes(ChatLinksContext context, Language language, CancellationToken cancellationToken)
+    private async Task<int> SeedRecipes(ChatLinksContext context, Language language, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Start seeding recipes.");
 
@@ -264,9 +271,10 @@ public sealed class DatabaseSeeder : IDisposable
         }
 
         _logger.LogInformation("Finished seeding {Count} recipes.", index.Count);
+        return index.Count;
     }
 
-    private async Task SeedFinishers(ChatLinksContext context, Language language, CancellationToken cancellationToken)
+    private async Task<int> SeedFinishers(ChatLinksContext context, Language language, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Start seeding finishers.");
 
@@ -293,9 +301,10 @@ public sealed class DatabaseSeeder : IDisposable
         }
 
         _logger.LogInformation("Finished seeding {Count} finishers.", index.Count);
+        return index.Count;
     }
 
-    private async Task SeedGliders(ChatLinksContext context, Language language, CancellationToken cancellationToken)
+    private async Task<int> SeedGliders(ChatLinksContext context, Language language, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Start seeding gliders.");
 
@@ -322,9 +331,10 @@ public sealed class DatabaseSeeder : IDisposable
         }
 
         _logger.LogInformation("Finished seeding {Count} gliders.", index.Count);
+        return index.Count;
     }
 
-    private async Task SeedJadeBots(ChatLinksContext context, Language language, CancellationToken cancellationToken)
+    private async Task<int> SeedJadeBots(ChatLinksContext context, Language language, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Start seeding jade bots.");
 
@@ -351,9 +361,10 @@ public sealed class DatabaseSeeder : IDisposable
         }
 
         _logger.LogInformation("Finished seeding {Count} jade bots.", index.Count);
+        return index.Count;
     }
 
-    private async Task SeedMailCarriers(ChatLinksContext context, Language language,
+    private async Task<int> SeedMailCarriers(ChatLinksContext context, Language language,
         CancellationToken cancellationToken)
     {
         _logger.LogInformation("Start seeding mail carriers.");
@@ -381,9 +392,10 @@ public sealed class DatabaseSeeder : IDisposable
         }
 
         _logger.LogInformation("Finished seeding {Count} mail carriers.", index.Count);
+        return index.Count;
     }
 
-    private async Task SeedMistChampions(ChatLinksContext context, Language language,
+    private async Task<int> SeedMistChampions(ChatLinksContext context, Language language,
         CancellationToken cancellationToken)
     {
         _logger.LogInformation("Start seeding mist champions.");
@@ -393,7 +405,7 @@ public sealed class DatabaseSeeder : IDisposable
             .ValueOnly();
 
         var index = champions.SelectMany(champion => champion.Skins.Select(skin => skin.Id)).ToHashSet();
-       
+
         _logger.LogDebug("Found {Count} mist champions in the API.", index.Count);
         var existing = await context.MistChampions.Select(mistChampion => mistChampion.Id)
             .ToListAsync(cancellationToken: cancellationToken);
@@ -413,9 +425,10 @@ public sealed class DatabaseSeeder : IDisposable
         }
 
         _logger.LogInformation("Finished seeding {Count} mist champions.", index.Count);
+        return index.Count;
     }
 
-    private async Task SeedNovelties(ChatLinksContext context, Language language,
+    private async Task<int> SeedNovelties(ChatLinksContext context, Language language,
         CancellationToken cancellationToken)
     {
         _logger.LogInformation("Start seeding novelties.");
@@ -443,9 +456,10 @@ public sealed class DatabaseSeeder : IDisposable
         }
 
         _logger.LogInformation("Finished seeding {Count} novelties.", index.Count);
+        return index.Count;
     }
 
-    private async Task SeedOutfits(ChatLinksContext context, Language language,
+    private async Task<int> SeedOutfits(ChatLinksContext context, Language language,
         CancellationToken cancellationToken)
     {
         _logger.LogInformation("Start seeding outfits.");
@@ -473,6 +487,7 @@ public sealed class DatabaseSeeder : IDisposable
         }
 
         _logger.LogInformation("Finished seeding {Count} outfits.", index.Count);
+        return index.Count;
     }
 
     private static void DetachAllEntities(ChatLinksContext context)
