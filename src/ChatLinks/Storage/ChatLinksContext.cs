@@ -25,6 +25,8 @@ namespace SL.ChatLinks.Storage;
 
 public class ChatLinksContext(DbContextOptions options) : DbContext(options)
 {
+    public static int SchemaVersion => 3;
+
     public DbSet<Item> Items => Set<Item>();
 
     public DbSet<EquipmentSkin> Skins => Set<EquipmentSkin>();

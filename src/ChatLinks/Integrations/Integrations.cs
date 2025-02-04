@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Polly;
 
+using SL.ChatLinks.StaticFiles;
 using SL.ChatLinks.Storage;
 
 namespace SL.ChatLinks.Integrations;
@@ -27,6 +28,7 @@ public static class Integrations
         IHttpClientBuilder httpClientBuilder = services.AddHttpClient<Gw2Client>(
             static httpClient =>
             {
+                httpClient.BaseAddress = BaseAddress.DefaultUri;
                 httpClient.Timeout = Timeout.InfiniteTimeSpan;
             });
 
@@ -35,6 +37,31 @@ public static class Integrations
             MaxConnectionsPerServer = int.MaxValue
         });
 
+        httpClientBuilder.AddHttpMessageHandler(() =>
+        {
+            ResiliencePipeline<HttpResponseMessage> pipeline = new ResiliencePipelineBuilder<HttpResponseMessage>()
+                .AddTimeout(Resiliency.TotalTimeoutStrategy)
+                .AddRetry(Resiliency.RetryStrategy)
+                .AddCircuitBreaker(Resiliency.CircuitBreakerStrategy)
+                .AddHedging(Resiliency.HedgingStrategy)
+                .AddTimeout(Resiliency.AttemptTimeoutStrategy)
+                .Build();
+            return new ResilienceHandler(pipeline);
+        });
+    }
+
+    public static void AddStaticDataClient(this IServiceCollection services)
+    {
+        IHttpClientBuilder httpClientBuilder = services.AddHttpClient<StaticDataClient>(
+            static httpClient =>
+            {
+                httpClient.BaseAddress = new Uri("https://bhm.blishhud.com/sliekens.chat_links/");
+                httpClient.Timeout = Timeout.InfiniteTimeSpan;
+            });
+        httpClientBuilder.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+        {
+            MaxConnectionsPerServer = int.MaxValue
+        });
         httpClientBuilder.AddHttpMessageHandler(() =>
         {
             ResiliencePipeline<HttpResponseMessage> pipeline = new ResiliencePipelineBuilder<HttpResponseMessage>()

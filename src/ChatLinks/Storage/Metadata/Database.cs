@@ -4,5 +4,5 @@ public sealed record Database
 {
     public required string Name { get; set; }
 
-    public required long Seed { get; set; }
+    public required int SchemaVersion { get; set; }
 }

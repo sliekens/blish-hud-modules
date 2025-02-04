@@ -17,6 +17,7 @@ using GuildWars2.Pvp.MistChampions;
 using SL.ChatLinks.Storage.Metadata;
 
 using Language = GuildWars2.Language;
+using SL.ChatLinks.StaticFiles;
 
 namespace SL.ChatLinks;
 
@@ -26,23 +27,23 @@ public sealed class DatabaseSeeder : IDisposable
     private readonly IOptions<DatabaseOptions> _options;
     private readonly IDbContextFactory _contextFactory;
     private readonly IEventAggregator _eventAggregator;
-    private readonly IIntrospection _introspection;
     private readonly Gw2Client _gw2Client;
+    private readonly StaticDataClient _staticDataClient;
 
     public DatabaseSeeder(ILogger<DatabaseSeeder> logger,
         IOptions<DatabaseOptions> options,
         IDbContextFactory contextFactory,
         IEventAggregator eventAggregator,
-        IIntrospection introspection,
-        Gw2Client gw2Client)
+        Gw2Client gw2Client,
+        StaticDataClient staticDataClient
+    )
     {
         _logger = logger;
         _options = options;
         _contextFactory = contextFactory;
         _eventAggregator = eventAggregator;
-        _introspection = introspection;
         _gw2Client = gw2Client;
-
+        _staticDataClient = staticDataClient;
         eventAggregator.Subscribe<LocaleChanged>(OnLocaleChanged);
     }
 
@@ -53,18 +54,6 @@ public sealed class DatabaseSeeder : IDisposable
             await Migrate(args.Language);
             await Sync(args.Language, CancellationToken.None);
         });
-    }
-
-    private async ValueTask<DataManifest?> SeedDataManifest()
-    {
-        using var stream = _introspection.GetFileStream("manifest.json");
-        if (stream is null)
-        {
-            _logger.LogError("Failed to find seed manifest.json.");
-            return null;
-        }
-
-        return await JsonSerializer.DeserializeAsync<DataManifest>(stream);
     }
 
     private async ValueTask<DataManifest?> DataManifest()
@@ -107,42 +96,58 @@ public sealed class DatabaseSeeder : IDisposable
         return new FileInfo(location) is { Exists: false } or { Length: 0 };
     }
 
-    private async ValueTask Unpack(Database database, string location)
-    {
-        using var data = _introspection.GetFileStream(database.Name);
-        if (data is not null)
-        {
-            using var fileStream = File.OpenWrite(location);
-            await data.CopyToAsync(fileStream);
-        }
-    }
-
     public async Task Migrate(Language language)
     {
-        var currentDataManifest = await DataManifest();
-        var currentDatabase = currentDataManifest?.Databases[language.Alpha2Code];
-
-        var seedDataManifest = await SeedDataManifest();
-        if (seedDataManifest?.Databases.TryGetValue(language.Alpha2Code, out var seedDatabase) ?? false)
+        DataManifest? currentDataManifest = await DataManifest();
+        Database? currentDatabase = null;
+        bool shouldDownload = false;
+        if (currentDataManifest is not null)
         {
-            bool unpack = currentDatabase is null
-                          || seedDatabase.Seed > currentDatabase.Seed
-                          || IsEmpty(currentDatabase);
-
-            if (unpack)
+            if (currentDataManifest.Databases.TryGetValue(language.Alpha2Code, out currentDatabase))
             {
-                var location = Path.Combine(_options.Value.Directory, seedDatabase.Name);
-                await Unpack(seedDatabase, location);
+                shouldDownload = currentDatabase.SchemaVersion > ChatLinksContext.SchemaVersion
+                    || IsEmpty(currentDatabase);
+            }
+            else
+            {
+                shouldDownload = true;
+            }
+        }
+        else
+        {
+            shouldDownload = true;
+        }
+
+
+        if (shouldDownload)
+        {
+            var seedDataManifest = await _staticDataClient.GetSeedIndex(CancellationToken.None);
+            var seedDatabase = seedDataManifest.Databases
+                .SingleOrDefault(seed => seed.Version == ChatLinksContext.SchemaVersion && seed.Language == language.Alpha2Code);
+
+            if (seedDatabase is not null)
+            {
+                var name = Path.GetFileName(seedDatabase.Reference);
+                var destination = Path.Combine(_options.Value.Directory, name);
+                await _staticDataClient.Download(seedDatabase, destination, CancellationToken.None);
+
                 currentDataManifest ??= new DataManifest
                 {
                     Version = 1,
                     Databases = []
                 };
 
-                currentDatabase = seedDatabase;
-                currentDataManifest.Databases[language.Alpha2Code] = seedDatabase;
+                currentDatabase = new Database
+                {
+                    Name = name,
+                    SchemaVersion = seedDatabase.Version
+                };
+
+                currentDataManifest.Databases[language.Alpha2Code] = currentDatabase;
 
                 await SaveManifest(currentDataManifest);
+
+                await _eventAggregator.PublishAsync(new DatabaseDownloaded());
             }
         }
 
@@ -171,7 +176,7 @@ public sealed class DatabaseSeeder : IDisposable
             Database database = new()
             {
                 Name = _options.Value.DatabaseFileName(language),
-                Seed = seed
+                SchemaVersion = ChatLinksContext.SchemaVersion
             };
 
             await using var context = _contextFactory.CreateDbContext(database.Name);

@@ -56,6 +56,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         services.AddSingleton<ILocale, OverlayLocale>();
         services.AddSingleton<IIntrospection, ModuleIntrospection>();
         services.AddGw2Client();
+        services.AddStaticDataClient();
 
         services.AddDatabase(options =>
         {

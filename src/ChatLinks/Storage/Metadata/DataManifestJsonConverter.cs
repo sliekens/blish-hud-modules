@@ -58,12 +58,17 @@ public sealed class DataManifestJsonConverter : JsonConverter<DataManifest>
                 continue;
             }
 
-            if (!database.Value.TryGetProperty("seed", out var seedElement))
+            if (!database.Value.TryGetProperty("schema_version", out var schemaVersionElement))
             {
                 continue;
             }
 
-            if (seedElement.ValueKind != JsonValueKind.Number)
+            if (schemaVersionElement.ValueKind != JsonValueKind.Number)
+            {
+                continue;
+            }
+
+            if (!schemaVersionElement.TryGetInt32(out var schemaVersion))
             {
                 continue;
             }
@@ -77,7 +82,7 @@ public sealed class DataManifestJsonConverter : JsonConverter<DataManifest>
             databases.Add(database.Name, new Database
             {
                 Name = name!,
-                Seed = seedElement.GetInt64()
+                SchemaVersion = schemaVersion
             });
         }
 
@@ -97,7 +102,7 @@ public sealed class DataManifestJsonConverter : JsonConverter<DataManifest>
         {
             writer.WriteStartObject(pair.Key);
             writer.WriteString("name", pair.Value.Name);
-            writer.WriteNumber("seed", pair.Value.Seed);
+            writer.WriteNumber("schema_version", pair.Value.SchemaVersion);
             writer.WriteEndObject();
         }
         writer.WriteEndObject();

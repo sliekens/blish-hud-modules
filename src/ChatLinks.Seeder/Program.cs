@@ -16,6 +16,7 @@ var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
         services.AddGw2Client();
+        services.AddStaticDataClient();
         services.AddDatabase(options =>
         {
             string directory = hostContext.Configuration["Database:Directory"];

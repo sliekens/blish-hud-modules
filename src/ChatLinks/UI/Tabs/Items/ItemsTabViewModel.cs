@@ -40,10 +40,16 @@ public sealed class ItemsTabViewModel(
     public void Initialize()
     {
         eventAggregator.Subscribe<LocaleChanged>(OnLocaleChanged);
+        eventAggregator.Subscribe<DatabaseDownloaded>(OnDatabaseDownloaded);
         eventAggregator.Subscribe<DatabaseSyncCompleted>(OnDatabaseSyncCompleted);
     }
 
     private async ValueTask OnLocaleChanged(LocaleChanged args)
+    {
+        await Task.Run(OnSearch);
+    }
+
+    private async ValueTask OnDatabaseDownloaded(DatabaseDownloaded downloaded)
     {
         await Task.Run(OnSearch);
     }
