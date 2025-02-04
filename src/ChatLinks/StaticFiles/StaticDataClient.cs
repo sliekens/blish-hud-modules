@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System.IO.Compression;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text.Json;
 
@@ -17,7 +18,7 @@ public sealed class StaticDataClient(HttpClient httpClient)
 
     public async Task Download(SeedDatabase database, string destination, CancellationToken cancellationToken)
     {
-        using var response = await httpClient.GetAsync(database.Reference, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+        using var response = await httpClient.GetAsync(database.Url, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
         using var content = await response.Content.ReadAsStreamAsync();
         response.EnsureSuccessStatusCode();
         var tmp = Path.GetTempFileName();
@@ -39,6 +40,17 @@ public sealed class StaticDataClient(HttpClient httpClient)
         }
 
         File.Delete(destination);
-        File.Move(tmp, destination);
+        DecompressGzipFile(tmp, destination);
+        File.Delete(tmp);
+    }
+
+    private void DecompressGzipFile(string sourceFile, string destinationFile)
+    {
+        using (var sourceStream = new FileStream(sourceFile, FileMode.Open, FileAccess.Read))
+        using (var decompressionStream = new GZipStream(sourceStream, CompressionMode.Decompress))
+        using (var destinationStream = new FileStream(destinationFile, FileMode.Create, FileAccess.Write))
+        {
+            decompressionStream.CopyTo(destinationStream);
+        }
     }
 }

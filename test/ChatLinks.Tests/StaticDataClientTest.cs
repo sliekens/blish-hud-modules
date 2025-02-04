@@ -25,10 +25,11 @@ public class StaticDataClientTest
         Assert.NotEmpty(actual.Databases);
         Assert.All(actual.Databases, database =>
         {
-            Assert.True(database.Version >= 3);
+            Assert.True(database.SchemaVersion >= 3);
             Assert.True(database.Language is "en" or "fr" or "de" or "es");
+            Assert.NotEmpty(database.Name);
+            Assert.NotEmpty(database.Url);
             Assert.NotEmpty(database.SHA256);
-            Assert.NotEmpty(database.Reference);
         });
     }
 }

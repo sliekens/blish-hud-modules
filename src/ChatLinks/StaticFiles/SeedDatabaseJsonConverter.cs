@@ -14,38 +14,43 @@ public sealed class SeedDatabaseJsonConverter : JsonConverter<SeedDatabase>
             return null;
         }
 
-        JsonElement versionElement = default;
+        JsonElement schemaVersionElement = default;
         JsonElement languageElement = default;
+        JsonElement nameElement = default;
+        JsonElement urlElement = default;
         JsonElement sha256Element = default;
-        JsonElement referenceElement = default;
 
         foreach (var property in root.EnumerateObject())
         {
-            if (property.NameEquals("version"))
+            if (property.NameEquals("schema_version"))
             {
-                versionElement = property.Value;
+                schemaVersionElement = property.Value;
             }
             else if (property.NameEquals("lang"))
             {
                 languageElement = property.Value;
             }
+            else if (property.NameEquals("name"))
+            {
+                nameElement = property.Value;
+            }
+            else if (property.NameEquals("url"))
+            {
+                urlElement = property.Value;
+            }
             else if (property.NameEquals("sha256"))
             {
                 sha256Element = property.Value;
             }
-            else if (property.NameEquals("ref"))
-            {
-                referenceElement = property.Value;
-            }
         }
 
-        if (versionElement.ValueKind != JsonValueKind.Number)
+        if (schemaVersionElement.ValueKind != JsonValueKind.Number)
         {
             return null;
         }
 
-        int version;
-        if (!versionElement.TryGetInt32(out version))
+        int schemaVersion;
+        if (!schemaVersionElement.TryGetInt32(out schemaVersion))
         {
             return null;
         }
@@ -56,7 +61,34 @@ public sealed class SeedDatabaseJsonConverter : JsonConverter<SeedDatabase>
         }
 
         string? language = languageElement.GetString();
-        if (languageElement.ValueKind != JsonValueKind.String || string.IsNullOrWhiteSpace(language))
+        if (string.IsNullOrWhiteSpace(language))
+        {
+            return null;
+        }
+
+        if (nameElement.ValueKind != JsonValueKind.String)
+        {
+            return null;
+        }
+
+        string? name = nameElement.GetString();
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return null;
+        }
+
+        if (urlElement.ValueKind != JsonValueKind.String)
+        {
+            return null;
+        }
+
+        string? url = urlElement.GetString();
+        if (string.IsNullOrWhiteSpace(url))
+        {
+            return null;
+        }
+
+        if (sha256Element.ValueKind != JsonValueKind.String)
         {
             return null;
         }
@@ -67,34 +99,24 @@ public sealed class SeedDatabaseJsonConverter : JsonConverter<SeedDatabase>
             return null;
         }
 
-
-        if (referenceElement.ValueKind != JsonValueKind.String)
-        {
-            return null;
-        }
-
-        string? reference = referenceElement.GetString();
-        if (string.IsNullOrWhiteSpace(reference))
-        {
-            return null;
-        }
-
         return new SeedDatabase
         {
-            Version = version,
+            SchemaVersion = schemaVersion,
             Language = language!,
-            SHA256 = sha256!,
-            Reference = reference!
+            Name = name!,
+            Url = url!,
+            SHA256 = sha256!
         };
     }
 
     public override void Write(Utf8JsonWriter writer, SeedDatabase value, JsonSerializerOptions options)
     {
         writer.WriteStartObject();
-        writer.WriteNumber("version", value.Version);
+        writer.WriteNumber("schema_version", value.SchemaVersion);
         writer.WriteString("lang", value.Language);
+        writer.WriteString("name", value.Name);
+        writer.WriteString("url", value.Url);
         writer.WriteString("sha256", value.SHA256);
-        writer.WriteString("ref", value.Reference);
         writer.WriteEndObject();
     }
 }

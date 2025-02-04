@@ -118,17 +118,15 @@ public sealed class DatabaseSeeder : IDisposable
             shouldDownload = true;
         }
 
-
         if (shouldDownload)
         {
             var seedDataManifest = await _staticDataClient.GetSeedIndex(CancellationToken.None);
             var seedDatabase = seedDataManifest.Databases
-                .SingleOrDefault(seed => seed.Version == ChatLinksContext.SchemaVersion && seed.Language == language.Alpha2Code);
+                .SingleOrDefault(seed => seed.SchemaVersion == ChatLinksContext.SchemaVersion && seed.Language == language.Alpha2Code);
 
             if (seedDatabase is not null)
             {
-                var name = Path.GetFileName(seedDatabase.Reference);
-                var destination = Path.Combine(_options.Value.Directory, name);
+                var destination = Path.Combine(_options.Value.Directory, seedDatabase.Name);
                 await _staticDataClient.Download(seedDatabase, destination, CancellationToken.None);
 
                 currentDataManifest ??= new DataManifest
@@ -139,8 +137,8 @@ public sealed class DatabaseSeeder : IDisposable
 
                 currentDatabase = new Database
                 {
-                    Name = name,
-                    SchemaVersion = seedDatabase.Version
+                    Name = seedDatabase.Name,
+                    SchemaVersion = seedDatabase.SchemaVersion
                 };
 
                 currentDataManifest.Databases[language.Alpha2Code] = currentDatabase;

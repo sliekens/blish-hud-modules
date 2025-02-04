@@ -11,11 +11,13 @@ public sealed record SeedIndex
 [JsonConverter(typeof(SeedDatabaseJsonConverter))]
 public sealed record SeedDatabase
 {
-    public required int Version { get; init; }
+    public required int SchemaVersion { get; init; }
 
     public required string Language { get; init; }
 
-    public required string SHA256 { get; init; }
+    public required string Name { get; init; }
 
-    public required string Reference { get; init; }
+    public required string Url { get; init; }
+
+    public required string SHA256 { get; init; }
 }
