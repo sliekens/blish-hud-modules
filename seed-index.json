@@ -1,0 +1,32 @@
+{
+    "databases": [
+        {
+            "schema_version": 3,
+            "lang": "en",
+            "name": "data.db",
+            "url": "v3/data.db.gz",
+            "sha256": "E4AD87E74A00CFD88AEC1FFFA84382C21595582F6BD13CDA36B103F72D16C02A"
+        },
+        {
+            "schema_version": 3,
+            "lang": "de",
+            "name": "data_de.db",
+            "url": "v3/data_de.db.gz",
+            "sha256": "24E330BE46F4DC314A8525BAC0CF0D039A3891B1316F2F4AF14AA77ECBF83A62"
+        },
+        {
+            "schema_version": 3,
+            "lang": "es",
+            "name": "data_es.db",
+            "url": "v3/data_es.db.gz",
+            "sha256": "A610F749745799275DC2E86526DB7C0EAE6359F9FEF58AA4EE0CC3807CE70EB9"
+        },
+        {
+            "schema_version": 3,
+            "lang": "fr",
+            "name": "data_fr.db",
+            "url": "v3/data_fr.db.gz",
+            "sha256": "7891AF540A2EC5E51862239E7249C72A9825ACE94B59DBAC9B73D8F9AB9B1801"
+        }
+    ]
+}
