@@ -11,7 +11,6 @@ public sealed class ItemsTabViewModelFactory(
     IOptionsMonitor<ChatLinkOptions> options,
     IEventAggregator eventAggregator,
     ItemSearch search,
-    Customizer customizer,
     ItemsListViewModelFactory itemsListViewModelFactory,
     ChatLinkEditorViewModelFactory chatLinkEditorViewModelFactory)
 {
@@ -22,7 +21,6 @@ public sealed class ItemsTabViewModelFactory(
             options,
             eventAggregator,
             search,
-            customizer,
             itemsListViewModelFactory,
             chatLinkEditorViewModelFactory
         );

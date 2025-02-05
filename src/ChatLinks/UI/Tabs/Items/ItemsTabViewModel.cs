@@ -20,7 +20,6 @@ public sealed class ItemsTabViewModel(
     IOptionsMonitor<ChatLinkOptions> options,
     IEventAggregator eventAggregator,
     ItemSearch search,
-    Customizer customizer,
     ItemsListViewModelFactory itemsListViewModelFactory,
     ChatLinkEditorViewModelFactory chatLinkEditorViewModelFactory)
     : ViewModel, IDisposable
