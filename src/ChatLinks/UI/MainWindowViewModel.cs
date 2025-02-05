@@ -10,7 +10,7 @@ namespace SL.ChatLinks.UI;
 
 public sealed class MainWindowViewModel(
     IEventAggregator eventAggregator,
-    ItemsTabViewFactory itemsTabViewFactory,
+    ItemsTabViewModelFactory itemsTabViewModelFactory,
     IStringLocalizer<MainWindow> localizer) : ViewModel
 {
     private bool _visible;
@@ -25,6 +25,7 @@ public sealed class MainWindowViewModel(
     private void OnLocaleChanged(LocaleChanged obj)
     {
         OnPropertyChanged(nameof(Title));
+        OnPropertyChanged(nameof(ItemsTabName));
     }
 
     private void MainIconClicked(MainIconClicked obj)
@@ -42,17 +43,16 @@ public sealed class MainWindowViewModel(
 
     public string Title => localizer["Title"];
 
+    public string ItemsTabName => localizer["Items"];
+
     public AsyncTexture2D BackgroundTexture => AsyncTexture2D.FromAssetId(155985);
 
     public AsyncTexture2D EmblemTexture => AsyncTexture2D.FromAssetId(2237584);
 
-    public IEnumerable<Tab> Tabs()
+
+    public ItemsTabViewModel CreateItemsTabViewModel()
     {
-        yield return new Tab(
-            AsyncTexture2D.FromAssetId(156699),
-            itemsTabViewFactory.Create,
-            "Items",
-            1);
+        return itemsTabViewModelFactory.Create();
     }
 
     private void ModuleUnloading(ModuleUnloading obj)

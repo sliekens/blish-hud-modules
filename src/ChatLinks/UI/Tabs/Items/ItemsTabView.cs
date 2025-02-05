@@ -1,7 +1,6 @@
 ﻿using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
 
-using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 
 using SL.ChatLinks.UI.Tabs.Items.Collections;
@@ -20,7 +19,7 @@ public class ItemsTabView : View
 
     private readonly ViewContainer _editor;
 
-    public ItemsTabView(ILogger<ItemsTabView> logger, ItemsTabViewModel viewModel)
+    public ItemsTabView(ItemsTabViewModel viewModel)
     {
         ViewModel = viewModel;
         ViewModel.Initialize();

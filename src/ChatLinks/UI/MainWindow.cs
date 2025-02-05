@@ -1,15 +1,20 @@
 ﻿using System.ComponentModel;
 
 using Blish_HUD;
+using Blish_HUD.Content;
 using Blish_HUD.Controls;
 
 using Microsoft.Xna.Framework;
+
+using SL.ChatLinks.UI.Tabs.Items;
 
 namespace SL.ChatLinks.UI;
 
 public sealed class MainWindow : TabbedWindow2
 {
     private readonly AsyncEmblem _emblem;
+
+    private readonly Tab _itemsTab;
 
     public MainWindow(MainWindowViewModel viewModel) : base(
         viewModel.BackgroundTexture,
@@ -24,10 +29,14 @@ public sealed class MainWindow : TabbedWindow2
         Title = viewModel.Title;
         Location = new Point(300, 300);
         TabChanged += OnTabChanged;
-        foreach (var tab in viewModel.Tabs())
-        {
-            Tabs.Add(tab);
-        }
+
+        _itemsTab = new Tab(
+            AsyncTexture2D.FromAssetId(156699),
+            () => new ItemsTabView(viewModel.CreateItemsTabViewModel()),
+            viewModel.ItemsTabName,
+            1);
+
+        Tabs.Add(_itemsTab);
 
         PropertyChanged += ViewPropertyChanged;
         viewModel.PropertyChanged += ModelPropertyChanged;
@@ -52,6 +61,11 @@ public sealed class MainWindow : TabbedWindow2
         {
             case nameof(ViewModel.Title):
                 Title = ViewModel.Title;
+                break;
+
+            case nameof(ViewModel.ItemsTabName):
+                _itemsTab.Name = ViewModel.ItemsTabName;
+                Subtitle = ViewModel.ItemsTabName;
                 break;
 
             case nameof(ViewModel.Visible):
