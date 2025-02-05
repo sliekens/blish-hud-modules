@@ -7,18 +7,27 @@ using GuildWars2.Authorization;
 
 using Gw2Sharp.WebApi.V2.Models;
 
+using Microsoft.Extensions.Logging;
+
 using SL.Common;
 
 namespace SL.Adapters;
 
 public class Gw2SharpTokenProvider : ITokenProvider
 {
+    private readonly ILogger<Gw2SharpTokenProvider> _logger;
+
     private readonly ModuleParameters _parameters;
 
     private readonly IEventAggregator _eventAggregator;
 
-    public Gw2SharpTokenProvider(ModuleParameters parameters, IEventAggregator eventAggregator)
+    public Gw2SharpTokenProvider(
+        ILogger<Gw2SharpTokenProvider> logger,
+        ModuleParameters parameters,
+        IEventAggregator eventAggregator
+    )
     {
+        _logger = logger;
         _parameters = parameters;
         _eventAggregator = eventAggregator;
         Grants = parameters.Gw2ApiManager.Permissions
@@ -48,15 +57,29 @@ public class Gw2SharpTokenProvider : ITokenProvider
 
     private async Task<string?> GetTokenInternal(CancellationToken cancellationToken)
     {
-        var createdSubToken = await _parameters
-            .Gw2ApiManager
-            .Gw2ApiClient
-            .V2
-            .CreateSubtoken
-            .WithPermissions(_parameters.Gw2ApiManager.Permissions)
-            .GetAsync(cancellationToken);
+        if (!_parameters.Gw2ApiManager.HasSubtoken)
+        {
+            _logger.LogWarning("API key is missing or subtoken is not yet available.");
+            return null;
+        }
 
-        return createdSubToken.Subtoken;
+        try
+        {
+            var createdSubToken = await _parameters
+                .Gw2ApiManager
+                .Gw2ApiClient
+                .V2
+                .CreateSubtoken
+                .WithPermissions(_parameters.Gw2ApiManager.Permissions)
+                .GetAsync(cancellationToken);
+
+            return createdSubToken.Subtoken;
+        }
+        catch (Exception reason)
+        {
+            _logger.LogWarning(reason, "Failed to create subtoken.");
+            return null;
+        }
     }
 
     private static Permission MapPermission(TokenPermission permission)
