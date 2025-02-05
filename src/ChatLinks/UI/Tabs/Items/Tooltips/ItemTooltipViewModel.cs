@@ -1,9 +1,15 @@
 ﻿using Blish_HUD.Content;
 
 using GuildWars2;
+using GuildWars2.Guilds.Upgrades;
 using GuildWars2.Hero;
+using GuildWars2.Hero.Equipment.Gliders;
+using GuildWars2.Hero.Equipment.MailCarriers;
+using GuildWars2.Hero.Equipment.Novelties;
+using GuildWars2.Hero.Equipment.Outfits;
 using GuildWars2.Hero.Equipment.Wardrobe;
 using GuildWars2.Items;
+using GuildWars2.Pvp.MistChampions;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
@@ -187,8 +193,7 @@ public sealed class ItemTooltipViewModel(
                         }
                         else
                         {
-                            AuthorizationText =
-                                "Grant 'unlocks' permission in settings to see unlock status";
+                            AuthorizationText = localizer["Grant unlocks permission"];
                         }
 
                         DefaultLocked = true;
@@ -211,8 +216,8 @@ public sealed class ItemTooltipViewModel(
                         }
                         else
                         {
-                            AuthorizationText =
-                                "Grant 'unlocks' permission in settings to see unlock status";
+                            AuthorizationText = localizer["Grant unlocks permission"];
+
                         }
 
                         DefaultLocked = true;
@@ -240,8 +245,7 @@ public sealed class ItemTooltipViewModel(
                         }
                         else
                         {
-                            AuthorizationText =
-                                "Grant 'unlocks' permission in settings to see unlock status";
+                            AuthorizationText = localizer["Grant unlocks permission"];
                         }
 
                         DefaultLocked = true;
@@ -275,8 +279,7 @@ public sealed class ItemTooltipViewModel(
                         }
                         else
                         {
-                            AuthorizationText =
-                                "Grant 'unlocks' permission in settings to see unlock status";
+                            AuthorizationText = localizer["Grant unlocks permission"];
                         }
 
                         DefaultLocked = true;
@@ -298,15 +301,14 @@ public sealed class ItemTooltipViewModel(
                         context.JadeBots.FirstOrDefault(jadeBotSkin => jadeBotSkin.UnlockItemId == unlocker.Id);
                     if (jadeBotSkin is not null)
                     {
-                        if (hero is { UnlocksAvailable: true, InventoriesAvailable: true })
+                        if (hero.UnlocksAvailable && hero.InventoriesAvailable)
                         {
                             var unlocks = await hero.GetUnlockedJadeBotSkins(CancellationToken.None);
                             Unlocked = unlocks.Contains(jadeBotSkin.Id);
                         }
                         else
                         {
-                            AuthorizationText =
-                                "Grant 'unlocks' and 'inventories' permission in settings to see unlock status";
+                            AuthorizationText = localizer["Grant unlocks and inventories permission"];
                         }
 
                         DefaultLocked = true;
@@ -340,8 +342,7 @@ public sealed class ItemTooltipViewModel(
                         }
                         else
                         {
-                            AuthorizationText =
-                                "Grant 'unlocks' permission in settings to see unlock status";
+                            AuthorizationText = localizer["Grant unlocks permission"];
                         }
 
                         DefaultLocked = true;
@@ -376,8 +377,7 @@ public sealed class ItemTooltipViewModel(
                         }
                         else
                         {
-                            AuthorizationText =
-                                "Grant 'unlocks' permission in settings to see unlock status";
+                            AuthorizationText = localizer["Grant unlocks permission"];
                         }
 
                         DefaultLocked = true;
@@ -456,8 +456,7 @@ public sealed class ItemTooltipViewModel(
                         }
                         else
                         {
-                            AuthorizationText =
-                                "Grant 'unlocks' permission in settings to see unlock status";
+                            AuthorizationText = localizer["Grant unlocks permission"];
                         }
 
                         DefaultLocked = true;
@@ -488,7 +487,7 @@ public sealed class ItemTooltipViewModel(
             }
             else
             {
-                AuthorizationText = "Grant 'unlocks' permission in settings to see unlock status";
+                AuthorizationText = localizer["Grant unlocks permission"];
             }
         }
         catch (Exception reason)

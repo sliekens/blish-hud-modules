@@ -127,6 +127,9 @@
     <value>¡Ya conoces todas estas recetas!</value>
   </data>
   <data name="Grant unlocks permission" xml:space="preserve">
-    <value>Para ver el estado de desbloqueo, otorgue el permiso "desbloqueos" en la configuración.</value>
+    <value>Para ver el estado de desbloqueo, registre una clave API con permisos de «Account» y «Unlocks».</value>
+  </data>
+  <data name="Grant unlocks and inventories permission" xml:space="preserve">
+    <value>Para ver el estado de desbloqueo, registre una clave API con permisos de «Account», «Unlocks» e «Inventories».</value>
   </data>
 </root>

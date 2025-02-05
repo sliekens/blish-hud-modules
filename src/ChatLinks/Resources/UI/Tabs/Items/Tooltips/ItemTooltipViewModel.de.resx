@@ -127,6 +127,9 @@
     <value>Ihr kennt alle diese Rezepte bereits!</value>
   </data>
   <data name="Grant unlocks permission" xml:space="preserve">
-    <value>Um den Entsperrstatus zu sehen, erteilen Sie in den Einstellungen die Berechtigung "Entsperrungen".</value>
+    <value>Um den Status der Freischaltung zu sehen, registrieren Sie einen API-Schlüssel mit den Berechtigungen „Account“ und „Unlocks“.</value>
+  </data>
+  <data name="Grant unlocks and inventories permission" xml:space="preserve">
+    <value>Um den Freigabestatus zu sehen, registrieren Sie einen API-Schlüssel mit den Berechtigungen „Account“, „Unlocks“ und „Inventories“.</value>
   </data>
 </root>

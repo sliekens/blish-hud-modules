@@ -127,6 +127,9 @@
     <value>Vous connaissez déjà toutes ces recettes !</value>
   </data>
   <data name="Grant unlocks permission" xml:space="preserve">
-    <value>Pour voir le statut de déverrouillage, accorde la permission « déverrouillages » dans les paramètres.</value>
+    <value>Pour connaître l'état de déverrouillage, enregistrez une clé API avec les autorisations « Account » et « Unlocks ».</value>
+  </data>
+  <data name="Grant unlocks and inventories permission" xml:space="preserve">
+    <value>Pour afficher l'état de déverrouillage, enregistrez une clé API avec les autorisations « Account », « Unlocks » et « Inventories ».</value>
   </data>
 </root>

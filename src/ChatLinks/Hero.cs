@@ -24,9 +24,11 @@ public sealed partial class Hero : IDisposable
         eventAggregator.Subscribe<AuthorizationInvalidated>(OnAuthorizationInvalidated);
     }
 
-    public bool InventoriesAvailable => _tokenProvider.Grants.Contains(Permission.Inventories);
+    public bool IsAuthorized => _tokenProvider.IsAuthorized;
 
-    public bool UnlocksAvailable => _tokenProvider.Grants.Contains(Permission.Unlocks);
+    public bool InventoriesAvailable => IsAuthorized && _tokenProvider.Grants.Contains(Permission.Inventories);
+
+    public bool UnlocksAvailable => IsAuthorized && _tokenProvider.Grants.Contains(Permission.Unlocks);
 
     private async ValueTask OnAuthorizationInvalidated(AuthorizationInvalidated _)
     {

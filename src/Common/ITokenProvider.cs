@@ -4,7 +4,9 @@ namespace SL.Common;
 
 public interface ITokenProvider
 {
-    public IReadOnlyList<Permission> Grants { get; }
+    bool IsAuthorized { get; }
+    
+    IReadOnlyList<Permission> Grants { get; }
 
-    public Task<string?> GetTokenAsync(CancellationToken cancellationToken);
+    Task<string?> GetTokenAsync(CancellationToken cancellationToken);
 }

@@ -127,6 +127,9 @@
     <value>You already know all of these recipes!</value>
   </data>
   <data name="Grant unlocks permission" xml:space="preserve">
-    <value>To see the unlock status, grant the "unlocks" permission in the settings.</value>
+    <value>To see the unlock status, register an API key with "Account" and "Unlocks" permissions.</value>
+  </data>
+  <data name="Grant unlocks and inventories permission" xml:space="preserve">
+    <value>To see the unlock status, register an API key with "Account", "Unlocks" and "Inventories" permissions.</value>
   </data>
 </root>

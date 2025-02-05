@@ -37,19 +37,12 @@ public class Gw2SharpTokenProvider : ITokenProvider
         parameters.Gw2ApiManager.SubtokenUpdated += OnSubtokenUpdated;
     }
 
+    public bool IsAuthorized => _parameters.Gw2ApiManager.HasSubtoken
+        && _parameters.Gw2ApiManager.HasPermission(TokenPermission.Account);
+
     public string? Token { get; private set; }
 
     public IReadOnlyList<Permission> Grants { get; private set; }
-
-    private void OnSubtokenUpdated(object sender, ValueEventArgs<IEnumerable<TokenPermission>> args)
-    {
-        Token = null;
-        Grants = args.Value
-            .Select(MapPermission)
-            .ToImmutableList();
-
-        _eventAggregator.Publish(new AuthorizationInvalidated(Grants));
-    }
 
     public async Task<string?> GetTokenAsync(CancellationToken cancellationToken)
     {
@@ -100,5 +93,15 @@ public class Gw2SharpTokenProvider : ITokenProvider
             (TokenPermission)11 => Permission.Wvw,
             _ => default
         };
+    }
+
+    private void OnSubtokenUpdated(object sender, ValueEventArgs<IEnumerable<TokenPermission>> args)
+    {
+        Token = null;
+        Grants = args.Value
+            .Select(MapPermission)
+            .ToImmutableList();
+
+        _eventAggregator.Publish(new AuthorizationInvalidated(Grants));
     }
 }
