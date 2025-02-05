@@ -95,7 +95,7 @@ public sealed class ItemsTabViewModel(
 
     public async Task LoadAsync()
     {
-        await NewItems(CancellationToken.None);
+        await Task.Run(async () => await NewItems(CancellationToken.None));
     }
 
     public ChatLinkEditorViewModel CreateChatLinkEditorViewModel(Item item)
