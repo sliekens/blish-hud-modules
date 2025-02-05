@@ -31,6 +31,7 @@ public class Gw2SharpTokenProvider : ITokenProvider
         _parameters = parameters;
         _eventAggregator = eventAggregator;
         Grants = parameters.Gw2ApiManager.Permissions
+            .Where(parameters.Gw2ApiManager.HasPermission)
             .Select(MapPermission)
             .ToImmutableList();
         parameters.Gw2ApiManager.SubtokenUpdated += OnSubtokenUpdated;
