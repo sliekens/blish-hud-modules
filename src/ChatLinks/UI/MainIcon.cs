@@ -21,9 +21,8 @@ public sealed class MainIcon : CornerIcon
         PropertyChanged += ViewPropertyChanged;
 
         Menu = new ContextMenuStrip();
-        Menu.AddMenuItem(ViewModel.KoFiCommand.ToMenuItem(() => "Buy me a coffee"));
 
-        var bananaModeItem = Menu.AddMenuItem("Banana of Imagination-mode");
+        var bananaModeItem = Menu.AddMenuItem(ViewModel.BananaModeLabel);
         bananaModeItem.CanCheck = true;
         bananaModeItem.Checked = viewModel.BananaMode;
         bananaModeItem.CheckedChanged += (sender, args) =>
@@ -31,7 +30,7 @@ public sealed class MainIcon : CornerIcon
             ViewModel.BananaMode = args.Checked;
         };
 
-        var raiseStackSizeItem = Menu.AddMenuItem("Raise stack size limit");
+        var raiseStackSizeItem = Menu.AddMenuItem(ViewModel.RaiseStackSizeLabel);
         raiseStackSizeItem.CanCheck = true;
         raiseStackSizeItem.Checked = viewModel.RaiseStackSize;
         raiseStackSizeItem.CheckedChanged += (sender, args) =>
@@ -39,17 +38,37 @@ public sealed class MainIcon : CornerIcon
             ViewModel.RaiseStackSize = args.Checked;
         };
 
-        Menu.AddMenuItem(ViewModel.SyncCommand.ToMenuItem(() => "Sync database"));
+        var syncItem = ViewModel.SyncCommand.ToMenuItem(() => ViewModel.SyncLabel);
+        Menu.AddMenuItem(syncItem);
+
+
+        var koFiItem = ViewModel.KoFiCommand.ToMenuItem(() => ViewModel.KoFiLabel);
+        Menu.AddMenuItem(koFiItem);
 
         viewModel.PropertyChanged += (_, args) =>
         {
             switch (args.PropertyName)
             {
+                case nameof(ViewModel.Name):
+                    IconName = viewModel.Name;
+                    break;
+                case nameof(ViewModel.BananaModeLabel):
+                    bananaModeItem.Text = viewModel.BananaModeLabel;
+                    break;
                 case nameof(ViewModel.BananaMode):
                     bananaModeItem.Checked = viewModel.BananaMode;
                     break;
+                case nameof(ViewModel.RaiseStackSizeLabel):
+                    raiseStackSizeItem.Text = viewModel.RaiseStackSizeLabel;
+                    break;
                 case nameof(ViewModel.RaiseStackSize):
                     raiseStackSizeItem.Checked = viewModel.RaiseStackSize;
+                    break;
+                case nameof(ViewModel.SyncLabel):
+                    syncItem.Text = viewModel.SyncLabel;
+                    break;
+                case nameof(ViewModel.KoFiLabel):
+                    koFiItem.Text = viewModel.KoFiLabel;
                     break;
                 case nameof(ViewModel.LoadingMessage):
                     LoadingMessage = ViewModel.LoadingMessage;

@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics;
-using System.Globalization;
 
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
 
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 
@@ -15,6 +15,7 @@ namespace SL.ChatLinks.UI;
 
 public class MainIconViewModel(
     ILogger<MainIconViewModel> logger,
+    IStringLocalizer<MainIcon> localizer,
     IEventAggregator eventAggregator,
     ILocale locale,
     DatabaseSeeder seeder,
@@ -33,8 +34,10 @@ public class MainIconViewModel(
 
     public void Initialize()
     {
-        eventAggregator.Subscribe<DatabaseSyncProgress>(DatabaseSyncProgress);
-        eventAggregator.Subscribe<DatabaseSyncCompleted>(DatabaseSyncCompleted);
+        eventAggregator.Subscribe<DatabaseSyncProgress>(OnDatabaseSyncProgress);
+        eventAggregator.Subscribe<DatabaseSyncCompleted>(OnDatabaseSyncCompleted);
+        eventAggregator.Subscribe<LocaleChanged>(OnLocaleChanged);
+        eventAggregator.Subscribe<ModuleUnloading>(OnModuleUnloading);
 
         ChangeToken.OnChange(settings.GetChangeToken, moduleSettings =>
         {
@@ -43,11 +46,23 @@ public class MainIconViewModel(
         }, settings);
     }
 
+    private void OnModuleUnloading(ModuleUnloading unloading)
+    {
+        eventAggregator.Unsubscribe<DatabaseSyncProgress>(OnDatabaseSyncProgress);
+        eventAggregator.Unsubscribe<DatabaseSyncCompleted>(OnDatabaseSyncCompleted);
+        eventAggregator.Unsubscribe<LocaleChanged>(OnLocaleChanged);
+        eventAggregator.Unsubscribe<ModuleUnloading>(OnModuleUnloading);
+    }
 
-    public string Name => """
-                          Chat links
-                          Right-click for options
-                          """;
+    public string Name => localizer["Name"];
+
+    public string KoFiLabel => localizer["Buy me a coffee"];
+
+    public string SyncLabel => localizer["Sync database"];
+
+    public string BananaModeLabel => localizer["Banana of Imagination-mode"];
+
+    public string RaiseStackSizeLabel => localizer["Raise stack size limit"];
 
     public AsyncTexture2D Texture => AsyncTexture2D.FromAssetId(155156);
 
@@ -106,12 +121,12 @@ public class MainIconViewModel(
                     await seeder.Sync(locale.Current, CancellationToken.None);
                 }, TaskCreationOptions.LongRunning);
 
-                ScreenNotification.ShowNotification("Everything is up-to-date.", ScreenNotification.NotificationType.Green);
+                ScreenNotification.ShowNotification(localizer["Chat Links database is up-to-date"], ScreenNotification.NotificationType.Green);
             }
             catch (Exception reason)
             {
                 logger.LogError(reason, "Sync failed");
-                ScreenNotification.ShowNotification("Sync failed, try again later.",
+                ScreenNotification.ShowNotification(localizer["Sync failed"],
                     ScreenNotification.NotificationType.Warning);
             }
         },
@@ -125,24 +140,28 @@ public class MainIconViewModel(
             DatabaseUpdated -= handler;
         });
 
-    private void DatabaseSyncProgress(DatabaseSyncProgress args)
+    private void OnDatabaseSyncProgress(DatabaseSyncProgress args)
     {
-        var step = args.Step switch
-        {
-            "items" => "items",
-            "skins" => "skins",
-            _ => args.Step
-        };
+        var step = localizer[args.Step];
 
-        LoadingMessage = $"Synchronizing {step}... ({args.Report.ResultCount} of {args.Report.ResultTotal})";
+        LoadingMessage = localizer["Downloading", step, args.Report.ResultCount, args.Report.ResultTotal];
         DatabaseUpdated?.Invoke(this, EventArgs.Empty);
     }
 
-    private void DatabaseSyncCompleted(DatabaseSyncCompleted args)
+    private void OnDatabaseSyncCompleted(DatabaseSyncCompleted args)
     {
         LoadingMessage = null;
         TooltipText = null;
         DatabaseUpdated?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void OnLocaleChanged(LocaleChanged changed)
+    {
+        OnPropertyChanged(nameof(Name));
+        OnPropertyChanged(nameof(KoFiLabel));
+        OnPropertyChanged(nameof(SyncLabel));
+        OnPropertyChanged(nameof(BananaModeLabel));
+        OnPropertyChanged(nameof(RaiseStackSizeLabel));
     }
 
     public RelayCommand KoFiCommand => new(() =>
