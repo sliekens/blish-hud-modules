@@ -176,9 +176,9 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
                 if (ViewModel.DefaultLocked)
                 {
-                    if (ViewModel.ContentUnlocksAvailable)
+                    if (ViewModel.Unlocked.HasValue)
                     {
-                        if (ViewModel.Unlocked!.Value)
+                        if (ViewModel.Unlocked.Value)
                         {
                             PrintPlainText("""
                                            You already have that content unlocked.
@@ -213,9 +213,9 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
                 if (ViewModel.DefaultLocked)
                 {
-                    if (ViewModel.DyeUnlocksAvailable)
+                    if (ViewModel.Unlocked.HasValue)
                     {
-                        if (ViewModel.Unlocked!.Value)
+                        if (ViewModel.Unlocked.Value)
                         {
                             PrintPlainText("""
                                            You have already unlocked this dye!
@@ -250,9 +250,9 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
                 if (ViewModel.DefaultLocked)
                 {
-                    if (ViewModel.GliderSkinUnlocksAvailable)
+                    if (ViewModel.Unlocked.HasValue)
                     {
-                        if (ViewModel.Unlocked!.Value)
+                        if (ViewModel.Unlocked.Value)
                         {
                             PrintPlainText("""
                                            You have already unlocked this glider!
@@ -287,9 +287,9 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
                 if (ViewModel.DefaultLocked)
                 {
-                    if (ViewModel.JadeBotSkinUnlocksAvailable)
+                    if (ViewModel.Unlocked.HasValue)
                     {
-                        if (ViewModel.Unlocked!.Value)
+                        if (ViewModel.Unlocked.Value)
                         {
                             PrintPlainText("""
                                            You have already unlocked this Jade Bot!
@@ -324,9 +324,9 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
                 if (ViewModel.DefaultLocked)
                 {
-                    if (ViewModel.MistChampionSkinUnlocksAvailable)
+                    if (ViewModel.Unlocked.HasValue)
                     {
-                        if (ViewModel.Unlocked!.Value)
+                        if (ViewModel.Unlocked.Value)
                         {
                             PrintPlainText("""
                                            You have already unlocked this outfit!
@@ -361,9 +361,9 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
                 if (ViewModel.DefaultLocked)
                 {
-                    if (ViewModel.OutfitUnlocksAvailable)
+                    if (ViewModel.Unlocked.HasValue)
                     {
-                        if (ViewModel.Unlocked!.Value)
+                        if (ViewModel.Unlocked.Value)
                         {
                             PrintPlainText("""
                                            You have already unlocked this outfit!
@@ -398,9 +398,9 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
                 if (ViewModel.DefaultLocked)
                 {
-                    if (ViewModel.RecipeUnlocksAvailable)
+                    if (ViewModel.Unlocked.HasValue)
                     {
-                        if (ViewModel.Unlocked!.Value)
+                        if (ViewModel.Unlocked.Value)
                         {
                             PrintPlainText($"""
                                            {ViewModel.UnlockedText}
@@ -510,9 +510,9 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
         if (ViewModel.DefaultLocked)
         {
-            if (ViewModel.NoveltyUnlocksAvailable)
+            if (ViewModel.Unlocked.HasValue)
             {
-                if (ViewModel.Unlocked!.Value)
+                if (ViewModel.Unlocked.Value)
                 {
                     PrintPlainText("""
 
@@ -931,9 +931,9 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
     {
         if (ViewModel.DefaultLocked)
         {
-            if (ViewModel.WardrobeUnlocksAvailable)
+            if (ViewModel.Unlocked.HasValue)
             {
-                if (ViewModel.Unlocked!.Value)
+                if (ViewModel.Unlocked.Value)
                 {
                     PrintPlainText($"""
 
@@ -965,9 +965,9 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
     {
         if (ViewModel.DefaultLocked)
         {
-            if (ViewModel.WardrobeUnlocksAvailable)
+            if (ViewModel.Unlocked.HasValue)
             {
-                if (ViewModel.Unlocked!.Value)
+                if (ViewModel.Unlocked.Value)
                 {
                     PrintPlainText($"""
 
