@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+﻿using System.Collections.Immutable;
 
 using GuildWars2.Hero;
 using GuildWars2.Items;
@@ -12,42 +12,9 @@ namespace SL.ChatLinks.UI.Tabs.Items;
 
 public sealed class Customizer(
     IDbContextFactory contextFactory,
-    IEventAggregator eventAggregator,
     ILocale locale
-) : IDisposable
+)
 {
-    public IReadOnlyDictionary<int, UpgradeComponent> UpgradeComponents { get; private set; } =
-        new Dictionary<int, UpgradeComponent>(0);
-
-    public async Task LoadAsync()
-    {
-        await using var context = contextFactory.CreateDbContext(locale.Current);
-        UpgradeComponents =
-            await context.Set<UpgradeComponent>().AsNoTracking().ToDictionaryAsync(upgrade => upgrade.Id);
-
-        eventAggregator.Subscribe<DatabaseSyncCompleted>(OnDatabaseSyncCompleted);
-    }
-
-    private async ValueTask OnDatabaseSyncCompleted(DatabaseSyncCompleted args)
-    {
-        if (args.Updated["items"] > 0)
-        {
-            await using var context = contextFactory.CreateDbContext(locale.Current);
-            UpgradeComponents = await context.Set<UpgradeComponent>().AsNoTracking()
-                .ToDictionaryAsync(upgrade => upgrade.Id);
-        }
-    }
-
-    public void Dispose()
-    {
-        eventAggregator.Unsubscribe<DatabaseSyncCompleted>(OnDatabaseSyncCompleted);
-    }
-
-    public IEnumerable<UpgradeComponent> GetUpgradeComponents(Item targetItem, UpgradeSlotType slotType)
-    {
-        return UpgradeComponents.Values.Where(component => FilterUpgradeSlot(targetItem, slotType, component));
-    }
-
     public UpgradeComponent? DefaultSuffixItem(Item item)
     {
         if (item is not IUpgradable upgradable)
@@ -55,73 +22,320 @@ public sealed class Customizer(
             return null;
         }
 
-        return GetUpgradeComponent(upgradable.SuffixItemId)
-            ?? GetUpgradeComponent(upgradable.SecondarySuffixItemId);
+        return GetUpgradeComponent(upgradable.SuffixItemId);
     }
 
     public UpgradeComponent? GetUpgradeComponent(int? upgradeComponentId)
     {
-        if (upgradeComponentId.HasValue && UpgradeComponents.TryGetValue(upgradeComponentId.Value, out var upgradeComponent))
+        if (!upgradeComponentId.HasValue)
         {
-            return upgradeComponent;
+            return null;
         }
 
-        return null;
+        using var context = contextFactory.CreateDbContext(locale.Current);
+        return context.Items
+            .OfType<UpgradeComponent>()
+            .SingleOrDefault(item => item.Id == upgradeComponentId.Value);
     }
 
-    private bool FilterUpgradeSlot(Item targetItem, UpgradeSlotType slotType, UpgradeComponent component)
+    public IEnumerable<UpgradeComponent> GetUpgradeComponents(Item targetItem, UpgradeSlotType slotType)
     {
-        if (slotType == UpgradeSlotType.Infusion)
+        using var context = contextFactory.CreateDbContext(locale.Current);
+        var upgrades = slotType switch
         {
-            return component.InfusionUpgradeFlags.Infusion;
-        }
-
-        if (component.InfusionUpgradeFlags.Infusion)
-        {
-            return false;
-        }
-
-        if (slotType == UpgradeSlotType.Enrichment)
-        {
-            return component.InfusionUpgradeFlags.Enrichment;
-        }
-
-        if (component.InfusionUpgradeFlags.Enrichment)
-        {
-            return false;
-        }
-
-        if (component is Gem)
-        {
-            return true;
-        }
-
-        return targetItem switch
-        {
-            Armor armor when armor.WeightClass == WeightClass.Light => component.UpgradeComponentFlags.LightArmor,
-            Armor armor when armor.WeightClass == WeightClass.Medium => component.UpgradeComponentFlags.MediumArmor,
-            Armor armor when armor.WeightClass == WeightClass.Heavy => component.UpgradeComponentFlags.HeavyArmor,
-            Axe => component.UpgradeComponentFlags.Axe,
-            Dagger => component.UpgradeComponentFlags.Dagger,
-            Focus => component.UpgradeComponentFlags.Focus,
-            Greatsword => component.UpgradeComponentFlags.Greatsword,
-            Hammer => component.UpgradeComponentFlags.Hammer,
-            HarpoonGun => component.UpgradeComponentFlags.HarpoonGun,
-            Longbow => component.UpgradeComponentFlags.LongBow,
-            Mace => component.UpgradeComponentFlags.Mace,
-            Pistol => component.UpgradeComponentFlags.Pistol,
-            Rifle => component.UpgradeComponentFlags.Rifle,
-            Scepter => component.UpgradeComponentFlags.Scepter,
-            Shield => component.UpgradeComponentFlags.Shield,
-            Shortbow => component.UpgradeComponentFlags.ShortBow,
-            Spear => component.UpgradeComponentFlags.Spear,
-            Staff => component.UpgradeComponentFlags.Staff,
-            Sword => component.UpgradeComponentFlags.Sword,
-            Torch => component.UpgradeComponentFlags.Torch,
-            Trident => component.UpgradeComponentFlags.Trident,
-            Trinket => component.UpgradeComponentFlags.Trinket,
-            Warhorn => component.UpgradeComponentFlags.Warhorn,
-            _ => true
+            UpgradeSlotType.Infusion => context.Set<UpgradeComponent>()
+                .FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type = 'upgrade_component'
+                      AND InfusionUpgradeFlags -> '$.infusion' = 'true'
+                    """
+                ),
+            UpgradeSlotType.Enrichment => context.Set<UpgradeComponent>()
+                .FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type = 'upgrade_component'
+                      AND InfusionUpgradeFlags -> '$.enrichment' = 'true'
+                    """
+                ),
+            UpgradeSlotType.Default when targetItem is Trinket => context.Set<UpgradeComponent>()
+                .FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type in ('upgrade_component', 'gem')
+                    	AND UpgradeComponentFlags -> '$.Trinket' = 'true'
+                    	AND InfusionUpgradeFlags -> '$.infusion' = 'false'
+                    	AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
+                    """
+            ),
+            UpgradeSlotType.Default when targetItem is Backpack => context.Set<UpgradeComponent>()
+                .FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type = 'gem'
+                    	AND InfusionUpgradeFlags -> '$.infusion' = 'false'
+                    	AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
+                    """
+            ),
+            UpgradeSlotType.Default when targetItem is Armor armor && armor.WeightClass == WeightClass.Heavy => context.Set<UpgradeComponent>()
+                .FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type in ('upgrade_component', 'gem', 'rune')
+                    	AND UpgradeComponentFlags -> '$.HeavyArmor' = 'true'
+                    	AND InfusionUpgradeFlags -> '$.infusion' = 'false'
+                    	AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
+                    """
+                ),
+            UpgradeSlotType.Default when targetItem is Armor armor && armor.WeightClass == WeightClass.Medium => context.Set<UpgradeComponent>()
+                .FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type in ('upgrade_component', 'gem', 'rune')
+                    	AND UpgradeComponentFlags -> '$.MediumArmor' = 'true'
+                    	AND InfusionUpgradeFlags -> '$.infusion' = 'false'
+                    	AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
+                    """
+                ),
+            UpgradeSlotType.Default when targetItem is Armor armor && armor.WeightClass == WeightClass.Light => context.Set<UpgradeComponent>()
+                .FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type in ('upgrade_component', 'gem', 'rune')
+                    	AND UpgradeComponentFlags -> '$.LightArmor' = 'true'
+                    	AND InfusionUpgradeFlags -> '$.infusion' = 'false'
+                    	AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
+                    """
+                ),
+            UpgradeSlotType.Default when targetItem is Axe => context.Set<UpgradeComponent>()
+                .FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type in ('upgrade_component', 'gem', 'sigil')
+                    	AND UpgradeComponentFlags -> '$.Axe' = 'true'
+                    	AND InfusionUpgradeFlags -> '$.infusion' = 'false'
+                    	AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
+                    """
+            ),
+            UpgradeSlotType.Default when targetItem is Dagger => context.Set<UpgradeComponent>()
+                .FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type in ('upgrade_component', 'gem', 'sigil')
+                    	AND UpgradeComponentFlags -> '$.Dagger' = 'true'
+                    	AND InfusionUpgradeFlags -> '$.infusion' = 'false'
+                    	AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
+                    """
+            ),
+            UpgradeSlotType.Default when targetItem is Focus => context.Set<UpgradeComponent>()
+                .FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type in ('upgrade_component', 'gem', 'sigil')
+                    	AND UpgradeComponentFlags -> '$.Focus' = 'true'
+                    	AND InfusionUpgradeFlags -> '$.infusion' = 'false'
+                    	AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
+                    """
+            ),
+            UpgradeSlotType.Default when targetItem is Greatsword => context.Set<UpgradeComponent>()
+                .FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type in ('upgrade_component', 'gem', 'sigil')
+                    	AND UpgradeComponentFlags -> '$.Greatsword' = 'true'
+                    	AND InfusionUpgradeFlags -> '$.infusion' = 'false'
+                    	AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
+                    """
+            ),
+            UpgradeSlotType.Default when targetItem is Hammer => context.Set<UpgradeComponent>()
+                .FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type in ('upgrade_component', 'gem', 'sigil')
+                    	AND UpgradeComponentFlags -> '$.Hammer' = 'true'
+                    	AND InfusionUpgradeFlags -> '$.infusion' = 'false'
+                    	AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
+                    """
+            ),
+            UpgradeSlotType.Default when targetItem is HarpoonGun => context.Set<UpgradeComponent>()
+                .FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type in ('upgrade_component', 'gem', 'sigil')
+                    	AND UpgradeComponentFlags -> '$.HarpoonGun' = 'true'
+                    	AND InfusionUpgradeFlags -> '$.infusion' = 'false'
+                    	AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
+                    """
+            ),
+            UpgradeSlotType.Default when targetItem is Longbow => context.Set<UpgradeComponent>()
+                .FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type in ('upgrade_component', 'gem', 'sigil')
+                    	AND UpgradeComponentFlags -> '$.LongBow' = 'true'
+                    	AND InfusionUpgradeFlags -> '$.infusion' = 'false'
+                    	AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
+                    """
+            ),
+            UpgradeSlotType.Default when targetItem is Mace => context.Set<UpgradeComponent>()
+                .FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type in ('upgrade_component', 'gem', 'sigil')
+                    	AND UpgradeComponentFlags -> '$.Mace' = 'true'
+                    	AND InfusionUpgradeFlags -> '$.infusion' = 'false'
+                    	AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
+                    """
+            ),
+            UpgradeSlotType.Default when targetItem is Pistol => context.Set<UpgradeComponent>()
+                .FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type in ('upgrade_component', 'gem', 'sigil')
+                    	AND UpgradeComponentFlags -> '$.Pistol' = 'true'
+                    	AND InfusionUpgradeFlags -> '$.infusion' = 'false'
+                    	AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
+                    """
+            ),
+            UpgradeSlotType.Default when targetItem is Rifle => context.Set<UpgradeComponent>()
+                .FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type in ('upgrade_component', 'gem', 'sigil')
+                    	AND UpgradeComponentFlags -> '$.Rifle' = 'true'
+                    	AND InfusionUpgradeFlags -> '$.infusion' = 'false'
+                    	AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
+                    """
+            ),
+            UpgradeSlotType.Default when targetItem is Scepter => context.Set<UpgradeComponent>()
+                .FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type in ('upgrade_component', 'gem', 'sigil')
+                    	AND UpgradeComponentFlags -> '$.Scepter' = 'true'
+                    	AND InfusionUpgradeFlags -> '$.infusion' = 'false'
+                    	AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
+                    """
+            ),
+            UpgradeSlotType.Default when targetItem is Shield => context.Set<UpgradeComponent>()
+                .FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type in ('upgrade_component', 'gem', 'sigil')
+                    	AND UpgradeComponentFlags -> '$.Shield' = 'true'
+                    	AND InfusionUpgradeFlags -> '$.infusion' = 'false'
+                    	AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
+                    """
+            ),
+            UpgradeSlotType.Default when targetItem is Shortbow => context.Set<UpgradeComponent>()
+                .FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type in ('upgrade_component', 'gem', 'sigil')
+                    	AND UpgradeComponentFlags -> '$.ShortBow' = 'true'
+                    	AND InfusionUpgradeFlags -> '$.infusion' = 'false'
+                    	AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
+                    """
+            ),
+            UpgradeSlotType.Default when targetItem is Spear => context.Set<UpgradeComponent>()
+                .FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type in ('upgrade_component', 'gem', 'sigil')
+                    	AND UpgradeComponentFlags -> '$.Spear' = 'true'
+                    	AND InfusionUpgradeFlags -> '$.infusion' = 'false'
+                    	AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
+                    """
+            ),
+            UpgradeSlotType.Default when targetItem is Staff => context.Set<UpgradeComponent>()
+                .FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type in ('upgrade_component', 'gem', 'sigil')
+                    	AND UpgradeComponentFlags -> '$.Staff' = 'true'
+                    	AND InfusionUpgradeFlags -> '$.infusion' = 'false'
+                    	AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
+                    """
+            ),
+            UpgradeSlotType.Default when targetItem is Sword => context.Set<UpgradeComponent>()
+                .FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type in ('upgrade_component', 'gem', 'sigil')
+                    	AND UpgradeComponentFlags -> '$.Sword' = 'true'
+                    	AND InfusionUpgradeFlags -> '$.infusion' = 'false'
+                    	AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
+                    """
+            ),
+            UpgradeSlotType.Default when targetItem is Torch => context.Set<UpgradeComponent>()
+                .FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type in ('upgrade_component', 'gem', 'sigil')
+                    	AND UpgradeComponentFlags -> '$.Torch' = 'true'
+                    	AND InfusionUpgradeFlags -> '$.infusion' = 'false'
+                    	AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
+                    """
+            ),
+            UpgradeSlotType.Default when targetItem is Trident => context.Set<UpgradeComponent>()
+                .FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type in ('upgrade_component', 'gem', 'sigil')
+                    	AND UpgradeComponentFlags -> '$.Trident' = 'true'
+                    	AND InfusionUpgradeFlags -> '$.infusion' = 'false'
+                    	AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
+                    """
+            ),
+            UpgradeSlotType.Default when targetItem is Warhorn => context.Set<UpgradeComponent>()
+                .FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type in ('upgrade_component', 'gem', 'sigil')
+                    	AND UpgradeComponentFlags -> '$.Warhorn' = 'true'
+                    	AND InfusionUpgradeFlags -> '$.infusion' = 'false'
+                    	AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
+                    """
+            ),
+            _ => context.Set<UpgradeComponent>()
+                .FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type in ('upgrade_component', 'gem', 'rune', 'sigil')
+                      AND InfusionUpgradeFlags -> '$.infusion' = 'false'
+                      AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
+                    """
+                    ),
         };
+
+        return upgrades.ToImmutableList();
     }
 }

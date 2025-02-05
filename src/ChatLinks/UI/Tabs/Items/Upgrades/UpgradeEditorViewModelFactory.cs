@@ -15,12 +15,7 @@ public sealed class UpgradeEditorViewModelFactory(
 {
     public UpgradeEditorViewModel Create(Item targetItem, UpgradeSlotType slotType, int? defaultUpgradeComponentId)
     {
-        UpgradeComponent? defaultUpgradeComponent = null;
-        if (defaultUpgradeComponentId.HasValue)
-        {
-            customizer.UpgradeComponents.TryGetValue(defaultUpgradeComponentId.Value, out defaultUpgradeComponent);
-        }
-
+        UpgradeComponent? defaultUpgradeComponent = customizer.GetUpgradeComponent(defaultUpgradeComponentId);
         var upgradeSlotViewModel = new UpgradeSlotViewModel(slotType, icons, itemTooltipViewModelFactory)
         {
             DefaultUpgradeComponent = defaultUpgradeComponent

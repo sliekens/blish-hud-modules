@@ -95,7 +95,6 @@ public sealed class ItemsTabViewModel(
 
     public async Task LoadAsync()
     {
-        await customizer.LoadAsync();
         await NewItems(CancellationToken.None);
     }
 
