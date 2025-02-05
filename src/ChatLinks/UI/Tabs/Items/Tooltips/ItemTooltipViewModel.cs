@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-using Blish_HUD.Content;
+﻿using Blish_HUD.Content;
 
 using GuildWars2;
 using GuildWars2.Hero;
@@ -49,24 +47,6 @@ public sealed class ItemTooltipViewModel(
         get => _skin;
         private set => SetField(ref _skin, value);
     }
-
-    public bool ContentUnlocksAvailable => hero.UnlocksAvailable;
-
-    public bool DyeUnlocksAvailable => hero.UnlocksAvailable;
-
-    public bool GliderSkinUnlocksAvailable => hero.UnlocksAvailable;
-
-    public bool JadeBotSkinUnlocksAvailable => hero is { UnlocksAvailable: true, InventoriesAvailable: true };
-
-    public bool MistChampionSkinUnlocksAvailable => hero.UnlocksAvailable;
-
-    public bool NoveltyUnlocksAvailable => hero.UnlocksAvailable;
-
-    public bool OutfitUnlocksAvailable => hero.UnlocksAvailable;
-
-    public bool RecipeUnlocksAvailable => hero.UnlocksAvailable;
-
-    public bool WardrobeUnlocksAvailable => hero.UnlocksAvailable;
 
     public bool DefaultLocked
     {
@@ -200,7 +180,7 @@ public sealed class ItemTooltipViewModel(
                         .FirstOrDefaultAsync();
                     if (finisher is not null)
                     {
-                        if (ContentUnlocksAvailable)
+                        if (hero.UnlocksAvailable)
                         {
                             var unlocks = await hero.GetUnlockedFinishers(CancellationToken.None);
                             Unlocked = unlocks.Contains(finisher.Id);
@@ -253,7 +233,7 @@ public sealed class ItemTooltipViewModel(
                     var dye = context.Colors.FirstOrDefault(dye => dye.ItemId == unlocker.Id);
                     if (dye is not null)
                     {
-                        if (DyeUnlocksAvailable)
+                        if (hero.UnlocksAvailable)
                         {
                             var unlocks = await hero.GetUnlockedDyes(CancellationToken.None);
                             Unlocked = unlocks.Contains(dye.Id);
@@ -288,7 +268,7 @@ public sealed class ItemTooltipViewModel(
                         .FirstOrDefaultAsync();
                     if (gliderSkin is not null)
                     {
-                        if (GliderSkinUnlocksAvailable)
+                        if (hero.UnlocksAvailable)
                         {
                             var unlocks = await hero.GetUnlockedGliderSkins(CancellationToken.None);
                             Unlocked = unlocks.Contains(gliderSkin.Id);
@@ -318,7 +298,7 @@ public sealed class ItemTooltipViewModel(
                         context.JadeBots.FirstOrDefault(jadeBotSkin => jadeBotSkin.UnlockItemId == unlocker.Id);
                     if (jadeBotSkin is not null)
                     {
-                        if (JadeBotSkinUnlocksAvailable)
+                        if (hero is { UnlocksAvailable: true, InventoriesAvailable: true })
                         {
                             var unlocks = await hero.GetUnlockedJadeBotSkins(CancellationToken.None);
                             Unlocked = unlocks.Contains(jadeBotSkin.Id);
@@ -353,7 +333,7 @@ public sealed class ItemTooltipViewModel(
                         .FirstOrDefaultAsync();
                     if (outfit is not null)
                     {
-                        if (OutfitUnlocksAvailable)
+                        if (hero.UnlocksAvailable)
                         {
                             var unlocks = await hero.GetUnlockedOutfits(CancellationToken.None);
                             Unlocked = unlocks.Contains(outfit.Id);
@@ -389,7 +369,7 @@ public sealed class ItemTooltipViewModel(
                         .FirstOrDefaultAsync();
                     if (mistChampionSkin is not null)
                     {
-                        if (MistChampionSkinUnlocksAvailable)
+                        if (hero.UnlocksAvailable)
                         {
                             var unlocks = await hero.GetUnlockedMistChampionSkins(CancellationToken.None);
                             Unlocked = unlocks.Contains(mistChampionSkin.Id);
@@ -414,7 +394,7 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    if (RecipeUnlocksAvailable)
+                    if (hero.UnlocksAvailable)
                     {
                         var unlocks = await hero.GetUnlockedRecipes(CancellationToken.None);
                         if (unlocks.Contains(unlocker.RecipeId))
@@ -469,7 +449,7 @@ public sealed class ItemTooltipViewModel(
                         .FirstOrDefaultAsync();
                     if (novelty is not null)
                     {
-                        if (NoveltyUnlocksAvailable)
+                        if (hero.UnlocksAvailable)
                         {
                             var unlocks = await hero.GetUnlockedNovelties(CancellationToken.None);
                             Unlocked = unlocks.Contains(novelty.Id);
@@ -501,7 +481,7 @@ public sealed class ItemTooltipViewModel(
             await using var context = contextFactory.CreateDbContext(locale.Current);
             DefaultSkin = await context.Skins.FirstOrDefaultAsync(skin => skin.Id == skinId);
 
-            if (WardrobeUnlocksAvailable)
+            if (hero.UnlocksAvailable)
             {
                 var unlocks = await hero.GetUnlockedWardrobe(CancellationToken.None);
                 Unlocked = unlocks.Contains(skinId);
