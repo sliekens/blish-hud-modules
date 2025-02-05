@@ -50,7 +50,7 @@ public class ItemsTabView : View
         {
             Parent = searchBoxPanel,
             Width = 400,
-            PlaceholderText = "Enter item name or chat link..."
+            PlaceholderText = viewModel.SearchPlaceholderText
         };
 
         searchBox.TextChanged += SearchTextChanged;
@@ -97,6 +97,20 @@ public class ItemsTabView : View
         Binder.Bind(ViewModel, vm => vm.SearchText, searchBox);
         Binder.Bind(ViewModel, vm => vm.Searching, loadingSpinner);
         Binder.Bind(ViewModel, vm => vm.ResultText, searchLayout.Children.OfType<Scrollbar>().Single());
+
+        viewModel.PropertyChanged += (_, args) =>
+        {
+            switch (args.PropertyName)
+            {
+                case nameof(ViewModel.SearchPlaceholderText):
+                    searchBox.PlaceholderText = ViewModel.SearchPlaceholderText;
+                    break;
+
+                case nameof(ViewModel.SearchResults):
+                    searchResults.Entries = ViewModel.SearchResults;
+                    break;
+            }
+        };
     }
 
     private void SelectionChanged(ListBox<ItemsListViewModel> sender, ListBoxSelectionChangedEventArgs<ItemsListViewModel> args)
@@ -124,7 +138,7 @@ public class ItemsTabView : View
 
     protected override void Unload()
     {
-        ViewModel.Dispose();
+        ViewModel.Unload();
     }
 
     private void SearchTextChanged(object sender, EventArgs e)

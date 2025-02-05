@@ -5,6 +5,7 @@ using Blish_HUD;
 
 using GuildWars2.Items;
 
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -17,12 +18,13 @@ namespace SL.ChatLinks.UI.Tabs.Items;
 
 public sealed class ItemsTabViewModel(
     ILogger<ItemsTabViewModel> logger,
+    IStringLocalizer<ItemsTabView> localizer,
     IOptionsMonitor<ChatLinkOptions> options,
     IEventAggregator eventAggregator,
     ItemSearch search,
     ItemsListViewModelFactory itemsListViewModelFactory,
     ChatLinkEditorViewModelFactory chatLinkEditorViewModelFactory)
-    : ViewModel, IDisposable
+    : ViewModel
 {
     private string _searchText = "";
 
@@ -45,6 +47,7 @@ public sealed class ItemsTabViewModel(
 
     private async ValueTask OnLocaleChanged(LocaleChanged args)
     {
+        OnPropertyChanged(nameof(SearchPlaceholderText));
         await Task.Run(OnSearch);
     }
 
@@ -91,6 +94,8 @@ public sealed class ItemsTabViewModel(
     {
         await Task.Run(OnSearch);
     });
+
+    public string SearchPlaceholderText => localizer["Search placeholder"];
 
     public async Task LoadAsync()
     {
@@ -188,8 +193,8 @@ public sealed class ItemsTabViewModel(
 
             ResultTotal = context.ResultTotal;
             ResultText = ResultTotal <= maxResults
-                ? $"{ResultTotal:N0} matches"
-                : $"{maxResults:N0} of {ResultTotal:N0} matches displayed";
+                ? localizer["Total results", ResultTotal]
+                : localizer["Partial results", maxResults, ResultTotal];
         }
         finally
         {
@@ -218,8 +223,8 @@ public sealed class ItemsTabViewModel(
 
             ResultTotal = await search.CountItems();
             ResultText = ResultTotal <= maxResults
-                ? $"{ResultTotal:N0} items"
-                : $"{maxResults:N0} of {ResultTotal:N0} items displayed";
+                ? localizer["Total results", ResultTotal]
+                : localizer["Partial results", maxResults, ResultTotal];
 
         }
         finally
@@ -228,8 +233,10 @@ public sealed class ItemsTabViewModel(
         }
     }
 
-    public void Dispose()
+    public void Unload()
     {
+        eventAggregator.Unsubscribe<LocaleChanged>(OnLocaleChanged);
+        eventAggregator.Unsubscribe<DatabaseDownloaded>(OnDatabaseDownloaded);
         eventAggregator.Unsubscribe<DatabaseSyncCompleted>(OnDatabaseSyncCompleted);
     }
 }

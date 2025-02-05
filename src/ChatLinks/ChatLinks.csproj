@@ -68,6 +68,9 @@
     <EmbeddedResource Update="Resources\UI\MainWindow.resx">
       <Generator></Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="Resources\UI\Tabs\Items\ItemsTabView.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Resources\UI\Tabs\Items\Tooltips\ItemTooltipViewModel.resx">
       <Generator>
       </Generator>
