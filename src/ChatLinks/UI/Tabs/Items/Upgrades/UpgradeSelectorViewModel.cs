@@ -128,7 +128,7 @@ public sealed class UpgradeSelectorViewModel : ViewModel, IDisposable
                     _ => 99
                 }
                 : 99
-            let vm = _itemsListViewModelFactory.Create(upgrade, upgrade == _selectedUpgradeComponent)
+            let vm = _itemsListViewModelFactory.Create(upgrade, upgrade.Id == _selectedUpgradeComponent?.Id)
             orderby rank, upgrade.Level, upgrade.Name
             group vm by (string)(upgrade switch
             {

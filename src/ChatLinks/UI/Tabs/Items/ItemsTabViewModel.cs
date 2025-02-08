@@ -36,7 +36,15 @@ public sealed class ItemsTabViewModel(
 
     private EventHandler? _searchCancelled;
 
+    private Item? _selectedItem;
+
     private readonly SemaphoreSlim _searchLock = new(1, 1);
+
+    public Item? SelectedItem
+    {
+        get => _selectedItem;
+        set => SetField(ref _selectedItem, value);
+    }
 
     public void Initialize()
     {
@@ -187,7 +195,7 @@ public sealed class ItemsTabViewModel(
                     break;
                 }
 
-                var viewModel = itemsListViewModelFactory.Create(item, false);
+                var viewModel = itemsListViewModelFactory.Create(item, item.Id == SelectedItem?.Id);
                 SearchResults.Add(viewModel);
             }
 
@@ -217,7 +225,7 @@ public sealed class ItemsTabViewModel(
                     break;
                 }
 
-                var viewModel = itemsListViewModelFactory.Create(item, false);
+                var viewModel = itemsListViewModelFactory.Create(item, item.Id == SelectedItem?.Id);
                 SearchResults.Add(viewModel);
             }
 

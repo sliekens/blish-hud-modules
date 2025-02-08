@@ -117,10 +117,12 @@ public class ItemsTabView : View
     {
         if (args.AddedItems is [{ Data: { } listItem }])
         {
+            ViewModel.SelectedItem = listItem.Item;
             _editor.Show(new ChatLinkEditorView(ViewModel.CreateChatLinkEditorViewModel(listItem.Item)));
         }
         else
         {
+            ViewModel.SelectedItem = null;
             _editor.Clear();
         }
     }
