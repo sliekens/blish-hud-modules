@@ -15,7 +15,7 @@ public sealed class ItemTooltipViewModelFactory(
     ItemIcons icons,
     Customizer customizer,
     Hero hero,
-    IStringLocalizer<ItemTooltipViewModel> localizer)
+    IStringLocalizer<ItemTooltipView> localizer)
 {
     public ItemTooltipViewModel Create(Item item, int quantity, IEnumerable<UpgradeSlot> upgrades)
     {

@@ -1,15 +1,9 @@
 ﻿using Blish_HUD.Content;
 
 using GuildWars2;
-using GuildWars2.Guilds.Upgrades;
 using GuildWars2.Hero;
-using GuildWars2.Hero.Equipment.Gliders;
-using GuildWars2.Hero.Equipment.MailCarriers;
-using GuildWars2.Hero.Equipment.Novelties;
-using GuildWars2.Hero.Equipment.Outfits;
 using GuildWars2.Hero.Equipment.Wardrobe;
 using GuildWars2.Items;
-using GuildWars2.Pvp.MistChampions;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
@@ -31,7 +25,7 @@ public sealed class ItemTooltipViewModel(
     Item item,
     int quantity,
     IEnumerable<UpgradeSlot> upgrades,
-    IStringLocalizer<ItemTooltipViewModel> localizer
+    IStringLocalizer<ItemTooltipView> localizer
 ) : ViewModel
 {
     private bool? _unlocked;
@@ -80,6 +74,8 @@ public sealed class ItemTooltipViewModel(
 
     public int Quantity { get; } = quantity;
 
+    public IStringLocalizer<ItemTooltipView> Localizer { get; } = localizer;
+
     public string? DefaultSuffixName { get; } = customizer.DefaultSuffixItem(item)?.SuffixName;
 
     public Color ItemNameColor { get; } = ItemColors.Rarity(item.Rarity);
@@ -125,26 +121,6 @@ public sealed class ItemTooltipViewModel(
     public Coin TotalVendorValue => Item.VendorValue * Quantity;
 
     public string? AuthorizationText { get; private set; }
-
-    public string AttributeName(Extensible<AttributeName> stat)
-    {
-        return stat.IsDefined()
-            ? stat.ToEnum() switch
-            {
-                GuildWars2.Hero.AttributeName.Power => "Power",
-                GuildWars2.Hero.AttributeName.Precision => "Precision",
-                GuildWars2.Hero.AttributeName.Toughness => "Toughness",
-                GuildWars2.Hero.AttributeName.Vitality => "Vitality",
-                GuildWars2.Hero.AttributeName.Concentration => "Concentration",
-                GuildWars2.Hero.AttributeName.ConditionDamage => "Condition Damage",
-                GuildWars2.Hero.AttributeName.Expertise => "Expertise",
-                GuildWars2.Hero.AttributeName.Ferocity => "Ferocity",
-                GuildWars2.Hero.AttributeName.HealingPower => "Healing Power",
-                GuildWars2.Hero.AttributeName.AgonyResistance => "Agony Resistance",
-                _ => stat.ToString()
-            }
-            : stat.ToString();
-    }
 
     public AsyncTexture2D? GetIcon(Item item)
     {
@@ -193,7 +169,7 @@ public sealed class ItemTooltipViewModel(
                         }
                         else
                         {
-                            AuthorizationText = localizer["Grant unlocks permission"];
+                            AuthorizationText = Localizer["Grant unlocks permission"];
                         }
 
                         DefaultLocked = true;
@@ -216,7 +192,7 @@ public sealed class ItemTooltipViewModel(
                         }
                         else
                         {
-                            AuthorizationText = localizer["Grant unlocks permission"];
+                            AuthorizationText = Localizer["Grant unlocks permission"];
 
                         }
 
@@ -245,7 +221,7 @@ public sealed class ItemTooltipViewModel(
                         }
                         else
                         {
-                            AuthorizationText = localizer["Grant unlocks permission"];
+                            AuthorizationText = Localizer["Grant unlocks permission"];
                         }
 
                         DefaultLocked = true;
@@ -279,7 +255,7 @@ public sealed class ItemTooltipViewModel(
                         }
                         else
                         {
-                            AuthorizationText = localizer["Grant unlocks permission"];
+                            AuthorizationText = Localizer["Grant unlocks permission"];
                         }
 
                         DefaultLocked = true;
@@ -308,7 +284,7 @@ public sealed class ItemTooltipViewModel(
                         }
                         else
                         {
-                            AuthorizationText = localizer["Grant unlocks and inventories permission"];
+                            AuthorizationText = Localizer["Grant unlocks and inventories permission"];
                         }
 
                         DefaultLocked = true;
@@ -342,7 +318,7 @@ public sealed class ItemTooltipViewModel(
                         }
                         else
                         {
-                            AuthorizationText = localizer["Grant unlocks permission"];
+                            AuthorizationText = Localizer["Grant unlocks permission"];
                         }
 
                         DefaultLocked = true;
@@ -377,7 +353,7 @@ public sealed class ItemTooltipViewModel(
                         }
                         else
                         {
-                            AuthorizationText = localizer["Grant unlocks permission"];
+                            AuthorizationText = Localizer["Grant unlocks permission"];
                         }
 
                         DefaultLocked = true;
@@ -401,15 +377,15 @@ public sealed class ItemTooltipViewModel(
                         {
                             Unlocked = true;
                             UnlockedText = unlocker.ExtraRecipeIds.Any()
-                                ? localizer["All recipes unlocked"]
-                                : localizer["Recipe unlocked"];
+                                ? Localizer["All recipes unlocked"]
+                                : Localizer["Recipe unlocked"];
                             UnlockedTextColor = Color.Red;
                         }
                         else if (unlocker.ExtraRecipeIds.Any(unlocks.Contains))
                         {
                             Unlocked = true;
                             var known = unlocker.ExtraRecipeIds.Count(unlocks.Contains);
-                            UnlockedText = localizer["Recipes unlocked", known, unlocker.ExtraRecipeIds.Count + 1];
+                            UnlockedText = Localizer["Recipes unlocked", known, unlocker.ExtraRecipeIds.Count + 1];
                             UnlockedTextColor = Color.Yellow;
                         }
                         else
@@ -419,7 +395,7 @@ public sealed class ItemTooltipViewModel(
                     }
                     else
                     {
-                        AuthorizationText = localizer["Grant unlocks permission"];
+                        AuthorizationText = Localizer["Grant unlocks permission"];
                     }
 
                     DefaultLocked = true;
@@ -456,7 +432,7 @@ public sealed class ItemTooltipViewModel(
                         }
                         else
                         {
-                            AuthorizationText = localizer["Grant unlocks permission"];
+                            AuthorizationText = Localizer["Grant unlocks permission"];
                         }
 
                         DefaultLocked = true;
@@ -487,7 +463,7 @@ public sealed class ItemTooltipViewModel(
             }
             else
             {
-                AuthorizationText = localizer["Grant unlocks permission"];
+                AuthorizationText = Localizer["Grant unlocks permission"];
             }
         }
         catch (Exception reason)

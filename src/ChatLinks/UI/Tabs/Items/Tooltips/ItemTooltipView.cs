@@ -47,7 +47,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
     {
         PrintHeader(armor);
         PrintAttributes(armor.Attributes.ToDictionary(
-            stat => ViewModel.AttributeName(stat.Key),
+            stat => stat.Key.ToString(),
             stat => stat.Value
         ));
 
@@ -58,23 +58,23 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         switch (armor)
         {
             case Boots:
-                PrintPlainText("Foot Armor");
+                PrintPlainText(ViewModel.Localizer["Foot Armor"]);
                 break;
             case Coat:
-                PrintPlainText("Chest Armor");
+                PrintPlainText(ViewModel.Localizer["Chest Armor"]);
                 break;
             case Gloves:
-                PrintPlainText("Hand Armor");
+                PrintPlainText(ViewModel.Localizer["Hand Armor"]);
                 break;
             case Helm:
             case HelmAquatic:
-                PrintPlainText("Head Armor");
+                PrintPlainText(ViewModel.Localizer["Head Armor"]);
                 break;
             case Leggings:
-                PrintPlainText("Leg Armor");
+                PrintPlainText(ViewModel.Localizer["Leg Armor"]);
                 break;
             case Shoulders:
-                PrintPlainText("Shoulder Armor");
+                PrintPlainText(ViewModel.Localizer["Shoulder Armor"]);
                 break;
         }
 
@@ -91,7 +91,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
     {
         PrintHeader(back);
         PrintAttributes(back.Attributes.ToDictionary(
-            stat => ViewModel.AttributeName(stat.Key),
+            stat => ViewModel.Localizer[stat.Key.ToString()].ToString(),
             stat => stat.Value
         ));
 
@@ -100,7 +100,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintItemSkin();
 
         PrintItemRarity(back.Rarity);
-        PrintPlainText("Back Item");
+        PrintPlainText(ViewModel.Localizer["Back Item"]);
         PrintRequiredLevel(back.Level);
         PrintDescription(back.Description);
         PrintInBank();
@@ -126,10 +126,10 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         switch (consumable)
         {
             case Currency or Service:
-                PrintPlainText("Takes effect immediately upon receipt.");
+                PrintPlainText(ViewModel.Localizer["Takes effect immediately upon receipt"]);
                 break;
             default:
-                PrintPlainText("Double-click to consume.");
+                PrintPlainText(ViewModel.Localizer["Double-click to consume"]);
                 break;
         }
 
@@ -154,18 +154,25 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         switch (consumable)
         {
             case Currency or Service:
-                PrintPlainText(string.IsNullOrEmpty(consumable.Description) ? "Service" : "\r\nService");
+                if (string.IsNullOrEmpty(consumable.Description))
+                {
+                    PrintPlainText(ViewModel.Localizer["Service"]);
+                }
+                else
+                {
+                    PrintPlainText("\r\n" + ViewModel.Localizer["Service"]);
+                }
                 break;
             case Transmutation transmutation:
                 PrintTransmutation();
-                PrintPlainText("\r\nConsumable");
+                PrintPlainText("\r\n" + ViewModel.Localizer["Consumable"]);
                 break;
             case Booze:
-                PrintPlainText("""
+                PrintPlainText($"""
 
-                               Excessive alcohol consumption will result in intoxication.
+                               {ViewModel.Localizer["Excessive alcohol consumption will result in intoxication"]}
 
-                               Consumable          
+                               {ViewModel.Localizer["Consumable"]}
                                """);
                 break;
             case ContentUnlocker unlocker:
@@ -180,8 +187,8 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     {
                         if (ViewModel.Unlocked.Value)
                         {
-                            PrintPlainText("""
-                                           You already have that content unlocked.
+                            PrintPlainText($"""
+                                           {ViewModel.Localizer["You already have that content unlocked"]}
 
                                            """, Color.Red);
                         }
@@ -197,13 +204,13 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                 }
                 else
                 {
-                    PrintPlainText("""
-                                   Unlock status unknown.
+                    PrintPlainText($"""
+                                   {ViewModel.Localizer["Unlock status unknown"]}
 
                                    """, Gray);
                 }
 
-                PrintPlainText("Consumable");
+                PrintPlainText(ViewModel.Localizer["Consumable"]);
                 break;
             case Dye unlocker:
                 if (!string.IsNullOrEmpty(unlocker.Description))
@@ -234,13 +241,13 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                 }
                 else
                 {
-                    PrintPlainText("""
-                                   Unlock status unknown.
+                    PrintPlainText($"""
+                                   {ViewModel.Localizer["Unlock status unknown"]}
 
                                    """, Gray);
                 }
 
-                PrintPlainText("Consumable");
+                PrintPlainText(ViewModel.Localizer["Consumable"]);
                 break;
             case GliderSkinUnlocker unlocker:
                 if (!string.IsNullOrEmpty(unlocker.Description))
@@ -271,13 +278,13 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                 }
                 else
                 {
-                    PrintPlainText("""
-                                   Unlock status unknown.
+                    PrintPlainText($"""
+                                   {ViewModel.Localizer["Unlock status unknown"]}
 
                                    """, Gray);
                 }
 
-                PrintPlainText("Consumable");
+                PrintPlainText(ViewModel.Localizer["Consumable"]);
                 break;
             case JadeBotSkinUnlocker unlocker:
                 if (!string.IsNullOrEmpty(unlocker.Description))
@@ -308,13 +315,13 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                 }
                 else
                 {
-                    PrintPlainText("""
-                                   Unlock status unknown.
+                    PrintPlainText($"""
+                                   {ViewModel.Localizer["Unlock status unknown"]}
 
                                    """, Gray);
                 }
 
-                PrintPlainText("Consumable");
+                PrintPlainText(ViewModel.Localizer["Consumable"]);
                 break;
             case MistChampionSkinUnlocker unlocker:
                 if (!string.IsNullOrEmpty(unlocker.Description))
@@ -345,13 +352,13 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                 }
                 else
                 {
-                    PrintPlainText("""
-                                   Unlock status unknown.
+                    PrintPlainText($"""
+                                   {ViewModel.Localizer["Unlock status unknown"]}
 
                                    """, Gray);
                 }
 
-                PrintPlainText("Consumable");
+                PrintPlainText(ViewModel.Localizer["Consumable"]);
                 break;
             case OutfitUnlocker unlocker:
                 if (!string.IsNullOrEmpty(unlocker.Description))
@@ -365,8 +372,8 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     {
                         if (ViewModel.Unlocked.Value)
                         {
-                            PrintPlainText("""
-                                           You have already unlocked this outfit!
+                            PrintPlainText($"""
+                                           {ViewModel.Localizer["You have already unlocked this outfit"]}
 
                                            """, Color.Red);
                         }
@@ -382,13 +389,13 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                 }
                 else
                 {
-                    PrintPlainText("""
-                                   Unlock status unknown.
+                    PrintPlainText($"""
+                                   {ViewModel.Localizer["Unlock status unknown"]}
 
                                    """, Gray);
                 }
 
-                PrintPlainText("Consumable");
+                PrintPlainText(ViewModel.Localizer["Consumable"]);
                 break;
             case RecipeSheet unlocker:
                 if (!string.IsNullOrEmpty(unlocker.Description))
@@ -419,16 +426,23 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                 }
                 else
                 {
-                    PrintPlainText("""
-                                   Unlock status unknown.
+                    PrintPlainText($"""
+                                   {ViewModel.Localizer["Unlock status unknown"]}
 
                                    """, Gray);
                 }
 
-                PrintPlainText("Consumable");
+                PrintPlainText(ViewModel.Localizer["Consumable"]);
                 break;
             default:
-                PrintPlainText(string.IsNullOrEmpty(consumable.Description) ? "Consumable" : "\r\nConsumable");
+                if (string.IsNullOrEmpty(consumable.Description))
+                {
+                    PrintPlainText(ViewModel.Localizer["Consumable"]);
+                }
+                else
+                {
+                    PrintPlainText("\r\n" + ViewModel.Localizer["Consumable"]);
+                }
                 break;
         }
 
@@ -443,7 +457,14 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
     {
         PrintHeader(container);
         PrintDescription(container.Description);
-        PrintPlainText(string.IsNullOrEmpty(container.Description) ? "Consumable" : "\r\nConsumable");
+        if (string.IsNullOrEmpty(container.Description))
+        {
+            PrintPlainText(ViewModel.Localizer["Consumable"]);
+        }
+        else
+        {
+            PrintPlainText("\r\n" + ViewModel.Localizer["Consumable"]);
+        }
         PrintInBank();
         PrintUniqueness(container);
         PrintItemBinding(container);
@@ -474,7 +495,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
     {
         PrintHeader(trinket);
         PrintAttributes(trinket.Attributes.ToDictionary(
-            stat => ViewModel.AttributeName(stat.Key),
+            stat => ViewModel.Localizer[stat.Key.ToString()].ToString(),
             stat => stat.Value
         ));
 
@@ -484,13 +505,13 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         switch (trinket)
         {
             case Accessory:
-                PrintPlainText("Accessory");
+                PrintPlainText(ViewModel.Localizer["Accessory"]);
                 break;
             case Amulet:
-                PrintPlainText("Amulet");
+                PrintPlainText(ViewModel.Localizer["Amulet"]);
                 break;
             case Ring:
-                PrintPlainText("Ring");
+                PrintPlainText(ViewModel.Localizer["Ring"]);
                 break;
         }
 
@@ -514,16 +535,16 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
             {
                 if (ViewModel.Unlocked.Value)
                 {
-                    PrintPlainText("""
+                    PrintPlainText($"""
 
-                        Novelty Unlocked
+                        {ViewModel.Localizer["Novelty Unlocked"]}
                         """);
                 }
                 else
                 {
-                    PrintPlainText("""
+                    PrintPlainText($"""
 
-                        Novelty Locked
+                        {ViewModel.Localizer["Novelty Locked"]}
                         """, Gray);
                 }
             }
@@ -535,9 +556,9 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     """, Gray);
             }
 
-            PrintPlainText("""
+            PrintPlainText($"""
 
-                Consumable
+                {ViewModel.Localizer["Consumable"]}
                 """);
         }
 
@@ -553,9 +574,9 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintHeader(jadeTechModule);
         PrintDescription(jadeTechModule.Description);
         PrintItemRarity(jadeTechModule.Rarity);
-        PrintPlainText("Module");
+        PrintPlainText(ViewModel.Localizer["Module"]);
         PrintRequiredLevel(jadeTechModule.Level);
-        PrintPlainText("Required Mastery: Jade Bots");
+        PrintPlainText(ViewModel.Localizer["Required Mastery: Jade Bots"]);
         PrintInBank();
         PrintUniqueness(jadeTechModule);
         PrintItemBinding(jadeTechModule);
@@ -567,7 +588,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintHeader(miniature);
         PrintDescription(miniature.Description);
         PrintMini(miniature.MiniatureId);
-        PrintPlainText("Mini");
+        PrintPlainText(ViewModel.Localizer["Mini"]);
         PrintInBank();
         PrintUniqueness(miniature);
         PrintItemBinding(miniature);
@@ -579,7 +600,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintHeader(powerCore);
         PrintDescription(powerCore.Description, true);
         PrintItemRarity(powerCore.Rarity);
-        PrintPlainText("Power Core");
+        PrintPlainText(ViewModel.Localizer["Power Core"]);
         PrintRequiredLevel(powerCore.Level);
         PrintInBank();
         PrintUniqueness(powerCore);
@@ -592,7 +613,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintHeader(relic);
         PrintDescription(relic.Description, true);
         PrintItemRarity(relic.Rarity);
-        PrintPlainText("Relic");
+        PrintPlainText(ViewModel.Localizer["Relic"]);
         PrintRequiredLevel(relic.Level);
         PrintInBank();
         PrintUniqueness(relic);
@@ -605,7 +626,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintHeader(salvageTool);
         PrintPlainText(" ");
         PrintItemRarity(salvageTool.Rarity);
-        PrintPlainText("Consumable");
+        PrintPlainText(ViewModel.Localizer["Consumable"]);
         PrintDescription(salvageTool.Description);
         PrintInBank();
         PrintUniqueness(salvageTool);
@@ -617,7 +638,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
     {
         PrintHeader(trophy);
         PrintDescription(trophy.Description);
-        PrintPlainText("Trophy");
+        PrintPlainText(ViewModel.Localizer["Trophy"]);
         PrintInBank();
         PrintUniqueness(trophy);
         PrintItemBinding(trophy);
@@ -638,7 +659,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         else
         {
             PrintAttributes(upgradeComponent.Attributes.ToDictionary(
-                stat => ViewModel.AttributeName(stat.Key),
+                stat => ViewModel.Localizer[stat.Key.ToString()].ToString(),
                 stat => stat.Value
             ));
         }
@@ -657,7 +678,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintWeaponStrength(weapon);
         PrintDefense(weapon.Defense);
         PrintAttributes(weapon.Attributes.ToDictionary(
-            stat => ViewModel.AttributeName(stat.Key),
+            stat => ViewModel.Localizer[stat.Key.ToString()].ToString(),
             stat => stat.Value
         ));
 
@@ -667,71 +688,71 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         switch (weapon)
         {
             case Axe:
-                PrintPlainText("Axe");
+                PrintPlainText(ViewModel.Localizer["Axe"]);
                 break;
             case Dagger:
-                PrintPlainText("Dagger");
+                PrintPlainText(ViewModel.Localizer["Dagger"]);
                 break;
             case Focus:
-                PrintPlainText("Focus");
+                PrintPlainText(ViewModel.Localizer["Focus"]);
                 break;
             case Greatsword:
-                PrintPlainText("Greatsword");
+                PrintPlainText(ViewModel.Localizer["Greatsword"]);
                 break;
             case Hammer:
-                PrintPlainText("Hammer");
+                PrintPlainText(ViewModel.Localizer["Hammer"]);
                 break;
             case HarpoonGun:
-                PrintPlainText("Harpoon Gun");
+                PrintPlainText(ViewModel.Localizer["Harpoon Gun"]);
                 break;
             case LargeBundle:
-                PrintPlainText("Large Bundle");
-                break;
+                PrintPlainText(ViewModel.Localizer["Large Bundle"]);
+                break;  
             case Longbow:
-                PrintPlainText("Longbow");
+                PrintPlainText(ViewModel.Localizer["Longbow"]);
                 break;
             case Mace:
-                PrintPlainText("Mace");
+                PrintPlainText(ViewModel.Localizer["Mace"]);
                 break;
             case Pistol:
-                PrintPlainText("Pistol");
+                PrintPlainText(ViewModel.Localizer["Pistol"]);
                 break;
             case Rifle:
-                PrintPlainText("Rifle");
+                PrintPlainText(ViewModel.Localizer["Rifle"]);
                 break;
             case Scepter:
-                PrintPlainText("Scepter");
+                PrintPlainText(ViewModel.Localizer["Scepter"]);
                 break;
             case Shield:
-                PrintPlainText("Shield");
+                PrintPlainText(ViewModel.Localizer["Shield"]);
                 break;
             case Shortbow:
-                PrintPlainText("Shortbow");
+                PrintPlainText(ViewModel.Localizer["Shortbow"]);
                 break;
             case SmallBundle:
-                PrintPlainText("Small Bundle");
+                PrintPlainText(ViewModel.Localizer["Small Bundle"]);
                 break;
             case Spear:
-                PrintPlainText("Spear");
+                PrintPlainText(ViewModel.Localizer["Spear"]);
                 break;
             case Staff:
-                PrintPlainText("Staff");
+                PrintPlainText(ViewModel.Localizer["Staff"]);
                 break;
             case Sword:
-                PrintPlainText("Sword");
+                PrintPlainText(ViewModel.Localizer["Sword"]);
                 break;
             case Torch:
-                PrintPlainText("Torch");
+                PrintPlainText(ViewModel.Localizer["Torch"]);
                 break;
             case Toy:
             case ToyTwoHanded:
-                PrintPlainText("Toy");
+                PrintPlainText(ViewModel.Localizer["Toy"]);
                 break;
             case Trident:
-                PrintPlainText("Trident");
+                PrintPlainText(ViewModel.Localizer["Trident"]);
                 break;
             case Warhorn:
-                PrintPlainText("Warhorn");
+                PrintPlainText(ViewModel.Localizer["Warhorn"]);
                 break;
         }
 
@@ -806,7 +827,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
     {
         if (defense > 0)
         {
-            PrintPlainText($"Defense: {defense:N0}");
+            PrintPlainText(ViewModel.Localizer["Defense", defense]);
         }
     }
 
@@ -822,7 +843,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     builder.AppendLine();
                 }
 
-                builder.AppendFormat($"+{stat.Value:N0} {stat.Key}");
+                builder.Append(ViewModel.Localizer[stat.Key, stat.Value]);
             }
 
             PrintPlainText(builder.ToString());
@@ -875,7 +896,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     foreach (KeyValuePair<Extensible<AttributeName>, int> stat in slot.UpgradeComponent.Attributes)
                     {
                         builder.CreatePart("\r\n", part => part.SetFontSize(ContentService.FontSize.Size16));
-                        builder.CreatePart($"+{stat.Value:N0} {ViewModel.AttributeName(stat.Key)}", part =>
+                        builder.CreatePart($"+{stat.Value:N0} {ViewModel.Localizer[stat.Key.ToString()]}", part =>
                         {
                             part.SetFontSize(ContentService.FontSize.Size16);
                             part.SetTextColor(ActiveBuffColor);
@@ -890,7 +911,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     case UpgradeSlotType.Infusion:
                         builder
                             .CreatePart("\r\n", _ => { })
-                            .CreatePart(" Unused Infusion Slot", part =>
+                            .CreatePart(" " + ViewModel.Localizer["Unused infusion slot"], part =>
                             {
                                 part.SetPrefixImage(EmbeddedResources.Texture("unused_infusion_slot.png"));
                                 part.SetPrefixImageSize(new Point(16));
@@ -900,7 +921,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     case UpgradeSlotType.Enrichment:
                         builder
                             .CreatePart("\r\n", _ => { })
-                            .CreatePart(" Unused Enrichment Slot", part =>
+                            .CreatePart(" " + ViewModel.Localizer["Unused enrichment slot"], part =>
                             {
                                 part.SetPrefixImage(EmbeddedResources.Texture("unused_enrichment_slot.png"));
                                 part.SetPrefixImageSize(new Point(16));
@@ -911,7 +932,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     default:
                         builder
                             .CreatePart("\r\n", _ => { })
-                            .CreatePart(" Unused Upgrade Slot", part =>
+                            .CreatePart(" " + ViewModel.Localizer["Unused upgrade slot"], part =>
                             {
                                 part.SetPrefixImage(EmbeddedResources.Texture("unused_upgrade_slot.png"));
                                 part.SetPrefixImageSize(new Point(16));
@@ -937,7 +958,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                 {
                     PrintPlainText($"""
 
-                                    Skin Unlocked
+                                    {ViewModel.Localizer["Skin Unlocked"]}
                                     {ViewModel.DefaultSkin?.Name}
                                     """);
                 }
@@ -945,7 +966,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                 {
                     PrintPlainText($"""
 
-                                    Skin Locked
+                                    {ViewModel.Localizer["Skin Locked"]}
                                     {ViewModel.DefaultSkin?.Name}
                                     """, Gray);
                 }
@@ -971,14 +992,14 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                 {
                     PrintPlainText($"""
 
-                                    Skin Unlocked
+                                    {ViewModel.Localizer["Skin Unlocked"]}
                                     """);
                 }
                 else
                 {
                     PrintPlainText($"""
 
-                                    Skin Locked
+                                    {ViewModel.Localizer["Skin Locked"]}
                                     """, Gray);
                 }
             }
@@ -1013,7 +1034,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
     {
         if (level > 0)
         {
-            PrintPlainText($"Required Level: {level}");
+            PrintPlainText(ViewModel.Localizer["Required Level", level]);
         }
     }
 
@@ -1054,20 +1075,20 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
         if (item.Flags.AccountBound)
         {
-            PrintPlainText("Account Bound on Acquire");
+            PrintPlainText(ViewModel.Localizer["Account Bound on Acquire"]);
         }
         else if (item.Flags.AccountBindOnUse)
         {
-            PrintPlainText("Account Bound on Use");
+            PrintPlainText(ViewModel.Localizer["Account Bound on Use"]);
         }
 
         if (item.Flags.Soulbound)
         {
-            PrintPlainText("Soulbound on Acquire");
+            PrintPlainText(ViewModel.Localizer["Soulbound on Acquire"]);
         }
         else if (item.Flags.SoulbindOnUse)
         {
-            PrintPlainText("Soulbound on Use");
+            PrintPlainText(ViewModel.Localizer["Soulbound on Use"]);
         }
     }
 
@@ -1201,7 +1222,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
             .AutoSizeHeight()
             .Wrap();
 
-        builder.CreatePart($"Weapon Strength: {weapon.MinPower:N0} - {weapon.MaxPower:N0}", static part =>
+        builder.CreatePart(ViewModel.Localizer["Weapon Strength", weapon.MinPower, weapon.MaxPower], static part =>
         {
             part.SetFontSize(ContentService.FontSize.Size16);
         });
@@ -1212,39 +1233,13 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
             damageType = defaultSkin.DamageType;
         }
 
-        if (damageType.IsDefined())
+        if (damageType != DamageType.Physical)
         {
-            switch (damageType.ToEnum())
+            builder.CreatePart($" ({ViewModel.Localizer[damageType.ToString()]})", static part =>
             {
-                case DamageType.Choking:
-                    builder.CreatePart(" (Choking)", static part =>
-                    {
-                        part.SetFontSize(ContentService.FontSize.Size16);
-                        part.SetTextColor(Gray);
-                    });
-                    break;
-                case DamageType.Fire:
-                    builder.CreatePart(" (Fire)", static part =>
-                    {
-                        part.SetFontSize(ContentService.FontSize.Size16);
-                        part.SetTextColor(Gray);
-                    });
-                    break;
-                case DamageType.Ice:
-                    builder.CreatePart(" (Ice)", static part =>
-                    {
-                        part.SetFontSize(ContentService.FontSize.Size16);
-                        part.SetTextColor(Gray);
-                    });
-                    break;
-                case DamageType.Lightning:
-                    builder.CreatePart(" (Lightning)", static part =>
-                    {
-                        part.SetFontSize(ContentService.FontSize.Size16);
-                        part.SetTextColor(Gray);
-                    });
-                    break;
-            }
+                part.SetFontSize(ContentService.FontSize.Size16);
+                part.SetTextColor(Gray);
+            });
         }
 
         FormattedLabel? label = builder.Build();
@@ -1255,7 +1250,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
     {
         if (equipment.StatChoices.Count > 0)
         {
-            PrintPlainText("Double-click to select stats.");
+            PrintPlainText(ViewModel.Localizer["Double-click to select stats."]);
         }
     }
 
@@ -1263,7 +1258,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
     {
         if (item.Flags.Unique)
         {
-            PrintPlainText("Unique");
+            PrintPlainText(ViewModel.Localizer["Unique"]);
         }
     }
 

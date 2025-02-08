@@ -1,0 +1,394 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Recipes unlocked" xml:space="preserve">
+    <value>Vous connaissez déjà {0} des {1} recettes fournies par cet objet.</value>
+  </data>
+  <data name="Recipe unlocked" xml:space="preserve">
+    <value>Vous connaissez déjà cette recette !</value>
+  </data>
+  <data name="All recipes unlocked" xml:space="preserve">
+    <value>Vous connaissez déjà toutes ces recettes !</value>
+  </data>
+  <data name="Grant unlocks permission" xml:space="preserve">
+    <value>Pour connaître l'état de déverrouillage, enregistrez une clé API avec les autorisations « Account » et « Unlocks ».</value>
+  </data>
+  <data name="Grant unlocks and inventories permission" xml:space="preserve">
+    <value>Pour afficher l'état de déverrouillage, enregistrez une clé API avec les autorisations « Account », « Unlocks » et « Inventories ».</value>
+  </data>
+  <data name="Foot Armor" xml:space="preserve">
+    <value>Armure : Bottes</value>
+  </data>
+  <data name="Chest Armor" xml:space="preserve">
+    <value>Armure : Cuirasse</value>
+  </data>
+  <data name="Hand Armor" xml:space="preserve">
+    <value>Armura : Gants</value>
+  </data>
+  <data name="Head Armor" xml:space="preserve">
+    <value>Armure : Couvre-chef</value>
+  </data>
+  <data name="Leg Armor" xml:space="preserve">
+    <value>Armura : Jambières</value>
+  </data>
+  <data name="Shoulder Armor" xml:space="preserve">
+    <value>Armure : Épaulières</value>
+  </data>
+  <data name="Back Item" xml:space="preserve">
+    <value>Objet de dos</value>
+  </data>
+  <data name="Takes effect immediately upon receipt." xml:space="preserve">
+    <value>Prend effet immédiatement après réception.</value>
+  </data>
+  <data name="Double-click to consume" xml:space="preserve">
+    <value>Double-cliquez pour utiliser.</value>
+  </data>
+  <data name="Service" xml:space="preserve">
+    <value>Services</value>
+  </data>
+  <data name="Consumable" xml:space="preserve">
+    <value>Consommable</value>
+  </data>
+  <data name="Excessive alcohol consumption will result in intoxication" xml:space="preserve">
+    <value>Consommer trop d'alcool entraîne une ivresse manifeste.</value>
+  </data>
+  <data name="You already have that content unlocked" xml:space="preserve">
+    <value>Vous avez déjà déverrouillé ce contenu.</value>
+  </data>
+  <data name="Unlock status unknown" xml:space="preserve">
+    <value>Statut de déverrouillage inconnu.</value>
+  </data>
+  <data name="You have already unlocked this outfit" xml:space="preserve">
+    <value>Vous avez déjà déverrouillé cette tenue !</value>
+  </data>
+  <data name="Accessory" xml:space="preserve">
+    <value>Accessoire</value>
+  </data>
+  <data name="Amulet" xml:space="preserve">
+    <value>Amulette</value>
+  </data>
+  <data name="Ring" xml:space="preserve">
+    <value>Anneau</value>
+  </data>
+  <data name="Novelty Unlocked" xml:space="preserve">
+    <value>Babiole déverrouillée</value>
+  </data>
+  <data name="Novelty Locked" xml:space="preserve">
+    <value>Babiole verrouillée</value>
+  </data>
+  <data name="Module" xml:space="preserve">
+    <value>Module</value>
+  </data>
+  <data name="Required Mastery: Jade Bots" xml:space="preserve">
+    <value>Maîtrise requise : Drones de jade</value>
+  </data>
+  <data name="Mini" xml:space="preserve">
+    <value>Miniature</value>
+  </data>
+  <data name="Power Core" xml:space="preserve">
+    <value>Noyau d'énergie</value>
+  </data>
+  <data name="Relic" xml:space="preserve">
+    <value>Relique</value>
+  </data>
+  <data name="Trophy" xml:space="preserve">
+    <value>Trophée</value>
+  </data>
+  <data name="Axe" xml:space="preserve">
+    <value>Hache</value>
+  </data>
+  <data name="Dagger" xml:space="preserve">
+    <value>Dague</value>
+  </data>
+  <data name="Focus" xml:space="preserve">
+    <value>Focus</value>
+  </data>
+  <data name="Greatsword" xml:space="preserve">
+    <value>Espadon</value>
+  </data>
+  <data name="Hammer" xml:space="preserve">
+    <value>Marteau</value>
+  </data>
+  <data name="Harpoon Gun" xml:space="preserve">
+    <value>Fusil-harpon</value>
+  </data>
+  <data name="Large Bundle" xml:space="preserve">
+    <value>Gros paquet</value>
+  </data>
+  <data name="Longbow" xml:space="preserve">
+    <value>Arc long</value>
+  </data>
+  <data name="Mace" xml:space="preserve">
+    <value>Masse</value>
+  </data>
+  <data name="Pistol" xml:space="preserve">
+    <value>Pistolet</value>
+  </data>
+  <data name="Rifle" xml:space="preserve">
+    <value>Fusil</value>
+  </data>
+  <data name="Scepter" xml:space="preserve">
+    <value>Sceptre</value>
+  </data>
+  <data name="Shield" xml:space="preserve">
+    <value>Bouclier</value>
+  </data>
+  <data name="Shortbow" xml:space="preserve">
+    <value>Arc court</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="Small Bundle" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="Spear" xml:space="preserve">
+    <value>Lance</value>
+  </data>
+  <data name="Staff" xml:space="preserve">
+    <value>Bâton</value>
+  </data>
+  <data name="Sword" xml:space="preserve">
+    <value>Épée</value>
+  </data>
+  <data name="Torch" xml:space="preserve">
+    <value>Torche</value>
+  </data>
+  <data name="Toy" xml:space="preserve">
+    <value>Jouet</value>
+  </data>
+  <data name="Trident" xml:space="preserve">
+    <value>Trident</value>
+  </data>
+  <data name="Warhorn" xml:space="preserve">
+    <value>Cor de guerre</value>
+  </data>
+  <data name="Defense" xml:space="preserve">
+    <value>Défense: {0:N0}</value>
+  </data>
+  <data name="Power" xml:space="preserve">
+    <value>Puissance +{0:N0}</value>
+  </data>
+  <data name="Precision" xml:space="preserve">
+    <value>Précision +{0:N0}</value>
+  </data>
+  <data name="Toughness" xml:space="preserve">
+    <value>Robustesse +{0:N0}</value>
+  </data>
+  <data name="Vitality" xml:space="preserve">
+    <value>Vitalité +{0:N0}</value>
+  </data>
+  <data name="Concentration" xml:space="preserve">
+    <value>Concentration +{0:N0}</value>
+  </data>
+  <data name="ConditionDamage" xml:space="preserve">
+    <value>Dégâts par altération +{0:N0}</value>
+  </data>
+  <data name="Expertise" xml:space="preserve">
+    <value>Expertise +{0:N0}</value>
+  </data>
+  <data name="Ferocity" xml:space="preserve">
+    <value>Férocité +{0:N0}</value>
+  </data>
+  <data name="HealingPower" xml:space="preserve">
+    <value>Guérison +{0:N0}</value>
+  </data>
+  <data name="AgonyResistance" xml:space="preserve">
+    <value>Résistance à l'agonie +{0:N0}</value>
+  </data>
+  <data name="Unused infusion slot" xml:space="preserve">
+    <value>Emplacement d'infusion inutilisé</value>
+  </data>
+  <data name="Unused enrichment slot" xml:space="preserve">
+    <value>Emplacement d'enrichissement inutilisé</value>
+  </data>
+  <data name="Unused upgrade slot" xml:space="preserve">
+    <value>Emplacement d'amélioration inutilisé</value>
+  </data>
+  <data name="Skin Unlocked" xml:space="preserve">
+    <value>Apparence déverrouillée</value>
+  </data>
+  <data name="Skin Locked" xml:space="preserve">
+    <value>Apparence verrouillée</value>
+  </data>
+  <data name="Basic" xml:space="preserve">
+    <value>Basique</value>
+  </data>
+  <data name="Fine" xml:space="preserve">
+    <value>Raffinée</value>
+  </data>
+  <data name="Masterwork" xml:space="preserve">
+    <value>Chef-d'œuvre</value>
+  </data>
+  <data name="Rare" xml:space="preserve">
+    <value>Rare</value>
+  </data>
+  <data name="Exotic" xml:space="preserve">
+    <value>Exotique</value>
+  </data>
+  <data name="Ascended" xml:space="preserve">
+    <value>Elevé</value>
+  </data>
+  <data name="Legendary" xml:space="preserve">
+    <value>Légendaire</value>
+  </data>
+  <data name="Required Level" xml:space="preserve">
+    <value>Niveau requis : {0}</value>
+  </data>
+  <data name="Account Bound on Acquire" xml:space="preserve">
+    <value>Lié au compte dès l'acquisition</value>
+  </data>
+  <data name="Account Bound on Use" xml:space="preserve">
+    <value>Lié au compte dès l'utilisation</value>
+  </data>
+  <data name="Soulbound on Acquire" xml:space="preserve">
+    <value>Lié à l'âme dès l'acquisition</value>
+  </data>
+  <data name="Soulbound on Use" xml:space="preserve">
+    <value>Lié à l'âme dès l'utilisation</value>
+  </data>
+  <data name="Weapon Strength" xml:space="preserve">
+    <value>Puissance d'arme : {0:N0} - {1:N0}</value>
+  </data>
+  <data name="Choking" xml:space="preserve">
+    <value>Etouffant</value>
+  </data>
+  <data name="Fire" xml:space="preserve">
+    <value>Feu</value>
+  </data>
+  <data name="Ice" xml:space="preserve">
+    <value>Glace</value>
+  </data>
+  <data name="Lightning" xml:space="preserve">
+    <value>Foudre</value>
+  </data>
+  <data name="Double-click to select stats" xml:space="preserve">
+    <value>Double-cliquez pour sélectionner les statistiques.</value>
+  </data>
+  <data name="Unique" xml:space="preserve">
+    <value>Unique</value>
+  </data>
+  <data name="Medium" xml:space="preserve">
+    <value>Intermédiaire</value>
+  </data>
+  <data name="Mini Locked" xml:space="preserve">
+    <value>Miniature verrouillée</value>
+  </data>
+  <data name="Mini Unlocked" xml:space="preserve">
+    <value>Miniature déverrouillée</value>
+  </data>
+</root>
