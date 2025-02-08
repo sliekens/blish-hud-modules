@@ -1,5 +1,7 @@
 ﻿using System.Linq.Expressions;
 
+using Blish_HUD.Controls;
+
 using SL.Common.Controls;
 
 namespace SL.Common.ModelBinding;
@@ -9,11 +11,24 @@ public sealed class NumberInputBinding<TViewModel> : ViewModelBinding<TViewModel
 {
     public NumberInput NumberInput { get; }
 
-    public NumberInputBinding(TViewModel viewModel, Expression<Func<TViewModel, int>> propertySelector, NumberInput numberInput) : base(viewModel, propertySelector)
+    public NumberInputBinding(
+        TViewModel viewModel,
+        Expression<Func<TViewModel, int>> propertySelector,
+        NumberInput numberInput,
+        BindingMode bindingMode
+    ) : base(viewModel, propertySelector, bindingMode)
     {
         NumberInput = numberInput;
-        numberInput.Value = Snapshot();
-        numberInput.ValueChanged += ValueChanged;
+
+        if (bindingMode is BindingMode.ToView or BindingMode.Bidirectional)
+        {
+            UpdateView(Snapshot());
+        }
+
+        if (bindingMode is BindingMode.ToModel or BindingMode.Bidirectional)
+        {
+            numberInput.ValueChanged += ValueChanged;
+        }
     }
 
     private void ValueChanged(object sender, EventArgs e)

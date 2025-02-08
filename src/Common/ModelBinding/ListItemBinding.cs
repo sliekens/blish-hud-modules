@@ -1,5 +1,7 @@
 ﻿using System.Linq.Expressions;
 
+using Blish_HUD.Controls;
+
 using SL.Common.Controls;
 
 namespace SL.Common.ModelBinding;
@@ -9,11 +11,24 @@ public sealed class ListItemBinding<TViewModel, TData> : ViewModelBinding<TViewM
 {
     public ListItem<TData> ListItem { get; }
 
-    public ListItemBinding(TViewModel viewModel, Expression<Func<TViewModel, bool>> propertySelector, ListItem<TData> listItem) : base(viewModel, propertySelector)
+    public ListItemBinding(
+        TViewModel viewModel,
+        Expression<Func<TViewModel, bool>> propertySelector,
+        ListItem<TData> listItem,
+        BindingMode bindingMode
+    ) : base(viewModel, propertySelector, bindingMode)
     {
         ListItem = listItem;
-        listItem.IsSelected = Snapshot();
-        listItem.SelectionChanged += SelectionChanged;
+
+        if (bindingMode is BindingMode.ToView or BindingMode.Bidirectional)
+        {
+            UpdateView(Snapshot());
+        }
+
+        if (bindingMode is BindingMode.ToModel or BindingMode.Bidirectional)
+        {
+            listItem.SelectionChanged += SelectionChanged;
+        }
     }
 
     private void SelectionChanged(object sender, EventArgs e)

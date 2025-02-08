@@ -19,10 +19,11 @@ public sealed class GenericBinding<TViewModel, TControl, TData> : ViewModelBindi
     public GenericBinding(
         TViewModel viewModel,
         Expression<Func<TViewModel, TData>> viewModelPropertySelector,
-        TControl control
-,
-        Expression<Func<TControl, TData>> controlPropertySelector)
-        : base(viewModel, viewModelPropertySelector)
+        TControl control,
+        Expression<Func<TControl, TData>> controlPropertySelector,
+        BindingMode bindingMode
+    )
+        : base(viewModel, viewModelPropertySelector, bindingMode)
     {
         Control = control;
         ControlPropertyName = ((MemberExpression)controlPropertySelector.Body).Member.Name;
@@ -37,8 +38,15 @@ public sealed class GenericBinding<TViewModel, TControl, TData> : ViewModelBindi
             return value => propertyInfo.SetValue(control, value);
         });
 
-        Control.PropertyChanged += ControlOnPropertyChanged;
-        UpdateView(Snapshot());
+        if (bindingMode is BindingMode.ToView or BindingMode.Bidirectional)
+        {
+            UpdateView(Snapshot());
+        }
+
+        if (bindingMode is BindingMode.ToModel or BindingMode.Bidirectional)
+        {
+            Control.PropertyChanged += ControlOnPropertyChanged;
+        }
     }
 
     private void ControlOnPropertyChanged(object sender, PropertyChangedEventArgs e)

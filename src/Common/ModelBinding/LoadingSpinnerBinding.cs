@@ -9,7 +9,11 @@ public sealed class LoadingSpinnerBinding<TViewModel> : ViewModelBinding<TViewMo
 {
     public LoadingSpinner LoadingSpinner { get; }
 
-    public LoadingSpinnerBinding(TViewModel viewModel, Expression<Func<TViewModel, bool>> propertySelector, LoadingSpinner loadingSpinner) : base(viewModel, propertySelector)
+    public LoadingSpinnerBinding(
+        TViewModel viewModel,
+        Expression<Func<TViewModel, bool>> propertySelector,
+        LoadingSpinner loadingSpinner
+    ) : base(viewModel, propertySelector, BindingMode.ToView)
     {
         LoadingSpinner = loadingSpinner;
         LoadingSpinner.Visible = Snapshot();

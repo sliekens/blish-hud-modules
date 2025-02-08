@@ -241,13 +241,6 @@ public sealed class ChatLinkEditorViewModel : ViewModel
             SuffixItemId = SuffixItem?.Id,
             SecondarySuffixItemId = SecondarySuffixItem?.Id
         }.ToString();
-
-        // ReSharper disable once ValueParameterNotUsed
-        set
-        {
-            // Need a setter because this is bound to a writable TextBox
-            // TODO: read-only TextBox with one-way binding and a Copy button
-        }
     }
 
     public RelayCommand CopyNameCommand => new(() => _clipboard.SetText(Item.Name));

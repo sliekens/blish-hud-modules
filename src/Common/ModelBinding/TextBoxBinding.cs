@@ -9,11 +9,24 @@ public sealed class TextBoxBinding<TViewModel> : ViewModelBinding<TViewModel, st
 {
     public TextBox TextBox { get; }
 
-    public TextBoxBinding(TViewModel viewModel, Expression<Func<TViewModel, string>> propertySelector, TextBox textBox) : base(viewModel, propertySelector)
+    public TextBoxBinding(
+        TViewModel viewModel,
+        Expression<Func<TViewModel, string>> propertySelector,
+        TextBox textBox,
+        BindingMode bindingMode
+    ) : base(viewModel, propertySelector, bindingMode)
     {
         TextBox = textBox;
-        textBox.Text = Snapshot();
-        textBox.TextChanged += TextChanged;
+
+        if (bindingMode is BindingMode.ToView or BindingMode.Bidirectional)
+        {
+            UpdateView(Snapshot());
+        }
+
+        if (bindingMode is BindingMode.ToModel or BindingMode.Bidirectional)
+        {
+            textBox.TextChanged += TextChanged;
+        }
     }
 
     private void TextChanged(object sender, EventArgs e)

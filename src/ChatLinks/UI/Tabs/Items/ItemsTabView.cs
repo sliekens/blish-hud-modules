@@ -96,7 +96,7 @@ public class ItemsTabView : View
 
         Binder.Bind(ViewModel, vm => vm.SearchText, searchBox);
         Binder.Bind(ViewModel, vm => vm.Searching, loadingSpinner);
-        Binder.Bind(ViewModel, vm => vm.ResultText, searchLayout.Children.OfType<Scrollbar>().Single());
+        Binder.Bind(ViewModel, vm => vm.ResultText, searchLayout.Children.OfType<Scrollbar>().Single(), ctl => ctl.BasicTooltipText);
 
         viewModel.PropertyChanged += (_, args) =>
         {

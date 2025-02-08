@@ -13,41 +13,58 @@ public sealed class Binder
         TViewModel viewModel,
         Expression<Func<TViewModel, TData>> viewModelPropertySelector,
         TControl control,
-        Expression<Func<TControl, TData>> controlPropertySelector
-    )
-        where TViewModel : ViewModel
-        where TControl : INotifyPropertyChanged
+        Expression<Func<TControl, TData>> controlPropertySelector,
+        BindingMode bindingMode = BindingMode.ToView
+    ) where TViewModel : ViewModel where TControl : INotifyPropertyChanged
     {
-        return new GenericBinding<TViewModel, TControl, TData>(viewModel, viewModelPropertySelector, control, controlPropertySelector);
+        return new GenericBinding<TViewModel, TControl, TData>(viewModel, viewModelPropertySelector, control, controlPropertySelector, bindingMode);
     }
 
-    public static ViewModelBinding<TViewModel, string> Bind<TViewModel>(TViewModel viewModel, Expression<Func<TViewModel, string>> propertySelector, TextBox textBox) where TViewModel : ViewModel
+    public static ViewModelBinding<TViewModel, string> Bind<TViewModel>(
+        TViewModel viewModel,
+        Expression<Func<TViewModel, string>> propertySelector,
+        TextBox textBox,
+        BindingMode bindingMode = BindingMode.Bidirectional
+    ) where TViewModel : ViewModel
     {
-        return new TextBoxBinding<TViewModel>(viewModel, propertySelector, textBox);
+        return new TextBoxBinding<TViewModel>(viewModel, propertySelector, textBox, bindingMode);
     }
 
-    public static ViewModelBinding<TViewModel, string> Bind<TViewModel>(TViewModel viewModel, Expression<Func<TViewModel, string>> propertySelector, Label label) where TViewModel : ViewModel
+    public static ViewModelBinding<TViewModel, string> Bind<TViewModel>(
+        TViewModel viewModel,
+        Expression<Func<TViewModel, string>> propertySelector,
+        Label label
+    ) where TViewModel : ViewModel
     {
         return new LabelBinding<TViewModel>(viewModel, propertySelector, label);
     }
 
-    public static ViewModelBinding<TViewModel, string> Bind<TViewModel>(TViewModel viewModel, Expression<Func<TViewModel, string>> propertySelector, Scrollbar scrollbar) where TViewModel : ViewModel
+    public static ViewModelBinding<TViewModel, int> Bind<TViewModel>(
+        TViewModel viewModel,
+        Expression<Func<TViewModel, int>> propertySelector,
+        NumberInput numberInput,
+        BindingMode bindingMode = BindingMode.Bidirectional
+    ) where TViewModel : ViewModel
     {
-        return new ScrollbarTooltipBinding<TViewModel>(viewModel, propertySelector, scrollbar);
+        return new NumberInputBinding<TViewModel>(viewModel, propertySelector, numberInput, bindingMode);
     }
 
-    public static ViewModelBinding<TViewModel, int> Bind<TViewModel>(TViewModel viewModel, Expression<Func<TViewModel, int>> propertySelector, NumberInput numberInput) where TViewModel : ViewModel
-    {
-        return new NumberInputBinding<TViewModel>(viewModel, propertySelector, numberInput);
-    }
-
-    public static ViewModelBinding<TViewModel, bool> Bind<TViewModel>(TViewModel viewModel, Expression<Func<TViewModel, bool>> propertySelector, LoadingSpinner loadingSpinner) where TViewModel : ViewModel
+    public static ViewModelBinding<TViewModel, bool> Bind<TViewModel>(
+        TViewModel viewModel,
+        Expression<Func<TViewModel, bool>> propertySelector,
+        LoadingSpinner loadingSpinner
+    ) where TViewModel : ViewModel
     {
         return new LoadingSpinnerBinding<TViewModel>(viewModel, propertySelector, loadingSpinner);
     }
 
-    public static ViewModelBinding<TViewModel, bool> Bind<TViewModel, TData>(TViewModel viewModel, Expression<Func<TViewModel, bool>> propertySelector, ListItem<TData> listItem) where TViewModel : ViewModel
+    public static ViewModelBinding<TViewModel, bool> Bind<TViewModel, TData>(
+        TViewModel viewModel,
+        Expression<Func<TViewModel, bool>> propertySelector,
+        ListItem<TData> listItem,
+        BindingMode bindingMode = BindingMode.Bidirectional
+    ) where TViewModel : ViewModel
     {
-        return new ListItemBinding<TViewModel, TData>(viewModel, propertySelector, listItem);
+        return new ListItemBinding<TViewModel, TData>(viewModel, propertySelector, listItem, bindingMode);
     }
 }

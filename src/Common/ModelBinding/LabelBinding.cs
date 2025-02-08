@@ -9,7 +9,11 @@ public sealed class LabelBinding<TViewModel> : ViewModelBinding<TViewModel, stri
 {
     public Label Label { get; }
 
-    public LabelBinding(TViewModel viewModel, Expression<Func<TViewModel, string>> propertySelector, Label label) : base(viewModel, propertySelector)
+    public LabelBinding(
+        TViewModel viewModel,
+        Expression<Func<TViewModel, string>> propertySelector,
+        Label label
+    ) : base(viewModel, propertySelector, BindingMode.ToView)
     {
         Label = label;
         label.Text = Snapshot();

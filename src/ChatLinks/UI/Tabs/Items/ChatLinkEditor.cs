@@ -161,7 +161,7 @@ public sealed class ChatLinkEditor : FlowPanel
             Width = 350
         };
 
-        Binder.Bind(ViewModel, vm => vm.ChatLink, _chatLink);
+        Binder.Bind(ViewModel, vm => vm.ChatLink, _chatLink, BindingMode.ToView);
 
         _chatLink.Click += ChatLinkClicked;
         _chatLink.Menu = new ContextMenuStrip();

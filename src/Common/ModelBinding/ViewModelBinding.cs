@@ -11,7 +11,11 @@ public abstract class ViewModelBinding<TViewModel, TData> : IDisposable where TV
     private Lazy<Func<TData>> ViewModelRead { get; }
     private Lazy<Action<TData>> ViewModelWrite { get; }
 
-    protected ViewModelBinding(TViewModel viewModel, Expression<Func<TViewModel, TData>> viewModelPropertySelector)
+    protected ViewModelBinding(
+        TViewModel viewModel,
+        Expression<Func<TViewModel, TData>> viewModelPropertySelector,
+        BindingMode bindingMode
+    )
     {
         ViewModel = viewModel;
         ViewModelPropertyName = ((MemberExpression)viewModelPropertySelector.Body).Member.Name;
@@ -26,7 +30,10 @@ public abstract class ViewModelBinding<TViewModel, TData> : IDisposable where TV
             return value => propertyInfo.SetValue(viewModel, value);
         });
 
-        ViewModel.PropertyChanged += ViewModelOnPropertyChanged;
+        if (bindingMode is BindingMode.ToView or BindingMode.Bidirectional)
+        {
+            ViewModel.PropertyChanged += ViewModelOnPropertyChanged;
+        }
     }
 
     private void ViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs args)
