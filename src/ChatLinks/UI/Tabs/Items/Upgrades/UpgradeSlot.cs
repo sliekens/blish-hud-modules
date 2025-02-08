@@ -39,6 +39,9 @@ public sealed class UpgradeSlot : Container
                 _label = FormatSlot();
                 _label.Parent = this;
                 break;
+            case nameof(ViewModel.EmptySlotTooltip):
+                _label.BasicTooltipText = ViewModel.EmptySlotTooltip;
+                break;
         }
     }
 
@@ -56,11 +59,7 @@ public sealed class UpgradeSlot : Container
             }
             else
             {
-                _label.BasicTooltipText ??=
-                    """
-                    Click to customize
-                    Right-click for options
-                    """;
+                _label.BasicTooltipText ??= ViewModel.EmptySlotTooltip;
             }
         }
     }
@@ -101,7 +100,7 @@ public sealed class UpgradeSlot : Container
         {
             case UpgradeSlotType.Default:
                 builder
-                    .CreatePart(" Unused Upgrade Slot", part =>
+                    .CreatePart(" " + ViewModel.UnusedUpgradeSlotLabel, part =>
                     {
                         part.SetPrefixImage(EmbeddedResources.Texture("unused_upgrade_slot.png"));
                         part.SetPrefixImageSize(new Point(16));
@@ -110,18 +109,18 @@ public sealed class UpgradeSlot : Container
                 break;
             case UpgradeSlotType.Infusion:
                 builder
-                    .CreatePart(" Unused Infusion Slot", part =>
+                    .CreatePart(" " + ViewModel.UnusedInfusionSlotLabel, part =>
                     {
-                        part.SetPrefixImage(Common.EmbeddedResources.Texture("unused_infusion_slot.png"));
+                        part.SetPrefixImage(EmbeddedResources.Texture("unused_infusion_slot.png"));
                         part.SetPrefixImageSize(new Point(16));
                         part.SetFontSize(ContentService.FontSize.Size16);
                     });
                 break;
             case UpgradeSlotType.Enrichment:
                 builder
-                    .CreatePart(" Unused Enrichment Slot", part =>
+                    .CreatePart(" " + ViewModel.UnusedEnrichmenSlotLabel, part =>
                     {
-                        part.SetPrefixImage(Common.EmbeddedResources.Texture("unused_enrichment_slot.png"));
+                        part.SetPrefixImage(EmbeddedResources.Texture("unused_enrichment_slot.png"));
                         part.SetPrefixImageSize(new Point(16));
                         part.SetFontSize(ContentService.FontSize.Size16);
                     });
@@ -129,5 +128,11 @@ public sealed class UpgradeSlot : Container
         }
 
         return builder.Build();
+    }
+
+    protected override void DisposeControl()
+    {
+        base.DisposeControl();
+        ViewModel.Dispose();
     }
 }

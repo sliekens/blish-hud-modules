@@ -55,10 +55,10 @@ public sealed class ChatLinkEditor : FlowPanel
             Size = new Point(50),
             Menu = new ContextMenuStrip(
                 () => [
-                    ViewModel.CopyNameCommand.ToMenuItem(() => "Copy Name"),
-                    ViewModel.CopyChatLinkCommand.ToMenuItem(() => "Copy Chat Link"),
-                    ViewModel.OpenWikiCommand.ToMenuItem(() => "Open Wiki"),
-                    ViewModel.OpenApiCommand.ToMenuItem(() => "Open API"),
+                    ViewModel.CopyNameCommand.ToMenuItem(() => ViewModel.CopyNameLabel),
+                    ViewModel.CopyChatLinkCommand.ToMenuItem(() => viewModel.CopyChatLinkLabel),
+                    ViewModel.OpenWikiCommand.ToMenuItem(() => viewModel.OpenWikiLabel),
+                    ViewModel.OpenApiCommand.ToMenuItem(() => viewModel.OpenApiLabel),
                 ])
         };
 
@@ -104,13 +104,14 @@ public sealed class ChatLinkEditor : FlowPanel
             ControlPadding = new Vector2(5f)
         };
 
-        _ = new Label
+        var stackSizeLabel = new Label
         {
             Parent = quantityGroup,
-            Text = "Stack Size:",
             AutoSizeWidth = true,
             Height = 32
         };
+
+        Binder.Bind(viewModel, vm => vm.StackSizeLabel, stackSizeLabel);
 
         _quantity = new NumberInput
         {
@@ -150,7 +151,17 @@ public sealed class ChatLinkEditor : FlowPanel
             Height = 32,
             Icon = AsyncTexture2D.FromAssetId(157324),
             ActiveIcon = AsyncTexture2D.FromAssetId(157325),
-            BasicTooltipText = "Reset"
+            BasicTooltipText = viewModel.ResetTooltip
+        };
+
+        ViewModel.PropertyChanged += (_, args) =>
+        {
+            switch (args.PropertyName)
+            {
+                case nameof(ViewModel.ResetTooltip):
+                    resetQuantity.BasicTooltipText = ViewModel.ResetTooltip;
+                    break;
+            }
         };
 
         resetQuantity.Click += ResetQuantityClicked;
@@ -164,8 +175,10 @@ public sealed class ChatLinkEditor : FlowPanel
         Binder.Bind(ViewModel, vm => vm.ChatLink, _chatLink, BindingMode.ToView);
 
         _chatLink.Click += ChatLinkClicked;
-        _chatLink.Menu = new ContextMenuStrip();
-        _chatLink.Menu.AddMenuItem(viewModel.CopyChatLinkCommand.ToMenuItem(() => "Copy"));
+        _chatLink.Menu = new ContextMenuStrip(() =>
+        [
+            viewModel.CopyChatLinkCommand.ToMenuItem(() => viewModel.CopyChatLinkLabel)
+        ]);
 
         _infusionWarning = new Label
         {
@@ -174,13 +187,10 @@ public sealed class ChatLinkEditor : FlowPanel
             AutoSizeHeight = true,
             WrapText = true,
             TextColor = Color.Yellow,
-            Text = """
-                   Due to technical restrictions, the game only
-                   shows the item's default infusion(s) instead of
-                   the selected infusion(s).
-                   """,
             Visible = ViewModel.ShowInfusionWarning
         };
+
+        Binder.Bind(viewModel, vm => vm.InfusionWarning, _infusionWarning);
 
         viewModel.PropertyChanged += PropertyChanged;
     }
@@ -231,5 +241,11 @@ public sealed class ChatLinkEditor : FlowPanel
     {
         _chatLink.SelectionStart = 0;
         _chatLink.SelectionEnd = _chatLink.Text.Length;
+    }
+
+    protected override void DisposeControl()
+    {
+        base.DisposeControl();
+        ViewModel.Dispose();
     }
 }

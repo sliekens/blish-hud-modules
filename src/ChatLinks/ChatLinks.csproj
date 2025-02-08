@@ -75,6 +75,33 @@
       <Generator>
       </Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="Resources\UI\Tabs\Items\Upgrades\UpgradeEditor.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\UI\Tabs\Items\Upgrades\UpgradeSelector.es.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\UI\Tabs\Items\Upgrades\UpgradeSelector.fr.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\UI\Tabs\Items\Upgrades\UpgradeSelector.de.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\UI\Tabs\Items\Upgrades\UpgradeSelector.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\UI\Tabs\Items\Upgrades\UpgradeSlot.es.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\UI\Tabs\Items\Upgrades\UpgradeSlot.fr.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\UI\Tabs\Items\Upgrades\UpgradeSlot.de.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\UI\Tabs\Items\Upgrades\UpgradeSlot.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
   </ItemGroup>
   <Target Name="EnsureRestore" BeforeTargets="ResolvePackageAssets">
     <MSBuild Projects="$(MSBuildProjectFile)" Targets="Restore" />

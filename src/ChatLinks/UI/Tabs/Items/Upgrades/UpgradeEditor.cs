@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 
 using SL.Common;
 using SL.Common.Controls;
+using SL.Common.ModelBinding;
 
 namespace SL.ChatLinks.UI.Tabs.Items.Upgrades;
 
@@ -34,12 +35,12 @@ public sealed class UpgradeEditor : FlowPanel
         _upgradeSlot.Click += UpgradeSlotClicked;
         _upgradeSlot.Menu = new ContextMenuStrip(() =>
             [
-                ViewModel.CustomizeCommand.ToMenuItem(() => "Customize"),
-                ViewModel.RemoveCommand.ToMenuItem(() => ViewModel.RemoveItemText),
-                ViewModel.CopyNameCommand.ToMenuItem(() => "Copy Name"),
-                ViewModel.CopyChatLinkCommand.ToMenuItem(() => "Copy Chat Link"),
-                ViewModel.OpenWikiCommand.ToMenuItem(() => "Open Wiki"),
-                ViewModel.OpenApiCommand.ToMenuItem(() => "Open API"),
+                ViewModel.CustomizeCommand.ToMenuItem(() => ViewModel.CustomizeLabel),
+                ViewModel.RemoveCommand.ToMenuItem(() => ViewModel.RemoveItemLabel),
+                ViewModel.CopyNameCommand.ToMenuItem(() => ViewModel.CopyNameLabel),
+                ViewModel.CopyChatLinkCommand.ToMenuItem(() => ViewModel.CopyChatLinkLabel),
+                ViewModel.OpenWikiCommand.ToMenuItem(() => ViewModel.OpenWikiLabel),
+                ViewModel.OpenApiCommand.ToMenuItem(() => ViewModel.OpenApiLabel),
             ]);
     }
 
@@ -55,9 +56,10 @@ public sealed class UpgradeEditor : FlowPanel
         {
             Parent = this,
             Width = 350,
-            Text = "Cancel",
             Icon = AsyncTexture2D.FromAssetId(155149)
         };
+
+        Binder.Bind(ViewModel, vm => vm.CancelLabel, _cancelButton, btn => btn.Text);
 
         _options = new UpgradeSelector(ViewModel.CreateUpgradeComponentListViewModel())
         {
@@ -105,5 +107,11 @@ public sealed class UpgradeEditor : FlowPanel
                 }
                 break;
         }
+    }
+
+    protected override void DisposeControl()
+    {
+        base.DisposeControl();
+        ViewModel.Dispose();
     }
 }

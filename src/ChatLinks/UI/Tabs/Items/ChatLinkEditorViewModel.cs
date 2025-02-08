@@ -7,9 +7,11 @@ using Blish_HUD.Content;
 using GuildWars2.Chat;
 using GuildWars2.Items;
 
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using Microsoft.Xna.Framework;
 
+using SL.ChatLinks.Storage;
 using SL.ChatLinks.UI.Tabs.Items.Tooltips;
 using SL.ChatLinks.UI.Tabs.Items.Upgrades;
 using SL.Common;
@@ -19,17 +21,25 @@ using UpgradeSlot = SL.ChatLinks.UI.Tabs.Items.Tooltips.UpgradeSlot;
 
 namespace SL.ChatLinks.UI.Tabs.Items;
 
-public sealed class ChatLinkEditorViewModel : ViewModel
+public sealed class ChatLinkEditorViewModel : ViewModel, IDisposable
 {
     private readonly IOptionsMonitor<ChatLinkOptions> _options;
 
-    private bool _allowScroll = true;
+    private readonly IStringLocalizer<ChatLinkEditor> _localizer;
 
-    private int _quantity = 1;
+    private readonly IEventAggregator _eventAggregator;
+
+    private readonly IDbContextFactory _contextFactory;
+
+    private Item _item;
 
     private UpgradeComponent? _suffixItem;
 
     private UpgradeComponent? _secondarySuffixItem;
+
+    private bool _allowScroll = true;
+
+    private int _quantity = 1;
 
     private readonly List<UpgradeEditorViewModel> _upgradeEditorViewModels;
 
@@ -42,12 +52,16 @@ public sealed class ChatLinkEditorViewModel : ViewModel
     private readonly Customizer _customizer;
 
     private readonly IClipBoard _clipboard;
+
     private bool _showInfusionWarning;
+
     private int _maxStackSize;
 
     public ChatLinkEditorViewModel(
         IOptionsMonitor<ChatLinkOptions> options,
+        IStringLocalizer<ChatLinkEditor> localizer,
         IEventAggregator eventAggregator,
+        IDbContextFactory contextFactory,
         ItemTooltipViewModelFactory tooltipViewModelFactory,
         UpgradeEditorViewModelFactory upgradeEditorViewModelFactory,
         ItemIcons icons,
@@ -56,12 +70,15 @@ public sealed class ChatLinkEditorViewModel : ViewModel
         Item item)
     {
         _options = options;
+        _localizer = localizer;
+        _eventAggregator = eventAggregator;
+        _contextFactory = contextFactory;
         _tooltipViewModelFactory = tooltipViewModelFactory;
         _upgradeEditorViewModelFactory = upgradeEditorViewModelFactory;
         _icons = icons;
         _customizer = customizer;
         _clipboard = clipboard;
-        Item = item;
+        _item = item;
         ItemNameColor = ItemColors.Rarity(item.Rarity);
         _upgradeEditorViewModels = CreateUpgradeEditorViewModels().ToList();
         foreach (var (slot, vm) in _upgradeEditorViewModels.Select((vm, index) => (index + 1, vm)))
@@ -84,7 +101,7 @@ public sealed class ChatLinkEditorViewModel : ViewModel
             {
                 switch (args.PropertyName)
                 {
-                    case (nameof(vm.UpgradeSlotViewModel.SelectedUpgradeComponent)) when vm.UpgradeSlotViewModel.Type == UpgradeSlotType.Default:
+                    case nameof(vm.UpgradeSlotViewModel.SelectedUpgradeComponent) when vm.UpgradeSlotViewModel.Type == UpgradeSlotType.Default:
                         switch (slot)
                         {
                             case 1:
@@ -109,6 +126,21 @@ public sealed class ChatLinkEditorViewModel : ViewModel
         eventAggregator.Subscribe<MouseEnteredUpgradeSelector>(OnMouseEnteredUpgradeSelector);
         eventAggregator.Subscribe<MouseLeftUpgradeSelector>(OnMouseLeftUpgradeSelector);
         eventAggregator.Subscribe<UpgradeSlotChanged>(OnUpgradeSlotChanged);
+        eventAggregator.Subscribe<LocaleChanged>(OnLocaleChanged);
+    }
+
+    private async ValueTask OnLocaleChanged(LocaleChanged args)
+    {
+        OnPropertyChanged(nameof(CopyNameLabel));
+        OnPropertyChanged(nameof(CopyChatLinkLabel));
+        OnPropertyChanged(nameof(OpenWikiLabel));
+        OnPropertyChanged(nameof(OpenApiLabel));
+        OnPropertyChanged(nameof(StackSizeLabel));
+        OnPropertyChanged(nameof(ResetTooltip));
+        OnPropertyChanged(nameof(InfusionWarning));
+
+        await using var context = _contextFactory.CreateDbContext(args.Language);
+        Item = context.Items.SingleOrDefault(item => item.Id == Item.Id);
     }
 
     public int MaxStackSize
@@ -145,7 +177,17 @@ public sealed class ChatLinkEditorViewModel : ViewModel
         private set => SetField(ref _showInfusionWarning, value);
     }
 
-    public Item Item { get; }
+    public Item Item
+    {
+        get => _item;
+        set
+        {
+            if (SetField(ref _item, value))
+            {
+                OnPropertyChanged(nameof(ItemName));
+            }
+        }
+    }
 
     public ObservableCollection<UpgradeEditorViewModel> UpgradeEditorViewModels
         => new(_upgradeEditorViewModels);
@@ -243,18 +285,32 @@ public sealed class ChatLinkEditorViewModel : ViewModel
         }.ToString();
     }
 
+    public string CopyNameLabel => _localizer["Copy Name"];
+
     public RelayCommand CopyNameCommand => new(() => _clipboard.SetText(Item.Name));
 
-    public RelayCommand CopyChatLinkCommand => new (() => _clipboard.SetText(ChatLink));
-    
-    public RelayCommand OpenWikiCommand => new(() => Process.Start($"https://wiki.guildwars2.com/wiki/?search={WebUtility.UrlEncode(Item.ChatLink)}"));
+    public string CopyChatLinkLabel => _localizer["Copy Chat Link"];
+
+    public RelayCommand CopyChatLinkCommand => new(() => _clipboard.SetText(ChatLink));
+
+    public string OpenWikiLabel => _localizer["Open Wiki"];
+
+    public RelayCommand OpenWikiCommand => new(() => Process.Start(_localizer["Wiki search", WebUtility.UrlEncode(Item.ChatLink)]));
+
+    public string OpenApiLabel => _localizer["Open API"];
 
     public RelayCommand OpenApiCommand =>
-        new(() => Process.Start($"https://api.guildwars2.com/v2/items/{Item.Id}?v=latest"));
+        new(() => Process.Start(_localizer["Item API", Item.Id]));
 
-    public RelayCommand MinQuantityCommand => new (() => Quantity = 1);
+    public RelayCommand MinQuantityCommand => new(() => Quantity = 1);
 
-    public RelayCommand MaxQuantityCommand => new (() => Quantity = 250);
+    public RelayCommand MaxQuantityCommand => new(() => Quantity = 250);
+
+    public string StackSizeLabel => _localizer["Stack Size"];
+
+    public string ResetTooltip => _localizer["Reset"];
+
+    public string InfusionWarning => _localizer["Infusion warning"];
 
     public ItemTooltipViewModel CreateTooltipViewModel()
     {
@@ -292,7 +348,7 @@ public sealed class ChatLinkEditorViewModel : ViewModel
             yield return _upgradeEditorViewModelFactory.Create(
                 Item,
                 UpgradeSlotType.Default,
-                defaultUpgradeComponentId
+                _customizer.GetUpgradeComponent(defaultUpgradeComponentId)
             );
         }
 
@@ -306,8 +362,16 @@ public sealed class ChatLinkEditorViewModel : ViewModel
                     { Infusion: true } => UpgradeSlotType.Infusion,
                     _ => UpgradeSlotType.Default
                 },
-                infusionSlot.ItemId
+                _customizer.GetUpgradeComponent(infusionSlot.ItemId)
             );
         }
+    }
+
+    public void Dispose()
+    {
+        _eventAggregator.Unsubscribe<MouseEnteredUpgradeSelector>(OnMouseEnteredUpgradeSelector);
+        _eventAggregator.Unsubscribe<MouseLeftUpgradeSelector>(OnMouseLeftUpgradeSelector);
+        _eventAggregator.Unsubscribe<UpgradeSlotChanged>(OnUpgradeSlotChanged);
+        _eventAggregator.Unsubscribe<LocaleChanged>(OnLocaleChanged);
     }
 }

@@ -1,4 +1,8 @@
-﻿using GuildWars2.Items;
+﻿using System.Collections.ObjectModel;
+
+using GuildWars2.Items;
+
+using Microsoft.Extensions.Localization;
 
 using SL.ChatLinks.UI.Tabs.Items.Collections;
 using SL.Common;
@@ -6,20 +10,58 @@ using SL.Common.ModelBinding;
 
 namespace SL.ChatLinks.UI.Tabs.Items.Upgrades;
 
-public sealed class UpgradeSelectorViewModel(
-    Customizer customizer,
-    ItemsListViewModelFactory itemsListViewModelFactory,
-    Item target,
-    UpgradeSlotType slotType,
-    UpgradeComponent? selectedUpgradeComponent,
-    IEventAggregator eventAggregator
-) : ViewModel
+public sealed class UpgradeSelectorViewModel : ViewModel, IDisposable
 {
+    private ObservableCollection<IGrouping<string, ItemsListViewModel>>? _options;
+
+    private readonly IStringLocalizer<UpgradeSelector> _localizer;
+
+    private readonly Customizer _customizer;
+
+    private readonly ItemsListViewModelFactory _itemsListViewModelFactory;
+
+    private readonly Item _target;
+
+    private readonly UpgradeSlotType _slotType;
+
+    private readonly UpgradeComponent? _selectedUpgradeComponent;
+
+    private readonly IEventAggregator _eventAggregator;
+
+    public UpgradeSelectorViewModel(
+        IStringLocalizer<UpgradeSelector> localizer,
+        Customizer customizer,
+        ItemsListViewModelFactory itemsListViewModelFactory,
+        Item target,
+        UpgradeSlotType slotType,
+        UpgradeComponent? selectedUpgradeComponent,
+        IEventAggregator eventAggregator
+)
+    {
+        _localizer = localizer;
+        _customizer = customizer;
+        _itemsListViewModelFactory = itemsListViewModelFactory;
+        _target = target;
+        _slotType = slotType;
+        _selectedUpgradeComponent = selectedUpgradeComponent;
+        _eventAggregator = eventAggregator;
+        eventAggregator.Subscribe<LocaleChanged>(OnLocaleChanged);
+    }
+
+    private void OnLocaleChanged(LocaleChanged changed)
+    {
+        Options = null!;
+    }
+
     public event EventHandler<UpgradeComponent>? Selected;
 
     public event EventHandler? Deselected;
 
-    public IReadOnlyList<IGrouping<string, ItemsListViewModel>> Options => _options ??= GetOptions();
+    public ObservableCollection<IGrouping<string, ItemsListViewModel>> Options
+    {
+        get => _options ??= GetOptions();
+        private set => SetField(ref _options, value);
+    }
 
     public IEnumerable<ItemsListViewModel> AllOptions => Options.SelectMany(group => group);
 
@@ -46,34 +88,32 @@ public sealed class UpgradeSelectorViewModel(
 
     private void OnMouseEnteredUpgradeSelector()
     {
-        eventAggregator.Publish(new MouseEnteredUpgradeSelector());
+        _eventAggregator.Publish(new MouseEnteredUpgradeSelector());
     }
 
     public RelayCommand MouseLeftUpgradeSelectorCommand => new(OnMouseLeftUpgradeSelector);
 
     private void OnMouseLeftUpgradeSelector()
     {
-        eventAggregator.Publish(new MouseLeftUpgradeSelector());
+        _eventAggregator.Publish(new MouseLeftUpgradeSelector());
     }
 
-    private List<IGrouping<string, ItemsListViewModel>>? _options;
-
-    private List<IGrouping<string, ItemsListViewModel>> GetOptions()
+    private ObservableCollection<IGrouping<string, ItemsListViewModel>> GetOptions()
     {
         var groupOrder = new Dictionary<string, int>
         {
-            { "Runes", 1 },
-            { "Sigils", 1 },
-            { "Runes (PvP)", 2 },
-            { "Sigils (PvP)", 2 },
-            { "Infusions", 3 },
-            { "Enrichments", 3 },
-            { "Universal Upgrades", 4 },
-            { "Uncategorized", 5 }
+            { _localizer["Runes"], 1 },
+            { _localizer["Sigils"], 1 },
+            { _localizer["Runes (PvP)"], 2 },
+            { _localizer["Sigils (PvP)"], 2 },
+            { _localizer["Infusions"], 3 },
+            { _localizer["Enrichments"], 3 },
+            { _localizer["Universal Upgrades"], 4 },
+            { _localizer["Uncategorized"], 5 }
         };
 
         var groups =
-            from upgrade in customizer.GetUpgradeComponents(target, slotType)
+            from upgrade in _customizer.GetUpgradeComponents(_target, _slotType)
             let rank = upgrade.Rarity.IsDefined()
                 ? upgrade.Rarity.ToEnum() switch
                 {
@@ -88,25 +128,30 @@ public sealed class UpgradeSelectorViewModel(
                     _ => 99
                 }
                 : 99
-            let vm = itemsListViewModelFactory.Create(upgrade, upgrade == selectedUpgradeComponent)
+            let vm = _itemsListViewModelFactory.Create(upgrade, upgrade == _selectedUpgradeComponent)
             orderby rank, upgrade.Level, upgrade.Name
-            group vm by upgrade switch
+            group vm by (string)(upgrade switch
             {
-                Gem => "Universal Upgrades",
+                Gem => _localizer["Universal Upgrades"],
                 Rune when upgrade.GameTypes.All(
-                    type => type.IsDefined() && type.ToEnum() is GameType.Pvp or GameType.PvpLobby) => "Runes (PvP)",
+                    type => type.IsDefined() && type.ToEnum() is GameType.Pvp or GameType.PvpLobby) => _localizer["Runes (PvP)"],
                 Sigil when upgrade.GameTypes.All(
-                    type => type.IsDefined() && type.ToEnum() is GameType.Pvp or GameType.PvpLobby) => "Sigils (PvP)",
-                Rune => "Runes",
-                Sigil => "Sigils",
-                _ when upgrade.InfusionUpgradeFlags.Infusion => "Infusions",
-                _ when upgrade.InfusionUpgradeFlags.Enrichment => "Enrichments",
-                _ => "Uncategorized"
-            }
+                    type => type.IsDefined() && type.ToEnum() is GameType.Pvp or GameType.PvpLobby) => _localizer["Sigils (PvP)"],
+                Rune => _localizer["Runes"],
+                Sigil => _localizer["Sigils"],
+                _ when upgrade.InfusionUpgradeFlags.Infusion => _localizer["Infusions"],
+                _ when upgrade.InfusionUpgradeFlags.Enrichment => _localizer["Enrichments"],
+                _ => _localizer["Uncategorized"]
+            })
                into grouped
             orderby groupOrder[grouped.Key]
             select grouped;
 
-        return groups.ToList();
+        return [.. groups];
+    }
+
+    public void Dispose()
+    {
+        _eventAggregator.Unsubscribe<LocaleChanged>(OnLocaleChanged);
     }
 }

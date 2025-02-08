@@ -13,16 +13,16 @@ public class ItemsList : ListBox<ItemsListViewModel>
         return entry;
     }
 
-    protected override void Bind(ItemsListViewModel data, ListItem<ItemsListViewModel> listItem)
+    protected override void Bind(ItemsListViewModel viewModel, ListItem<ItemsListViewModel> listItem)
     {
-        Binder.Bind(data, vm => vm.IsSelected, listItem);
+        Binder.Bind(viewModel, vm => vm.IsSelected, listItem);
         listItem.Menu = new ContextMenuStrip(() =>
         [
-            data.ToggleCommand.ToMenuItem(() => data.IsSelected ? "Deselect" : "Select"),
-            data.CopyNameCommand.ToMenuItem(() => "Copy Name"),
-            data.CopyChatLinkCommand.ToMenuItem(() => "Copy Chat Link"),
-            data.OpenWikiCommand.ToMenuItem(() => "Open Wiki"),
-            data.OpenApiCommand.ToMenuItem(() => "Open API")
+            viewModel.ToggleCommand.ToMenuItem(() => viewModel.IsSelected ? viewModel.DeselectLabel : viewModel.SelectLabel),
+            viewModel.CopyNameCommand.ToMenuItem(() => viewModel.CopyNameLabel),
+            viewModel.CopyChatLinkCommand.ToMenuItem(() => viewModel.CopyChatLinkLabel),
+            viewModel.OpenWikiCommand.ToMenuItem(() => viewModel.OpenWikiLabel),
+            viewModel.OpenApiCommand.ToMenuItem(() => viewModel.OpenApiLabel)
         ]);
     }
 }

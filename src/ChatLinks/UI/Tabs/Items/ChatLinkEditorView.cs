@@ -11,4 +11,9 @@ public sealed class ChatLinkEditorView(ChatLinkEditorViewModel viewModel) : View
     {
         _chatLinkEditor.Parent = buildPanel;
     }
+
+    protected override void Unload()
+    {
+        _chatLinkEditor.Dispose();
+    }
 }

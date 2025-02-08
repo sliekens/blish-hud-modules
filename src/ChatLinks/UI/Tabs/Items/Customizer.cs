@@ -25,6 +25,19 @@ public sealed class Customizer(
         return GetUpgradeComponent(upgradable.SuffixItemId);
     }
 
+    public async ValueTask<UpgradeComponent?> GetUpgradeComponentAsync(int? upgradeComponentId)
+    {
+        if (!upgradeComponentId.HasValue)
+        {
+            return null;
+        }
+
+        await using var context = contextFactory.CreateDbContext(locale.Current);
+        return await context.Items
+            .OfType<UpgradeComponent>()
+            .SingleOrDefaultAsync(item => item.Id == upgradeComponentId.Value);
+    }
+
     public UpgradeComponent? GetUpgradeComponent(int? upgradeComponentId)
     {
         if (!upgradeComponentId.HasValue)

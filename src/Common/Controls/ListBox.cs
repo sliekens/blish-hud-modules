@@ -218,6 +218,7 @@ public class ListBox<T> : FlowPanel
 
     protected override void DisposeControl()
     {
+        base.DisposeControl();
         SelectionChanged = null;
     }
 }

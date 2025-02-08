@@ -5,6 +5,7 @@ using Blish_HUD.Content;
 
 using GuildWars2.Items;
 
+using Microsoft.Extensions.Localization;
 using Microsoft.Xna.Framework;
 
 using SL.ChatLinks.UI.Tabs.Items.Tooltips;
@@ -15,20 +16,58 @@ using UpgradeSlot = SL.ChatLinks.UI.Tabs.Items.Tooltips.UpgradeSlot;
 
 namespace SL.ChatLinks.UI.Tabs.Items.Collections;
 
-public sealed class ItemsListViewModel(
-    IClipBoard clipboard,
-    ItemIcons icons,
-    Customizer customizer,
-    Item item,
-    ItemTooltipViewModelFactory tooltipViewModelFactory,
-    bool isSelected
-) : ViewModel
+public sealed class ItemsListViewModel : ViewModel, IDisposable
 {
-    private bool _isSelected = isSelected;
+    private readonly IStringLocalizer<ItemsList> _localizer;
 
-    public Item Item { get; } = item ?? throw new ArgumentNullException(nameof(item));
+    private readonly IEventAggregator _eventAggregator;
 
-    public Color Color { get; } = ItemColors.Rarity(item.Rarity);
+    private readonly IClipBoard _clipboard;
+
+    private readonly ItemIcons _icons;
+
+    private readonly Customizer _customizer;
+
+    private readonly ItemTooltipViewModelFactory _tooltipViewModelFactory;
+
+    private bool _isSelected;
+
+    public ItemsListViewModel(
+        IStringLocalizer<ItemsList> localizer,
+        IEventAggregator eventAggregator,
+        IClipBoard clipboard,
+        ItemIcons icons,
+        Customizer customizer,
+        Item item,
+        ItemTooltipViewModelFactory tooltipViewModelFactory,
+        bool isSelected
+    )
+    {
+        _localizer = localizer;
+        _eventAggregator = eventAggregator;
+        _clipboard = clipboard;
+        _icons = icons;
+        _customizer = customizer;
+        _tooltipViewModelFactory = tooltipViewModelFactory;
+        _isSelected = isSelected;
+        Item = item ?? throw new ArgumentNullException(nameof(item));
+        Color = ItemColors.Rarity(item.Rarity);
+        _eventAggregator.Subscribe<LocaleChanged>(OnLocaleChanged);
+    }
+
+    private void OnLocaleChanged(LocaleChanged changed)
+    {
+        OnPropertyChanged(nameof(SelectLabel));
+        OnPropertyChanged(nameof(DeselectLabel));
+        OnPropertyChanged(nameof(CopyNameLabel));
+        OnPropertyChanged(nameof(CopyChatLinkLabel));
+        OnPropertyChanged(nameof(OpenWikiLabel));
+        OnPropertyChanged(nameof(OpenApiLabel));
+    }
+
+    public Item Item { get; }
+
+    public Color Color { get; }
 
     public bool IsSelected
     {
@@ -36,20 +75,32 @@ public sealed class ItemsListViewModel(
         set => SetField(ref _isSelected, value);
     }
 
+    public string SelectLabel => _localizer["Select"];
+
+    public string DeselectLabel => _localizer["Deselect"];
+
     public RelayCommand ToggleCommand => new(() => IsSelected = !IsSelected);
 
-    public RelayCommand CopyNameCommand => new(() => clipboard.SetText(Item.Name));
+    public string CopyNameLabel => _localizer["Copy Name"];
 
-    public RelayCommand CopyChatLinkCommand => new(() => clipboard.SetText(Item.ChatLink));
+    public RelayCommand CopyNameCommand => new(() => _clipboard.SetText(Item.Name));
 
-    public RelayCommand OpenWikiCommand => new(() => Process.Start($"https://wiki.guildwars2.com/wiki/?search={WebUtility.UrlEncode(item.ChatLink)}"));
+    public string CopyChatLinkLabel => _localizer["Copy Chat Link"];
+
+    public RelayCommand CopyChatLinkCommand => new(() => _clipboard.SetText(Item.ChatLink));
+
+    public string OpenWikiLabel => _localizer["Open Wiki"];
+
+    public RelayCommand OpenWikiCommand => new(() => Process.Start(_localizer["Wiki search", WebUtility.UrlEncode(Item.ChatLink)]));
+
+    public string OpenApiLabel => _localizer["Open API"];
 
     public RelayCommand OpenApiCommand =>
-        new(() => Process.Start($"https://api.guildwars2.com/v2/items/{item.Id}?v=latest"));
+        new(() => Process.Start(_localizer["Item API", Item.Id]));
 
     public AsyncTexture2D? GetIcon()
     {
-        return icons.GetIcon(item);
+        return _icons.GetIcon(Item);
     }
 
     public ItemTooltipViewModel CreateTooltipViewModel()
@@ -61,7 +112,7 @@ public sealed class ItemsListViewModel(
             upgrades.AddRange(InfusionSlots(upgradable));
         }
 
-        return tooltipViewModelFactory.Create(item, 1, upgrades);
+        return _tooltipViewModelFactory.Create(Item, 1, upgrades);
     }
 
     private IEnumerable<UpgradeSlot> UpgradeSlots(IUpgradable upgradable)
@@ -70,7 +121,7 @@ public sealed class ItemsListViewModel(
             .Select(upgradeComponentId => new UpgradeSlot
             {
                 Type = UpgradeSlotType.Default,
-                UpgradeComponent = customizer.GetUpgradeComponent(upgradeComponentId)
+                UpgradeComponent = _customizer.GetUpgradeComponent(upgradeComponentId)
             });
     }
     private IEnumerable<UpgradeSlot> InfusionSlots(IUpgradable upgradable)
@@ -84,7 +135,12 @@ public sealed class ItemsListViewModel(
                     { Enrichment: true } => UpgradeSlotType.Enrichment,
                     _ => UpgradeSlotType.Default
                 },
-                UpgradeComponent = customizer.GetUpgradeComponent(infusionSlot.ItemId)
+                UpgradeComponent = _customizer.GetUpgradeComponent(infusionSlot.ItemId)
             });
+    }
+
+    public void Dispose()
+    {
+        _eventAggregator.Unsubscribe<LocaleChanged>(OnLocaleChanged);
     }
 }
