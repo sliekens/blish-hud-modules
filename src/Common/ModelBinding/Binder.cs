@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.ComponentModel;
+using System.Linq.Expressions;
 
 using Blish_HUD.Controls;
 
@@ -8,6 +9,18 @@ namespace SL.Common.ModelBinding;
 
 public sealed class Binder
 {
+    public static ViewModelBinding<TViewModel, TData> Bind<TViewModel, TControl, TData>(
+        TViewModel viewModel,
+        Expression<Func<TViewModel, TData>> viewModelPropertySelector,
+        TControl control,
+        Expression<Func<TControl, TData>> controlPropertySelector
+    )
+        where TViewModel : ViewModel
+        where TControl : INotifyPropertyChanged
+    {
+        return new GenericBinding<TViewModel, TControl, TData>(viewModel, viewModelPropertySelector, control, controlPropertySelector);
+    }
+
     public static ViewModelBinding<TViewModel, string> Bind<TViewModel>(TViewModel viewModel, Expression<Func<TViewModel, string>> propertySelector, TextBox textBox) where TViewModel : ViewModel
     {
         return new TextBoxBinding<TViewModel>(viewModel, propertySelector, textBox);

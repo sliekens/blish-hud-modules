@@ -1,35 +1,31 @@
-﻿
-
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace SL.Common.ModelBinding;
 
 public abstract class ViewModelBinding<TViewModel, TData> : IDisposable where TViewModel : ViewModel
 {
     public TViewModel ViewModel { get; }
-
     public string ViewModelPropertyName { get; }
-
     private Lazy<Func<TData>> ViewModelRead { get; }
-
     private Lazy<Action<TData>> ViewModelWrite { get; }
 
-    protected ViewModelBinding(TViewModel viewModel, Expression<Func<TViewModel, TData>> propertySelector)
+    protected ViewModelBinding(TViewModel viewModel, Expression<Func<TViewModel, TData>> viewModelPropertySelector)
     {
         ViewModel = viewModel;
-        ViewModelPropertyName = ((MemberExpression)propertySelector.Body).Member.Name;
+        ViewModelPropertyName = ((MemberExpression)viewModelPropertySelector.Body).Member.Name;
         ViewModelRead = new Lazy<Func<TData>>(() =>
         {
-            var compiled = propertySelector.Compile();
+            var compiled = viewModelPropertySelector.Compile();
             return () => compiled(ViewModel);
         });
         ViewModelWrite = new Lazy<Action<TData>>(() =>
         {
-            var memberExpression = (MemberExpression)propertySelector.Body;
-            var property = typeof(TViewModel).GetProperty(memberExpression.Member.Name) ?? throw new InvalidOperationException();
-            return value => property.SetValue(ViewModel, value);
+            var propertyInfo = (PropertyInfo)((MemberExpression)viewModelPropertySelector.Body).Member;
+            return value => propertyInfo.SetValue(viewModel, value);
         });
+
         ViewModel.PropertyChanged += ViewModelOnPropertyChanged;
     }
 
@@ -37,11 +33,14 @@ public abstract class ViewModelBinding<TViewModel, TData> : IDisposable where TV
     {
         if (args.PropertyName == ViewModelPropertyName)
         {
-            UpdateView(ViewModelRead.Value());
+            UpdateView(Snapshot());
         }
     }
 
-    protected TData Snapshot() => ViewModelRead.Value();
+    protected TData Snapshot()
+    {
+        return ViewModelRead.Value();
+    }
 
     protected abstract void UpdateView(TData data);
 
@@ -52,7 +51,10 @@ public abstract class ViewModelBinding<TViewModel, TData> : IDisposable where TV
 
     protected virtual void Dispose(bool disposing)
     {
-        ViewModel.PropertyChanged -= ViewModelOnPropertyChanged;
+        if (disposing)
+        {
+            ViewModel.PropertyChanged -= ViewModelOnPropertyChanged;
+        }
     }
 
     public void Dispose()
