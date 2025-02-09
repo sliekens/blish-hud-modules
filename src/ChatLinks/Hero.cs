@@ -36,6 +36,7 @@ public sealed partial class Hero : IDisposable
         var unlockedGliderSkinsTask = GetUnlockedGliderSkinsInternal(CancellationToken.None);
         var unlockedJadeBotSkinsTask = GetUnlockedJadeBotSkinsInternal(CancellationToken.None);
         var unlockedMailCarriersTask = GetUnlockedMailCarriersInternal(CancellationToken.None);
+        var unlockedMiniaturesTask = GetUnlockedMiniaturesInternal(CancellationToken.None);
         var unlockedMistChampionSkinsTask = GetUnlockedMistChampionSkinsInternal(CancellationToken.None);
         var unlockedNoveltiesTask = GetUnlockedNoveltiesInternal(CancellationToken.None);
         var unlockedOutfitsTask = GetUnlockedOutfitsInternal(CancellationToken.None);
@@ -46,6 +47,7 @@ public sealed partial class Hero : IDisposable
         _unlockedGliderSkins = await unlockedGliderSkinsTask;
         _unlockedJadeBotSkins = await unlockedJadeBotSkinsTask;
         _unlockedMailCarriers = await unlockedMailCarriersTask;
+        _unlockedMiniatures = await unlockedMiniaturesTask;
         _unlockedMistChampionSkins = await unlockedMistChampionSkinsTask;
         _unlockedNovelties = await unlockedNoveltiesTask;
         _unlockedOutfits = await unlockedOutfitsTask;

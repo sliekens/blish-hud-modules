@@ -1,5 +1,4 @@
-﻿using GuildWars2.Hero.Equipment.JadeBots;
-using GuildWars2.Hero.Equipment.MailCarriers;
+﻿using GuildWars2.Hero.Equipment.MailCarriers;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

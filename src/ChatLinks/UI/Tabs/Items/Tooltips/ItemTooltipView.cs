@@ -587,7 +587,37 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
     {
         PrintHeader(miniature);
         PrintDescription(miniature.Description);
-        PrintMini(miniature.MiniatureId);
+        if (ViewModel.DefaultLocked)
+        {
+            if (ViewModel.Unlocked.HasValue)
+            {
+                if (ViewModel.Unlocked.Value)
+                {
+                    PrintPlainText($"""
+
+                                    {ViewModel.Localizer["Mini Unlocked"]}
+
+                                    """);
+                }
+                else
+                {
+                    PrintPlainText($"""
+
+                                    {ViewModel.Localizer["Mini Locked"]}
+
+                                    """, Gray);
+                }
+            }
+            else
+            {
+                PrintPlainText($"""
+
+                                {ViewModel.AuthorizationText}
+
+                                """, Gray);
+            }
+        }
+
         PrintPlainText(ViewModel.Localizer["Mini"]);
         PrintInBank();
         PrintUniqueness(miniature);
@@ -707,7 +737,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                 break;
             case LargeBundle:
                 PrintPlainText(ViewModel.Localizer["Large Bundle"]);
-                break;  
+                break;
             case Longbow:
                 PrintPlainText(ViewModel.Localizer["Longbow"]);
                 break;
@@ -1184,11 +1214,6 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
             TextColor = new Color(0xAA, 0xAA, 0xAA),
             Font = GameService.Content.DefaultFont16
         };
-    }
-
-    public void PrintMini(int miniatureId)
-    {
-        // TODO: mini unlock status
     }
 
     public void PrintBuff(Buff buff)

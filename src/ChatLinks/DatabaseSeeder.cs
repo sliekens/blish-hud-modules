@@ -162,7 +162,7 @@ public sealed class DatabaseSeeder : IDisposable
 
     public async Task SeedAll()
     {
-        var seed = DateTime.UtcNow.Ticks;
+        Directory.CreateDirectory(_options.Value.Directory);
         var manifest = new DataManifest
         {
             Version = 1,
@@ -199,6 +199,7 @@ public sealed class DatabaseSeeder : IDisposable
             ["gliders"] = await SeedGliders(context, language, cancellationToken),
             ["jadeBots"] = await SeedJadeBots(context, language, cancellationToken),
             ["mailCarriers"] = await SeedMailCarriers(context, language, cancellationToken),
+            ["miniatures"] = await SeedMiniatures(context, language, cancellationToken),
             ["mistChampions"] = await SeedMistChampions(context, language, cancellationToken),
             ["novelties"] = await SeedNovelties(context, language, cancellationToken),
             ["outfits"] = await SeedOutfits(context, language, cancellationToken)
@@ -498,6 +499,37 @@ public sealed class DatabaseSeeder : IDisposable
         }
 
         _logger.LogInformation("Finished seeding {Count} mail carriers.", index.Count);
+        return index.Count;
+    }
+
+    private async Task<int> SeedMiniatures(ChatLinksContext context, Language language,
+        CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Start seeding miniatures.");
+
+        HashSet<int> index = await _gw2Client.Hero.Equipment.Miniatures
+            .GetMiniaturesIndex(cancellationToken)
+            .ValueOnly();
+
+        _logger.LogDebug("Found {Count} miniatures in the API.", index.Count);
+        var existing = await context.Miniatures.Select(miniature => miniature.Id)
+            .ToListAsync(cancellationToken: cancellationToken);
+
+        index.ExceptWith(existing);
+        if (index.Count != 0)
+        {
+            _logger.LogDebug("Start seeding {Count} miniatures.", index.Count);
+
+            // TODO: incremental query
+            var miniatures = await _gw2Client.Hero.Equipment.Miniatures
+                .GetMiniatures(language, MissingMemberBehavior.Undefined, cancellationToken).ValueOnly();
+
+            await context.AddRangeAsync(miniatures.Where(miniature => index.Contains(miniature.Id)), cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+            DetachAllEntities(context);
+        }
+
+        _logger.LogInformation("Finished seeding {Count} miniatures.", index.Count);
         return index.Count;
     }
 

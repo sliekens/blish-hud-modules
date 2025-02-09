@@ -1,7 +1,6 @@
 ﻿using Blish_HUD.Content;
 
 using GuildWars2;
-using GuildWars2.Hero;
 using GuildWars2.Hero.Equipment.Wardrobe;
 using GuildWars2.Items;
 
@@ -288,6 +287,36 @@ public sealed class ItemTooltipViewModel(
                         }
 
                         DefaultLocked = true;
+                    }
+                }
+                catch (Exception reason)
+                {
+                    logger.LogWarning(reason, "Couldn't get unlocks.");
+                }
+
+                break;
+            case Miniature:
+            case MiniatureUnlocker:
+                progress.Report("Checking unlock status...");
+                try
+                {
+                    await using var context = contextFactory.CreateDbContext(locale.Current);
+                    var miniature =
+                        await context.Miniatures.FirstOrDefaultAsync(miniature => miniature.ItemId == Item.Id);
+                    if (miniature is not null)
+                    {
+                        if (hero.UnlocksAvailable)
+                        {
+                            var unlocks = await hero.GetUnlockedMiniatures(CancellationToken.None);
+                            Unlocked = unlocks.Contains(miniature.Id);
+                        }
+                        else
+                        {
+                            AuthorizationText = Localizer["Grant unlocks permission"];
+                        }
+
+                        DefaultLocked = true;
+                        break;
                     }
                 }
                 catch (Exception reason)

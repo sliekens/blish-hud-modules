@@ -47,7 +47,9 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
 
     public DbSet<Novelty> Novelties => Set<Novelty>();
 
-    public DbSet<Outfit> Outfits=> Set<Outfit>();
+    public DbSet<GuildWars2.Hero.Equipment.Miniatures.Miniature> Miniatures => Set<GuildWars2.Hero.Equipment.Miniatures.Miniature>();
+
+    public DbSet<Outfit> Outfits => Set<Outfit>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -182,6 +184,8 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
         modelBuilder.ApplyConfiguration(new JadeBotSkinEntityTypeConfiguration());
 
         modelBuilder.ApplyConfiguration(new MailCarrierEntityTypeConfiguration());
+
+        modelBuilder.ApplyConfiguration(new MiniatureEntityTypeConfiguration());
 
         modelBuilder.ApplyConfiguration(new MistChampionSkinEntityTypeConfiguration());
 
