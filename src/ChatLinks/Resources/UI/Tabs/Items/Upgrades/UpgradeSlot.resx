@@ -121,12 +121,12 @@
     <value>Click to customize</value>
   </data>
   <data name="Unused upgrade slot" xml:space="preserve">
-    <value>Unused Infusion Slot</value>
+    <value>Unused Upgrade Slot</value>
   </data>
   <data name="Unused enrichment slot" xml:space="preserve">
     <value>Unused Enrichment Slot</value>
   </data>
   <data name="Unused infusion slot" xml:space="preserve">
-    <value>Unused Upgrade Slot</value>
+    <value>Unused Infusion Slot</value>
   </data>
 </root>
