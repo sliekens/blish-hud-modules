@@ -114,18 +114,26 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 
     protected override async Task LoadAsync()
     {
-        var databaseManager = _serviceProvider.GetRequiredService<DatabaseSeeder>();
+        var logger = _serviceProvider.GetRequiredService<ILogger<Module>>();
         var locale = _serviceProvider.GetRequiredService<ILocale>();
-        await databaseManager.Migrate(locale.Current);
+        var seeder = _serviceProvider.GetRequiredService<DatabaseSeeder>();
+
+        try
+        {
+            await seeder.Migrate(locale.Current);
+        }
+        catch (Exception reason)
+        {
+            logger.LogWarning(reason, "Database migration failed, starting with potentially invalid database schema.");
+        }
 
         _ = _serviceProvider.GetRequiredService<MainIcon>();
         _ = _serviceProvider.GetRequiredService<MainWindow>();
 
 
-        var logger = _serviceProvider.GetRequiredService<ILogger<Module>>();
         try
         {
-            await databaseManager.Sync(locale.Current, CancellationToken.None);
+            await seeder.Sync(locale.Current, CancellationToken.None);
         }
         catch (Exception reason)
         {

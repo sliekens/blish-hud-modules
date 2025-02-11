@@ -98,50 +98,23 @@ public sealed class DatabaseSeeder : IDisposable
 
     public async Task Migrate(Language language)
     {
-        DataManifest? currentDataManifest = await DataManifest();
-        Database? currentDatabase = null;
-        bool shouldDownload = false;
-        if (currentDataManifest is not null)
+        DataManifest currentDataManifest = await DataManifest() ?? new DataManifest
         {
-            if (currentDataManifest.Databases.TryGetValue(language.Alpha2Code, out currentDatabase))
-            {
-                shouldDownload = currentDatabase.SchemaVersion > ChatLinksContext.SchemaVersion
-                    || IsEmpty(currentDatabase);
-            }
-            else
-            {
-                shouldDownload = true;
-            }
-        }
-        else
-        {
-            shouldDownload = true;
-        }
+            Version = 1,
+            Databases = []
+        };
+
+        bool shouldDownload = !currentDataManifest.Databases.TryGetValue(language.Alpha2Code, out Database? currentDatabase)
+            || currentDatabase.SchemaVersion > ChatLinksContext.SchemaVersion
+            || IsEmpty(currentDatabase);
 
         if (shouldDownload)
         {
-            var seedDataManifest = await _staticDataClient.GetSeedIndex(CancellationToken.None);
-            var seedDatabase = seedDataManifest.Databases
-                .SingleOrDefault(seed => seed.SchemaVersion == ChatLinksContext.SchemaVersion && seed.Language == language.Alpha2Code);
-
+            var seedDatabase = await DownloadDatabase(language);
             if (seedDatabase is not null)
             {
-                var destination = Path.Combine(_options.Value.Directory, seedDatabase.Name);
-                await _staticDataClient.Download(seedDatabase, destination, CancellationToken.None);
-
-                currentDataManifest ??= new DataManifest
-                {
-                    Version = 1,
-                    Databases = []
-                };
-
-                currentDatabase = new Database
-                {
-                    Name = seedDatabase.Name,
-                    SchemaVersion = seedDatabase.SchemaVersion
-                };
-
-                currentDataManifest.Databases[language.Alpha2Code] = currentDatabase;
+                currentDatabase = seedDatabase;
+                currentDataManifest.Databases[language.Alpha2Code] = seedDatabase;
 
                 await SaveManifest(currentDataManifest);
 
@@ -149,8 +122,35 @@ public sealed class DatabaseSeeder : IDisposable
             }
         }
 
-        await using var context = _contextFactory.CreateDbContext(currentDatabase!.Name);
+        if (currentDatabase is null)
+        {
+            _logger.LogWarning("No usable database found for language {Language}.", language.Alpha2Code);
+            return;
+        }
+
+        await using var context = _contextFactory.CreateDbContext(currentDatabase.Name);
         await context.Database.MigrateAsync();
+    }
+
+    private async Task<Database?> DownloadDatabase(Language language)
+    {
+        var seedDataManifest = await _staticDataClient.GetSeedIndex(CancellationToken.None);
+        var seedDatabase = seedDataManifest.Databases
+            .SingleOrDefault(seed => seed.SchemaVersion == ChatLinksContext.SchemaVersion && seed.Language == language.Alpha2Code);
+
+        if (seedDatabase is null)
+        {
+            return null;
+        }
+
+        var destination = Path.Combine(_options.Value.Directory, seedDatabase.Name);
+        await _staticDataClient.Download(seedDatabase, destination, CancellationToken.None);
+
+        return new Database
+        {
+            Name = seedDatabase.Name,
+            SchemaVersion = seedDatabase.SchemaVersion
+        };
     }
 
     public async Task Sync(Language language, CancellationToken cancellationToken)
