@@ -121,7 +121,16 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         _ = _serviceProvider.GetRequiredService<MainIcon>();
         _ = _serviceProvider.GetRequiredService<MainWindow>();
 
-        await databaseManager.Sync(locale.Current, CancellationToken.None);
+
+        var logger = _serviceProvider.GetRequiredService<ILogger<Module>>();
+        try
+        {
+            await databaseManager.Sync(locale.Current, CancellationToken.None);
+        }
+        catch (Exception reason)
+        {
+            logger.LogWarning(reason, "Database sync failed, starting with potentially stale data.");
+        }
     }
 
     private static void SetupSqlite3()
