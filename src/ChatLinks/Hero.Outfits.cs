@@ -3,6 +3,8 @@
 using GuildWars2;
 using GuildWars2.Authorization;
 
+using Microsoft.Extensions.Logging;
+
 namespace SL.ChatLinks;
 
 public sealed partial class Hero
@@ -11,7 +13,15 @@ public sealed partial class Hero
 
     public async ValueTask<IReadOnlyList<int>> GetUnlockedOutfits(CancellationToken cancellationToken)
     {
-        return _unlockedOutfits ??= await GetUnlockedOutfitsInternal(cancellationToken);
+        try
+        {
+            return _unlockedOutfits ??= await GetUnlockedOutfitsInternal(cancellationToken);
+        }
+        catch (Exception reason)
+        {
+            _logger.LogWarning(reason, "Failed to retrieve unlocked outfits.");
+            return [];
+        }
     }
 
     private async ValueTask<IReadOnlyList<int>> GetUnlockedOutfitsInternal(CancellationToken cancellationToken)
