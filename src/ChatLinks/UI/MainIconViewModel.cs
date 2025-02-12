@@ -9,6 +9,7 @@ using Microsoft.Extensions.Primitives;
 
 using SL.ChatLinks.Storage;
 using SL.Common;
+using SL.Common.Controls;
 using SL.Common.ModelBinding;
 
 namespace SL.ChatLinks.UI;
@@ -168,4 +169,35 @@ public class MainIconViewModel(
     {
         Process.Start("https://ko-fi.com/sliekens");
     });
+
+    public IEnumerable<ContextMenuStripItem> ContextMenuItems()
+    {
+        var bananaModeItem = new ContextMenuStripItem(BananaModeLabel);
+        bananaModeItem.CanCheck = true;
+        bananaModeItem.Checked = BananaMode;
+        bananaModeItem.CheckedChanged += (sender, args) =>
+        {
+            BananaMode = args.Checked;
+        };
+
+        var raiseStackSizeItem = new ContextMenuStripItem(RaiseStackSizeLabel);
+        raiseStackSizeItem.CanCheck = true;
+        raiseStackSizeItem.Checked = RaiseStackSize;
+        raiseStackSizeItem.CheckedChanged += (sender, args) =>
+        {
+            RaiseStackSize = args.Checked;
+        };
+
+        var syncItem = SyncCommand.ToMenuItem(() => SyncLabel);
+
+        var koFiItem = KoFiCommand.ToMenuItem(() => KoFiLabel);
+
+        return
+        [
+            bananaModeItem,
+            raiseStackSizeItem,
+            syncItem,
+            koFiItem
+        ];
+    }
 }
