@@ -50,7 +50,7 @@ public sealed class ItemsTabViewModel(
     {
         eventAggregator.Subscribe<LocaleChanged>(OnLocaleChanged);
         eventAggregator.Subscribe<DatabaseDownloaded>(OnDatabaseDownloaded);
-        eventAggregator.Subscribe<DatabaseSyncCompleted>(OnDatabaseSyncCompleted);
+        eventAggregator.Subscribe<DatabaseSeeded>(OnDatabaseSeeded);
     }
 
     private async ValueTask OnLocaleChanged(LocaleChanged args)
@@ -64,7 +64,7 @@ public sealed class ItemsTabViewModel(
         await Task.Run(OnSearch);
     }
 
-    private async ValueTask OnDatabaseSyncCompleted(DatabaseSyncCompleted args)
+    private async ValueTask OnDatabaseSeeded(DatabaseSeeded args)
     {
         if (args.Updated["items"] > 0)
         {
@@ -245,6 +245,6 @@ public sealed class ItemsTabViewModel(
     {
         eventAggregator.Unsubscribe<LocaleChanged>(OnLocaleChanged);
         eventAggregator.Unsubscribe<DatabaseDownloaded>(OnDatabaseDownloaded);
-        eventAggregator.Unsubscribe<DatabaseSyncCompleted>(OnDatabaseSyncCompleted);
+        eventAggregator.Unsubscribe<DatabaseSeeded>(OnDatabaseSeeded);
     }
 }

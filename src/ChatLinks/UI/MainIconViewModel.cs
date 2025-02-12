@@ -130,7 +130,7 @@ public class MainIconViewModel(
                     ScreenNotification.NotificationType.Warning);
             }
         },
-        () => string.IsNullOrEmpty(LoadingMessage),
+        () => !seeder.IsSynchronizing,
         handler =>
         {
             DatabaseUpdated += handler;

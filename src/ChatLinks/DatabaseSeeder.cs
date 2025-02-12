@@ -30,6 +30,9 @@ public sealed class DatabaseSeeder : IDisposable
     private readonly Gw2Client _gw2Client;
     private readonly StaticDataClient _staticDataClient;
 
+    private readonly SemaphoreSlim _syncSemaphore = new(1, 1);
+    private Task? _currentSync;
+
     public DatabaseSeeder(ILogger<DatabaseSeeder> logger,
         IOptions<DatabaseOptions> options,
         IDbContextFactory contextFactory,
@@ -153,11 +156,30 @@ public sealed class DatabaseSeeder : IDisposable
         };
     }
 
+    public bool IsSynchronizing => _currentSync is { IsCompleted: false };
+
     public async Task Sync(Language language, CancellationToken cancellationToken)
     {
-        await using var context = _contextFactory.CreateDbContext(language);
-        context.ChangeTracker.AutoDetectChangesEnabled = false;
-        await Seed(context, language, cancellationToken);
+        await _syncSemaphore.WaitAsync(cancellationToken);
+        try
+        {
+            if (_currentSync is null || _currentSync.IsCompleted)
+            {
+                _currentSync = Task.Run(async () =>
+                {
+                    await using var context = _contextFactory.CreateDbContext(language);
+                    context.ChangeTracker.AutoDetectChangesEnabled = false;
+                    await Seed(context, language, cancellationToken);
+                }, cancellationToken);
+            }
+        }
+        finally
+        {
+            _syncSemaphore.Release();
+        }
+
+        await _currentSync;
+        await _eventAggregator.PublishAsync(new DatabaseSyncCompleted(), cancellationToken);
     }
 
     public async Task SeedAll()
@@ -187,7 +209,7 @@ public sealed class DatabaseSeeder : IDisposable
         await SaveManifest(manifest);
     }
 
-    public async Task Seed(ChatLinksContext context, Language language, CancellationToken cancellationToken)
+    private async Task Seed(ChatLinksContext context, Language language, CancellationToken cancellationToken)
     {
         var inserted = new Dictionary<string, int>
         {
@@ -205,7 +227,7 @@ public sealed class DatabaseSeeder : IDisposable
             ["outfits"] = await SeedOutfits(context, language, cancellationToken)
         };
 
-        await _eventAggregator.PublishAsync(new DatabaseSyncCompleted(inserted), cancellationToken);
+        await _eventAggregator.PublishAsync(new DatabaseSeeded(language, inserted), cancellationToken);
     }
 
     private async Task<int> SeedItems(ChatLinksContext context, Language language, CancellationToken cancellationToken)
