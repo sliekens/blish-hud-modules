@@ -37,6 +37,15 @@ public sealed class ListItem<TData> : Panel
         }
     }
 
+    protected override void OnContentResized(RegionChangedEventArgs e)
+    {
+        base.OnContentResized(e);
+        foreach (Control child in Children)
+        {
+            child.Invalidate();
+        }
+    }
+
     public TData Data { get; }
 
     protected override void OnClick(MouseEventArgs e)
