@@ -153,7 +153,7 @@
   <data name="Back Item" xml:space="preserve">
     <value>Rücken-Gegenstand</value>
   </data>
-  <data name="Takes effect immediately upon receipt." xml:space="preserve">
+  <data name="Takes effect immediately upon receipt" xml:space="preserve">
     <value>Tritt direkt bei Erhalt in Kraft.</value>
   </data>
   <data name="Double-click to consume" xml:space="preserve">
