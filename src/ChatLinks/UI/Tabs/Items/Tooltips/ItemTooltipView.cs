@@ -1051,13 +1051,16 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         }
         else
         {
-            PrintPlainText($"\r\n{rarity}", ItemColors.Rarity(rarity));
+            PrintPlainText($"\r\n{ViewModel.Localizer[rarity.ToString()]}", ItemColors.Rarity(rarity));
         }
     }
 
     public void PrintWeightClass(Extensible<WeightClass> weightClass)
     {
-        PrintPlainText(weightClass.ToString());
+        if (weightClass != WeightClass.Clothing)
+        {
+            PrintPlainText(ViewModel.Localizer[weightClass.ToString()]);
+        }
     }
 
     public void PrintRequiredLevel(int level)

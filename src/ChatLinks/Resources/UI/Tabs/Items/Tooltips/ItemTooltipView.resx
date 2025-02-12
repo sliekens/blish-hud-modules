@@ -393,4 +393,10 @@
   <data name="Mini Unlocked" xml:space="preserve">
     <value>Mini Unlocked</value>
   </data>
+  <data name="Light" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="Heavy" xml:space="preserve">
+    <value>Heavy</value>
+  </data>
 </root>

@@ -329,7 +329,7 @@
     <value>Básica</value>
   </data>
   <data name="Fine" xml:space="preserve">
-    <value>Selecta</value>
+    <value>Selecto</value>
   </data>
   <data name="Masterwork" xml:space="preserve">
     <value>Sobresaliente</value>
@@ -390,5 +390,11 @@
   </data>
   <data name="Mini Unlocked" xml:space="preserve">
     <value>Miniatura desbloqueada</value>
+  </data>
+  <data name="Light" xml:space="preserve">
+    <value>Ligero</value>
+  </data>
+  <data name="Heavy" xml:space="preserve">
+    <value>Pesado</value>
   </data>
 </root>
