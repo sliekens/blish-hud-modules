@@ -36,6 +36,6 @@ public sealed partial class Hero
             .GetUnlockedFinishers(token, cancellationToken: cancellationToken)
             .ValueOnly();
 
-        return values.Select(finisher => finisher.Id).ToImmutableList();
+        return [.. values.Select(finisher => finisher.Id)];
     }
 }

@@ -37,7 +37,7 @@ public sealed class ItemTooltipViewModel(
 
     private EquipmentSkin? _skin;
 
-    public IReadOnlyList<UpgradeSlot> UpgradesSlots { get; } = upgrades.ToList();
+    public IReadOnlyList<UpgradeSlot> UpgradesSlots { get; } = [.. upgrades];
 
     public Item Item { get; } = item;
 

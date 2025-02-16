@@ -349,6 +349,6 @@ public sealed class Customizer(
                     ),
         };
 
-        return upgrades.ToImmutableList();
+        return [.. upgrades];
     }
 }

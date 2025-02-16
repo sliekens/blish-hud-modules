@@ -36,6 +36,6 @@ public sealed partial class Hero
             .GetUnlockedNovelties(token, cancellationToken)
             .ValueOnly();
 
-        return values.ToImmutableList();
+        return [.. values];
     }
 }

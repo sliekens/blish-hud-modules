@@ -36,6 +36,6 @@ public sealed partial class Hero
             .GetUnlockedOutfits(token, cancellationToken: cancellationToken)
             .ValueOnly();
 
-        return values.ToImmutableList();
+        return [.. values];
     }
 }

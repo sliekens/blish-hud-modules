@@ -36,6 +36,6 @@ public sealed partial class Hero
             .GetUnlockedMistChampions(token, cancellationToken: cancellationToken)
             .ValueOnly();
 
-        return values.ToImmutableList();
+        return [.. values];
     }
 }

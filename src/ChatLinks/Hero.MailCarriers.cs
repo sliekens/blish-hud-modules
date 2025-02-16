@@ -37,6 +37,6 @@ public sealed partial class Hero
             .GetUnlockedMailCarriers(token, cancellationToken: cancellationToken)
             .ValueOnly();
 
-        return values.ToImmutableList();
+        return [.. values];
     }
 }
