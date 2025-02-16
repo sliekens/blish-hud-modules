@@ -52,57 +52,6 @@
   <ItemGroup>
     <Reference Include="System.IO.Compression" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="Resources\UI\MainIcon.es.resx">
-      <Generator></Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Resources\UI\MainIcon.fr.resx">
-      <Generator></Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Resources\UI\MainIcon.de.resx">
-      <Generator></Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Resources\UI\MainIcon.resx">
-      <Generator></Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Resources\UI\MainWindow.resx">
-      <Generator></Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Resources\UI\Tabs\Items\ItemsTabView.resx">
-      <Generator></Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Resources\UI\Tabs\Items\Tooltips\ItemTooltipView.resx">
-      <Generator>
-      </Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Resources\UI\Tabs\Items\Upgrades\UpgradeEditor.resx">
-      <Generator></Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Resources\UI\Tabs\Items\Upgrades\UpgradeSelector.es.resx">
-      <Generator></Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Resources\UI\Tabs\Items\Upgrades\UpgradeSelector.fr.resx">
-      <Generator></Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Resources\UI\Tabs\Items\Upgrades\UpgradeSelector.de.resx">
-      <Generator></Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Resources\UI\Tabs\Items\Upgrades\UpgradeSelector.resx">
-      <Generator></Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Resources\UI\Tabs\Items\Upgrades\UpgradeSlot.es.resx">
-      <Generator></Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Resources\UI\Tabs\Items\Upgrades\UpgradeSlot.fr.resx">
-      <Generator></Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Resources\UI\Tabs\Items\Upgrades\UpgradeSlot.de.resx">
-      <Generator></Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Resources\UI\Tabs\Items\Upgrades\UpgradeSlot.resx">
-      <Generator></Generator>
-    </EmbeddedResource>
-  </ItemGroup>
   <Target Name="EnsureRestore" BeforeTargets="ResolvePackageAssets">
     <MSBuild Projects="$(MSBuildProjectFile)" Targets="Restore" />
   </Target>
