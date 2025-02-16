@@ -81,7 +81,7 @@ public sealed class UpgradeEditorViewModel : ViewModel, IDisposable
         () => UpgradeSlotViewModel.SelectedUpgradeComponent is not null);
 
     public string CopyNameLabel => _localizer["Copy Name"];
-     
+
     public RelayCommand CopyNameCommand => new(
         () =>
         {

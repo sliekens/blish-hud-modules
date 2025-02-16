@@ -6,7 +6,6 @@ using Blish_HUD;
 using Blish_HUD.Controls;
 
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 
 using MonoGame.Extended;
@@ -386,7 +385,7 @@ public class NumberInput : TextInputBase
                 }
             }
         }
-        
+
         PaintText(spriteBatch, _textRectangle, HorizontalAlignment.Right, _textBoxRectangle);
 
         #endregion Text

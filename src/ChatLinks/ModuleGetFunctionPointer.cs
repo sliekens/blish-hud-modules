@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics;
 
-using Windows.Win32;
-
 using Microsoft.Win32.SafeHandles;
 
 using SQLitePCL;
+
+using Windows.Win32;
 
 namespace SL.ChatLinks;
 
@@ -23,8 +23,8 @@ public class ModuleGetFunctionPointer(ProcessModule module) : IGetFunctionPointe
             .Where(e => Path.GetFileNameWithoutExtension(e.ModuleName) == moduleName).ToList();
         return modules switch
         {
-        [var module] => module,
-        [] => throw new ArgumentException($"Found no modules named '{moduleName}' in the current process.", nameof(moduleName)),
+            [var module] => module,
+            [] => throw new ArgumentException($"Found no modules named '{moduleName}' in the current process.", nameof(moduleName)),
             _ => throw new ArgumentException($"Found several modules named '{moduleName}' in the current process."),
         };
     }

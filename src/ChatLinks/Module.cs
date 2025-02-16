@@ -1,11 +1,9 @@
 ﻿using System.ComponentModel.Composition;
-using System.Globalization;
 
 using Blish_HUD;
 using Blish_HUD.Modules;
 using Blish_HUD.Settings;
 
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -13,7 +11,6 @@ using Microsoft.Extensions.Options;
 using SL.Adapters;
 using SL.ChatLinks.Integrations;
 using SL.ChatLinks.Logging;
-using SL.ChatLinks.Storage;
 using SL.ChatLinks.UI;
 using SL.ChatLinks.UI.Tabs.Items;
 using SL.ChatLinks.UI.Tabs.Items.Collections;

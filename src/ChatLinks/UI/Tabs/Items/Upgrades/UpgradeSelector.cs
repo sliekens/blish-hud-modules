@@ -5,7 +5,6 @@ using Blish_HUD.Controls;
 using Blish_HUD.Input;
 
 using SL.ChatLinks.UI.Tabs.Items.Collections;
-using SL.Common;
 using SL.Common.Controls;
 
 namespace SL.ChatLinks.UI.Tabs.Items.Upgrades;

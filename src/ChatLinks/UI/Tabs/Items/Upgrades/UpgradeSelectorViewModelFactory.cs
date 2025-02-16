@@ -21,10 +21,10 @@ public sealed class UpgradeSelectorViewModelFactory(
     {
         return new UpgradeSelectorViewModel(
             localizer,
-            customizer, 
-            itemsListViewModelFactory, 
-            targetItem, 
-            slotType, 
+            customizer,
+            itemsListViewModelFactory,
+            targetItem,
+            slotType,
             selectedUpgradeComponent,
             eventAggregator
         );

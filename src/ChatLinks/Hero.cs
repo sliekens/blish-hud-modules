@@ -1,6 +1,4 @@
-﻿using System.Threading;
-
-using GuildWars2;
+﻿using GuildWars2;
 using GuildWars2.Authorization;
 
 using Microsoft.Extensions.Logging;

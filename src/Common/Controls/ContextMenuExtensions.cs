@@ -1,5 +1,6 @@
-﻿using Blish_HUD.Controls;
-using System.Windows.Input;
+﻿using System.Windows.Input;
+
+using Blish_HUD.Controls;
 
 namespace SL.Common.Controls;
 

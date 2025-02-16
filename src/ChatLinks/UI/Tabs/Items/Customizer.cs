@@ -1,6 +1,4 @@
-﻿using System.Collections.Immutable;
-
-using GuildWars2.Hero;
+﻿using GuildWars2.Hero;
 using GuildWars2.Items;
 
 using Microsoft.EntityFrameworkCore;

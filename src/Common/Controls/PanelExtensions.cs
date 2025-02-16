@@ -1,6 +1,6 @@
-﻿using Blish_HUD.Controls;
+﻿using System.Reflection;
 
-using System.Reflection;
+using Blish_HUD.Controls;
 
 namespace SL.Common.Controls;
 
