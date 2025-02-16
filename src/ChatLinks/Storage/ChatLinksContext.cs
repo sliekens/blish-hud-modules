@@ -19,7 +19,18 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 using SL.ChatLinks.Storage.Comparers;
-using SL.ChatLinks.Storage.Models;
+using SL.ChatLinks.Storage.Models.Hero.Crafting;
+using SL.ChatLinks.Storage.Models.Hero.Equipment.Dyes;
+using SL.ChatLinks.Storage.Models.Hero.Equipment.Finishers;
+using SL.ChatLinks.Storage.Models.Hero.Equipment.Gliders;
+using SL.ChatLinks.Storage.Models.Hero.Equipment.JadeBots;
+using SL.ChatLinks.Storage.Models.Hero.Equipment.MailCarriers;
+using SL.ChatLinks.Storage.Models.Hero.Equipment.Miniatures;
+using SL.ChatLinks.Storage.Models.Hero.Equipment.Novelties;
+using SL.ChatLinks.Storage.Models.Hero.Equipment.Outfits;
+using SL.ChatLinks.Storage.Models.Hero.Equipment.Wardrobe;
+using SL.ChatLinks.Storage.Models.Items;
+using SL.ChatLinks.Storage.Models.Pvp.MistChampions;
 
 namespace SL.ChatLinks.Storage;
 
