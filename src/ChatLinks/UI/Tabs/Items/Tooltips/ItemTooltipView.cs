@@ -45,7 +45,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
 	private void PrintArmor(Armor armor)
 	{
-		PrintHeader(armor);
+		PrintHeader();
 		PrintAttributes(armor.Attributes.ToDictionary(
 			stat => stat.Key.ToString(),
 			stat => stat.Value
@@ -89,7 +89,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
 	private void PrintBackpack(Backpack back)
 	{
-		PrintHeader(back);
+		PrintHeader();
 		PrintAttributes(back.Attributes.ToDictionary(
 			stat => ViewModel.Localizer[stat.Key.ToString()].ToString(),
 			stat => stat.Value
@@ -112,7 +112,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
 	private void PrintBag(Bag bag)
 	{
-		PrintHeader(bag);
+		PrintHeader();
 		PrintDescription(bag.Description);
 		PrintInBank();
 		PrintUniqueness(bag);
@@ -122,7 +122,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
 	private void PrintConsumable(Consumable consumable)
 	{
-		PrintHeader(consumable);
+		PrintHeader();
 		switch (consumable)
 		{
 			case Currency or Service:
@@ -163,7 +163,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 					PrintPlainText("\r\n" + ViewModel.Localizer["Service"]);
 				}
 				break;
-			case Transmutation transmutation:
+			case Transmutation:
 				PrintTransmutation();
 				PrintPlainText("\r\n" + ViewModel.Localizer["Consumable"]);
 				break;
@@ -455,7 +455,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
 	private void PrintContainer(GuildWars2.Items.Container container)
 	{
-		PrintHeader(container);
+		PrintHeader();
 		PrintDescription(container.Description);
 		if (string.IsNullOrEmpty(container.Description))
 		{
@@ -473,7 +473,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
 	private void PrintCraftingMaterial(CraftingMaterial craftingMaterial)
 	{
-		PrintHeader(craftingMaterial);
+		PrintHeader();
 		PrintDescription(craftingMaterial.Description);
 		PrintInBank();
 		PrintUniqueness(craftingMaterial);
@@ -483,7 +483,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
 	private void PrintGatheringTool(GatheringTool gatheringTool)
 	{
-		PrintHeader(gatheringTool);
+		PrintHeader();
 		PrintDescription(gatheringTool.Description);
 		PrintInBank();
 		PrintUniqueness(gatheringTool);
@@ -493,7 +493,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
 	private void PrintTrinket(Trinket trinket)
 	{
-		PrintHeader(trinket);
+		PrintHeader();
 		PrintAttributes(trinket.Attributes.ToDictionary(
 			stat => ViewModel.Localizer[stat.Key.ToString()].ToString(),
 			stat => stat.Value
@@ -526,7 +526,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
 	private void PrintGizmo(Gizmo gizmo)
 	{
-		PrintHeader(gizmo);
+		PrintHeader();
 		PrintDescription(gizmo.Description, gizmo.Level > 0);
 
 		if (ViewModel.DefaultLocked)
@@ -571,7 +571,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
 	private void PrintJadeTechModule(JadeTechModule jadeTechModule)
 	{
-		PrintHeader(jadeTechModule);
+		PrintHeader();
 		PrintDescription(jadeTechModule.Description);
 		PrintItemRarity(jadeTechModule.Rarity);
 		PrintPlainText(ViewModel.Localizer["Module"]);
@@ -585,7 +585,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
 	private void PrintMiniature(Miniature miniature)
 	{
-		PrintHeader(miniature);
+		PrintHeader();
 		PrintDescription(miniature.Description);
 		if (ViewModel.DefaultLocked)
 		{
@@ -627,7 +627,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
 	private void PrintPowerCore(PowerCore powerCore)
 	{
-		PrintHeader(powerCore);
+		PrintHeader();
 		PrintDescription(powerCore.Description, true);
 		PrintItemRarity(powerCore.Rarity);
 		PrintPlainText(ViewModel.Localizer["Power Core"]);
@@ -640,7 +640,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
 	private void PrintRelic(Relic relic)
 	{
-		PrintHeader(relic);
+		PrintHeader();
 		PrintDescription(relic.Description, true);
 		PrintItemRarity(relic.Rarity);
 		PrintPlainText(ViewModel.Localizer["Relic"]);
@@ -653,7 +653,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
 	private void PrintSalvageTool(SalvageTool salvageTool)
 	{
-		PrintHeader(salvageTool);
+		PrintHeader();
 		PrintPlainText(" ");
 		PrintItemRarity(salvageTool.Rarity);
 		PrintPlainText(ViewModel.Localizer["Consumable"]);
@@ -666,7 +666,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
 	private void PrintTrophy(Trophy trophy)
 	{
-		PrintHeader(trophy);
+		PrintHeader();
 		PrintDescription(trophy.Description);
 		PrintPlainText(ViewModel.Localizer["Trophy"]);
 		PrintInBank();
@@ -677,7 +677,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
 	private void PrintUpgradeComponent(UpgradeComponent upgradeComponent)
 	{
-		PrintHeader(upgradeComponent);
+		PrintHeader();
 		if (upgradeComponent is Rune rune)
 		{
 			PrintBonuses(rune.Bonuses ?? []);
@@ -704,7 +704,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
 	private void PrintWeapon(Weapon weapon)
 	{
-		PrintHeader(weapon);
+		PrintHeader();
 		PrintWeaponStrength(weapon);
 		PrintDefense(weapon.Defense);
 		PrintAttributes(weapon.Attributes.ToDictionary(
@@ -797,7 +797,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
 	private void Print(Item item)
 	{
-		PrintHeader(item);
+		PrintHeader();
 		PrintDescription(item.Description);
 		PrintInBank();
 		PrintUniqueness(item);
@@ -819,7 +819,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 		};
 	}
 
-	public void PrintHeader(Item item)
+	public void PrintHeader()
 	{
 		FlowPanel header = new()
 		{
@@ -1206,8 +1206,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
 		builder.Append(": ");
 		builder.Append(effect.Description);
-
-		Label label = new()
+		_ = new Label()
 		{
 			Parent = panel,
 			Width = panel.Width - 30,
