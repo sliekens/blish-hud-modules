@@ -1,4 +1,6 @@
-﻿using Blish_HUD.Content;
+﻿using System.Diagnostics.CodeAnalysis;
+
+using Blish_HUD.Content;
 
 using Microsoft.Extensions.Localization;
 
@@ -38,14 +40,17 @@ public sealed class MainWindowViewModel(
         set => SetField(ref _visible, value);
     }
 
+    [SuppressMessage("Performance", "CA1822:Mark members as static")]
     public string Id => "sliekens.chat-links.main-window";
 
     public string Title => localizer["Title"];
 
     public string ItemsTabName => localizer["Items"];
 
+    [SuppressMessage("Performance", "CA1822:Mark members as static")]
     public AsyncTexture2D BackgroundTexture => AsyncTexture2D.FromAssetId(155985);
 
+    [SuppressMessage("Performance", "CA1822:Mark members as static")]
     public AsyncTexture2D EmblemTexture => AsyncTexture2D.FromAssetId(2237584);
 
 

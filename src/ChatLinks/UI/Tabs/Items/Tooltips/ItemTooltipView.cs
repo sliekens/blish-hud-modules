@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 using Blish_HUD;
 using Blish_HUD.Common.UI.Views;
@@ -1096,6 +1097,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         label.Parent = container;
     }
 
+    [SuppressMessage("Performance", "CA1822:Mark members as static")]
     public void PrintInBank()
     {
         // TODO: bank count

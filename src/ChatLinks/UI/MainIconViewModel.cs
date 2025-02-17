@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
@@ -14,7 +15,7 @@ using SL.Common.ModelBinding;
 
 namespace SL.ChatLinks.UI;
 
-public class MainIconViewModel(
+public sealed class MainIconViewModel(
     ILogger<MainIconViewModel> logger,
     IStringLocalizer<MainIcon> localizer,
     IEventAggregator eventAggregator,
@@ -66,10 +67,13 @@ public class MainIconViewModel(
 
     public string RaiseStackSizeLabel => localizer["Raise stack size limit"];
 
+    [SuppressMessage("Performance", "CA1822:Mark members as static")]
     public AsyncTexture2D Texture => AsyncTexture2D.FromAssetId(155156);
 
+    [SuppressMessage("Performance", "CA1822:Mark members as static")]
     public AsyncTexture2D HoverTexture => AsyncTexture2D.FromAssetId(155157);
 
+    [SuppressMessage("Performance", "CA1822:Mark members as static")]
     public int Priority => 745727698;
 
     public string? LoadingMessage
@@ -166,6 +170,7 @@ public class MainIconViewModel(
         OnPropertyChanged(nameof(RaiseStackSizeLabel));
     }
 
+    [SuppressMessage("Performance", "CA1822:Mark members as static")]
     public RelayCommand KoFiCommand => new(() =>
     {
         _ = Process.Start("https://ko-fi.com/sliekens");

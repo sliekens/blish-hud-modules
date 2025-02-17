@@ -14,39 +14,39 @@
         <AnalysisLevel>latest</AnalysisLevel>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/design-warnings -->
-        <AnalysisModeDesign>Default</AnalysisModeDesign>
+        <AnalysisModeDesign>Minimum</AnalysisModeDesign>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/documentation-warnings -->
-        <AnalysisModeDocumentation>Default</AnalysisModeDocumentation>
+        <AnalysisModeDocumentation>Minimum</AnalysisModeDocumentation>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/globalization-warnings -->
-        <AnalysisModeGlobalization>Default</AnalysisModeGlobalization>
+        <AnalysisModeGlobalization>Minimum</AnalysisModeGlobalization>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/interoperability-warnings -->
-        <AnalysisModeInteroperability>Default</AnalysisModeInteroperability>
+        <AnalysisModeInteroperability>Minimum</AnalysisModeInteroperability>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/maintainability-warnings -->
-        <AnalysisModeMaintainability>Default</AnalysisModeMaintainability>
+        <AnalysisModeMaintainability>Minimum</AnalysisModeMaintainability>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/naming-warnings -->
-        <AnalysisModeNaming>Default</AnalysisModeNaming>
+        <AnalysisModeNaming>Minimum</AnalysisModeNaming>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/performance-warnings -->
-        <AnalysisModePerformance>Default</AnalysisModePerformance>
+        <AnalysisModePerformance>Minimum</AnalysisModePerformance>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/core/deploying/single-file/warnings/overview -->
-        <AnalysisModeSingleFile>Default</AnalysisModeSingleFile>
+        <AnalysisModeSingleFile>Minimum</AnalysisModeSingleFile>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/reliability-warnings -->
-        <AnalysisModeReliability>Default</AnalysisModeReliability>
+        <AnalysisModeReliability>Minimum</AnalysisModeReliability>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/security-warnings -->
-        <AnalysisModeSecurity>Default</AnalysisModeSecurity>
+        <AnalysisModeSecurity>Minimum</AnalysisModeSecurity>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ -->
-        <AnalysisModeStyle>Default</AnalysisModeStyle>
+        <AnalysisModeStyle>Minimum</AnalysisModeStyle>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/usage-warnings -->
-        <AnalysisModeUsage>Default</AnalysisModeUsage>
+        <AnalysisModeUsage>Minimum</AnalysisModeUsage>
     </PropertyGroup>
 </Project>

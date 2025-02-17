@@ -1,4 +1,6 @@
-﻿using GuildWars2;
+﻿using System.Diagnostics.CodeAnalysis;
+
+using GuildWars2;
 
 namespace SL.ChatLinks.Storage;
 
@@ -6,6 +8,7 @@ public class DatabaseOptions
 {
     public string Directory { get; set; } = System.IO.Directory.GetCurrentDirectory();
 
+    [SuppressMessage("Performance", "CA1822:Mark members as static")]
     public string DatabaseFileName(Language language)
     {
         return language switch
