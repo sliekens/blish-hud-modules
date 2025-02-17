@@ -1,6 +1,6 @@
 ﻿namespace SL.Common.Controls;
 
-internal class ListBoxSelectionChange<T>
+internal sealed class ListBoxSelectionChange<T>
 {
     public List<ListItem<T>> Added { get; } = [];
 

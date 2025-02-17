@@ -32,7 +32,7 @@
         <AnalysisModeNaming>Recommended</AnalysisModeNaming>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/performance-warnings -->
-        <AnalysisModePerformance>Minimum</AnalysisModePerformance>
+        <AnalysisModePerformance>Recommended</AnalysisModePerformance>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/core/deploying/single-file/warnings/overview -->
         <AnalysisModeSingleFile>Minimum</AnalysisModeSingleFile>
