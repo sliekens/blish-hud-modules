@@ -416,7 +416,7 @@ public sealed class ItemTooltipViewModel(
                         if (unlocks.Contains(unlocker.RecipeId))
                         {
                             Unlocked = true;
-                            UnlockedText = unlocker.ExtraRecipeIds.Any()
+                            UnlockedText = unlocker.ExtraRecipeIds.Count != 0
                                 ? Localizer["All recipes unlocked"]
                                 : Localizer["Recipe unlocked"];
                             UnlockedTextColor = Color.Red;
