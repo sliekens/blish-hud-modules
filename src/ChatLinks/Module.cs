@@ -51,7 +51,6 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         _ = services.AddSingleton<IOptionsChangeTokenSource<ChatLinkOptions>>(_moduleSettings);
 
         _ = services.AddSingleton<ILocale, OverlayLocale>();
-        _ = services.AddSingleton<IIntrospection, ModuleIntrospection>();
         services.AddGw2Client();
         services.AddStaticDataClient();
 

@@ -24,7 +24,6 @@ IHost host = Host.CreateDefaultBuilder(args)
         });
 
         _ = services.AddSingleton<IEventAggregator, DefaultEventAggregator>();
-        _ = services.AddSingleton<IIntrospection, NullIntrospection>();
 
         _ = services.AddSingleton<DatabaseSeeder>();
     })
