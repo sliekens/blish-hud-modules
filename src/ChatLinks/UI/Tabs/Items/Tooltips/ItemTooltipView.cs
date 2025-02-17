@@ -25,7 +25,7 @@ using Item = GuildWars2.Items.Item;
 
 namespace SL.ChatLinks.UI.Tabs.Items.Tooltips;
 
-public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, ITooltipView
+public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, ITooltipView, IDisposable
 {
     private static readonly Color Gray = new(0x99, 0x99, 0x99);
     private static readonly Color ActiveBuffColor = new(0x55, 0x99, 0xFF);
@@ -42,6 +42,11 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
     {
         await ViewModel.Load(progress);
         return true;
+    }
+
+    protected override void Unload()
+    {
+        Dispose();
     }
 
     private void PrintArmor(Armor armor)
@@ -1354,5 +1359,11 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         }
 
         _layout.Parent = buildPanel;
+    }
+
+    public void Dispose()
+    {
+        _layout.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

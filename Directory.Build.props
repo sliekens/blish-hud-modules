@@ -14,7 +14,7 @@
         <AnalysisLevel>latest</AnalysisLevel>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/design-warnings -->
-        <AnalysisModeDesign>Minimum</AnalysisModeDesign>
+        <AnalysisModeDesign>Recommended</AnalysisModeDesign>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/documentation-warnings -->
         <AnalysisModeDocumentation>Minimum</AnalysisModeDocumentation>

@@ -11,7 +11,7 @@ using Container = Blish_HUD.Controls.Container;
 
 namespace SL.ChatLinks.UI.Tabs.Items;
 
-public class ItemsTabView : View
+public sealed class ItemsTabView : View, IDisposable
 {
     public ItemsTabViewModel ViewModel { get; }
 
@@ -142,7 +142,7 @@ public class ItemsTabView : View
 
     protected override void Unload()
     {
-        ViewModel.Unload();
+        Dispose();
     }
 
     private void SearchTextChanged(object sender, EventArgs e)
@@ -153,5 +153,12 @@ public class ItemsTabView : View
     private void SearchEnterPressed(object sender, EventArgs e)
     {
         ViewModel.SearchCommand.Execute(null);
+    }
+
+    public void Dispose()
+    {
+        _layout.Dispose();
+        _editor.Dispose();
+        ViewModel.Dispose();
     }
 }

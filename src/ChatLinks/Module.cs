@@ -147,5 +147,6 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
     {
         _eventAggregator?.Publish(new ModuleUnloading());
         _serviceProvider?.Dispose();
+        _moduleSettings?.Dispose();
     }
 }

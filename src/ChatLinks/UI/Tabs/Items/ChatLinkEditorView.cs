@@ -3,7 +3,7 @@ using Blish_HUD.Graphics.UI;
 
 namespace SL.ChatLinks.UI.Tabs.Items;
 
-public sealed class ChatLinkEditorView(ChatLinkEditorViewModel viewModel) : View
+public sealed class ChatLinkEditorView(ChatLinkEditorViewModel viewModel) : View, IDisposable
 {
     private readonly ChatLinkEditor _chatLinkEditor = new(viewModel);
 
@@ -14,6 +14,12 @@ public sealed class ChatLinkEditorView(ChatLinkEditorViewModel viewModel) : View
 
     protected override void Unload()
     {
+        Dispose();
+    }
+
+    public void Dispose()
+    {
         _chatLinkEditor.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

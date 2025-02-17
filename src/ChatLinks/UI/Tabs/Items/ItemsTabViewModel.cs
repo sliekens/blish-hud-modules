@@ -22,7 +22,7 @@ public sealed class ItemsTabViewModel(
     ItemSearch search,
     ItemsListViewModelFactory itemsListViewModelFactory,
     ChatLinkEditorViewModelFactory chatLinkEditorViewModelFactory)
-    : ViewModel
+    : ViewModel, IDisposable
 {
     private string _searchText = "";
 
@@ -240,10 +240,12 @@ public sealed class ItemsTabViewModel(
         }
     }
 
-    public void Unload()
+    public void Dispose()
     {
         eventAggregator.Unsubscribe<LocaleChanged>(OnLocaleChanged);
         eventAggregator.Unsubscribe<DatabaseDownloaded>(OnDatabaseDownloaded);
         eventAggregator.Unsubscribe<DatabaseSeeded>(OnDatabaseSeeded);
+        _searchLock.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

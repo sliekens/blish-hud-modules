@@ -7,7 +7,7 @@ using SL.ChatLinks.UI.Tabs.Items;
 
 namespace SL.ChatLinks;
 
-public class ModuleSettings : IConfigureOptions<ChatLinkOptions>, IOptionsChangeTokenSource<ChatLinkOptions>
+public sealed class ModuleSettings : IConfigureOptions<ChatLinkOptions>, IOptionsChangeTokenSource<ChatLinkOptions>, IDisposable
 {
     private readonly SettingEntry<bool> _bananaMode;
 
@@ -75,9 +75,15 @@ public class ModuleSettings : IConfigureOptions<ChatLinkOptions>, IOptionsChange
         return _changeTokenSource.Token;
     }
 
+    public void Dispose()
+    {
+        _changeTokenSource.Dispose();
+        GC.SuppressFinalize(this);
+    }
+
     public string Name => Options.DefaultName;
 
-    private class ChangeTokenSource
+    private sealed class ChangeTokenSource : IDisposable
     {
         private CancellationTokenSource _cts = new();
 
@@ -88,6 +94,12 @@ public class ModuleSettings : IConfigureOptions<ChatLinkOptions>, IOptionsChange
             CancellationTokenSource previousCts = Interlocked.Exchange(ref _cts, new CancellationTokenSource());
             previousCts.Cancel();
             previousCts.Dispose();
+        }
+
+        public void Dispose()
+        {
+            _cts.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }
