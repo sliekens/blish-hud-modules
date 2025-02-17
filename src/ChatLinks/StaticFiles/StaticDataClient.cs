@@ -9,7 +9,7 @@ public sealed class StaticDataClient(HttpClient httpClient)
 {
     public async Task<SeedIndex> GetSeedIndex(CancellationToken cancellationToken)
     {
-        using HttpResponseMessage response = await httpClient.GetAsync("seed-index.json");
+        using HttpResponseMessage response = await httpClient.GetAsync("seed-index.json", cancellationToken);
         using Stream content = await response.Content.ReadAsStreamAsync();
         _ = response.EnsureSuccessStatusCode();
         return await JsonSerializer.DeserializeAsync<SeedIndex>(content, cancellationToken: cancellationToken)
