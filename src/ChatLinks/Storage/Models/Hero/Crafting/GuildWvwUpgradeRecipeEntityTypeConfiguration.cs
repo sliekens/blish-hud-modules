@@ -9,7 +9,7 @@ public sealed class GuildWvwUpgradeRecipeEntityTypeConfiguration : IEntityTypeCo
 {
     public void Configure(EntityTypeBuilder<GuildWvwUpgradeRecipe> builder)
     {
-        builder.Property(recipe => recipe.OutputUpgradeId)
+        _ = builder.Property(recipe => recipe.OutputUpgradeId)
             .HasColumnName("OutputWvwUpgradeId");
     }
 }

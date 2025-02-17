@@ -40,13 +40,14 @@ public class MainIconViewModel(
         eventAggregator.Subscribe<LocaleChanged>(OnLocaleChanged);
         eventAggregator.Subscribe<ModuleUnloading>(OnModuleUnloading);
 
-        ChangeToken.OnChange(settings.GetChangeToken, moduleSettings =>
+        _ = ChangeToken.OnChange(settings.GetChangeToken, moduleSettings =>
         {
             BananaMode = moduleSettings.BananaMode;
             RaiseStackSize = moduleSettings.RaiseStackSize;
         }, settings);
     }
 
+    // TODO: implement IDisposable
     private void OnModuleUnloading(ModuleUnloading unloading)
     {
         eventAggregator.Unsubscribe<DatabaseSyncProgress>(OnDatabaseSyncProgress);
@@ -143,7 +144,7 @@ public class MainIconViewModel(
 
     private void OnDatabaseSyncProgress(DatabaseSyncProgress args)
     {
-        var step = localizer[args.Step];
+        LocalizedString step = localizer[args.Step];
 
         LoadingMessage = localizer["Downloading", step, args.Report.ResultCount, args.Report.ResultTotal];
         DatabaseUpdated?.Invoke(this, EventArgs.Empty);
@@ -167,12 +168,12 @@ public class MainIconViewModel(
 
     public RelayCommand KoFiCommand => new(() =>
     {
-        Process.Start("https://ko-fi.com/sliekens");
+        _ = Process.Start("https://ko-fi.com/sliekens");
     });
 
     public IEnumerable<ContextMenuStripItem> ContextMenuItems()
     {
-        var bananaModeItem = new ContextMenuStripItem(BananaModeLabel)
+        ContextMenuStripItem bananaModeItem = new(BananaModeLabel)
         {
             CanCheck = true,
             Checked = BananaMode
@@ -182,7 +183,7 @@ public class MainIconViewModel(
             BananaMode = args.Checked;
         };
 
-        var raiseStackSizeItem = new ContextMenuStripItem(RaiseStackSizeLabel)
+        ContextMenuStripItem raiseStackSizeItem = new(RaiseStackSizeLabel)
         {
             CanCheck = true,
             Checked = RaiseStackSize
@@ -192,9 +193,9 @@ public class MainIconViewModel(
             RaiseStackSize = args.Checked;
         };
 
-        var syncItem = SyncCommand.ToMenuItem(() => SyncLabel);
+        ContextMenuStripItem syncItem = SyncCommand.ToMenuItem(() => SyncLabel);
 
-        var koFiItem = KoFiCommand.ToMenuItem(() => KoFiLabel);
+        ContextMenuStripItem koFiItem = KoFiCommand.ToMenuItem(() => KoFiLabel);
 
         return
         [

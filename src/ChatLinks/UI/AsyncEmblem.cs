@@ -25,11 +25,15 @@ internal sealed class AsyncEmblem : IDisposable
 
     public static AsyncEmblem Attach(WindowBase2 window, AsyncTexture2D emblem)
     {
-        var asyncEmblem = new AsyncEmblem(window, emblem);
+        AsyncEmblem asyncEmblem = new(window, emblem);
         if (emblem.HasSwapped)
+        {
             window.Emblem = emblem.Texture;
+        }
         else
+        {
             emblem.TextureSwapped += asyncEmblem.OnTextureSwapped;
+        }
 
         return asyncEmblem;
     }

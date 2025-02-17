@@ -38,7 +38,7 @@ public sealed class ItemsListEntry(ItemsListViewModel viewModel) : Control
 
     public override void RecalculateLayout()
     {
-        var parent = Parent;
+        Container? parent = Parent;
         if (parent is null)
         {
             return;
@@ -60,6 +60,7 @@ public sealed class ItemsListEntry(ItemsListViewModel viewModel) : Control
         if (MouseOver || viewModel.IsSelected)
         {
             foreach ((int x, int y) in (ReadOnlySpan<(int, int)>)[(1, 1), (-1, 1), (-1, -1), (1, -1)])
+            {
                 spriteBatch.DrawStringOnCtrl(
                     this,
                     viewModel.Item.Name,
@@ -68,6 +69,7 @@ public sealed class ItemsListEntry(ItemsListViewModel viewModel) : Control
                     new Color(Color.Black, .4f),
                     true
                 );
+            }
         }
 
         spriteBatch.DrawStringOnCtrl(

@@ -10,18 +10,18 @@ public class SqliteDbContextFactory(IOptions<DatabaseOptions> options) : IDbCont
 {
     public ChatLinksContext CreateDbContext(Language language)
     {
-        var optionsBuilder = new DbContextOptionsBuilder<ChatLinksContext>();
-        var connection = new SqliteConnection(options.Value.ConnectionString(language));
-        optionsBuilder.UseSqlite(connection);
+        DbContextOptionsBuilder<ChatLinksContext> optionsBuilder = new();
+        SqliteConnection connection = new(options.Value.ConnectionString(language));
+        _ = optionsBuilder.UseSqlite(connection);
         Levenshtein.RegisterLevenshteinFunction(connection);
         return new ChatLinksContext(optionsBuilder.Options);
     }
 
     public ChatLinksContext CreateDbContext(string file)
     {
-        var optionsBuilder = new DbContextOptionsBuilder<ChatLinksContext>();
-        var connection = new SqliteConnection(options.Value.ConnectionString(file));
-        optionsBuilder.UseSqlite(connection);
+        DbContextOptionsBuilder<ChatLinksContext> optionsBuilder = new();
+        SqliteConnection connection = new(options.Value.ConnectionString(file));
+        _ = optionsBuilder.UseSqlite(connection);
         Levenshtein.RegisterLevenshteinFunction(connection);
         return new ChatLinksContext(optionsBuilder.Options);
     }

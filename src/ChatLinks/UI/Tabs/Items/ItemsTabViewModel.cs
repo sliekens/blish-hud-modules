@@ -136,7 +136,7 @@ public sealed class ItemsTabViewModel(
             }
             finally
             {
-                _searchLock.Release();
+                _ = _searchLock.Release();
             }
         }
         catch (OperationCanceledException)
@@ -173,6 +173,8 @@ public sealed class ItemsTabViewModel(
             case >= 3:
                 await Query(query, cancellationToken);
                 break;
+            default:
+                break;
         }
     }
 
@@ -184,7 +186,7 @@ public sealed class ItemsTabViewModel(
             SearchResults.Clear();
 
             int maxResults = options.CurrentValue.MaxResultCount;
-            var context = new ResultContext();
+            ResultContext context = new();
             await foreach (Item item in search.Search(text, maxResults, context, cancellationToken))
             {
                 if (cancellationToken.IsCancellationRequested)
@@ -192,7 +194,7 @@ public sealed class ItemsTabViewModel(
                     break;
                 }
 
-                var viewModel = itemsListViewModelFactory.Create(item, item.Id == SelectedItem?.Id);
+                ItemsListViewModel viewModel = itemsListViewModelFactory.Create(item, item.Id == SelectedItem?.Id);
                 SearchResults.Add(viewModel);
             }
 
@@ -222,7 +224,7 @@ public sealed class ItemsTabViewModel(
                     break;
                 }
 
-                var viewModel = itemsListViewModelFactory.Create(item, item.Id == SelectedItem?.Id);
+                ItemsListViewModel viewModel = itemsListViewModelFactory.Create(item, item.Id == SelectedItem?.Id);
                 SearchResults.Add(viewModel);
             }
 

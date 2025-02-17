@@ -8,7 +8,7 @@ public sealed class DefaultEventAggregator : IEventAggregator
 
     public void Subscribe<TEvent>(Action<TEvent> syncHandler)
     {
-        var handlers = _eventHandlers.GetOrAdd(typeof(TEvent), _ => []);
+        List<Delegate> handlers = _eventHandlers.GetOrAdd(typeof(TEvent), _ => []);
         lock (handlers)
         {
             handlers.Add(syncHandler);
@@ -17,7 +17,7 @@ public sealed class DefaultEventAggregator : IEventAggregator
 
     public void Subscribe<TEvent>(Func<TEvent, ValueTask> asyncHandler)
     {
-        var handlers = _eventHandlers.GetOrAdd(typeof(TEvent), _ => []);
+        List<Delegate> handlers = _eventHandlers.GetOrAdd(typeof(TEvent), _ => []);
         lock (handlers)
         {
             handlers.Add(asyncHandler);
@@ -27,25 +27,25 @@ public sealed class DefaultEventAggregator : IEventAggregator
 
     public void Unsubscribe<TEvent>(Delegate handler)
     {
-        if (!_eventHandlers.TryGetValue(typeof(TEvent), out var handlers))
+        if (!_eventHandlers.TryGetValue(typeof(TEvent), out List<Delegate>? handlers))
         {
             return;
         }
 
         lock (handlers)
         {
-            handlers.Remove(handler);
+            _ = handlers.Remove(handler);
 
             if (handlers.Count == 0)
             {
-                _eventHandlers.TryRemove(typeof(TEvent), out _);
+                _ = _eventHandlers.TryRemove(typeof(TEvent), out _);
             }
         }
     }
 
     public void Publish<TEvent>(TEvent eventToPublish)
     {
-        if (!_eventHandlers.TryGetValue(typeof(TEvent), out var handlers))
+        if (!_eventHandlers.TryGetValue(typeof(TEvent), out List<Delegate>? handlers))
         {
             return;
         }
@@ -56,7 +56,7 @@ public sealed class DefaultEventAggregator : IEventAggregator
             copy = [.. handlers];
         }
 
-        foreach (var handler in copy)
+        foreach (Delegate handler in copy)
         {
             switch (handler)
             {
@@ -64,7 +64,9 @@ public sealed class DefaultEventAggregator : IEventAggregator
                     syncHandler(eventToPublish);
                     break;
                 case Func<TEvent, ValueTask> asyncHandler:
-                    asyncHandler(eventToPublish);
+                    _ = asyncHandler(eventToPublish);
+                    break;
+                default:
                     break;
             }
         }
@@ -78,7 +80,7 @@ public sealed class DefaultEventAggregator : IEventAggregator
 
     public async Task PublishAsync<TEvent>(TEvent eventToPublish, CancellationToken cancellationToken)
     {
-        if (!_eventHandlers.TryGetValue(typeof(TEvent), out var handlers))
+        if (!_eventHandlers.TryGetValue(typeof(TEvent), out List<Delegate>? handlers))
         {
             return;
         }
@@ -89,8 +91,8 @@ public sealed class DefaultEventAggregator : IEventAggregator
             copy = [.. handlers];
         }
 
-        var tasks = new List<Task>();
-        foreach (var handler in copy)
+        List<Task> tasks = [];
+        foreach (Delegate handler in copy)
         {
             switch (handler)
             {
@@ -101,6 +103,8 @@ public sealed class DefaultEventAggregator : IEventAggregator
                 case Func<TEvent, ValueTask> asyncHandler:
                     cancellationToken.ThrowIfCancellationRequested();
                     tasks.Add(asyncHandler(eventToPublish).AsTask());
+                    break;
+                default:
                     break;
             }
         }
@@ -113,14 +117,14 @@ public sealed class DefaultEventAggregator : IEventAggregator
 
     private static async Task WhenAllWithCancellation(IEnumerable<Task> tasks, CancellationToken cancellationToken)
     {
-        var taskList = tasks.ToList();
-        var completionSource = new TaskCompletionSource<object>();
+        List<Task> taskList = [.. tasks];
+        TaskCompletionSource<object> completionSource = new();
 
         using (cancellationToken.Register(() => completionSource.TrySetCanceled()))
         {
-            var allTasks = Task.WhenAny(Task.WhenAll(taskList), completionSource.Task);
+            Task<Task> allTasks = Task.WhenAny(Task.WhenAll(taskList), completionSource.Task);
 
-            var completedTask = await allTasks.ConfigureAwait(false);
+            Task completedTask = await allTasks.ConfigureAwait(false);
 
             if (completedTask == completionSource.Task)
             {

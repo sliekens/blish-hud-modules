@@ -20,7 +20,7 @@ public sealed class Accordion : FlowPanel
 
     public void AddSection(string title, Control content)
     {
-        var section = new Panel
+        Panel section = new()
         {
             Parent = this,
             WidthSizingMode = SizingMode.Fill,

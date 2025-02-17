@@ -12,6 +12,6 @@ public sealed class WeaponSkinEntityTypeConfiguration : IEntityTypeConfiguration
 {
     public void Configure(EntityTypeBuilder<WeaponSkin> builder)
     {
-        builder.Property(skin => skin.DamageType).HasConversion(new ExtensibleEnumConverter<DamageType>());
+        _ = builder.Property(skin => skin.DamageType).HasConversion(new ExtensibleEnumConverter<DamageType>());
     }
 }

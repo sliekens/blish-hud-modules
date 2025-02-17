@@ -13,22 +13,22 @@ public sealed class DyeColorEntityTypeConfiguration : IEntityTypeConfiguration<D
 {
     public void Configure(EntityTypeBuilder<DyeColor> builder)
     {
-        builder.ToTable("Colors");
-        builder.HasKey(color => color.Id);
-        builder.HasIndex(color => color.Name);
-        builder.HasIndex(color => color.ItemId);
-        builder.HasIndex(color => color.Hue);
-        builder.HasIndex(color => color.Material);
-        builder.HasIndex(color => color.Set);
-        builder.Property(color => color.BaseRgb).HasConversion(
+        _ = builder.ToTable("Colors");
+        _ = builder.HasKey(color => color.Id);
+        _ = builder.HasIndex(color => color.Name);
+        _ = builder.HasIndex(color => color.ItemId);
+        _ = builder.HasIndex(color => color.Hue);
+        _ = builder.HasIndex(color => color.Material);
+        _ = builder.HasIndex(color => color.Set);
+        _ = builder.Property(color => color.BaseRgb).HasConversion(
             color => color.ToArgb(),
             argb => Color.FromArgb(argb));
-        builder.Property(color => color.Cloth).HasJsonValueConversion();
-        builder.Property(color => color.Leather).HasJsonValueConversion();
-        builder.Property(color => color.Metal).HasJsonValueConversion();
-        builder.Property(color => color.Fur).HasJsonValueConversion();
-        builder.Property(color => color.Hue).HasConversion(new ExtensibleEnumConverter<Hue>());
-        builder.Property(color => color.Material).HasConversion(new ExtensibleEnumConverter<Material>());
-        builder.Property(color => color.Set).HasConversion(new ExtensibleEnumConverter<ColorSet>());
+        _ = builder.Property(color => color.Cloth).HasJsonValueConversion();
+        _ = builder.Property(color => color.Leather).HasJsonValueConversion();
+        _ = builder.Property(color => color.Metal).HasJsonValueConversion();
+        _ = builder.Property(color => color.Fur).HasJsonValueConversion();
+        _ = builder.Property(color => color.Hue).HasConversion(new ExtensibleEnumConverter<Hue>());
+        _ = builder.Property(color => color.Material).HasConversion(new ExtensibleEnumConverter<Material>());
+        _ = builder.Property(color => color.Set).HasConversion(new ExtensibleEnumConverter<ColorSet>());
     }
 }

@@ -15,12 +15,7 @@ public sealed class Customizer(
 {
     public UpgradeComponent? DefaultSuffixItem(Item item)
     {
-        if (item is not IUpgradable upgradable)
-        {
-            return null;
-        }
-
-        return GetUpgradeComponent(upgradable.SuffixItemId);
+        return item is not IUpgradable upgradable ? null : GetUpgradeComponent(upgradable.SuffixItemId);
     }
 
     public async ValueTask<UpgradeComponent?> GetUpgradeComponentAsync(int? upgradeComponentId)
@@ -30,7 +25,7 @@ public sealed class Customizer(
             return null;
         }
 
-        await using var context = contextFactory.CreateDbContext(locale.Current);
+        await using ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
         return await context.Items
             .OfType<UpgradeComponent>()
             .SingleOrDefaultAsync(item => item.Id == upgradeComponentId.Value);
@@ -43,7 +38,7 @@ public sealed class Customizer(
             return null;
         }
 
-        using var context = contextFactory.CreateDbContext(locale.Current);
+        using ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
         return context.Items
             .OfType<UpgradeComponent>()
             .SingleOrDefault(item => item.Id == upgradeComponentId.Value);
@@ -51,8 +46,8 @@ public sealed class Customizer(
 
     public IEnumerable<UpgradeComponent> GetUpgradeComponents(Item targetItem, UpgradeSlotType slotType)
     {
-        using var context = contextFactory.CreateDbContext(locale.Current);
-        var upgrades = slotType switch
+        using ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
+        IQueryable<UpgradeComponent> upgrades = slotType switch
         {
             UpgradeSlotType.Infusion => context.Set<UpgradeComponent>()
                 .FromSqlRaw(

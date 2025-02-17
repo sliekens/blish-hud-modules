@@ -7,15 +7,15 @@ public sealed class SeedIndexJsonConverter : JsonConverter<SeedIndex>
 {
     public override SeedIndex? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        using var json = JsonDocument.ParseValue(ref reader);
-        var root = json.RootElement;
+        using JsonDocument json = JsonDocument.ParseValue(ref reader);
+        JsonElement root = json.RootElement;
         if (root.ValueKind != JsonValueKind.Object)
         {
             return null;
         }
 
         JsonElement databasesElement = default;
-        foreach (var property in root.EnumerateObject())
+        foreach (JsonProperty property in root.EnumerateObject())
         {
             if (property.NameEquals("databases"))
             {
@@ -28,10 +28,10 @@ public sealed class SeedIndexJsonConverter : JsonConverter<SeedIndex>
             return null;
         }
 
-        var databases = new List<SeedDatabase>();
-        foreach (var databaseElement in databasesElement.EnumerateArray())
+        List<SeedDatabase> databases = [];
+        foreach (JsonElement databaseElement in databasesElement.EnumerateArray())
         {
-            var database = JsonSerializer.Deserialize<SeedDatabase>(databaseElement.GetRawText(), options);
+            SeedDatabase? database = JsonSerializer.Deserialize<SeedDatabase>(databaseElement.GetRawText(), options);
             if (database is null)
             {
                 return null;
@@ -50,7 +50,7 @@ public sealed class SeedIndexJsonConverter : JsonConverter<SeedIndex>
     {
         writer.WriteStartObject();
         writer.WriteStartArray("databases");
-        foreach (var database in value.Databases)
+        foreach (SeedDatabase database in value.Databases)
         {
             JsonSerializer.Serialize(writer, database, options);
         }

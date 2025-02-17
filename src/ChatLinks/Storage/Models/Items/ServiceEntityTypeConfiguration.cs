@@ -11,7 +11,7 @@ public sealed class ServiceEntityTypeConfiguration : IEntityTypeConfiguration<Se
 {
     public void Configure(EntityTypeBuilder<Service> builder)
     {
-        builder.Property(service => service.Effect).HasColumnName("Effect").HasJsonValueConversion();
-        builder.Property(service => service.GuildUpgradeId).HasColumnName("GuildUpgradeId");
+        _ = builder.Property(service => service.Effect).HasColumnName("Effect").HasJsonValueConversion();
+        _ = builder.Property(service => service.GuildUpgradeId).HasColumnName("GuildUpgradeId");
     }
 }

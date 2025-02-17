@@ -100,7 +100,7 @@ public sealed class UpgradeSelectorViewModel : ViewModel, IDisposable
 
     private ObservableCollection<IGrouping<string, ItemsListViewModel>> GetOptions()
     {
-        var groupOrder = new Dictionary<string, int>
+        Dictionary<string, int> groupOrder = new()
         {
             { _localizer["Runes"], 1 },
             { _localizer["Sigils"], 1 },
@@ -112,7 +112,7 @@ public sealed class UpgradeSelectorViewModel : ViewModel, IDisposable
             { _localizer["Uncategorized"], 5 }
         };
 
-        var groups =
+        IOrderedEnumerable<IGrouping<string, ItemsListViewModel>> groups =
             from upgrade in _customizer.GetUpgradeComponents(_target, _slotType)
             let rank = upgrade.Rarity.IsDefined()
                 ? upgrade.Rarity.ToEnum() switch

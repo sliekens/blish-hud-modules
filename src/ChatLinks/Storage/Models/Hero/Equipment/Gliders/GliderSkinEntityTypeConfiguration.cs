@@ -12,10 +12,10 @@ public sealed class GliderSkinEntityTypeConfiguration : IEntityTypeConfiguration
 {
     public void Configure(EntityTypeBuilder<GliderSkin> builder)
     {
-        builder.ToTable("Gliders");
-        builder.HasKey(glider => glider.Id);
-        builder.HasIndex(glider => glider.Name);
-        builder.HasIndex(glider => glider.Order);
+        _ = builder.ToTable("Gliders");
+        _ = builder.HasKey(glider => glider.Id);
+        _ = builder.HasIndex(glider => glider.Name);
+        _ = builder.HasIndex(glider => glider.Order);
 
         builder.Property(finisher => finisher.UnlockItemIds)
             .HasJsonValueConversion()

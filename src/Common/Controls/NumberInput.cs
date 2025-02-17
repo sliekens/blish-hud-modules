@@ -82,7 +82,7 @@ public class NumberInput : TextInputBase
                 value = MaxValue;
             }
 
-            var text = value.ToString(NumberFormatInfo.InvariantInfo);
+            string text = value.ToString(NumberFormatInfo.InvariantInfo);
             if (Text != text)
             {
                 Text = text;
@@ -93,10 +93,7 @@ public class NumberInput : TextInputBase
 
     public int MinValue
     {
-        get
-        {
-            return _minValue;
-        }
+        get => _minValue;
         set
         {
             _minValue = value;
@@ -109,10 +106,7 @@ public class NumberInput : TextInputBase
 
     public int MaxValue
     {
-        get
-        {
-            return _maxValue;
-        }
+        get => _maxValue;
         set
         {
             _maxValue = value;
@@ -145,6 +139,8 @@ public class NumberInput : TextInputBase
                     _incrementInterval = TimeSpan.FromMilliseconds(100);
                 }
                 break;
+            case NumberInputAction.Drag:
+            case NumberInputAction.None:
             default:
                 _incrementTimer = TimeSpan.Zero;
                 _incrementInterval = TimeSpan.FromMilliseconds(150);
@@ -250,16 +246,14 @@ public class NumberInput : TextInputBase
 
     protected override void OnMouseMoved(MouseEventArgs e)
     {
-        if (e.MousePosition.X > AbsoluteBounds.Right - SpinnerWidth)
+        bool mouseOverSpinner = e.MousePosition.X > AbsoluteBounds.Right - SpinnerWidth;
+        bool mouseOverUpButton = mouseOverSpinner && e.MousePosition.Y < AbsoluteBounds.Top + SpinnerButtonHeight;
+        _glow = (mouseOverSpinner, mouseOverUpButton) switch
         {
-            _glow = e.MousePosition.Y < AbsoluteBounds.Top + SpinnerButtonHeight
-                ? NumberInputSpinnerGlow.Up
-                : NumberInputSpinnerGlow.Down;
-        }
-        else
-        {
-            _glow = NumberInputSpinnerGlow.None;
-        }
+            (true, true) => NumberInputSpinnerGlow.Up,
+            (true, false) => NumberInputSpinnerGlow.Down,
+            _ => NumberInputSpinnerGlow.None
+        };
 
         base.OnMouseMoved(e);
     }
@@ -279,14 +273,9 @@ public class NumberInput : TextInputBase
     {
         float lineWidth = MeasureStringWidth(_text[_cursorIndex..]);
 
-        if (_cursorIndex < _prevCursorIndex)
-        {
-            _horizontalOffset = (int)Math.Max(_horizontalOffset, lineWidth + TextPaddingX * 2 - _textBoxRectangle.Width);
-        }
-        else
-        {
-            _horizontalOffset = (int)Math.Min(_horizontalOffset, lineWidth);
-        }
+        _horizontalOffset = _cursorIndex < _prevCursorIndex
+            ? (int)Math.Max(_horizontalOffset, lineWidth + (TextPaddingX * 2) - _textBoxRectangle.Width)
+            : (int)Math.Min(_horizontalOffset, lineWidth);
 
         _prevCursorIndex = _cursorIndex;
         Invalidate();
@@ -297,7 +286,7 @@ public class NumberInput : TextInputBase
         if (e.MousePosition.X > AbsoluteBounds.Right - SpinnerWidth)
         {
             UnsetFocus();
-            Soundboard.Click.Play();
+            _ = Soundboard.Click.Play();
             _action = e.MousePosition.Y < AbsoluteBounds.Top + SpinnerButtonHeight
                 ? NumberInputAction.Increment
                 : NumberInputAction.Decrement;
@@ -323,6 +312,10 @@ public class NumberInput : TextInputBase
                 break;
             case NumberInputAction.Drag:
                 base.OnLeftMouseButtonReleased(e);
+                break;
+            case NumberInputAction.None:
+                break;
+            default:
                 break;
         }
 
@@ -392,7 +385,7 @@ public class NumberInput : TextInputBase
 
         #region Spinner
 
-        var buttonsRectangle = new Rectangle(bounds.Right - SpinnerWidth, 0, SpinnerWidth, SpinnerButtonHeight * 2);
+        Rectangle buttonsRectangle = new(bounds.Right - SpinnerWidth, 0, SpinnerWidth, SpinnerButtonHeight * 2);
         switch ((hoverButton: _glow, pressedButton: _action))
         {
             case (NumberInputSpinnerGlow.Up, NumberInputAction.None):
@@ -478,25 +471,25 @@ public class NumberInput : TextInputBase
             return;
         }
 
-        var numericBuilder = new StringBuilder(_text.Length);
-        var input = _text.AsSpan();
+        StringBuilder numericBuilder = new(_text.Length);
+        ReadOnlySpan<char> input = _text.AsSpan();
         foreach (char c in input)
         {
             if (numericBuilder.Length == 0)
             {
                 if (c is '+' or '-')
                 {
-                    numericBuilder.Append(c);
+                    _ = numericBuilder.Append(c);
                 }
             }
 
             if (c is >= '0' and <= '9')
             {
-                numericBuilder.Append(c);
+                _ = numericBuilder.Append(c);
             }
         }
 
-        if (int.TryParse(numericBuilder.ToString(), out var value))
+        if (int.TryParse(numericBuilder.ToString(), out int value))
         {
             Value = value;
             OnValueChanged();
@@ -512,7 +505,7 @@ public class NumberInput : TextInputBase
     {
         if (_action == NumberInputAction.Drag)
         {
-            var center = AbsoluteBounds.Y + _textBoxRectangle.Center.Y;
+            int center = AbsoluteBounds.Y + _textBoxRectangle.Center.Y;
             switch (e.MousePosition.Y - center)
             {
                 case < -1:
@@ -522,6 +515,8 @@ public class NumberInput : TextInputBase
                 case > 1:
                     Value--;
                     HideMousePosition();
+                    break;
+                default:
                     break;
             }
 
@@ -539,8 +534,8 @@ public class NumberInput : TextInputBase
 
     private void HideMousePosition()
     {
-        var x = AbsoluteBounds.X + Width - SpinnerWidth / 2;
-        var y = AbsoluteBounds.Y + Height / 2;
+        int x = AbsoluteBounds.X + Width - (SpinnerWidth / 2);
+        int y = AbsoluteBounds.Y + (Height / 2);
         System.Windows.Input.Mouse.OverrideCursor = Cursors.None;
         Mouse.SetPosition(
             (int)(x * GameService.Graphics.UIScaleMultiplier),

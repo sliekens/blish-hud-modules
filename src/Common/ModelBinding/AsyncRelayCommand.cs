@@ -44,7 +44,7 @@ public sealed class AsyncRelayCommand(Func<Task> execute) : ICommand
 
     public void Execute()
     {
-        execute();
+        _ = execute();
     }
 
     public void Execute(object parameter)

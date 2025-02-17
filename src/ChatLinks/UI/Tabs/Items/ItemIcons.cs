@@ -27,7 +27,7 @@ public class ItemIcons(HttpClient httpClient)
             ?? WebCache.GetOrAdd(item.IconHref, url =>
             {
                 AsyncTexture2D newTexture = new();
-                httpClient.GetStreamAsync(url).ContinueWith(task =>
+                _ = httpClient.GetStreamAsync(url).ContinueWith(task =>
                 {
                     if (task.Status != TaskStatus.RanToCompletion)
                     {

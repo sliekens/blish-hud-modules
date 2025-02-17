@@ -31,6 +31,8 @@ public sealed class MainIcon : CornerIcon
             case nameof(BasicTooltipText):
                 ViewModel.TooltipText = BasicTooltipText;
                 break;
+            default:
+                break;
         }
     }
 

@@ -19,8 +19,7 @@ public class ModuleGetFunctionPointer(ProcessModule module) : IGetFunctionPointe
 
     public static ProcessModule GetModule(string moduleName)
     {
-        var modules = Process.GetCurrentProcess().Modules.Cast<ProcessModule>()
-            .Where(e => Path.GetFileNameWithoutExtension(e.ModuleName) == moduleName).ToList();
+        List<ProcessModule> modules = [.. Process.GetCurrentProcess().Modules.Cast<ProcessModule>().Where(e => Path.GetFileNameWithoutExtension(e.ModuleName) == moduleName)];
         return modules switch
         {
             [var module] => module,
@@ -31,7 +30,7 @@ public class ModuleGetFunctionPointer(ProcessModule module) : IGetFunctionPointe
 
     public IntPtr GetFunctionPointer(string name)
     {
-        using var handle = new SafeProcessHandle(_module.BaseAddress, ownsHandle: false);
+        using SafeProcessHandle handle = new(_module.BaseAddress, ownsHandle: false);
         return PInvoke.GetProcAddress(handle, name);
     }
 }

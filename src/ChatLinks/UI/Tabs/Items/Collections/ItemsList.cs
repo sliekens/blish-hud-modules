@@ -15,7 +15,7 @@ public class ItemsList : ListBox<ItemsListViewModel>
 
     protected override void Bind(ItemsListViewModel viewModel, ListItem<ItemsListViewModel> listItem)
     {
-        Binder.Bind(viewModel, vm => vm.IsSelected, listItem);
+        _ = Binder.Bind(viewModel, vm => vm.IsSelected, listItem);
         listItem.Menu = new ContextMenuStrip(() =>
         [
             viewModel.ToggleCommand.ToMenuItem(() => viewModel.IsSelected ? viewModel.DeselectLabel : viewModel.SelectLabel),

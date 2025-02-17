@@ -12,9 +12,9 @@ public sealed class MistChampionSkinEntityTypeConfiguration : IEntityTypeConfigu
 {
     public void Configure(EntityTypeBuilder<MistChampionSkin> builder)
     {
-        builder.ToTable("MistChampions");
-        builder.HasKey(mistChampion => mistChampion.Id);
-        builder.HasIndex(mistChampion => mistChampion.Name);
+        _ = builder.ToTable("MistChampions");
+        _ = builder.HasKey(mistChampion => mistChampion.Id);
+        _ = builder.HasIndex(mistChampion => mistChampion.Name);
 
         builder.Property(mistChampion => mistChampion.UnlockItemIds)
             .HasJsonValueConversion()

@@ -31,8 +31,16 @@ public class ListBox<T> : FlowPanel
         get => _entries;
         set
         {
-            if (_entries == value) return;
-            if (_entries is not null) _entries.CollectionChanged -= EntriesCollectionChanged;
+            if (_entries == value)
+            {
+                return;
+            }
+
+            if (_entries is not null)
+            {
+                _entries.CollectionChanged -= EntriesCollectionChanged;
+            }
+
             _entries = value;
             if (value is not null)
             {
@@ -57,7 +65,7 @@ public class ListBox<T> : FlowPanel
 
     protected virtual ListItem<T> AddItem(T data)
     {
-        var listItem = new ListItem<T>(data)
+        ListItem<T> listItem = new(data)
         {
             Parent = this,
             ShowTint = Children.Count % 2 == 1
@@ -90,7 +98,7 @@ public class ListBox<T> : FlowPanel
 
         listItem.SelectionChanged += ListItemSelectionChanged;
 
-        var template = Template(data);
+        Control template = Template(data);
         template.Parent = listItem;
         return listItem;
     }
@@ -102,7 +110,7 @@ public class ListBox<T> : FlowPanel
             case NotifyCollectionChangedAction.Add:
                 foreach (T newItem in e.NewItems)
                 {
-                    AddItem(newItem);
+                    _ = AddItem(newItem);
                 }
                 break;
 
@@ -120,7 +128,7 @@ public class ListBox<T> : FlowPanel
                 }
                 foreach (T newItem in e.NewItems)
                 {
-                    AddItem(newItem);
+                    _ = AddItem(newItem);
                 }
                 break;
 
@@ -136,6 +144,8 @@ public class ListBox<T> : FlowPanel
             case NotifyCollectionChangedAction.Reset:
                 ClearItems();
                 RefreshItems();
+                break;
+            default:
                 break;
         }
 
@@ -168,14 +178,14 @@ public class ListBox<T> : FlowPanel
 
     protected virtual void RemoveItem(T item)
     {
-        var entry = Children.OfType<ListItem<T>>()
+        ListItem<T> entry = Children.OfType<ListItem<T>>()
             .FirstOrDefault(child => EqualityComparer<T>.Default.Equals(child.Data, item));
         entry?.Dispose();
     }
 
     protected virtual void MoveItems(IList children, int oldStartingIndex, int newStartingIndex)
     {
-        var collected = new List<Control>(children.Count);
+        List<Control> collected = new(children.Count);
 
         for (int i = 0; i < children.Count; i++)
         {
@@ -207,12 +217,15 @@ public class ListBox<T> : FlowPanel
 
     private void RefreshItems()
     {
-        if (_entries is null) return;
+        if (_entries is null)
+        {
+            return;
+        }
 
         ClearItems();
-        foreach (var item in _entries)
+        foreach (T? item in _entries)
         {
-            AddItem(item);
+            _ = AddItem(item);
         }
     }
 

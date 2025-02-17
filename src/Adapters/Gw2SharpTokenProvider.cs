@@ -56,7 +56,7 @@ public class Gw2SharpTokenProvider : ITokenProvider
 
         try
         {
-            var createdSubToken = await _parameters
+            CreateSubtoken createdSubToken = await _parameters
                 .Gw2ApiManager
                 .Gw2ApiClient
                 .V2
@@ -88,6 +88,7 @@ public class Gw2SharpTokenProvider : ITokenProvider
             TokenPermission.Unlocks => Permission.Unlocks,
             TokenPermission.Wallet => Permission.Wallet,
             (TokenPermission)11 => Permission.Wvw,
+            TokenPermission.Unknown => throw new NotImplementedException(),
             _ => default
         };
     }

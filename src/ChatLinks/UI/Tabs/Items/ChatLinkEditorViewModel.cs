@@ -81,18 +81,20 @@ public sealed class ChatLinkEditorViewModel : ViewModel, IDisposable
         _item = item;
         ItemNameColor = ItemColors.Rarity(item.Rarity);
         _upgradeEditorViewModels = [.. CreateUpgradeEditorViewModels()];
-        foreach (var (slot, vm) in _upgradeEditorViewModels.Select((vm, index) => (index + 1, vm)))
+        foreach ((int slot, UpgradeEditorViewModel vm) in _upgradeEditorViewModels.Select((vm, index) => (index + 1, vm)))
         {
             vm.PropertyChanged += (sender, args) =>
             {
                 switch (args.PropertyName)
                 {
                     case nameof(vm.Customizing) when vm.Customizing:
-                        foreach (var editor in UpgradeEditorViewModels)
+                        foreach (UpgradeEditorViewModel editor in UpgradeEditorViewModels)
                         {
                             editor.Customizing = editor == sender;
                         }
 
+                        break;
+                    default:
                         break;
                 }
             };
@@ -110,15 +112,19 @@ public sealed class ChatLinkEditorViewModel : ViewModel, IDisposable
                             case 2:
                                 SecondarySuffixItem = vm.UpgradeSlotViewModel.SelectedUpgradeComponent;
                                 break;
+                            default:
+                                break;
                         }
 
+                        break;
+                    default:
                         break;
                 }
             };
         }
 
         MaxStackSize = options.CurrentValue.RaiseStackSize ? 255 : 250;
-        options.OnChange(current =>
+        _ = options.OnChange(current =>
         {
             MaxStackSize = current.RaiseStackSize ? 255 : 250;
         });
@@ -139,7 +145,7 @@ public sealed class ChatLinkEditorViewModel : ViewModel, IDisposable
         OnPropertyChanged(nameof(ResetTooltip));
         OnPropertyChanged(nameof(InfusionWarning));
 
-        await using var context = _contextFactory.CreateDbContext(args.Language);
+        await using ChatLinksContext context = _contextFactory.CreateDbContext(args.Language);
         Item = context.Items.SingleOrDefault(item => item.Id == Item.Id);
     }
 
@@ -196,18 +202,18 @@ public sealed class ChatLinkEditorViewModel : ViewModel, IDisposable
     {
         get
         {
-            var name = Item.Name;
+            string name = Item.Name;
 
             if (!Item.Flags.HideSuffix)
             {
-                var defaultSuffix = _customizer.DefaultSuffixItem(Item);
+                UpgradeComponent? defaultSuffix = _customizer.DefaultSuffixItem(Item);
                 if (!string.IsNullOrEmpty(defaultSuffix?.SuffixName) && name.EndsWith(defaultSuffix!.SuffixName))
                 {
                     name = name[..^defaultSuffix.SuffixName.Length];
                     name = name.TrimEnd();
                 }
 
-                var newSuffix = SuffixName ?? defaultSuffix?.SuffixName;
+                string? newSuffix = SuffixName ?? defaultSuffix?.SuffixName;
                 if (!string.IsNullOrEmpty(newSuffix))
                 {
                     name += $" {newSuffix}";
@@ -242,7 +248,7 @@ public sealed class ChatLinkEditorViewModel : ViewModel, IDisposable
         {
             OnPropertyChanging(nameof(ItemName));
             OnPropertyChanging(nameof(ChatLink));
-            SetField(ref _quantity, value);
+            _ = SetField(ref _quantity, value);
             OnPropertyChanged(nameof(ItemName));
             OnPropertyChanged(nameof(ChatLink));
         }
@@ -255,7 +261,7 @@ public sealed class ChatLinkEditorViewModel : ViewModel, IDisposable
         {
             OnPropertyChanging(nameof(ItemName));
             OnPropertyChanging(nameof(ChatLink));
-            SetField(ref _suffixItem, value);
+            _ = SetField(ref _suffixItem, value);
             OnPropertyChanged(nameof(ItemName));
             OnPropertyChanged(nameof(ChatLink));
         }
@@ -268,22 +274,19 @@ public sealed class ChatLinkEditorViewModel : ViewModel, IDisposable
         {
             OnPropertyChanging(nameof(ItemName));
             OnPropertyChanging(nameof(ChatLink));
-            SetField(ref _secondarySuffixItem, value);
+            _ = SetField(ref _secondarySuffixItem, value);
             OnPropertyChanged(nameof(ItemName));
             OnPropertyChanged(nameof(ChatLink));
         }
     }
 
-    public string ChatLink
+    public string ChatLink => new ItemLink
     {
-        get => new ItemLink
-        {
-            ItemId = Item.Id,
-            Count = Quantity,
-            SuffixItemId = SuffixItem?.Id,
-            SecondarySuffixItemId = SecondarySuffixItem?.Id
-        }.ToString();
-    }
+        ItemId = Item.Id,
+        Count = Quantity,
+        SuffixItemId = SuffixItem?.Id,
+        SecondarySuffixItemId = SecondarySuffixItem?.Id
+    }.ToString();
 
     public string CopyNameLabel => _localizer["Copy Name"];
 
@@ -314,7 +317,7 @@ public sealed class ChatLinkEditorViewModel : ViewModel, IDisposable
 
     public ItemTooltipViewModel CreateTooltipViewModel()
     {
-        var upgrades = UpgradeEditorViewModels
+        IEnumerable<UpgradeSlot> upgrades = UpgradeEditorViewModels
             .Select(vm => new UpgradeSlot
             {
                 Type = vm.UpgradeSlotType,
@@ -343,7 +346,7 @@ public sealed class ChatLinkEditorViewModel : ViewModel, IDisposable
             yield break;
         }
 
-        foreach (var defaultUpgradeComponentId in upgradable.UpgradeSlots)
+        foreach (int? defaultUpgradeComponentId in upgradable.UpgradeSlots)
         {
             yield return _upgradeEditorViewModelFactory.Create(
                 Item,
@@ -352,7 +355,7 @@ public sealed class ChatLinkEditorViewModel : ViewModel, IDisposable
             );
         }
 
-        foreach (var infusionSlot in upgradable.InfusionSlots)
+        foreach (InfusionSlot infusionSlot in upgradable.InfusionSlots)
         {
             yield return _upgradeEditorViewModelFactory.Create(
                 Item,

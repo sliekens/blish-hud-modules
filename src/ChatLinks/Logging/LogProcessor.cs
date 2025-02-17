@@ -19,7 +19,7 @@ public static class LogProcessor
     public static void Enqueue(Action callback)
     {
         Work.Enqueue(callback);
-        QueueSemaphore.Release();
+        _ = QueueSemaphore.Release();
     }
 
     private static async Task ProcessQueue()
@@ -28,7 +28,7 @@ public static class LogProcessor
         {
             await QueueSemaphore.WaitAsync();
 
-            while (Work.TryDequeue(out var work))
+            while (Work.TryDequeue(out Action? work))
             {
                 try
                 {

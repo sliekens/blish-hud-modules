@@ -10,13 +10,13 @@ public class ChatLinksContextTest
     [Fact]
     public async Task Can_migrate_data()
     {
-        var options = new DbContextOptionsBuilder<ChatLinksContext>()
+        DbContextOptions<ChatLinksContext> options = new DbContextOptionsBuilder<ChatLinksContext>()
             .Options;
-        var sut = new ChatLinksContext(options);
+        ChatLinksContext sut = new(options);
 
-        await sut.Database.EnsureDeletedAsync();
+        _ = await sut.Database.EnsureDeletedAsync();
         await sut.Database.MigrateAsync();
-        var actual = await sut.Database.GetPendingMigrationsAsync();
+        IEnumerable<string> actual = await sut.Database.GetPendingMigrationsAsync();
 
         Assert.Empty(actual);
     }

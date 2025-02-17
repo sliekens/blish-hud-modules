@@ -33,9 +33,9 @@ public sealed class UpgradeSelector : FlowPanel
 
     private void AddOptions()
     {
-        foreach (var group in ViewModel.Options)
+        foreach (IGrouping<string, ItemsListViewModel> group in ViewModel.Options)
         {
-            var list = new ItemsList
+            ItemsList list = new()
             {
                 Entries = [.. group]
             };
@@ -59,6 +59,8 @@ public sealed class UpgradeSelector : FlowPanel
                 }
 
                 AddOptions();
+                break;
+            default:
                 break;
         }
     }

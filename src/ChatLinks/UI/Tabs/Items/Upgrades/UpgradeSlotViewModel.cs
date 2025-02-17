@@ -50,13 +50,13 @@ public sealed class UpgradeSlotViewModel : ViewModel, IDisposable
         OnPropertyChanged(nameof(EmptySlotTooltip));
         if (SelectedUpgradeComponent is not null)
         {
-            var id = SelectedUpgradeComponent.Id;
+            int id = SelectedUpgradeComponent.Id;
             SelectedUpgradeComponent = await _customizer.GetUpgradeComponentAsync(id);
         }
 
         if (DefaultUpgradeComponent is not null)
         {
-            var id = DefaultUpgradeComponent.Id;
+            int id = DefaultUpgradeComponent.Id;
             DefaultUpgradeComponent = await _customizer.GetUpgradeComponentAsync(id);
         }
         else
@@ -91,9 +91,15 @@ public sealed class UpgradeSlotViewModel : ViewModel, IDisposable
 
     public string UnusedEnrichmenSlotLabel => _localizer["Unused enrichment slot"];
 
-    public AsyncTexture2D? GetIcon(UpgradeComponent item) => _icons.GetIcon(item);
+    public AsyncTexture2D? GetIcon(UpgradeComponent item)
+    {
+        return _icons.GetIcon(item);
+    }
 
-    public ItemTooltipViewModel CreateTooltipViewModel(UpgradeComponent item) => _itemTooltipViewModelFactory.Create(item, 1, []);
+    public ItemTooltipViewModel CreateTooltipViewModel(UpgradeComponent item)
+    {
+        return _itemTooltipViewModelFactory.Create(item, 1, []);
+    }
 
     public void Dispose()
     {

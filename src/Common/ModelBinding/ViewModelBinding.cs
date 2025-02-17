@@ -21,12 +21,12 @@ public abstract class ViewModelBinding<TViewModel, TData> : IDisposable where TV
         ViewModelPropertyName = ((MemberExpression)viewModelPropertySelector.Body).Member.Name;
         ViewModelRead = new Lazy<Func<TData>>(() =>
         {
-            var compiled = viewModelPropertySelector.Compile();
+            Func<TViewModel, TData> compiled = viewModelPropertySelector.Compile();
             return () => compiled(ViewModel);
         });
         ViewModelWrite = new Lazy<Action<TData>>(() =>
         {
-            var propertyInfo = (PropertyInfo)((MemberExpression)viewModelPropertySelector.Body).Member;
+            PropertyInfo propertyInfo = (PropertyInfo)((MemberExpression)viewModelPropertySelector.Body).Member;
             return value => propertyInfo.SetValue(viewModel, value);
         });
 

@@ -32,8 +32,8 @@ public sealed partial class Hero
             return [];
         }
 
-        var token = await _tokenProvider.GetTokenAsync(cancellationToken);
-        var values = await _gw2Client.Hero.Equipment.MailCarriers
+        string? token = await _tokenProvider.GetTokenAsync(cancellationToken);
+        HashSet<int> values = await _gw2Client.Hero.Equipment.MailCarriers
             .GetUnlockedMailCarriers(token, cancellationToken: cancellationToken)
             .ValueOnly();
 

@@ -18,10 +18,10 @@ public static class FormattedLabelBuilderExtensions
     {
         IEnumerable<MarkupToken> tokens = Lexer.Tokenize(markup);
         RootNode syntax = Parser.Parse(tokens);
-        foreach (var part in syntax.Children.SelectMany(node => builder.CreateParts(node, primaryColor ?? Color.White)))
+        foreach (FormattedLabelPartBuilder? part in syntax.Children.SelectMany(node => builder.CreateParts(node, primaryColor ?? Color.White)))
         {
-            part.SetFontSize(ContentService.FontSize.Size16);
-            builder.CreatePart(part);
+            _ = part.SetFontSize(ContentService.FontSize.Size16);
+            _ = builder.CreatePart(part);
         }
 
         return builder;
@@ -32,35 +32,41 @@ public static class FormattedLabelBuilderExtensions
         switch (node.Type)
         {
             case MarkupNodeType.Text:
-                var text = (TextNode)node;
-                var textPart = builder.CreatePart(text.Text);
-                textPart.SetTextColor(currentColor);
+                TextNode text = (TextNode)node;
+                FormattedLabelPartBuilder textPart = builder.CreatePart(text.Text);
+                _ = textPart.SetTextColor(currentColor);
                 yield return textPart;
                 break;
             case MarkupNodeType.LineBreak:
                 yield return builder.CreatePart("\r\n");
                 break;
             case MarkupNodeType.ColoredText:
-                var coloredText = (ColoredTextNode)node;
-                var color = ParseColor(coloredText.Color);
-                foreach (var part in coloredText.Children.SelectMany(child => builder.CreateParts(child, color)))
+                ColoredTextNode coloredText = (ColoredTextNode)node;
+                Color color = ParseColor(coloredText.Color);
+                foreach (FormattedLabelPartBuilder? part in coloredText.Children.SelectMany(child => builder.CreateParts(child, color)))
                 {
                     yield return part;
                 }
+                break;
+            case MarkupNodeType.None:
+                break;
+            case MarkupNodeType.Root:
+                break;
+            default:
                 break;
         }
     }
 
     private static Color ParseColor(string color)
     {
-        if (MarkupColorName.DefaultColorMap.TryGetValue(color, out var colorCode))
+        if (MarkupColorName.DefaultColorMap.TryGetValue(color, out string? colorCode))
         {
             color = colorCode;
         }
 
         if (color.StartsWith("#", StringComparison.Ordinal))
         {
-            var hex = color[1..];
+            string hex = color[1..];
             try
             {
                 byte r = byte.Parse(hex[..2], NumberStyles.HexNumber);

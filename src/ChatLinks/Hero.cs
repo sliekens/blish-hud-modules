@@ -38,7 +38,7 @@ public sealed partial class Hero : IDisposable
 
     private async ValueTask OnAuthorizationInvalidated(AuthorizationInvalidated _)
     {
-        var token = await _tokenProvider.GetTokenAsync(CancellationToken.None);
+        string? token = await _tokenProvider.GetTokenAsync(CancellationToken.None);
         if (token is null)
         {
             return;
@@ -49,16 +49,16 @@ public sealed partial class Hero : IDisposable
             return;
         }
 
-        var unlockedFinishersTask = GetUnlockedFinishersInternal(CancellationToken.None);
-        var unlockedGliderSkinsTask = GetUnlockedGliderSkinsInternal(CancellationToken.None);
-        var unlockedJadeBotSkinsTask = GetUnlockedJadeBotSkinsInternal(CancellationToken.None);
-        var unlockedMailCarriersTask = GetUnlockedMailCarriersInternal(CancellationToken.None);
-        var unlockedMiniaturesTask = GetUnlockedMiniaturesInternal(CancellationToken.None);
-        var unlockedMistChampionSkinsTask = GetUnlockedMistChampionSkinsInternal(CancellationToken.None);
-        var unlockedNoveltiesTask = GetUnlockedNoveltiesInternal(CancellationToken.None);
-        var unlockedOutfitsTask = GetUnlockedOutfitsInternal(CancellationToken.None);
-        var unlockedWardrobeTask = GetUnlockedWardrobeInternal(CancellationToken.None);
-        var unlockedRecipesTask = GetUnlockedRecipesInternal(CancellationToken.None);
+        ValueTask<IReadOnlyList<int>> unlockedFinishersTask = GetUnlockedFinishersInternal(CancellationToken.None);
+        ValueTask<IReadOnlyList<int>> unlockedGliderSkinsTask = GetUnlockedGliderSkinsInternal(CancellationToken.None);
+        ValueTask<IReadOnlyList<int>> unlockedJadeBotSkinsTask = GetUnlockedJadeBotSkinsInternal(CancellationToken.None);
+        ValueTask<IReadOnlyList<int>> unlockedMailCarriersTask = GetUnlockedMailCarriersInternal(CancellationToken.None);
+        ValueTask<IReadOnlyList<int>> unlockedMiniaturesTask = GetUnlockedMiniaturesInternal(CancellationToken.None);
+        ValueTask<IReadOnlyList<int>> unlockedMistChampionSkinsTask = GetUnlockedMistChampionSkinsInternal(CancellationToken.None);
+        ValueTask<IReadOnlyList<int>> unlockedNoveltiesTask = GetUnlockedNoveltiesInternal(CancellationToken.None);
+        ValueTask<IReadOnlyList<int>> unlockedOutfitsTask = GetUnlockedOutfitsInternal(CancellationToken.None);
+        ValueTask<IReadOnlyList<int>> unlockedWardrobeTask = GetUnlockedWardrobeInternal(CancellationToken.None);
+        ValueTask<IReadOnlyList<int>> unlockedRecipesTask = GetUnlockedRecipesInternal(CancellationToken.None);
 
         try
         {
@@ -155,7 +155,7 @@ public sealed partial class Hero : IDisposable
     private async Task<bool> HasAccountPermission(string token)
     {
         // Subtokens are not immediately authorized after creation, do a few retries.
-        var attempt = 0;
+        int attempt = 0;
         while (attempt < 10)
         {
             if (attempt > 0)
@@ -165,7 +165,7 @@ public sealed partial class Hero : IDisposable
 
             try
             {
-                var tokenInfo = await _gw2Client.Tokens
+                TokenInfo tokenInfo = await _gw2Client.Tokens
                     .GetTokenInfo(token, MissingMemberBehavior.Undefined, CancellationToken.None)
                     .ValueOnly();
                 return tokenInfo.Permissions.Contains(Permission.Account);

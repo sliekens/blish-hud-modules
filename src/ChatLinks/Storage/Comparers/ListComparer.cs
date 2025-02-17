@@ -6,5 +6,8 @@ public sealed class ListComparer<T>() : ValueComparer<IReadOnlyList<T>>((left, r
     list => list.GetHashCode(),
     list => GetSnapshot(list))
 {
-    private static IReadOnlyList<T> GetSnapshot(IReadOnlyList<T> list) => [.. list];
+    private static IReadOnlyList<T> GetSnapshot(IReadOnlyList<T> list)
+    {
+        return [.. list];
+    }
 }

@@ -22,6 +22,6 @@ public sealed class RingEntityTypeConfiguration(
         builder.Property(ring => ring.UpgradesInto)
             .HasColumnName("UpgradesInto")
             .HasJsonValueConversion()
-            .Metadata.SetValueComparer((upgradePathComparer));
+            .Metadata.SetValueComparer(upgradePathComparer);
     }
 }

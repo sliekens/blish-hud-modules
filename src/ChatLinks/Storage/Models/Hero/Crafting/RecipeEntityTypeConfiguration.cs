@@ -15,18 +15,18 @@ public sealed class RecipeEntityTypeConfiguration : IEntityTypeConfiguration<Rec
 {
     public void Configure(EntityTypeBuilder<Recipe> builder)
     {
-        builder.ToTable("Recipes");
-        builder.HasKey(recipe => recipe.Id);
-        builder.HasIndex(recipe => recipe.ChatLink);
-        builder.HasIndex(recipe => recipe.OutputItemId);
+        _ = builder.ToTable("Recipes");
+        _ = builder.HasKey(recipe => recipe.Id);
+        _ = builder.HasIndex(recipe => recipe.ChatLink);
+        _ = builder.HasIndex(recipe => recipe.OutputItemId);
         builder.Property(recipe => recipe.Disciplines).HasJsonValueConversion()
             .Metadata.SetValueComparer(new CollectionComparer<Extensible<CraftingDisciplineName>>());
-        builder.Property(recipe => recipe.Flags).HasJsonValueConversion();
+        _ = builder.Property(recipe => recipe.Flags).HasJsonValueConversion();
         builder.Property(recipe => recipe.Ingredients).HasJsonValueConversion()
             .Metadata.SetValueComparer(new ListComparer<Ingredient>());
 
-        var discriminatorBuilder = builder.HasDiscriminator<string>("Type");
-        discriminatorBuilder.HasValue<Recipe>("recipe")
+        DiscriminatorBuilder<string> discriminatorBuilder = builder.HasDiscriminator<string>("Type");
+        _ = discriminatorBuilder.HasValue<Recipe>("recipe")
             .HasValue<AmuletRecipe>("amulet")
             .HasValue<AxeRecipe>("axe")
             .HasValue<BackpackRecipe>("backpack")

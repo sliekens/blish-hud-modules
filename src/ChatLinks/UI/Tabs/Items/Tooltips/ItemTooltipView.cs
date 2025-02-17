@@ -76,6 +76,8 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
             case Shoulders:
                 PrintPlainText(ViewModel.Localizer["Shoulder Armor"]);
                 break;
+            default:
+                break;
         }
 
         PrintRequiredLevel(armor.Level);
@@ -84,7 +86,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintStatChoices(armor);
         PrintUniqueness(armor);
         PrintItemBinding(armor);
-        PrintVendorValue(armor);
+        PrintVendorValue();
     }
 
     private void PrintBackpack(Backpack back)
@@ -107,7 +109,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintStatChoices(back);
         PrintUniqueness(back);
         PrintItemBinding(back);
-        PrintVendorValue(back);
+        PrintVendorValue();
     }
 
     private void PrintBag(Bag bag)
@@ -117,7 +119,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintInBank();
         PrintUniqueness(bag);
         PrintItemBinding(bag);
-        PrintVendorValue(bag);
+        PrintVendorValue();
     }
 
     private void PrintConsumable(Consumable consumable)
@@ -146,6 +148,8 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                 break;
             case GenericConsumable { Effect: not null } generic:
                 PrintEffect(generic.Effect);
+                break;
+            default:
                 break;
         }
 
@@ -450,7 +454,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintInBank();
         PrintUniqueness(consumable);
         PrintItemBinding(consumable);
-        PrintVendorValue(consumable);
+        PrintVendorValue();
     }
 
     private void PrintContainer(GuildWars2.Items.Container container)
@@ -468,7 +472,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintInBank();
         PrintUniqueness(container);
         PrintItemBinding(container);
-        PrintVendorValue(container);
+        PrintVendorValue();
     }
 
     private void PrintCraftingMaterial(CraftingMaterial craftingMaterial)
@@ -478,7 +482,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintInBank();
         PrintUniqueness(craftingMaterial);
         PrintItemBinding(craftingMaterial);
-        PrintVendorValue(craftingMaterial);
+        PrintVendorValue();
     }
 
     private void PrintGatheringTool(GatheringTool gatheringTool)
@@ -488,7 +492,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintInBank();
         PrintUniqueness(gatheringTool);
         PrintItemBinding(gatheringTool);
-        PrintVendorValue(gatheringTool);
+        PrintVendorValue();
     }
 
     private void PrintTrinket(Trinket trinket)
@@ -513,6 +517,8 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
             case Ring:
                 PrintPlainText(ViewModel.Localizer["Ring"]);
                 break;
+            default:
+                break;
         }
 
         PrintRequiredLevel(trinket.Level);
@@ -521,7 +527,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintStatChoices(trinket);
         PrintUniqueness(trinket);
         PrintItemBinding(trinket);
-        PrintVendorValue(trinket);
+        PrintVendorValue();
     }
 
     private void PrintGizmo(Gizmo gizmo)
@@ -566,7 +572,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintInBank();
         PrintUniqueness(gizmo);
         PrintItemBinding(gizmo);
-        PrintVendorValue(gizmo);
+        PrintVendorValue();
     }
 
     private void PrintJadeTechModule(JadeTechModule jadeTechModule)
@@ -580,7 +586,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintInBank();
         PrintUniqueness(jadeTechModule);
         PrintItemBinding(jadeTechModule);
-        PrintVendorValue(jadeTechModule);
+        PrintVendorValue();
     }
 
     private void PrintMiniature(Miniature miniature)
@@ -622,7 +628,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintInBank();
         PrintUniqueness(miniature);
         PrintItemBinding(miniature);
-        PrintVendorValue(miniature);
+        PrintVendorValue();
     }
 
     private void PrintPowerCore(PowerCore powerCore)
@@ -635,7 +641,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintInBank();
         PrintUniqueness(powerCore);
         PrintItemBinding(powerCore);
-        PrintVendorValue(powerCore);
+        PrintVendorValue();
     }
 
     private void PrintRelic(Relic relic)
@@ -648,7 +654,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintInBank();
         PrintUniqueness(relic);
         PrintItemBinding(relic);
-        PrintVendorValue(relic);
+        PrintVendorValue();
     }
 
     private void PrintSalvageTool(SalvageTool salvageTool)
@@ -661,7 +667,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintInBank();
         PrintUniqueness(salvageTool);
         PrintItemBinding(salvageTool);
-        PrintVendorValue(salvageTool);
+        PrintVendorValue();
     }
 
     private void PrintTrophy(Trophy trophy)
@@ -672,7 +678,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintInBank();
         PrintUniqueness(trophy);
         PrintItemBinding(trophy);
-        PrintVendorValue(trophy);
+        PrintVendorValue();
     }
 
     private void PrintUpgradeComponent(UpgradeComponent upgradeComponent)
@@ -699,7 +705,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintInBank();
         PrintUniqueness(upgradeComponent);
         PrintItemBinding(upgradeComponent);
-        PrintVendorValue(upgradeComponent);
+        PrintVendorValue();
     }
 
     private void PrintWeapon(Weapon weapon)
@@ -784,6 +790,8 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
             case Warhorn:
                 PrintPlainText(ViewModel.Localizer["Warhorn"]);
                 break;
+            default:
+                break;
         }
 
         PrintRequiredLevel(weapon.Level);
@@ -792,7 +800,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintStatChoices(weapon);
         PrintUniqueness(weapon);
         PrintItemBinding(weapon);
-        PrintVendorValue(weapon);
+        PrintVendorValue();
     }
 
     private void Print(Item item)
@@ -802,7 +810,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintInBank();
         PrintUniqueness(item);
         PrintItemBinding(item);
-        PrintVendorValue(item);
+        PrintVendorValue();
     }
 
     public void PrintPlainText(string text, Color? textColor = null)
@@ -848,7 +856,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
             WrapText = true,
         };
 
-        Binder.Bind(ViewModel, vm => vm.ItemName, name);
+        _ = Binder.Bind(ViewModel, vm => vm.ItemName, name);
 
         name.Text = name.Text.Replace(" ", "  ");
     }
@@ -870,10 +878,10 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
             {
                 if (builder.Length > 0)
                 {
-                    builder.AppendLine();
+                    _ = builder.AppendLine();
                 }
 
-                builder.Append(ViewModel.Localizer[stat.Key, stat.Value]);
+                _ = builder.Append(ViewModel.Localizer[stat.Key, stat.Value]);
             }
 
             PrintPlainText(builder.ToString());
@@ -882,7 +890,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
     public void PrintUpgrades()
     {
-        foreach (var slot in ViewModel.UpgradesSlots)
+        foreach (UpgradeSlot slot in ViewModel.UpgradesSlots)
         {
             FormattedLabelBuilder builder = new FormattedLabelBuilder()
                 .SetWidth(_layout.Width)
@@ -891,88 +899,82 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
             if (slot.UpgradeComponent is not null)
             {
-                builder
+                _ = builder
                     .CreatePart("\r\n", _ => { })
                     .CreatePart(" " + slot.UpgradeComponent.Name, part =>
                     {
                         if (!string.IsNullOrEmpty(slot.UpgradeComponent.IconHref))
                         {
-                            part.SetPrefixImage(ViewModel.GetIcon(slot.UpgradeComponent));
-                            part.SetPrefixImageSize(new Point(16));
+                            _ = part.SetPrefixImage(ViewModel.GetIcon(slot.UpgradeComponent));
+                            _ = part.SetPrefixImageSize(new Point(16));
                         }
 
-                        part.SetFontSize(ContentService.FontSize.Size16);
-                        part.SetTextColor(ActiveBuffColor);
+                        _ = part.SetFontSize(ContentService.FontSize.Size16);
+                        _ = part.SetTextColor(ActiveBuffColor);
                     });
 
                 if (slot.UpgradeComponent is Rune rune)
                 {
                     foreach ((string? bonus, int ordinal) in (rune.Bonuses ?? []).Select((value, index) => (value, index + 1)))
                     {
-                        builder.CreatePart($"\r\n({ordinal:0}): {bonus}", part =>
+                        _ = builder.CreatePart($"\r\n({ordinal:0}): {bonus}", part =>
                         {
-                            part.SetFontSize(ContentService.FontSize.Size16);
-                            part.SetTextColor(Gray);
+                            _ = part.SetFontSize(ContentService.FontSize.Size16);
+                            _ = part.SetTextColor(Gray);
                         });
                     }
                 }
                 else if (slot.UpgradeComponent.Buff is { Description.Length: > 0 })
                 {
-                    builder.CreatePart("\r\n", part => part.SetFontSize(ContentService.FontSize.Size16));
-                    builder.AddMarkup(slot.UpgradeComponent.Buff.Description, ActiveBuffColor);
+                    _ = builder.CreatePart("\r\n", part => part.SetFontSize(ContentService.FontSize.Size16));
+                    _ = builder.AddMarkup(slot.UpgradeComponent.Buff.Description, ActiveBuffColor);
                 }
                 else
                 {
                     foreach (KeyValuePair<Extensible<AttributeName>, int> stat in slot.UpgradeComponent.Attributes)
                     {
-                        builder.CreatePart("\r\n", part => part.SetFontSize(ContentService.FontSize.Size16));
-                        builder.CreatePart($"+{stat.Value:N0} {ViewModel.Localizer[stat.Key.ToString()]}", part =>
+                        _ = builder.CreatePart("\r\n", part => part.SetFontSize(ContentService.FontSize.Size16));
+                        _ = builder.CreatePart($"+{stat.Value:N0} {ViewModel.Localizer[stat.Key.ToString()]}", part =>
                         {
-                            part.SetFontSize(ContentService.FontSize.Size16);
-                            part.SetTextColor(ActiveBuffColor);
+                            _ = part.SetFontSize(ContentService.FontSize.Size16);
+                            _ = part.SetTextColor(ActiveBuffColor);
                         });
                     }
                 }
             }
             else
             {
-                switch (slot.Type)
+                _ = slot.Type switch
                 {
-                    case UpgradeSlotType.Infusion:
-                        builder
-                            .CreatePart("\r\n", _ => { })
-                            .CreatePart(" " + ViewModel.Localizer["Unused infusion slot"], part =>
-                            {
-                                part.SetPrefixImage(EmbeddedResources.Texture("unused_infusion_slot.png"));
-                                part.SetPrefixImageSize(new Point(16));
-                                part.SetFontSize(ContentService.FontSize.Size16);
-                            });
-                        break;
-                    case UpgradeSlotType.Enrichment:
-                        builder
-                            .CreatePart("\r\n", _ => { })
-                            .CreatePart(" " + ViewModel.Localizer["Unused enrichment slot"], part =>
-                            {
-                                part.SetPrefixImage(EmbeddedResources.Texture("unused_enrichment_slot.png"));
-                                part.SetPrefixImageSize(new Point(16));
-                                part.SetFontSize(ContentService.FontSize.Size16);
-                            });
-                        break;
-                    case UpgradeSlotType.Default:
-                    default:
-                        builder
-                            .CreatePart("\r\n", _ => { })
-                            .CreatePart(" " + ViewModel.Localizer["Unused upgrade slot"], part =>
-                            {
-                                part.SetPrefixImage(EmbeddedResources.Texture("unused_upgrade_slot.png"));
-                                part.SetPrefixImageSize(new Point(16));
-                                part.SetFontSize(ContentService.FontSize.Size16);
-                            });
-                        break;
-                }
+                    UpgradeSlotType.Infusion => builder
+                        .CreatePart("\r\n", _ => { })
+                        .CreatePart(" " + ViewModel.Localizer["Unused infusion slot"], part =>
+                        {
+                            _ = part.SetPrefixImage(EmbeddedResources.Texture("unused_infusion_slot.png"));
+                            _ = part.SetPrefixImageSize(new Point(16));
+                            _ = part.SetFontSize(ContentService.FontSize.Size16);
+                        }),
+                    UpgradeSlotType.Enrichment => builder
+                        .CreatePart("\r\n", _ => { })
+                        .CreatePart(" " + ViewModel.Localizer["Unused enrichment slot"], part =>
+                        {
+                            _ = part.SetPrefixImage(EmbeddedResources.Texture("unused_enrichment_slot.png"));
+                            _ = part.SetPrefixImageSize(new Point(16));
+                            _ = part.SetFontSize(ContentService.FontSize.Size16);
+                        }),
+                    UpgradeSlotType.Default => builder
+                        .CreatePart("\r\n", _ => { })
+                        .CreatePart(" " + ViewModel.Localizer["Unused upgrade slot"], part =>
+                        {
+                            _ = part.SetPrefixImage(EmbeddedResources.Texture("unused_upgrade_slot.png"));
+                            _ = part.SetPrefixImageSize(new Point(16));
+                            _ = part.SetFontSize(ContentService.FontSize.Size16);
+                        }),
+                    _ => builder,
+                };
             }
 
-            var upgradeSlot = builder.Build();
+            FormattedLabel upgradeSlot = builder.Build();
             upgradeSlot.Parent = _layout;
         }
 
@@ -1087,7 +1089,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
             .AddMarkup(description);
         if (finalNewLine)
         {
-            builder.CreatePart("\r\n\r\n", part => part.SetFontSize(ContentService.FontSize.Size16));
+            _ = builder.CreatePart("\r\n\r\n", part => part.SetFontSize(ContentService.FontSize.Size16));
         }
 
         FormattedLabel label = builder.Build();
@@ -1125,9 +1127,9 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         }
     }
 
-    public void PrintVendorValue(Item _)
+    public void PrintVendorValue()
     {
-        var totalValue = ViewModel.TotalVendorValue;
+        Coin totalValue = ViewModel.TotalVendorValue;
         if (totalValue == Coin.Zero || ViewModel.Item.Flags.NoSell)
         {
             return;
@@ -1140,31 +1142,31 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         if (totalValue.Amount >= 10_000)
         {
             FormattedLabelPartBuilder? gold = builder.CreatePart(totalValue.Gold.ToString("N0"));
-            gold.SetTextColor(new Color(0xDD, 0xBB, 0x44));
-            gold.SetFontSize(ContentService.FontSize.Size16);
-            gold.SetSuffixImage(AsyncTexture2D.FromAssetId(156904));
-            gold.SetSuffixImageSize(new Point(20));
-            builder.CreatePart(gold);
-            builder.CreatePart("  ", _ => { });
+            _ = gold.SetTextColor(new Color(0xDD, 0xBB, 0x44));
+            _ = gold.SetFontSize(ContentService.FontSize.Size16);
+            _ = gold.SetSuffixImage(AsyncTexture2D.FromAssetId(156904));
+            _ = gold.SetSuffixImageSize(new Point(20));
+            _ = builder.CreatePart(gold);
+            _ = builder.CreatePart("  ", _ => { });
         }
 
         if (totalValue.Amount >= 100)
         {
             FormattedLabelPartBuilder? silver = builder.CreatePart(totalValue.Silver.ToString("N0"));
-            silver.SetTextColor(new Color(0xC0, 0xC0, 0xC0));
-            silver.SetFontSize(ContentService.FontSize.Size16);
-            silver.SetSuffixImage(AsyncTexture2D.FromAssetId(156907));
-            silver.SetSuffixImageSize(new Point(20));
-            builder.CreatePart(silver);
-            builder.CreatePart("  ", _ => { });
+            _ = silver.SetTextColor(new Color(0xC0, 0xC0, 0xC0));
+            _ = silver.SetFontSize(ContentService.FontSize.Size16);
+            _ = silver.SetSuffixImage(AsyncTexture2D.FromAssetId(156907));
+            _ = silver.SetSuffixImageSize(new Point(20));
+            _ = builder.CreatePart(silver);
+            _ = builder.CreatePart("  ", _ => { });
         }
 
         FormattedLabelPartBuilder? copper = builder.CreatePart(totalValue.Copper.ToString("N0"));
-        copper.SetTextColor(new Color(0xCD, 0x7F, 0x32));
-        copper.SetFontSize(ContentService.FontSize.Size16);
-        copper.SetSuffixImage(AsyncTexture2D.FromAssetId(156902));
-        copper.SetSuffixImageSize(new Point(20));
-        builder.CreatePart(copper);
+        _ = copper.SetTextColor(new Color(0xCD, 0x7F, 0x32));
+        _ = copper.SetFontSize(ContentService.FontSize.Size16);
+        _ = copper.SetSuffixImage(AsyncTexture2D.FromAssetId(156902));
+        _ = copper.SetSuffixImageSize(new Point(20));
+        _ = builder.CreatePart(copper);
 
         FormattedLabel? label = builder.Build();
         label.Parent = _layout;
@@ -1193,19 +1195,19 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         }
 
         StringBuilder builder = new();
-        builder.Append(effect.Name);
+        _ = builder.Append(effect.Name);
 
         if (effect.Duration > TimeSpan.Zero)
         {
-            builder.AppendFormat(" ({0})", effect.Duration switch
+            _ = builder.AppendFormat(" ({0})", effect.Duration switch
             {
                 { Hours: >= 1 } => $"{effect.Duration.TotalHours} h",
                 _ => $"{effect.Duration.TotalMinutes} m"
             });
         }
 
-        builder.Append(": ");
-        builder.Append(effect.Description);
+        _ = builder.Append(": ");
+        _ = builder.Append(effect.Description);
         _ = new Label()
         {
             Parent = panel,
@@ -1236,7 +1238,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         foreach ((string? bonus, int ordinal) in bonuses
                      .Select((value, index) => (value, index + 1)))
         {
-            text.Append($"\r\n({ordinal:0}): {bonus}");
+            _ = text.Append($"\r\n({ordinal:0}): {bonus}");
         }
 
         PrintPlainText(text.ToString(), Gray);
@@ -1249,9 +1251,9 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
             .AutoSizeHeight()
             .Wrap();
 
-        builder.CreatePart(ViewModel.Localizer["Weapon Strength", weapon.MinPower, weapon.MaxPower], static part =>
+        _ = builder.CreatePart(ViewModel.Localizer["Weapon Strength", weapon.MinPower, weapon.MaxPower], static part =>
         {
-            part.SetFontSize(ContentService.FontSize.Size16);
+            _ = part.SetFontSize(ContentService.FontSize.Size16);
         });
 
         Extensible<DamageType> damageType = weapon.DamageType;
@@ -1262,10 +1264,10 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
         if (damageType != DamageType.Physical)
         {
-            builder.CreatePart($" ({ViewModel.Localizer[damageType.ToString()]})", static part =>
+            _ = builder.CreatePart($" ({ViewModel.Localizer[damageType.ToString()]})", static part =>
             {
-                part.SetFontSize(ContentService.FontSize.Size16);
-                part.SetTextColor(Gray);
+                _ = part.SetFontSize(ContentService.FontSize.Size16);
+                _ = part.SetTextColor(Gray);
             });
         }
 

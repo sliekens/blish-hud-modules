@@ -31,8 +31,8 @@ public sealed partial class Hero
             return [];
         }
 
-        var token = await _tokenProvider.GetTokenAsync(cancellationToken);
-        var values = await _gw2Client.Pvp
+        string? token = await _tokenProvider.GetTokenAsync(cancellationToken);
+        HashSet<int> values = await _gw2Client.Pvp
             .GetUnlockedMistChampions(token, cancellationToken: cancellationToken)
             .ValueOnly();
 

@@ -12,16 +12,16 @@ public sealed class MailCarrierEntityTypeConfiguration : IEntityTypeConfiguratio
 {
     public void Configure(EntityTypeBuilder<MailCarrier> builder)
     {
-        builder.ToTable("MailCarriers");
-        builder.HasKey(mailCarrier => mailCarrier.Id);
-        builder.HasIndex(mailCarrier => mailCarrier.Name);
-        builder.HasIndex(mailCarrier => mailCarrier.Order);
+        _ = builder.ToTable("MailCarriers");
+        _ = builder.HasKey(mailCarrier => mailCarrier.Id);
+        _ = builder.HasIndex(mailCarrier => mailCarrier.Name);
+        _ = builder.HasIndex(mailCarrier => mailCarrier.Order);
 
         builder.Property(mailCarrier => mailCarrier.UnlockItemIds)
             .HasJsonValueConversion()
             .Metadata.SetValueComparer(new CollectionComparer<int>());
 
-        builder.Property(mailCarrier => mailCarrier.Flags)
+        _ = builder.Property(mailCarrier => mailCarrier.Flags)
             .HasJsonValueConversion();
     }
 }

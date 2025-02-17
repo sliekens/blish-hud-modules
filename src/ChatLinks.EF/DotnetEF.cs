@@ -6,7 +6,7 @@ public static class DotnetEF
 {
     public static void Run(string arguments)
     {
-        var processStartInfo = new ProcessStartInfo
+        ProcessStartInfo processStartInfo = new()
         {
             FileName = "dotnet",
             Arguments = $"ef --no-build --project {GetModuleDirectory()} {arguments}",
@@ -19,9 +19,9 @@ public static class DotnetEF
 
         Console.WriteLine($"dotnet {processStartInfo.Arguments}");
 
-        using var process = new Process();
+        using Process process = new();
         process.StartInfo = processStartInfo;
-        process.Start();
+        _ = process.Start();
 
         // Read the output (or the error)
         string output = process.StandardOutput.ReadToEnd();

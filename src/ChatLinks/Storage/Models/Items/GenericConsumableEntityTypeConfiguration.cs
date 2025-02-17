@@ -11,9 +11,9 @@ public sealed class GenericConsumableEntityTypeConfiguration : IEntityTypeConfig
 {
     public void Configure(EntityTypeBuilder<GenericConsumable> builder)
     {
-        builder.Property(genericConsumable => genericConsumable.Effect).HasColumnName("Effect")
+        _ = builder.Property(genericConsumable => genericConsumable.Effect).HasColumnName("Effect")
             .HasJsonValueConversion();
-        builder.Property(genericConsumable => genericConsumable.GuildUpgradeId)
+        _ = builder.Property(genericConsumable => genericConsumable.GuildUpgradeId)
             .HasColumnName("GuildUpgradeId");
     }
 }

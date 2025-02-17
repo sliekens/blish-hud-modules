@@ -66,7 +66,7 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
     {
         if (!optionsBuilder.IsConfigured)
         {
-            optionsBuilder.UseSqlite("Data Source=data.db");
+            _ = optionsBuilder.UseSqlite("Data Source=data.db");
         }
     }
 
@@ -82,7 +82,7 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfiguration(new ItemEntityTypeConfiguration());
+        _ = modelBuilder.ApplyConfiguration(new ItemEntityTypeConfiguration());
 
         ValueConverter<IDictionary<Extensible<AttributeName>, int>, string> attributesConverter = new(
             static attr => Serialize(attr.ToDictionary(pair => pair.Key.ToString(), pair => pair.Value)),
@@ -106,40 +106,40 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
         ValueComparer<IReadOnlyCollection<InfusionSlotUpgradePath>> upgradePathComparer =
             new CollectionComparer<InfusionSlotUpgradePath>();
 
-        modelBuilder.ApplyConfiguration(new ArmorEntityTypeConfiguration(
+        _ = modelBuilder.ApplyConfiguration(new ArmorEntityTypeConfiguration(
             attributesConverter,
             attributesComparer,
             buffComparer,
             infusionSlotsComparer
         ));
 
-        modelBuilder.ApplyConfiguration(new TrinketEntityTypeConfiguration(
+        _ = modelBuilder.ApplyConfiguration(new TrinketEntityTypeConfiguration(
             attributesConverter,
             attributesComparer,
             buffComparer,
             infusionSlotsComparer
         ));
 
-        modelBuilder.ApplyConfiguration(new RingEntityTypeConfiguration(
+        _ = modelBuilder.ApplyConfiguration(new RingEntityTypeConfiguration(
             upgradeSourceComparer,
             upgradePathComparer
         ));
 
-        modelBuilder.ApplyConfiguration(new WeaponEntityTypeConfiguration(
+        _ = modelBuilder.ApplyConfiguration(new WeaponEntityTypeConfiguration(
             attributesConverter,
             attributesComparer,
             buffComparer,
             infusionSlotsComparer
         ));
 
-        modelBuilder.ApplyConfiguration(new WeaponEntityTypeConfiguration(
+        _ = modelBuilder.ApplyConfiguration(new WeaponEntityTypeConfiguration(
             attributesConverter,
             attributesComparer,
             buffComparer,
             infusionSlotsComparer
         ));
 
-        modelBuilder.ApplyConfiguration(new BackItemEntityTypeConfiguration(
+        _ = modelBuilder.ApplyConfiguration(new BackItemEntityTypeConfiguration(
             attributesConverter,
             attributesComparer,
             buffComparer,
@@ -148,60 +148,60 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
             upgradePathComparer
         ));
 
-        modelBuilder.ApplyConfiguration(new UpgradeComponentEntityTypeConfiguration(
+        _ = modelBuilder.ApplyConfiguration(new UpgradeComponentEntityTypeConfiguration(
             attributesConverter,
             attributesComparer,
             buffComparer
         ));
 
-        modelBuilder.ApplyConfiguration(new RuneEntityTypeConfiguration());
+        _ = modelBuilder.ApplyConfiguration(new RuneEntityTypeConfiguration());
 
-        modelBuilder.ApplyConfiguration(new CraftingMaterialEntityTypeConfiguration(upgradePathComparer));
+        _ = modelBuilder.ApplyConfiguration(new CraftingMaterialEntityTypeConfiguration(upgradePathComparer));
 
-        modelBuilder.ApplyConfiguration(new RecipeSheetEntityTypeConfiguration());
+        _ = modelBuilder.ApplyConfiguration(new RecipeSheetEntityTypeConfiguration());
 
-        modelBuilder.ApplyConfiguration(new TransmutationEntityTypeConfiguration());
+        _ = modelBuilder.ApplyConfiguration(new TransmutationEntityTypeConfiguration());
 
-        modelBuilder.ApplyConfiguration(new FoodEntityTypeConfiguration());
+        _ = modelBuilder.ApplyConfiguration(new FoodEntityTypeConfiguration());
 
-        modelBuilder.ApplyConfiguration(new GenericConsumableEntityTypeConfiguration());
+        _ = modelBuilder.ApplyConfiguration(new GenericConsumableEntityTypeConfiguration());
 
-        modelBuilder.ApplyConfiguration(new ServiceEntityTypeConfiguration());
+        _ = modelBuilder.ApplyConfiguration(new ServiceEntityTypeConfiguration());
 
-        modelBuilder.ApplyConfiguration(new GizmoEntityTypeConfiguration());
+        _ = modelBuilder.ApplyConfiguration(new GizmoEntityTypeConfiguration());
 
-        modelBuilder.ApplyConfiguration(new UtilityEntityTypeConfiguration());
+        _ = modelBuilder.ApplyConfiguration(new UtilityEntityTypeConfiguration());
 
-        modelBuilder.ApplyConfiguration(new EquipmentSkinEntityTypeConfiguration());
+        _ = modelBuilder.ApplyConfiguration(new EquipmentSkinEntityTypeConfiguration());
 
-        modelBuilder.ApplyConfiguration(new ArmorSkinEntityTypeConfiguration());
+        _ = modelBuilder.ApplyConfiguration(new ArmorSkinEntityTypeConfiguration());
 
-        modelBuilder.ApplyConfiguration(new WeaponSkinEntityTypeConfiguration());
+        _ = modelBuilder.ApplyConfiguration(new WeaponSkinEntityTypeConfiguration());
 
-        modelBuilder.ApplyConfiguration(new DyeColorEntityTypeConfiguration());
+        _ = modelBuilder.ApplyConfiguration(new DyeColorEntityTypeConfiguration());
 
-        modelBuilder.ApplyConfiguration(new RecipeEntityTypeConfiguration());
+        _ = modelBuilder.ApplyConfiguration(new RecipeEntityTypeConfiguration());
 
-        modelBuilder.ApplyConfiguration(new GuildConsumableRecipeEntityTypeConfiguration());
+        _ = modelBuilder.ApplyConfiguration(new GuildConsumableRecipeEntityTypeConfiguration());
 
-        modelBuilder.ApplyConfiguration(new GuildDecorationRecipeEntityTypeConfiguration());
+        _ = modelBuilder.ApplyConfiguration(new GuildDecorationRecipeEntityTypeConfiguration());
 
-        modelBuilder.ApplyConfiguration(new GuildWvwUpgradeRecipeEntityTypeConfiguration());
+        _ = modelBuilder.ApplyConfiguration(new GuildWvwUpgradeRecipeEntityTypeConfiguration());
 
-        modelBuilder.ApplyConfiguration(new FinisherEntityTypeConfiguration());
+        _ = modelBuilder.ApplyConfiguration(new FinisherEntityTypeConfiguration());
 
-        modelBuilder.ApplyConfiguration(new GliderSkinEntityTypeConfiguration());
+        _ = modelBuilder.ApplyConfiguration(new GliderSkinEntityTypeConfiguration());
 
-        modelBuilder.ApplyConfiguration(new JadeBotSkinEntityTypeConfiguration());
+        _ = modelBuilder.ApplyConfiguration(new JadeBotSkinEntityTypeConfiguration());
 
-        modelBuilder.ApplyConfiguration(new MailCarrierEntityTypeConfiguration());
+        _ = modelBuilder.ApplyConfiguration(new MailCarrierEntityTypeConfiguration());
 
-        modelBuilder.ApplyConfiguration(new MiniatureEntityTypeConfiguration());
+        _ = modelBuilder.ApplyConfiguration(new MiniatureEntityTypeConfiguration());
 
-        modelBuilder.ApplyConfiguration(new MistChampionSkinEntityTypeConfiguration());
+        _ = modelBuilder.ApplyConfiguration(new MistChampionSkinEntityTypeConfiguration());
 
-        modelBuilder.ApplyConfiguration(new NoveltyEntityTypeConfiguration());
+        _ = modelBuilder.ApplyConfiguration(new NoveltyEntityTypeConfiguration());
 
-        modelBuilder.ApplyConfiguration(new OutfitEntityTypeConfiguration());
+        _ = modelBuilder.ApplyConfiguration(new OutfitEntityTypeConfiguration());
     }
 }

@@ -31,7 +31,7 @@ public class ItemsTabView : View
             HeightSizingMode = SizingMode.Fill
         };
 
-        var searchLayout = new FlowPanel
+        FlowPanel searchLayout = new()
         {
             Parent = _layout,
             FlowDirection = ControlFlowDirection.SingleTopToBottom,
@@ -39,14 +39,14 @@ public class ItemsTabView : View
             HeightSizingMode = SizingMode.Fill
         };
 
-        var searchBoxPanel = new Panel
+        Panel searchBoxPanel = new()
         {
             Parent = searchLayout,
             WidthSizingMode = SizingMode.Fill,
             HeightSizingMode = SizingMode.AutoSize,
         };
 
-        var searchBox = new TextBox
+        TextBox searchBox = new()
         {
             Parent = searchBoxPanel,
             Width = 400,
@@ -68,14 +68,14 @@ public class ItemsTabView : View
             }
         };
 
-        var loadingSpinner = new LoadingSpinner
+        LoadingSpinner loadingSpinner = new()
         {
             Parent = searchBoxPanel,
             Size = new Point(searchBox.Height),
             Right = searchBox.Right
         };
 
-        var searchResults = new ItemsList
+        ItemsList searchResults = new()
         {
             Parent = searchLayout,
             WidthSizingMode = SizingMode.Standard,
@@ -94,9 +94,9 @@ public class ItemsTabView : View
             FadeView = true
         };
 
-        Binder.Bind(ViewModel, vm => vm.SearchText, searchBox);
-        Binder.Bind(ViewModel, vm => vm.Searching, loadingSpinner);
-        Binder.Bind(ViewModel, vm => vm.ResultText, searchLayout.Children.OfType<Scrollbar>().Single(), ctl => ctl.BasicTooltipText);
+        _ = Binder.Bind(ViewModel, vm => vm.SearchText, searchBox);
+        _ = Binder.Bind(ViewModel, vm => vm.Searching, loadingSpinner);
+        _ = Binder.Bind(ViewModel, vm => vm.ResultText, searchLayout.Children.OfType<Scrollbar>().Single(), ctl => ctl.BasicTooltipText);
 
         viewModel.PropertyChanged += (_, args) =>
         {
@@ -108,6 +108,8 @@ public class ItemsTabView : View
 
                 case nameof(ViewModel.SearchResults):
                     searchResults.Entries = ViewModel.SearchResults;
+                    break;
+                default:
                     break;
             }
         };

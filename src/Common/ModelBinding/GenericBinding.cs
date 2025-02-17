@@ -29,12 +29,12 @@ public sealed class GenericBinding<TViewModel, TControl, TData> : ViewModelBindi
         ControlPropertyName = ((MemberExpression)controlPropertySelector.Body).Member.Name;
         ControlRead = new Lazy<Func<TData>>(() =>
         {
-            var compiled = controlPropertySelector.Compile();
+            Func<TControl, TData> compiled = controlPropertySelector.Compile();
             return () => compiled(control);
         });
         ControlWrite = new Lazy<Action<TData>>(() =>
         {
-            var propertyInfo = (PropertyInfo)((MemberExpression)controlPropertySelector.Body).Member;
+            PropertyInfo propertyInfo = (PropertyInfo)((MemberExpression)controlPropertySelector.Body).Member;
             return value => propertyInfo.SetValue(control, value);
         });
 

@@ -24,14 +24,14 @@ public sealed class BackItemEntityTypeConfiguration(
 {
     public void Configure(EntityTypeBuilder<Backpack> builder)
     {
-        builder.Property(backpack => backpack.DefaultSkinId).HasColumnName("DefaultSkinId");
-        builder.Property(backpack => backpack.SuffixItemId).HasColumnName("SuffixItemId");
-        builder.Property(backpack => backpack.AttributeCombinationId).HasColumnName("AttributeCombinationId");
+        _ = builder.Property(backpack => backpack.DefaultSkinId).HasColumnName("DefaultSkinId");
+        _ = builder.Property(backpack => backpack.SuffixItemId).HasColumnName("SuffixItemId");
+        _ = builder.Property(backpack => backpack.AttributeCombinationId).HasColumnName("AttributeCombinationId");
         builder.Property(backpack => backpack.Attributes)
             .HasColumnName("Attributes")
             .HasConversion(attributesConverter)
             .Metadata.SetValueComparer(attributesComparer);
-        builder.Property(backpack => backpack.AttributeAdjustment).HasColumnName("AttributeAdjustment");
+        _ = builder.Property(backpack => backpack.AttributeAdjustment).HasColumnName("AttributeAdjustment");
         builder.Property(backpack => backpack.StatChoices)
             .HasColumnName("StatChoices")
             .HasJsonValueConversion()
@@ -50,6 +50,6 @@ public sealed class BackItemEntityTypeConfiguration(
         builder.Property(backpack => backpack.UpgradesInto)
             .HasColumnName("UpgradesInto")
             .HasJsonValueConversion()
-            .Metadata.SetValueComparer((upgradePathComparer));
+            .Metadata.SetValueComparer(upgradePathComparer);
     }
 }

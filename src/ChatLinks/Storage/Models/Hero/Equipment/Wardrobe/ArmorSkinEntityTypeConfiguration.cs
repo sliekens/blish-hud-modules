@@ -12,8 +12,8 @@ public sealed class ArmorSkinEntityTypeConfiguration : IEntityTypeConfiguration<
 {
     public void Configure(EntityTypeBuilder<ArmorSkin> builder)
     {
-        builder.Property(skin => skin.WeightClass).HasConversion(new ExtensibleEnumConverter<WeightClass>());
-        builder.Property(skin => skin.DyeSlots)
+        _ = builder.Property(skin => skin.WeightClass).HasConversion(new ExtensibleEnumConverter<WeightClass>());
+        _ = builder.Property(skin => skin.DyeSlots)
             .HasJsonValueConversion();
     }
 }

@@ -21,17 +21,17 @@ public sealed class WeaponEntityTypeConfiguration(
 {
     public void Configure(EntityTypeBuilder<Weapon> builder)
     {
-        builder.Property(weapon => weapon.DamageType).HasConversion(new ExtensibleEnumConverter<DamageType>());
-        builder.Property(weapon => weapon.Defense).HasColumnName("Defense");
-        builder.Property(weapon => weapon.DefaultSkinId).HasColumnName("DefaultSkinId");
-        builder.Property(weapon => weapon.SuffixItemId).HasColumnName("SuffixItemId");
-        builder.Property(weapon => weapon.SecondarySuffixItemId).HasColumnName("SecondarySuffixItemId");
-        builder.Property(weapon => weapon.AttributeCombinationId).HasColumnName("AttributeCombinationId");
+        _ = builder.Property(weapon => weapon.DamageType).HasConversion(new ExtensibleEnumConverter<DamageType>());
+        _ = builder.Property(weapon => weapon.Defense).HasColumnName("Defense");
+        _ = builder.Property(weapon => weapon.DefaultSkinId).HasColumnName("DefaultSkinId");
+        _ = builder.Property(weapon => weapon.SuffixItemId).HasColumnName("SuffixItemId");
+        _ = builder.Property(weapon => weapon.SecondarySuffixItemId).HasColumnName("SecondarySuffixItemId");
+        _ = builder.Property(weapon => weapon.AttributeCombinationId).HasColumnName("AttributeCombinationId");
         builder.Property(weapon => weapon.Attributes)
             .HasColumnName("Attributes")
             .HasConversion(attributesConverter)
             .Metadata.SetValueComparer(attributesComparer);
-        builder.Property(weapon => weapon.AttributeAdjustment).HasColumnName("AttributeAdjustment");
+        _ = builder.Property(weapon => weapon.AttributeAdjustment).HasColumnName("AttributeAdjustment");
         builder.Property(weapon => weapon.StatChoices)
             .HasColumnName("StatChoices")
             .HasJsonValueConversion()

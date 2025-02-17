@@ -8,9 +8,9 @@ using Polly.Hedging;
 using Polly.Retry;
 using Polly.Timeout;
 
-namespace SL.ChatLinks.Integrations;
+using static System.Net.HttpStatusCode;
 
-using static HttpStatusCode;
+namespace SL.ChatLinks.Integrations;
 
 internal static class Resiliency
 {

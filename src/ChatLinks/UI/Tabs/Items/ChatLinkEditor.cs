@@ -39,7 +39,7 @@ public sealed class ChatLinkEditor : FlowPanel
         CanScroll = true;
         ShowBorder = true;
 
-        var header = new FlowPanel
+        FlowPanel header = new()
         {
             FlowDirection = ControlFlowDirection.SingleLeftToRight,
             ControlPadding = new Vector2(5f),
@@ -75,9 +75,9 @@ public sealed class ChatLinkEditor : FlowPanel
             WrapText = true,
         };
 
-        Binder.Bind(viewModel, vm => vm.ItemName, _itemName);
+        _ = Binder.Bind(viewModel, vm => vm.ItemName, _itemName);
 
-        foreach (var upgradeEditorViewModel in viewModel.UpgradeEditorViewModels)
+        foreach (UpgradeEditorViewModel upgradeEditorViewModel in viewModel.UpgradeEditorViewModels)
         {
             UpgradeEditor editor = new(upgradeEditorViewModel)
             {
@@ -91,11 +91,13 @@ public sealed class ChatLinkEditor : FlowPanel
                     case nameof(upgradeEditorViewModel.EffectiveUpgradeComponent):
                         _itemIcon.Tooltip = null;
                         break;
+                    default:
+                        break;
                 }
             };
         }
 
-        var quantityGroup = new FlowPanel
+        FlowPanel quantityGroup = new()
         {
             Parent = this,
             FlowDirection = ControlFlowDirection.LeftToRight,
@@ -104,14 +106,14 @@ public sealed class ChatLinkEditor : FlowPanel
             ControlPadding = new Vector2(5f)
         };
 
-        var stackSizeLabel = new Label
+        Label stackSizeLabel = new()
         {
             Parent = quantityGroup,
             AutoSizeWidth = true,
             Height = 32
         };
 
-        Binder.Bind(viewModel, vm => vm.StackSizeLabel, stackSizeLabel);
+        _ = Binder.Bind(viewModel, vm => vm.StackSizeLabel, stackSizeLabel);
 
         _quantity = new NumberInput
         {
@@ -129,10 +131,12 @@ public sealed class ChatLinkEditor : FlowPanel
                 case nameof(ViewModel.MaxStackSize):
                     _quantity.MaxValue = ViewModel.MaxStackSize;
                     break;
+                default:
+                    break;
             }
         };
 
-        Binder.Bind(viewModel, vm => vm.Quantity, _quantity);
+        _ = Binder.Bind(viewModel, vm => vm.Quantity, _quantity);
 
         StandardButton maxQuantity = new()
         {
@@ -161,6 +165,8 @@ public sealed class ChatLinkEditor : FlowPanel
                 case nameof(ViewModel.ResetTooltip):
                     resetQuantity.BasicTooltipText = ViewModel.ResetTooltip;
                     break;
+                default:
+                    break;
             }
         };
 
@@ -172,7 +178,7 @@ public sealed class ChatLinkEditor : FlowPanel
             Width = 350
         };
 
-        Binder.Bind(ViewModel, vm => vm.ChatLink, _chatLink, BindingMode.ToView);
+        _ = Binder.Bind(ViewModel, vm => vm.ChatLink, _chatLink, BindingMode.ToView);
 
         _chatLink.Click += ChatLinkClicked;
         _chatLink.Menu = new ContextMenuStrip(() =>
@@ -190,7 +196,7 @@ public sealed class ChatLinkEditor : FlowPanel
             Visible = ViewModel.ShowInfusionWarning
         };
 
-        Binder.Bind(viewModel, vm => vm.InfusionWarning, _infusionWarning);
+        _ = Binder.Bind(viewModel, vm => vm.InfusionWarning, _infusionWarning);
 
         viewModel.PropertyChanged += PropertyChanged;
     }
@@ -209,6 +215,8 @@ public sealed class ChatLinkEditor : FlowPanel
             case nameof(ViewModel.Quantity):
                 _itemIcon.Tooltip = null;
                 break;
+            default:
+                break;
         }
     }
 
@@ -222,13 +230,13 @@ public sealed class ChatLinkEditor : FlowPanel
 
     private void MaxQuantityClicked(object sender, MouseEventArgs e)
     {
-        Soundboard.Click.Play();
+        _ = Soundboard.Click.Play();
         ViewModel.MaxQuantityCommand.Execute();
     }
 
     private void ResetQuantityClicked(object sender, MouseEventArgs e)
     {
-        Soundboard.Click.Play();
+        _ = Soundboard.Click.Play();
         ViewModel.MinQuantityCommand.Execute();
     }
 

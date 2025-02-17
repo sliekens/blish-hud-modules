@@ -43,6 +43,8 @@ public sealed class UpgradeEditorViewModel : ViewModel, IDisposable
                 case nameof(UpgradeSlotViewModel.SelectedUpgradeComponent):
                     OnPropertyChanged(nameof(EffectiveUpgradeComponent));
                     break;
+                default:
+                    break;
             }
         };
     }
@@ -85,7 +87,7 @@ public sealed class UpgradeEditorViewModel : ViewModel, IDisposable
     public RelayCommand CopyNameCommand => new(
         () =>
         {
-            var name = EffectiveUpgradeComponent?.Name;
+            string? name = EffectiveUpgradeComponent?.Name;
             if (name is not null)
             {
                 _clipboard.SetText(name);
@@ -98,7 +100,7 @@ public sealed class UpgradeEditorViewModel : ViewModel, IDisposable
     public RelayCommand CopyChatLinkCommand => new(
         () =>
         {
-            var chatLink = EffectiveUpgradeComponent?.ChatLink;
+            string? chatLink = EffectiveUpgradeComponent?.ChatLink;
             if (chatLink is not null)
             {
                 _clipboard.SetText(chatLink);
@@ -111,10 +113,10 @@ public sealed class UpgradeEditorViewModel : ViewModel, IDisposable
     public RelayCommand OpenWikiCommand => new(
         () =>
         {
-            var chatLink = EffectiveUpgradeComponent?.ChatLink;
+            string? chatLink = EffectiveUpgradeComponent?.ChatLink;
             if (chatLink is not null)
             {
-                Process.Start(_localizer["Wiki search", WebUtility.UrlEncode(chatLink)]);
+                _ = Process.Start(_localizer["Wiki search", WebUtility.UrlEncode(chatLink)]);
             }
         },
         () => EffectiveUpgradeComponent is not null);
@@ -124,10 +126,10 @@ public sealed class UpgradeEditorViewModel : ViewModel, IDisposable
     public RelayCommand OpenApiCommand => new(
         () =>
         {
-            var id = EffectiveUpgradeComponent?.Id;
+            int? id = EffectiveUpgradeComponent?.Id;
             if (id is not null)
             {
-                Process.Start(_localizer["Item API", id]);
+                _ = Process.Start(_localizer["Item API", id]);
             }
         },
         () => EffectiveUpgradeComponent is not null);

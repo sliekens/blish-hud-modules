@@ -19,7 +19,7 @@ public sealed class UpgradeEditorViewModelFactory(
 {
     public UpgradeEditorViewModel Create(Item targetItem, UpgradeSlotType slotType, UpgradeComponent? defaultUpgradeComponent)
     {
-        var upgradeSlotViewModel = new UpgradeSlotViewModel(slotType, icons, localizer2, itemTooltipViewModelFactory, eventAggregator, customizer)
+        UpgradeSlotViewModel upgradeSlotViewModel = new(slotType, icons, localizer2, itemTooltipViewModelFactory, eventAggregator, customizer)
         {
             DefaultUpgradeComponent = defaultUpgradeComponent
         };

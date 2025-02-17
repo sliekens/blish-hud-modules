@@ -22,6 +22,9 @@ public sealed class OverlayLocale : ILocale, IDisposable
             Locale.German => Language.German,
             Locale.Spanish => Language.Spanish,
             Locale.French => Language.French,
+            Locale.English => Language.English,
+            Locale.Korean => Language.English,
+            Locale.Chinese => Language.English,
             _ => Language.English
         };
 

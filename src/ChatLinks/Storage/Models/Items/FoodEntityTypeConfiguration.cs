@@ -11,6 +11,6 @@ public sealed class FoodEntityTypeConfiguration : IEntityTypeConfiguration<Food>
 {
     public void Configure(EntityTypeBuilder<Food> builder)
     {
-        builder.Property(food => food.Effect).HasColumnName("Effect").HasJsonValueConversion();
+        _ = builder.Property(food => food.Effect).HasColumnName("Effect").HasJsonValueConversion();
     }
 }

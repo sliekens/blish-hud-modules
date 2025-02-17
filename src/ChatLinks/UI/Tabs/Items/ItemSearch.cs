@@ -22,14 +22,14 @@ public sealed class ItemSearch(IDbContextFactory contextFactory, ILocale locale)
 
     public async ValueTask<int> CountItems()
     {
-        await using var context = contextFactory.CreateDbContext(locale.Current);
+        await using ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
         return await context.Items.CountAsync();
     }
 
     public async IAsyncEnumerable<Item> NewItems(int limit)
     {
-        await using var context = contextFactory.CreateDbContext(locale.Current);
-        await foreach (var item in context.Items
+        await using ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
+        await foreach (Item? item in context.Items
            .AsNoTracking()
            .OrderByDescending(item => item.Id)
            .Take(limit)
@@ -55,7 +55,7 @@ public sealed class ItemSearch(IDbContextFactory contextFactory, ILocale locale)
         }
         else
         {
-            await using var context = contextFactory.CreateDbContext(locale.Current);
+            await using ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
             IQueryable<Item> query = context.Items.FromSqlInterpolated(
                 $"""
                  SELECT * FROM Items
@@ -82,7 +82,7 @@ public sealed class ItemSearch(IDbContextFactory contextFactory, ILocale locale)
         ResultContext resultContext,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        await using var context = contextFactory.CreateDbContext(locale.Current);
+        await using ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
         Item item = await context.Items.AsNoTracking()
             .SingleOrDefaultAsync(row => row.Id == link.ItemId, cancellationToken);
         if (item is null)
@@ -96,12 +96,12 @@ public sealed class ItemSearch(IDbContextFactory contextFactory, ILocale locale)
         HashSet<int> relatedItems = [];
         if (link.SuffixItemId.HasValue)
         {
-            relatedItems.Add(link.SuffixItemId.Value);
+            _ = relatedItems.Add(link.SuffixItemId.Value);
         }
 
         if (link.SecondarySuffixItemId.HasValue)
         {
-            relatedItems.Add(link.SecondarySuffixItemId.Value);
+            _ = relatedItems.Add(link.SecondarySuffixItemId.Value);
         }
 
         switch (item)
@@ -109,19 +109,19 @@ public sealed class ItemSearch(IDbContextFactory contextFactory, ILocale locale)
             case Weapon weapon:
                 if (weapon.SuffixItemId.HasValue)
                 {
-                    relatedItems.Add(weapon.SuffixItemId.Value);
+                    _ = relatedItems.Add(weapon.SuffixItemId.Value);
                 }
 
                 if (weapon.SecondarySuffixItemId.HasValue)
                 {
-                    relatedItems.Add(weapon.SecondarySuffixItemId.Value);
+                    _ = relatedItems.Add(weapon.SecondarySuffixItemId.Value);
                 }
 
                 foreach (InfusionSlot? slot in weapon.InfusionSlots)
                 {
                     if (slot.ItemId.HasValue)
                     {
-                        relatedItems.Add(slot.ItemId.Value);
+                        _ = relatedItems.Add(slot.ItemId.Value);
                     }
                 }
 
@@ -130,14 +130,14 @@ public sealed class ItemSearch(IDbContextFactory contextFactory, ILocale locale)
             case Armor armor:
                 if (armor.SuffixItemId.HasValue)
                 {
-                    relatedItems.Add(armor.SuffixItemId.Value);
+                    _ = relatedItems.Add(armor.SuffixItemId.Value);
                 }
 
                 foreach (InfusionSlot? slot in armor.InfusionSlots)
                 {
                     if (slot.ItemId.HasValue)
                     {
-                        relatedItems.Add(slot.ItemId.Value);
+                        _ = relatedItems.Add(slot.ItemId.Value);
                     }
                 }
 
@@ -145,25 +145,25 @@ public sealed class ItemSearch(IDbContextFactory contextFactory, ILocale locale)
             case Backpack back:
                 if (back.SuffixItemId.HasValue)
                 {
-                    relatedItems.Add(back.SuffixItemId.Value);
+                    _ = relatedItems.Add(back.SuffixItemId.Value);
                 }
 
                 foreach (InfusionSlot? slot in back.InfusionSlots)
                 {
                     if (slot.ItemId.HasValue)
                     {
-                        relatedItems.Add(slot.ItemId.Value);
+                        _ = relatedItems.Add(slot.ItemId.Value);
                     }
                 }
 
                 foreach (InfusionSlotUpgradeSource? source in back.UpgradesFrom)
                 {
-                    relatedItems.Add(source.ItemId);
+                    _ = relatedItems.Add(source.ItemId);
                 }
 
                 foreach (InfusionSlotUpgradePath? upgrade in back.UpgradesInto)
                 {
-                    relatedItems.Add(upgrade.ItemId);
+                    _ = relatedItems.Add(upgrade.ItemId);
                 }
 
                 break;
@@ -171,14 +171,14 @@ public sealed class ItemSearch(IDbContextFactory contextFactory, ILocale locale)
             case Trinket trinket:
                 if (trinket.SuffixItemId.HasValue)
                 {
-                    relatedItems.Add(trinket.SuffixItemId.Value);
+                    _ = relatedItems.Add(trinket.SuffixItemId.Value);
                 }
 
                 foreach (InfusionSlot? slot in trinket.InfusionSlots)
                 {
                     if (slot.ItemId.HasValue)
                     {
-                        relatedItems.Add(slot.ItemId.Value);
+                        _ = relatedItems.Add(slot.ItemId.Value);
                     }
                 }
 
@@ -187,9 +187,11 @@ public sealed class ItemSearch(IDbContextFactory contextFactory, ILocale locale)
 
                 foreach (InfusionSlotUpgradePath? upgrade in material.UpgradesInto)
                 {
-                    relatedItems.Add(upgrade.ItemId);
+                    _ = relatedItems.Add(upgrade.ItemId);
                 }
 
+                break;
+            default:
                 break;
         }
 

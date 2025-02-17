@@ -9,7 +9,13 @@ public class JsonValueConverter<T>() : ValueConverter<T, string>(
     static value => Deserialize(value)
 )
 {
-    private static string Serialize(T value) => JsonSerializer.Serialize(value);
+    private static string Serialize(T value)
+    {
+        return JsonSerializer.Serialize(value);
+    }
 
-    private static T Deserialize(string value) => JsonSerializer.Deserialize<T>(value)!;
+    private static T Deserialize(string value)
+    {
+        return JsonSerializer.Deserialize<T>(value)!;
+    }
 }

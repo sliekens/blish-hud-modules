@@ -7,13 +7,13 @@ public sealed class DataManifestJsonConverter : JsonConverter<DataManifest>
 {
     public override DataManifest? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        using var json = JsonDocument.ParseValue(ref reader);
+        using JsonDocument json = JsonDocument.ParseValue(ref reader);
         if (json.RootElement.ValueKind != JsonValueKind.Object)
         {
             return null;
         }
 
-        if (!json.RootElement.TryGetProperty("version", out var versionElement))
+        if (!json.RootElement.TryGetProperty("version", out JsonElement versionElement))
         {
             return null;
         }
@@ -23,7 +23,7 @@ public sealed class DataManifestJsonConverter : JsonConverter<DataManifest>
             return null;
         }
 
-        var version = versionElement.GetInt32();
+        int version = versionElement.GetInt32();
         if (version != 1)
         {
             return null;
@@ -41,14 +41,14 @@ public sealed class DataManifestJsonConverter : JsonConverter<DataManifest>
 
 
         Dictionary<string, Database> databases = [];
-        foreach (var database in databaseVersionsElement.EnumerateObject())
+        foreach (JsonProperty database in databaseVersionsElement.EnumerateObject())
         {
             if (database.Value.ValueKind != JsonValueKind.Object)
             {
                 continue;
             }
 
-            if (!database.Value.TryGetProperty("name", out var nameElement))
+            if (!database.Value.TryGetProperty("name", out JsonElement nameElement))
             {
                 continue;
             }
@@ -58,7 +58,7 @@ public sealed class DataManifestJsonConverter : JsonConverter<DataManifest>
                 continue;
             }
 
-            if (!database.Value.TryGetProperty("schema_version", out var schemaVersionElement))
+            if (!database.Value.TryGetProperty("schema_version", out JsonElement schemaVersionElement))
             {
                 continue;
             }
@@ -68,7 +68,7 @@ public sealed class DataManifestJsonConverter : JsonConverter<DataManifest>
                 continue;
             }
 
-            if (!schemaVersionElement.TryGetInt32(out var schemaVersion))
+            if (!schemaVersionElement.TryGetInt32(out int schemaVersion))
             {
                 continue;
             }
@@ -98,7 +98,7 @@ public sealed class DataManifestJsonConverter : JsonConverter<DataManifest>
         writer.WriteStartObject();
         writer.WriteNumber("version", value.Version);
         writer.WriteStartObject("databases");
-        foreach (var pair in value.Databases)
+        foreach (KeyValuePair<string, Database> pair in value.Databases)
         {
             writer.WriteStartObject(pair.Key);
             writer.WriteString("name", pair.Value.Name);

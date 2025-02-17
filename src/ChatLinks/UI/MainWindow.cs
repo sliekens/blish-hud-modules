@@ -52,6 +52,8 @@ public sealed class MainWindow : TabbedWindow2
             case nameof(Visible):
                 ViewModel.Visible = Visible;
                 break;
+            default:
+                break;
         }
     }
 
@@ -78,6 +80,8 @@ public sealed class MainWindow : TabbedWindow2
                     Hide();
                 }
 
+                break;
+            default:
                 break;
         }
     }

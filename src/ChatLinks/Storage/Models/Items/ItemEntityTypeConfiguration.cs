@@ -13,18 +13,18 @@ public sealed class ItemEntityTypeConfiguration : IEntityTypeConfiguration<Item>
 {
     public void Configure(EntityTypeBuilder<Item> builder)
     {
-        builder.HasIndex(item => item.Name);
-        builder.HasIndex(item => item.ChatLink);
-        builder.Property(item => item.Id).ValueGeneratedNever();
-        builder.Property(item => item.Rarity).HasConversion(new ExtensibleEnumConverter<Rarity>());
-        builder.Property(item => item.VendorValue).HasConversion(new CoinConverter());
+        _ = builder.HasIndex(item => item.Name);
+        _ = builder.HasIndex(item => item.ChatLink);
+        _ = builder.Property(item => item.Id).ValueGeneratedNever();
+        _ = builder.Property(item => item.Rarity).HasConversion(new ExtensibleEnumConverter<Rarity>());
+        _ = builder.Property(item => item.VendorValue).HasConversion(new CoinConverter());
         builder.Property(item => item.GameTypes)
             .HasJsonValueConversion()
             .Metadata.SetValueComparer(new CollectionComparer<Extensible<GameType>>());
-        builder.Property(item => item.Flags).HasJsonValueConversion();
-        builder.Property(item => item.Restrictions).HasJsonValueConversion();
+        _ = builder.Property(item => item.Flags).HasJsonValueConversion();
+        _ = builder.Property(item => item.Restrictions).HasJsonValueConversion();
 
-        builder.HasDiscriminator<string>("Type")
+        _ = builder.HasDiscriminator<string>("Type")
             .HasValue<Item>("item")
             .HasValue<CraftingMaterial>("crafting_material")
             .HasValue<JadeTechModule>("jade_tech_module")

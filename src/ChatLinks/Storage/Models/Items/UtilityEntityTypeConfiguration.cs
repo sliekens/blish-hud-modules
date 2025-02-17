@@ -11,6 +11,6 @@ public sealed class UtilityEntityTypeConfiguration : IEntityTypeConfiguration<Ut
 {
     public void Configure(EntityTypeBuilder<Utility> builder)
     {
-        builder.Property(utility => utility.Effect).HasColumnName("Effect").HasJsonValueConversion();
+        _ = builder.Property(utility => utility.Effect).HasColumnName("Effect").HasJsonValueConversion();
     }
 }

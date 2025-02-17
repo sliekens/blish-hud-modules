@@ -31,8 +31,8 @@ public sealed partial class Hero
             return [];
         }
 
-        var token = await _tokenProvider.GetTokenAsync(cancellationToken);
-        var values = await _gw2Client.Hero.Equipment.Finishers
+        string? token = await _tokenProvider.GetTokenAsync(cancellationToken);
+        HashSet<GuildWars2.Hero.Equipment.Finishers.UnlockedFinisher> values = await _gw2Client.Hero.Equipment.Finishers
             .GetUnlockedFinishers(token, cancellationToken: cancellationToken)
             .ValueOnly();
 

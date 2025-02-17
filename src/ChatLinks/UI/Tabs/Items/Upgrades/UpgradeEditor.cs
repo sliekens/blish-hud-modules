@@ -46,7 +46,7 @@ public sealed class UpgradeEditor : FlowPanel
 
     private void UpgradeSlotClicked(object sender, MouseEventArgs e)
     {
-        Soundboard.Click.Play();
+        _ = Soundboard.Click.Play();
         ViewModel.CustomizeCommand.Execute();
     }
 
@@ -59,7 +59,7 @@ public sealed class UpgradeEditor : FlowPanel
             Icon = AsyncTexture2D.FromAssetId(155149)
         };
 
-        Binder.Bind(ViewModel, vm => vm.CancelLabel, _cancelButton, btn => btn.Text);
+        _ = Binder.Bind(ViewModel, vm => vm.CancelLabel, _cancelButton, btn => btn.Text);
 
         _options = new UpgradeSelector(ViewModel.CreateUpgradeComponentListViewModel())
         {
@@ -105,6 +105,8 @@ public sealed class UpgradeEditor : FlowPanel
                 {
                     HideOptions();
                 }
+                break;
+            default:
                 break;
         }
     }

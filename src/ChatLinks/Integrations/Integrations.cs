@@ -18,9 +18,9 @@ public static class Integrations
         Action<DatabaseOptions> configureOptions
     )
     {
-        services.Configure(configureOptions);
+        _ = services.Configure(configureOptions);
 
-        services.AddSingleton<IDbContextFactory, SqliteDbContextFactory>();
+        _ = services.AddSingleton<IDbContextFactory, SqliteDbContextFactory>();
     }
 
     public static void AddGw2Client(this IServiceCollection services)
@@ -32,12 +32,12 @@ public static class Integrations
                 httpClient.Timeout = Timeout.InfiniteTimeSpan;
             });
 
-        httpClientBuilder.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+        _ = httpClientBuilder.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
         {
             MaxConnectionsPerServer = int.MaxValue
         });
 
-        httpClientBuilder.AddHttpMessageHandler(() =>
+        _ = httpClientBuilder.AddHttpMessageHandler(() =>
         {
             ResiliencePipeline<HttpResponseMessage> pipeline = new ResiliencePipelineBuilder<HttpResponseMessage>()
                 .AddTimeout(Resiliency.TotalTimeoutStrategy)
@@ -58,11 +58,11 @@ public static class Integrations
                 httpClient.BaseAddress = new Uri("https://bhm.blishhud.com/sliekens.chat_links/");
                 httpClient.Timeout = Timeout.InfiniteTimeSpan;
             });
-        httpClientBuilder.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+        _ = httpClientBuilder.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
         {
             MaxConnectionsPerServer = int.MaxValue
         });
-        httpClientBuilder.AddHttpMessageHandler(() =>
+        _ = httpClientBuilder.AddHttpMessageHandler(() =>
         {
             ResiliencePipeline<HttpResponseMessage> pipeline = new ResiliencePipelineBuilder<HttpResponseMessage>()
                 .AddTimeout(Resiliency.TotalTimeoutStrategy)

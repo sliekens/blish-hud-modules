@@ -32,7 +32,10 @@ public static class SpriteBatchExtensions
         Rectangle? clippingRectangle = null)
     {
 
-        if (string.IsNullOrEmpty(text)) return;
+        if (string.IsNullOrEmpty(text))
+        {
+            return;
+        }
 
         text = wrap ? DrawUtil.WrapText(font, text, destinationRectangle.Width) : text;
 
@@ -65,30 +68,38 @@ public static class SpriteBatchExtensions
         switch (horizontalAlignment)
         {
             case HorizontalAlignment.Center:
-                xPos += destinationRectangle.Width / 2 - (int)textSize.X / 2;
+                xPos += (destinationRectangle.Width / 2) - ((int)textSize.X / 2);
                 break;
             case HorizontalAlignment.Right:
                 xPos += destinationRectangle.Width - (int)textSize.X;
+                break;
+            case HorizontalAlignment.Left:
+                break;
+            default:
                 break;
         }
 
         switch (verticalAlignment)
         {
             case VerticalAlignment.Middle:
-                yPos += destinationRectangle.Height / 2 - (int)textSize.Y / 2;
+                yPos += (destinationRectangle.Height / 2) - ((int)textSize.Y / 2);
                 break;
             case VerticalAlignment.Bottom:
                 yPos += destinationRectangle.Height - (int)textSize.Y;
                 break;
+            case VerticalAlignment.Top:
+                break;
+            default:
+                break;
         }
 
-        var textPos = new Vector2(xPos, yPos);
+        Vector2 textPos = new(xPos, yPos);
 
         float absoluteOpacity = ctrl.AbsoluteOpacity();
 
         if (stroke)
         {
-            var strokePreMultiplied = Color.Black * absoluteOpacity;
+            Color strokePreMultiplied = Color.Black * absoluteOpacity;
 
             spriteBatch.DrawString(font, text, textPos.OffsetBy(0, -strokeDistance), strokePreMultiplied, clippingRectangle);
             spriteBatch.DrawString(font, text, textPos.OffsetBy(strokeDistance, -strokeDistance), strokePreMultiplied, clippingRectangle);

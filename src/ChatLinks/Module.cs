@@ -45,13 +45,13 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
         }
 
         ServiceCollection services = new();
-        services.AddSingleton(ModuleParameters);
-        services.AddSingleton(_moduleSettings);
-        services.ConfigureOptions(_moduleSettings);
-        services.AddSingleton<IOptionsChangeTokenSource<ChatLinkOptions>>(_moduleSettings);
+        _ = services.AddSingleton(ModuleParameters);
+        _ = services.AddSingleton(_moduleSettings);
+        _ = services.ConfigureOptions(_moduleSettings);
+        _ = services.AddSingleton<IOptionsChangeTokenSource<ChatLinkOptions>>(_moduleSettings);
 
-        services.AddSingleton<ILocale, OverlayLocale>();
-        services.AddSingleton<IIntrospection, ModuleIntrospection>();
+        _ = services.AddSingleton<ILocale, OverlayLocale>();
+        _ = services.AddSingleton<IIntrospection, ModuleIntrospection>();
         services.AddGw2Client();
         services.AddStaticDataClient();
 
@@ -60,46 +60,46 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
             options.Directory = ModuleParameters.DirectoriesManager.GetFullDirectoryPath("chat-links-data");
         });
 
-        services.AddSingleton<DatabaseSeeder>();
+        _ = services.AddSingleton<DatabaseSeeder>();
 
-        services.AddSingleton<IEventAggregator, DefaultEventAggregator>();
-        services.AddTransient<MainIcon>();
-        services.AddTransient<MainIconViewModel>();
-        services.AddTransient<MainWindow>();
-        services.AddTransient<MainWindowViewModel>();
-        services.AddTransient<ItemsTabViewModelFactory>();
-        services.AddTransient<ItemsListViewModelFactory>();
-        services.AddTransient<ItemTooltipViewModelFactory>();
-        services.AddTransient<ChatLinkEditorViewModelFactory>();
-        services.AddTransient<UpgradeEditorViewModelFactory>();
-        services.AddTransient<UpgradeSelectorViewModelFactory>();
-        services.AddTransient<ItemSearch>();
-        services.AddSingleton<Customizer>();
-        services.AddSingleton<Hero>();
-        services.AddHttpClient<ItemIcons>();
-        services.AddTransient<IClipBoard, WpfClipboard>();
+        _ = services.AddSingleton<IEventAggregator, DefaultEventAggregator>();
+        _ = services.AddTransient<MainIcon>();
+        _ = services.AddTransient<MainIconViewModel>();
+        _ = services.AddTransient<MainWindow>();
+        _ = services.AddTransient<MainWindowViewModel>();
+        _ = services.AddTransient<ItemsTabViewModelFactory>();
+        _ = services.AddTransient<ItemsListViewModelFactory>();
+        _ = services.AddTransient<ItemTooltipViewModelFactory>();
+        _ = services.AddTransient<ChatLinkEditorViewModelFactory>();
+        _ = services.AddTransient<UpgradeEditorViewModelFactory>();
+        _ = services.AddTransient<UpgradeSelectorViewModelFactory>();
+        _ = services.AddTransient<ItemSearch>();
+        _ = services.AddSingleton<Customizer>();
+        _ = services.AddSingleton<Hero>();
+        _ = services.AddHttpClient<ItemIcons>();
+        _ = services.AddTransient<IClipBoard, WpfClipboard>();
 
-        services.AddLogging(builder =>
+        _ = services.AddLogging(builder =>
         {
-            builder.Services.AddSingleton<ILoggerProvider, LoggingAdapterProvider<Module>>();
+            _ = builder.Services.AddSingleton<ILoggerProvider, LoggingAdapterProvider<Module>>();
             if (ApplicationSettings.Instance.DebugEnabled || GameService.Debug.EnableDebugLogging.Value)
             {
-                builder.SetMinimumLevel(LogLevel.Debug);
-                builder.AddFilter("System", LogLevel.Information);
-                builder.AddFilter("Microsoft", LogLevel.Information);
-                builder.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning);
+                _ = builder.SetMinimumLevel(LogLevel.Debug);
+                _ = builder.AddFilter("System", LogLevel.Information);
+                _ = builder.AddFilter("Microsoft", LogLevel.Information);
+                _ = builder.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning);
             }
             else
             {
-                builder.AddFilter("System", LogLevel.Warning);
-                builder.AddFilter("Microsoft", LogLevel.Warning);
-                builder.AddFilter("Microsoft.EntityFrameworkCore.Query", LogLevel.Critical);
+                _ = builder.AddFilter("System", LogLevel.Warning);
+                _ = builder.AddFilter("Microsoft", LogLevel.Warning);
+                _ = builder.AddFilter("Microsoft.EntityFrameworkCore.Query", LogLevel.Critical);
             }
         });
 
-        services.AddSingleton<ITokenProvider, Gw2SharpTokenProvider>();
+        _ = services.AddSingleton<ITokenProvider, Gw2SharpTokenProvider>();
 
-        services.AddLocalization(options =>
+        _ = services.AddLocalization(options =>
         {
             options.ResourcesPath = "Resources";
         });
@@ -111,9 +111,9 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 
     protected override async Task LoadAsync()
     {
-        var logger = _serviceProvider.GetRequiredService<ILogger<Module>>();
-        var locale = _serviceProvider.GetRequiredService<ILocale>();
-        var seeder = _serviceProvider.GetRequiredService<DatabaseSeeder>();
+        ILogger<Module> logger = _serviceProvider.GetRequiredService<ILogger<Module>>();
+        ILocale locale = _serviceProvider.GetRequiredService<ILocale>();
+        DatabaseSeeder seeder = _serviceProvider.GetRequiredService<DatabaseSeeder>();
 
         try
         {

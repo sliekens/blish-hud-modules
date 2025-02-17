@@ -11,6 +11,6 @@ internal static class PanelExtensions
 
     public static void UpdateScrollbar(this Panel instance)
     {
-        UpdateScrollbarMethod?.Invoke(instance, []);
+        _ = (UpdateScrollbarMethod?.Invoke(instance, []));
     }
 }

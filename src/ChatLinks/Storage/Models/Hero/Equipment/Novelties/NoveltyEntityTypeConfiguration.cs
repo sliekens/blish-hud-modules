@@ -12,10 +12,10 @@ public sealed class NoveltyEntityTypeConfiguration : IEntityTypeConfiguration<No
 {
     public void Configure(EntityTypeBuilder<Novelty> builder)
     {
-        builder.ToTable("Novelties");
-        builder.HasKey(novelty => novelty.Id);
-        builder.HasIndex(novelty => novelty.Name);
-        builder.Property(novelty => novelty.Slot)
+        _ = builder.ToTable("Novelties");
+        _ = builder.HasKey(novelty => novelty.Id);
+        _ = builder.HasIndex(novelty => novelty.Name);
+        _ = builder.Property(novelty => novelty.Slot)
             .HasConversion(new ExtensibleEnumConverter<NoveltyKind>());
 
         builder.Property(novelty => novelty.UnlockItemIds)

@@ -24,10 +24,10 @@ public sealed class RelayCommand<T>(Action<T> execute) : ICommand
             CanExecuteChanged?.Invoke(sender, args);
         });
 
-        unsubscribeCanExecuteChanged.Invoke(((sender, args) =>
+        unsubscribeCanExecuteChanged.Invoke((sender, args) =>
         {
             CanExecuteChanged?.Invoke(sender, args);
-        }));
+        });
     }
 
     public event EventHandler? CanExecuteChanged;

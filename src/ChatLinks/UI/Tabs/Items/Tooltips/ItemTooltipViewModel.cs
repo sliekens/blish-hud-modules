@@ -1,8 +1,16 @@
 ﻿using Blish_HUD.Content;
 
 using GuildWars2;
+using GuildWars2.Hero.Equipment.Dyes;
+using GuildWars2.Hero.Equipment.Finishers;
+using GuildWars2.Hero.Equipment.Gliders;
+using GuildWars2.Hero.Equipment.JadeBots;
+using GuildWars2.Hero.Equipment.MailCarriers;
+using GuildWars2.Hero.Equipment.Novelties;
+using GuildWars2.Hero.Equipment.Outfits;
 using GuildWars2.Hero.Equipment.Wardrobe;
 using GuildWars2.Items;
+using GuildWars2.Pvp.MistChampions;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
@@ -11,6 +19,9 @@ using Microsoft.Xna.Framework;
 
 using SL.ChatLinks.Storage;
 using SL.Common;
+
+using Miniature = GuildWars2.Hero.Equipment.Miniatures.Miniature;
+using MiniatureItem = GuildWars2.Items.Miniature;
 
 namespace SL.ChatLinks.UI.Tabs.Items.Tooltips;
 
@@ -83,7 +94,7 @@ public sealed class ItemTooltipViewModel(
     {
         get
         {
-            var name = Item.Name;
+            string name = Item.Name;
 
             if (!Item.Flags.HideSuffix)
             {
@@ -93,7 +104,7 @@ public sealed class ItemTooltipViewModel(
                     name = name.TrimEnd();
                 }
 
-                var newSuffix = SuffixName ?? DefaultSuffixName;
+                string? newSuffix = SuffixName ?? DefaultSuffixName;
                 if (!string.IsNullOrEmpty(newSuffix))
                 {
                     name += $" {newSuffix}";
@@ -150,9 +161,9 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    await using var context = contextFactory.CreateDbContext(locale.Current);
+                    await using ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
 
-                    var finisher = await context.Finishers
+                    Finisher? finisher = await context.Finishers
                         .FromSqlInterpolated($"""
                                               SELECT *
                                               FROM Finishers, json_each(Finishers.UnlockItemIds)
@@ -163,7 +174,7 @@ public sealed class ItemTooltipViewModel(
                     {
                         if (hero.UnlocksAvailable)
                         {
-                            var unlocks = await hero.GetUnlockedFinishers(CancellationToken.None);
+                            IReadOnlyList<int> unlocks = await hero.GetUnlockedFinishers(CancellationToken.None);
                             Unlocked = unlocks.Contains(finisher.Id);
                         }
                         else
@@ -175,7 +186,7 @@ public sealed class ItemTooltipViewModel(
                         break;
                     }
 
-                    var mailCarrier = await context.MailCarrriers
+                    MailCarrier? mailCarrier = await context.MailCarrriers
                         .FromSqlInterpolated($"""
                                               SELECT *
                                               FROM MailCarriers, json_each(MailCarriers.UnlockItemIds)
@@ -186,7 +197,7 @@ public sealed class ItemTooltipViewModel(
                     {
                         if (hero.UnlocksAvailable)
                         {
-                            var unlocks = await hero.GetUnlockedMailCarriers(CancellationToken.None);
+                            IReadOnlyList<int> unlocks = await hero.GetUnlockedMailCarriers(CancellationToken.None);
                             Unlocked = unlocks.Contains(mailCarrier.Id);
                         }
                         else
@@ -209,13 +220,13 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    await using var context = contextFactory.CreateDbContext(locale.Current);
-                    var dye = context.Colors.FirstOrDefault(dye => dye.ItemId == unlocker.Id);
+                    await using ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
+                    DyeColor? dye = context.Colors.FirstOrDefault(dye => dye.ItemId == unlocker.Id);
                     if (dye is not null)
                     {
                         if (hero.UnlocksAvailable)
                         {
-                            var unlocks = await hero.GetUnlockedDyes(CancellationToken.None);
+                            IReadOnlyList<int> unlocks = await hero.GetUnlockedDyes(CancellationToken.None);
                             Unlocked = unlocks.Contains(dye.Id);
                         }
                         else
@@ -236,9 +247,9 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    await using var context = contextFactory.CreateDbContext(locale.Current);
+                    await using ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
 
-                    var gliderSkin = await context.Gliders
+                    GliderSkin? gliderSkin = await context.Gliders
                         .FromSqlInterpolated($"""
                                               SELECT *
                                               FROM Gliders, json_each(Gliders.UnlockItemIds)
@@ -249,7 +260,7 @@ public sealed class ItemTooltipViewModel(
                     {
                         if (hero.UnlocksAvailable)
                         {
-                            var unlocks = await hero.GetUnlockedGliderSkins(CancellationToken.None);
+                            IReadOnlyList<int> unlocks = await hero.GetUnlockedGliderSkins(CancellationToken.None);
                             Unlocked = unlocks.Contains(gliderSkin.Id);
                         }
                         else
@@ -270,15 +281,15 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    await using var context = contextFactory.CreateDbContext(locale.Current);
+                    await using ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
 
-                    var jadeBotSkin =
+                    JadeBotSkin? jadeBotSkin =
                         context.JadeBots.FirstOrDefault(jadeBotSkin => jadeBotSkin.UnlockItemId == unlocker.Id);
                     if (jadeBotSkin is not null)
                     {
                         if (hero.UnlocksAvailable && hero.InventoriesAvailable)
                         {
-                            var unlocks = await hero.GetUnlockedJadeBotSkins(CancellationToken.None);
+                            IReadOnlyList<int> unlocks = await hero.GetUnlockedJadeBotSkins(CancellationToken.None);
                             Unlocked = unlocks.Contains(jadeBotSkin.Id);
                         }
                         else
@@ -295,19 +306,19 @@ public sealed class ItemTooltipViewModel(
                 }
 
                 break;
-            case Miniature:
+            case MiniatureItem:
             case MiniatureUnlocker:
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    await using var context = contextFactory.CreateDbContext(locale.Current);
-                    var miniature =
+                    await using ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
+                    Miniature? miniature =
                         await context.Miniatures.FirstOrDefaultAsync(miniature => miniature.ItemId == Item.Id);
                     if (miniature is not null)
                     {
                         if (hero.UnlocksAvailable)
                         {
-                            var unlocks = await hero.GetUnlockedMiniatures(CancellationToken.None);
+                            IReadOnlyList<int> unlocks = await hero.GetUnlockedMiniatures(CancellationToken.None);
                             Unlocked = unlocks.Contains(miniature.Id);
                         }
                         else
@@ -329,9 +340,9 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    await using var context = contextFactory.CreateDbContext(locale.Current);
+                    await using ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
 
-                    var outfit = await context.Outfits
+                    Outfit? outfit = await context.Outfits
                         .FromSqlInterpolated($"""
                                               SELECT *
                                               FROM Outfits, json_each(Outfits.UnlockItemIds)
@@ -342,7 +353,7 @@ public sealed class ItemTooltipViewModel(
                     {
                         if (hero.UnlocksAvailable)
                         {
-                            var unlocks = await hero.GetUnlockedOutfits(CancellationToken.None);
+                            IReadOnlyList<int> unlocks = await hero.GetUnlockedOutfits(CancellationToken.None);
                             Unlocked = unlocks.Contains(outfit.Id);
                         }
                         else
@@ -364,9 +375,9 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    await using var context = contextFactory.CreateDbContext(locale.Current);
+                    await using ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
 
-                    var mistChampionSkin = await context.MistChampions
+                    MistChampionSkin? mistChampionSkin = await context.MistChampions
                         .FromSqlInterpolated($"""
                                               SELECT *
                                               FROM MistChampions, json_each(MistChampions.UnlockItemIds)
@@ -377,7 +388,7 @@ public sealed class ItemTooltipViewModel(
                     {
                         if (hero.UnlocksAvailable)
                         {
-                            var unlocks = await hero.GetUnlockedMistChampionSkins(CancellationToken.None);
+                            IReadOnlyList<int> unlocks = await hero.GetUnlockedMistChampionSkins(CancellationToken.None);
                             Unlocked = unlocks.Contains(mistChampionSkin.Id);
                         }
                         else
@@ -401,7 +412,7 @@ public sealed class ItemTooltipViewModel(
                 {
                     if (hero.UnlocksAvailable)
                     {
-                        var unlocks = await hero.GetUnlockedRecipes(CancellationToken.None);
+                        IReadOnlyList<int> unlocks = await hero.GetUnlockedRecipes(CancellationToken.None);
                         if (unlocks.Contains(unlocker.RecipeId))
                         {
                             Unlocked = true;
@@ -413,7 +424,7 @@ public sealed class ItemTooltipViewModel(
                         else if (unlocker.ExtraRecipeIds.Any(unlocks.Contains))
                         {
                             Unlocked = true;
-                            var known = unlocker.ExtraRecipeIds.Count(unlocks.Contains);
+                            int known = unlocker.ExtraRecipeIds.Count(unlocks.Contains);
                             UnlockedText = Localizer["Recipes unlocked", known, unlocker.ExtraRecipeIds.Count + 1];
                             UnlockedTextColor = Color.Yellow;
                         }
@@ -443,9 +454,9 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    await using var context = contextFactory.CreateDbContext(locale.Current);
+                    await using ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
 
-                    var novelty = await context.Novelties
+                    Novelty? novelty = await context.Novelties
                         .FromSqlInterpolated($"""
                                               SELECT *
                                               FROM Novelties, json_each(Novelties.UnlockItemIds)
@@ -456,7 +467,7 @@ public sealed class ItemTooltipViewModel(
                     {
                         if (hero.UnlocksAvailable)
                         {
-                            var unlocks = await hero.GetUnlockedNovelties(CancellationToken.None);
+                            IReadOnlyList<int> unlocks = await hero.GetUnlockedNovelties(CancellationToken.None);
                             Unlocked = unlocks.Contains(novelty.Id);
                         }
                         else
@@ -473,6 +484,8 @@ public sealed class ItemTooltipViewModel(
                 }
 
                 break;
+            default:
+                break;
         }
     }
 
@@ -482,12 +495,12 @@ public sealed class ItemTooltipViewModel(
         {
             DefaultLocked = true;
 
-            await using var context = contextFactory.CreateDbContext(locale.Current);
+            await using ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
             DefaultSkin = await context.Skins.FirstOrDefaultAsync(skin => skin.Id == skinId);
 
             if (hero.UnlocksAvailable)
             {
-                var unlocks = await hero.GetUnlockedWardrobe(CancellationToken.None);
+                IReadOnlyList<int> unlocks = await hero.GetUnlockedWardrobe(CancellationToken.None);
                 Unlocked = unlocks.Contains(skinId);
             }
             else

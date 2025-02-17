@@ -12,9 +12,9 @@ public sealed class OutfitEntityTypeConfiguration : IEntityTypeConfiguration<Out
 {
     public void Configure(EntityTypeBuilder<Outfit> builder)
     {
-        builder.ToTable("Outfits");
-        builder.HasKey(outfit => outfit.Id);
-        builder.HasIndex(outfit => outfit.Name);
+        _ = builder.ToTable("Outfits");
+        _ = builder.HasKey(outfit => outfit.Id);
+        _ = builder.HasIndex(outfit => outfit.Name);
 
         builder.Property(outfit => outfit.UnlockItemIds)
             .HasJsonValueConversion()

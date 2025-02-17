@@ -6,5 +6,8 @@ public sealed class CollectionComparer<T>() : ValueComparer<IReadOnlyCollection<
     collection => collection.GetHashCode(),
     collection => GetSnapshot(collection))
 {
-    private static IReadOnlyCollection<T> GetSnapshot(IReadOnlyCollection<T> collection) => [.. collection];
+    private static IReadOnlyCollection<T> GetSnapshot(IReadOnlyCollection<T> collection)
+    {
+        return [.. collection];
+    }
 }

@@ -21,13 +21,13 @@ public sealed class TrinketEntityTypeConfiguration(
 {
     public void Configure(EntityTypeBuilder<Trinket> builder)
     {
-        builder.Property(trinket => trinket.SuffixItemId).HasColumnName("SuffixItemId");
-        builder.Property(trinket => trinket.AttributeCombinationId).HasColumnName("AttributeCombinationId");
+        _ = builder.Property(trinket => trinket.SuffixItemId).HasColumnName("SuffixItemId");
+        _ = builder.Property(trinket => trinket.AttributeCombinationId).HasColumnName("AttributeCombinationId");
         builder.Property(trinket => trinket.Attributes)
             .HasColumnName("Attributes")
             .HasConversion(attributesConverter)
             .Metadata.SetValueComparer(attributesComparer);
-        builder.Property(trinket => trinket.AttributeAdjustment).HasColumnName("AttributeAdjustment");
+        _ = builder.Property(trinket => trinket.AttributeAdjustment).HasColumnName("AttributeAdjustment");
         builder.Property(trinket => trinket.StatChoices)
             .HasColumnName("StatChoices")
             .HasJsonValueConversion()

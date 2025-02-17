@@ -19,17 +19,17 @@ public class UpgradeComponentEntityTypeConfiguration(
 {
     public void Configure(EntityTypeBuilder<UpgradeComponent> builder)
     {
-        builder.Property(upgradeComponent => upgradeComponent.AttributeCombinationId)
+        _ = builder.Property(upgradeComponent => upgradeComponent.AttributeCombinationId)
             .HasColumnName("AttributeCombinationId");
         builder.Property(upgradeComponent => upgradeComponent.Attributes)
             .HasColumnName("Attributes")
             .HasConversion(attributesConverter)
             .Metadata.SetValueComparer(attributesComparer);
-        builder.Property(upgradeComponent => upgradeComponent.AttributeAdjustment)
+        _ = builder.Property(upgradeComponent => upgradeComponent.AttributeAdjustment)
             .HasColumnName("AttributeAdjustment");
-        builder.Property(upgradeComponent => upgradeComponent.UpgradeComponentFlags)
+        _ = builder.Property(upgradeComponent => upgradeComponent.UpgradeComponentFlags)
             .HasConversion(new JsonValueConverter<UpgradeComponentFlags>());
-        builder.Property(upgradeComponent => upgradeComponent.InfusionUpgradeFlags)
+        _ = builder.Property(upgradeComponent => upgradeComponent.InfusionUpgradeFlags)
             .HasConversion(new JsonValueConverter<InfusionSlotFlags>());
         builder.Property(upgradeComponent => upgradeComponent.Buff)
             .HasColumnName("Buff")

@@ -50,38 +50,17 @@ public class ModuleSettings : IConfigureOptions<ChatLinkOptions>, IOptionsChange
 
     public bool BananaMode
     {
-        get
-        {
-            return _bananaMode.Value;
-        }
-        set
-        {
-            _bananaMode.Value = value;
-        }
+        get => _bananaMode.Value; set => _bananaMode.Value = value;
     }
 
     public bool RaiseStackSize
     {
-        get
-        {
-            return _raiseStackSize.Value;
-        }
-        set
-        {
-            _raiseStackSize.Value = value;
-        }
+        get => _raiseStackSize.Value; set => _raiseStackSize.Value = value;
     }
 
     public int MaxResultCount
     {
-        get
-        {
-            return _maxResultCount.Value;
-        }
-        set
-        {
-            _maxResultCount.Value = value;
-        }
+        get => _maxResultCount.Value; set => _maxResultCount.Value = value;
     }
 
     public void Configure(ChatLinkOptions options)
@@ -91,7 +70,10 @@ public class ModuleSettings : IConfigureOptions<ChatLinkOptions>, IOptionsChange
         options.MaxResultCount = MaxResultCount;
     }
 
-    public IChangeToken GetChangeToken() => _changeTokenSource.Token;
+    public IChangeToken GetChangeToken()
+    {
+        return _changeTokenSource.Token;
+    }
 
     public string Name => Options.DefaultName;
 
@@ -103,7 +85,7 @@ public class ModuleSettings : IConfigureOptions<ChatLinkOptions>, IOptionsChange
 
         public void OnChange()
         {
-            var previousCts = Interlocked.Exchange(ref _cts, new CancellationTokenSource());
+            CancellationTokenSource previousCts = Interlocked.Exchange(ref _cts, new CancellationTokenSource());
             previousCts.Cancel();
             previousCts.Dispose();
         }

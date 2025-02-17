@@ -9,17 +9,17 @@ public class StaticDataClientTest
     [Fact]
     public async Task Get_seed_index()
     {
-        var services = new ServiceCollection();
-        services.AddHttpClient<StaticDataClient>(httpClient =>
+        ServiceCollection services = new();
+        _ = services.AddHttpClient<StaticDataClient>(httpClient =>
             {
                 httpClient.BaseAddress = new Uri("https://bhm.blishhud.com/sliekens.chat_links/");
             });
 
-        var sp = services.BuildServiceProvider();
+        ServiceProvider sp = services.BuildServiceProvider();
 
-        var sut = sp.GetRequiredService<StaticDataClient>();
+        StaticDataClient sut = sp.GetRequiredService<StaticDataClient>();
 
-        var actual = await sut.GetSeedIndex(CancellationToken.None);
+        SeedIndex actual = await sut.GetSeedIndex(CancellationToken.None);
 
         Assert.NotNull(actual);
         Assert.NotEmpty(actual.Databases);

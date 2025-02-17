@@ -18,7 +18,7 @@ public sealed class GuildConsumableRecipeEntityTypeConfiguration : IEntityTypeCo
             .HasJsonValueConversion()
             .Metadata.SetValueComparer(new ListComparer<GuildIngredient>());
 
-        builder.Property(recipe => recipe.OutputUpgradeId)
+        _ = builder.Property(recipe => recipe.OutputUpgradeId)
             .HasColumnName(nameof(GuildConsumableRecipe.OutputUpgradeId));
     }
 }

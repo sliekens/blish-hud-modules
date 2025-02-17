@@ -12,7 +12,7 @@ using SQLitePCL;
 ServicePointManager.DefaultConnectionLimit = int.MaxValue;
 Batteries_V2.Init();
 
-var host = Host.CreateDefaultBuilder(args)
+IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
         services.AddGw2Client();
@@ -23,12 +23,12 @@ var host = Host.CreateDefaultBuilder(args)
             options.Directory = Path.GetFullPath(directory);
         });
 
-        services.AddSingleton<IEventAggregator, DefaultEventAggregator>();
-        services.AddSingleton<IIntrospection, NullIntrospection>();
+        _ = services.AddSingleton<IEventAggregator, DefaultEventAggregator>();
+        _ = services.AddSingleton<IIntrospection, NullIntrospection>();
 
-        services.AddSingleton<DatabaseSeeder>();
+        _ = services.AddSingleton<DatabaseSeeder>();
     })
     .Build();
 
-using var seeder = host.Services.GetRequiredService<DatabaseSeeder>();
+using DatabaseSeeder seeder = host.Services.GetRequiredService<DatabaseSeeder>();
 await seeder.SeedAll();

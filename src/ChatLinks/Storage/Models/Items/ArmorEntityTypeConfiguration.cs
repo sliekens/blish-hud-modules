@@ -21,17 +21,17 @@ public sealed class ArmorEntityTypeConfiguration(
 {
     public void Configure(EntityTypeBuilder<Armor> builder)
     {
-        builder.Property(armor => armor.WeightClass).HasConversion(new ExtensibleEnumConverter<WeightClass>());
-        builder.Property(armor => armor.Defense).HasColumnName("Defense");
-        builder.Property(armor => armor.DefaultSkinId).HasColumnName("DefaultSkinId");
-        builder.Property(armor => armor.SuffixItemId).HasColumnName("SuffixItemId");
-        builder.Property(armor => armor.AttributeCombinationId).HasColumnName("AttributeCombinationId");
+        _ = builder.Property(armor => armor.WeightClass).HasConversion(new ExtensibleEnumConverter<WeightClass>());
+        _ = builder.Property(armor => armor.Defense).HasColumnName("Defense");
+        _ = builder.Property(armor => armor.DefaultSkinId).HasColumnName("DefaultSkinId");
+        _ = builder.Property(armor => armor.SuffixItemId).HasColumnName("SuffixItemId");
+        _ = builder.Property(armor => armor.AttributeCombinationId).HasColumnName("AttributeCombinationId");
         builder.Property(armor => armor.Attributes)
             .HasColumnName("Attributes")
             .HasConversion(attributesConverter)
             .Metadata
             .SetValueComparer(attributesComparer);
-        builder.Property(armor => armor.AttributeAdjustment).HasColumnName("AttributeAdjustment");
+        _ = builder.Property(armor => armor.AttributeAdjustment).HasColumnName("AttributeAdjustment");
         builder.Property(armor => armor.StatChoices)
             .HasColumnName("StatChoices")
             .HasJsonValueConversion()

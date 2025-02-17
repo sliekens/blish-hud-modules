@@ -42,6 +42,10 @@ public class LoggingAdapter<T>(string categoryName, IOptionsMonitor<LoggerFilter
                 case LogLevel.Critical:
                     _sink.Fatal(exception, logMessage);
                     break;
+                case LogLevel.None:
+                    break;
+                default:
+                    break;
             }
         });
     }
@@ -50,7 +54,7 @@ public class LoggingAdapter<T>(string categoryName, IOptionsMonitor<LoggerFilter
     public bool IsEnabled(LogLevel logLevel)
     {
         // Check if global filters disable this log level
-        foreach (var rule in options.CurrentValue.Rules)
+        foreach (LoggerFilterRule? rule in options.CurrentValue.Rules)
         {
             if (rule.ProviderName is not null and not "Blish_HUD")
             {

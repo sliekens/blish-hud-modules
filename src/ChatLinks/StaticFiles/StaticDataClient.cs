@@ -9,29 +9,29 @@ public sealed class StaticDataClient(HttpClient httpClient)
 {
     public async Task<SeedIndex> GetSeedIndex(CancellationToken cancellationToken)
     {
-        using var response = await httpClient.GetAsync("seed-index.json");
-        using var content = await response.Content.ReadAsStreamAsync();
-        response.EnsureSuccessStatusCode();
+        using HttpResponseMessage response = await httpClient.GetAsync("seed-index.json");
+        using Stream content = await response.Content.ReadAsStreamAsync();
+        _ = response.EnsureSuccessStatusCode();
         return await JsonSerializer.DeserializeAsync<SeedIndex>(content, cancellationToken: cancellationToken)
             ?? throw new InvalidOperationException("Couldn't retrieve seed index.");
     }
 
     public async Task Download(SeedDatabase database, string destination, CancellationToken cancellationToken)
     {
-        using var response = await httpClient.GetAsync(database.Url, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-        using var content = await response.Content.ReadAsStreamAsync();
-        response.EnsureSuccessStatusCode();
-        var tmp = Path.GetTempFileName();
-        using (var fileStream = File.OpenWrite(tmp))
+        using HttpResponseMessage response = await httpClient.GetAsync(database.Url, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+        using Stream content = await response.Content.ReadAsStreamAsync();
+        _ = response.EnsureSuccessStatusCode();
+        string tmp = Path.GetTempFileName();
+        using (FileStream fileStream = File.OpenWrite(tmp))
         {
             await content.CopyToAsync(fileStream, 8192, cancellationToken);
         }
 
-        using (var sha256 = SHA256.Create())
+        using (SHA256 sha256 = SHA256.Create())
         {
-            using var fileStream = File.OpenRead(tmp);
-            var hash = sha256.ComputeHash(fileStream);
-            var hashString = BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+            using FileStream fileStream = File.OpenRead(tmp);
+            byte[] hash = sha256.ComputeHash(fileStream);
+            string hashString = BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
             if (hashString != database.SHA256.ToLowerInvariant())
             {
                 File.Delete(tmp);
@@ -46,9 +46,9 @@ public sealed class StaticDataClient(HttpClient httpClient)
 
     private void DecompressGzipFile(string sourceFile, string destinationFile)
     {
-        using var sourceStream = new FileStream(sourceFile, FileMode.Open, FileAccess.Read);
-        using var decompressionStream = new GZipStream(sourceStream, CompressionMode.Decompress);
-        using var destinationStream = new FileStream(destinationFile, FileMode.Create, FileAccess.Write);
+        using FileStream sourceStream = new(sourceFile, FileMode.Open, FileAccess.Read);
+        using GZipStream decompressionStream = new(sourceStream, CompressionMode.Decompress);
+        using FileStream destinationStream = new(destinationFile, FileMode.Create, FileAccess.Write);
         decompressionStream.CopyTo(destinationStream);
     }
 }

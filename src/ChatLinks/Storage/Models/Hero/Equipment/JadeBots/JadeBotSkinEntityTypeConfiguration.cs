@@ -9,9 +9,9 @@ public sealed class JadeBotSkinEntityTypeConfiguration : IEntityTypeConfiguratio
 {
     public void Configure(EntityTypeBuilder<JadeBotSkin> builder)
     {
-        builder.ToTable("JadeBots");
-        builder.HasKey(jadeBot => jadeBot.Id);
-        builder.HasIndex(jadeBot => jadeBot.Name);
-        builder.HasIndex(jadeBot => jadeBot.UnlockItemId);
+        _ = builder.ToTable("JadeBots");
+        _ = builder.HasKey(jadeBot => jadeBot.Id);
+        _ = builder.HasIndex(jadeBot => jadeBot.Name);
+        _ = builder.HasIndex(jadeBot => jadeBot.UnlockItemId);
     }
 }

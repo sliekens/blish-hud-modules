@@ -7,8 +7,8 @@ public sealed class SeedDatabaseJsonConverter : JsonConverter<SeedDatabase>
 {
     public override SeedDatabase? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        using var jsonDocument = JsonDocument.ParseValue(ref reader);
-        var root = jsonDocument.RootElement;
+        using JsonDocument jsonDocument = JsonDocument.ParseValue(ref reader);
+        JsonElement root = jsonDocument.RootElement;
         if (root.ValueKind != JsonValueKind.Object)
         {
             return null;
@@ -20,7 +20,7 @@ public sealed class SeedDatabaseJsonConverter : JsonConverter<SeedDatabase>
         JsonElement urlElement = default;
         JsonElement sha256Element = default;
 
-        foreach (var property in root.EnumerateObject())
+        foreach (JsonProperty property in root.EnumerateObject())
         {
             if (property.NameEquals("schema_version"))
             {
@@ -93,19 +93,16 @@ public sealed class SeedDatabaseJsonConverter : JsonConverter<SeedDatabase>
         }
 
         string? sha256 = sha256Element.GetString();
-        if (string.IsNullOrWhiteSpace(sha256))
-        {
-            return null;
-        }
-
-        return new SeedDatabase
-        {
-            SchemaVersion = schemaVersion,
-            Language = language!,
-            Name = name!,
-            Url = url!,
-            SHA256 = sha256!
-        };
+        return string.IsNullOrWhiteSpace(sha256)
+            ? null
+            : new SeedDatabase
+            {
+                SchemaVersion = schemaVersion,
+                Language = language!,
+                Name = name!,
+                Url = url!,
+                SHA256 = sha256!
+            };
     }
 
     public override void Write(Utf8JsonWriter writer, SeedDatabase value, JsonSerializerOptions options)
