@@ -15,7 +15,7 @@ public sealed class DefaultEventAggregator : IEventAggregator
         }
     }
 
-    public void Subscribe<TEvent>(Func<TEvent, ValueTask> asyncHandler)
+    public void Subscribe<TEvent>(Func<TEvent, Task> asyncHandler)
     {
         List<Delegate> handlers = _eventHandlers.GetOrAdd(typeof(TEvent), _ => []);
         lock (handlers)
@@ -63,8 +63,8 @@ public sealed class DefaultEventAggregator : IEventAggregator
                 case Action<TEvent> syncHandler:
                     syncHandler(eventToPublish);
                     break;
-                case Func<TEvent, ValueTask> asyncHandler:
-                    _ = asyncHandler(eventToPublish);
+                case Func<TEvent, Task> asyncHandler:
+                    _ = asyncHandler(eventToPublish).ConfigureAwait(false);
                     break;
                 default:
                     break;
@@ -100,9 +100,9 @@ public sealed class DefaultEventAggregator : IEventAggregator
                     cancellationToken.ThrowIfCancellationRequested();
                     syncHandler(eventToPublish);
                     break;
-                case Func<TEvent, ValueTask> asyncHandler:
+                case Func<TEvent, Task> asyncHandler:
                     cancellationToken.ThrowIfCancellationRequested();
-                    tasks.Add(asyncHandler(eventToPublish).AsTask());
+                    tasks.Add(asyncHandler(eventToPublish));
                     break;
                 default:
                     break;

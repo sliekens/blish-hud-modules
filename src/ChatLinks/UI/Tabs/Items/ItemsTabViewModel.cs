@@ -51,18 +51,18 @@ public sealed class ItemsTabViewModel(
         eventAggregator.Subscribe<DatabaseSeeded>(OnDatabaseSeeded);
     }
 
-    private async ValueTask OnLocaleChanged(LocaleChanged args)
+    private async Task OnLocaleChanged(LocaleChanged args)
     {
         OnPropertyChanged(nameof(SearchPlaceholderText));
         await Task.Run(OnSearch);
     }
 
-    private async ValueTask OnDatabaseDownloaded(DatabaseDownloaded downloaded)
+    private async Task OnDatabaseDownloaded(DatabaseDownloaded downloaded)
     {
         await Task.Run(OnSearch);
     }
 
-    private async ValueTask OnDatabaseSeeded(DatabaseSeeded args)
+    private async Task OnDatabaseSeeded(DatabaseSeeded args)
     {
         if (args.Updated["items"] > 0)
         {

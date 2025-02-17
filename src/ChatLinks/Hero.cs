@@ -36,7 +36,7 @@ public sealed partial class Hero : IDisposable
 
     public bool UnlocksAvailable => IsAuthorized && _tokenProvider.Grants.Contains(Permission.Unlocks);
 
-    private async ValueTask OnAuthorizationInvalidated(AuthorizationInvalidated _)
+    private async Task OnAuthorizationInvalidated(AuthorizationInvalidated _)
     {
         string? token = await _tokenProvider.GetTokenAsync(CancellationToken.None);
         if (token is null)

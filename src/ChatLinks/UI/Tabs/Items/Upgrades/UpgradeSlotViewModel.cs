@@ -45,7 +45,7 @@ public sealed class UpgradeSlotViewModel : ViewModel, IDisposable
         eventAggregator.Subscribe<LocaleChanged>(OnLocaleChanged);
     }
 
-    private async ValueTask OnLocaleChanged(LocaleChanged changed)
+    private async Task OnLocaleChanged(LocaleChanged changed)
     {
         OnPropertyChanged(nameof(EmptySlotTooltip));
         if (SelectedUpgradeComponent is not null)

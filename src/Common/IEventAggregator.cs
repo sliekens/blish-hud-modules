@@ -14,7 +14,7 @@ public interface IEventAggregator
     /// <summary>
     /// Subscribes an asynchronous handler to an event of type TEvent.
     /// </summary>
-    void Subscribe<TEvent>(Func<TEvent, ValueTask> asyncHandler);
+    void Subscribe<TEvent>(Func<TEvent, Task> asyncHandler);
 
     /// <summary>
     /// Unsubscribes a specific handler from an event of type TEvent.

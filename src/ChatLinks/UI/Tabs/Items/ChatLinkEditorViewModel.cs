@@ -135,7 +135,7 @@ public sealed class ChatLinkEditorViewModel : ViewModel, IDisposable
         eventAggregator.Subscribe<LocaleChanged>(OnLocaleChanged);
     }
 
-    private async ValueTask OnLocaleChanged(LocaleChanged args)
+    private async Task OnLocaleChanged(LocaleChanged args)
     {
         OnPropertyChanged(nameof(CopyNameLabel));
         OnPropertyChanged(nameof(CopyChatLinkLabel));
