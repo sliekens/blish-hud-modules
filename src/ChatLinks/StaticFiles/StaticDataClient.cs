@@ -31,8 +31,8 @@ public sealed class StaticDataClient(HttpClient httpClient)
         {
             using FileStream fileStream = File.OpenRead(tmp);
             byte[] hash = sha256.ComputeHash(fileStream);
-            string hashString = BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
-            if (hashString != database.SHA256.ToLowerInvariant())
+            string hashString = BitConverter.ToString(hash).Replace("-", "");
+            if (!hashString.Equals(database.SHA256, StringComparison.OrdinalIgnoreCase))
             {
                 File.Delete(tmp);
                 throw new InvalidOperationException("SHA256 hash mismatch.");
