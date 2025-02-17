@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Text;
 
 using Blish_HUD;
@@ -1148,7 +1149,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
         if (totalValue.Amount >= 10_000)
         {
-            FormattedLabelPartBuilder? gold = builder.CreatePart(totalValue.Gold.ToString("N0"));
+            FormattedLabelPartBuilder? gold = builder.CreatePart(totalValue.Gold.ToString("N0", CultureInfo.CurrentCulture));
             _ = gold.SetTextColor(new Color(0xDD, 0xBB, 0x44));
             _ = gold.SetFontSize(ContentService.FontSize.Size16);
             _ = gold.SetSuffixImage(AsyncTexture2D.FromAssetId(156904));
@@ -1159,7 +1160,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
         if (totalValue.Amount >= 100)
         {
-            FormattedLabelPartBuilder? silver = builder.CreatePart(totalValue.Silver.ToString("N0"));
+            FormattedLabelPartBuilder? silver = builder.CreatePart(totalValue.Silver.ToString("N0", CultureInfo.CurrentCulture));
             _ = silver.SetTextColor(new Color(0xC0, 0xC0, 0xC0));
             _ = silver.SetFontSize(ContentService.FontSize.Size16);
             _ = silver.SetSuffixImage(AsyncTexture2D.FromAssetId(156907));
@@ -1168,7 +1169,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
             _ = builder.CreatePart("  ", _ => { });
         }
 
-        FormattedLabelPartBuilder? copper = builder.CreatePart(totalValue.Copper.ToString("N0"));
+        FormattedLabelPartBuilder? copper = builder.CreatePart(totalValue.Copper.ToString("N0", CultureInfo.CurrentCulture));
         _ = copper.SetTextColor(new Color(0xCD, 0x7F, 0x32));
         _ = copper.SetFontSize(ContentService.FontSize.Size16);
         _ = copper.SetSuffixImage(AsyncTexture2D.FromAssetId(156902));
@@ -1206,7 +1207,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
         if (effect.Duration > TimeSpan.Zero)
         {
-            _ = builder.AppendFormat(" ({0})", effect.Duration switch
+            _ = builder.AppendFormat(CultureInfo.CurrentCulture, " ({0})", effect.Duration switch
             {
                 { Hours: >= 1 } => $"{effect.Duration.TotalHours} h",
                 _ => $"{effect.Duration.TotalMinutes} m"

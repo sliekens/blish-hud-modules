@@ -98,7 +98,7 @@ public sealed class ItemTooltipViewModel(
 
             if (!Item.Flags.HideSuffix)
             {
-                if (!string.IsNullOrEmpty(DefaultSuffixName) && name.EndsWith(DefaultSuffixName!))
+                if (!string.IsNullOrEmpty(DefaultSuffixName) && name.EndsWith(DefaultSuffixName!, StringComparison.Ordinal))
                 {
                     name = name[..^DefaultSuffixName!.Length];
                     name = name.TrimEnd();

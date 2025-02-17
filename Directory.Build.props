@@ -20,7 +20,7 @@
         <AnalysisModeDocumentation>Minimum</AnalysisModeDocumentation>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/globalization-warnings -->
-        <AnalysisModeGlobalization>Minimum</AnalysisModeGlobalization>
+        <AnalysisModeGlobalization>Recommended</AnalysisModeGlobalization>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/interoperability-warnings -->
         <AnalysisModeInteroperability>Minimum</AnalysisModeInteroperability>

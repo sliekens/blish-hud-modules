@@ -69,9 +69,9 @@ public static class FormattedLabelBuilderExtensions
             string hex = color[1..];
             try
             {
-                byte r = byte.Parse(hex[..2], NumberStyles.HexNumber);
-                byte g = byte.Parse(hex[2..4], NumberStyles.HexNumber);
-                byte b = byte.Parse(hex[4..6], NumberStyles.HexNumber);
+                byte r = byte.Parse(hex[..2], NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+                byte g = byte.Parse(hex[2..4], NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+                byte b = byte.Parse(hex[4..6], NumberStyles.HexNumber, CultureInfo.InvariantCulture);
                 return new Color(r, g, b);
             }
             catch (FormatException)

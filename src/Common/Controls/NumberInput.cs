@@ -458,7 +458,7 @@ public class NumberInput : TextInputBase
     {
         if (!e.Value)
         {
-            Text = Value.ToString();
+            Text = Value.ToString(NumberFormatInfo.InvariantInfo);
             _horizontalOffset = 0;
             Invalidate();
         }

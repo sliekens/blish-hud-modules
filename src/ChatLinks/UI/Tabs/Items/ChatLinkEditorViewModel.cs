@@ -207,7 +207,7 @@ public sealed class ChatLinkEditorViewModel : ViewModel, IDisposable
             if (!Item.Flags.HideSuffix)
             {
                 UpgradeComponent? defaultSuffix = _customizer.DefaultSuffixItem(Item);
-                if (!string.IsNullOrEmpty(defaultSuffix?.SuffixName) && name.EndsWith(defaultSuffix!.SuffixName))
+                if (!string.IsNullOrEmpty(defaultSuffix?.SuffixName) && name.EndsWith(defaultSuffix!.SuffixName, StringComparison.Ordinal))
                 {
                     name = name[..^defaultSuffix.SuffixName.Length];
                     name = name.TrimEnd();
