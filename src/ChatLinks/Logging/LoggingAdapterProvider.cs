@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 
 namespace SL.ChatLinks.Logging;
 
-public class LoggingAdapterProvider<T>(IOptionsMonitor<LoggerFilterOptions> options) : ILoggerProvider
+public sealed class LoggingAdapterProvider<T>(IOptionsMonitor<LoggerFilterOptions> options) : ILoggerProvider
 {
     public ILogger CreateLogger(string categoryName)
     {
@@ -12,6 +12,7 @@ public class LoggingAdapterProvider<T>(IOptionsMonitor<LoggerFilterOptions> opti
 
     public void Dispose()
     {
+        GC.SuppressFinalize(this);
     }
 }
 
