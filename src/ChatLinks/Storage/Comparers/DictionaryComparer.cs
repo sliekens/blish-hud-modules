@@ -23,7 +23,7 @@ public sealed class DictionaryComparer<TKey, TValue>() : ValueComparer<IDictiona
         return dictionary?.Aggregate(0, (hash, pair) => HashCode.Combine(hash, pair.Key, pair.Value)) ?? 0;
     }
 
-    private static IDictionary<TKey, TValue> GetSnapshot(IDictionary<TKey, TValue> dictionary)
+    private static Dictionary<TKey, TValue> GetSnapshot(IDictionary<TKey, TValue> dictionary)
     {
         return new Dictionary<TKey, TValue>(dictionary);
     }
