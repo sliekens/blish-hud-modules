@@ -44,7 +44,7 @@ public sealed class StaticDataClient(HttpClient httpClient)
         File.Delete(tmp);
     }
 
-    private void DecompressGzipFile(string sourceFile, string destinationFile)
+    private static void DecompressGzipFile(string sourceFile, string destinationFile)
     {
         using FileStream sourceStream = new(sourceFile, FileMode.Open, FileAccess.Read);
         using GZipStream decompressionStream = new(sourceStream, CompressionMode.Decompress);
