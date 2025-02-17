@@ -22,9 +22,9 @@ using SQLitePCL;
 
 namespace SL.ChatLinks;
 
-[Export(typeof(Blish_HUD.Modules.Module))]
+[Export(typeof(Module))]
 [method: ImportingConstructor]
-public class Module([Import("ModuleParameters")] ModuleParameters parameters) : Blish_HUD.Modules.Module(parameters)
+public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters parameters) : Module(parameters)
 {
     private IEventAggregator? _eventAggregator;
 
@@ -80,7 +80,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 
         _ = services.AddLogging(builder =>
         {
-            _ = builder.Services.AddSingleton<ILoggerProvider, LoggingAdapterProvider<Module>>();
+            _ = builder.Services.AddSingleton<ILoggerProvider, LoggingAdapterProvider<ChatLinksModule>>();
             if (ApplicationSettings.Instance.DebugEnabled || GameService.Debug.EnableDebugLogging.Value)
             {
                 _ = builder.SetMinimumLevel(LogLevel.Debug);
@@ -110,7 +110,7 @@ public class Module([Import("ModuleParameters")] ModuleParameters parameters) : 
 
     protected override async Task LoadAsync()
     {
-        ILogger<Module> logger = _serviceProvider.GetRequiredService<ILogger<Module>>();
+        ILogger<ChatLinksModule> logger = _serviceProvider.GetRequiredService<ILogger<ChatLinksModule>>();
         ILocale locale = _serviceProvider.GetRequiredService<ILocale>();
         DatabaseSeeder seeder = _serviceProvider.GetRequiredService<DatabaseSeeder>();
 

@@ -17,19 +17,19 @@
         <AnalysisModeDesign>Recommended</AnalysisModeDesign>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/documentation-warnings -->
-        <AnalysisModeDocumentation>Minimum</AnalysisModeDocumentation>
+        <AnalysisModeDocumentation>Recommended</AnalysisModeDocumentation>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/globalization-warnings -->
         <AnalysisModeGlobalization>Recommended</AnalysisModeGlobalization>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/interoperability-warnings -->
-        <AnalysisModeInteroperability>Minimum</AnalysisModeInteroperability>
+        <AnalysisModeInteroperability>Recommended</AnalysisModeInteroperability>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/maintainability-warnings -->
-        <AnalysisModeMaintainability>Minimum</AnalysisModeMaintainability>
+        <AnalysisModeMaintainability>Recommended</AnalysisModeMaintainability>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/naming-warnings -->
-        <AnalysisModeNaming>Minimum</AnalysisModeNaming>
+        <AnalysisModeNaming>Recommended</AnalysisModeNaming>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/performance-warnings -->
         <AnalysisModePerformance>Minimum</AnalysisModePerformance>
