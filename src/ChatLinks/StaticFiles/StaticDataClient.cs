@@ -18,6 +18,7 @@ public sealed class StaticDataClient(HttpClient httpClient)
 
     public async Task Download(SeedDatabase database, string destination, CancellationToken cancellationToken)
     {
+        ThrowHelper.ThrowIfNull(database);
         using HttpResponseMessage response = await httpClient.GetAsync(database.Url, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
         using Stream content = await response.Content.ReadAsStreamAsync();
         _ = response.EnsureSuccessStatusCode();

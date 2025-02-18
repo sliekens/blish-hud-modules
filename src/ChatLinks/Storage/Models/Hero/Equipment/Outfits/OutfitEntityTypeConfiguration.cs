@@ -12,6 +12,7 @@ public sealed class OutfitEntityTypeConfiguration : IEntityTypeConfiguration<Out
 {
     public void Configure(EntityTypeBuilder<Outfit> builder)
     {
+        ThrowHelper.ThrowIfNull(builder);
         _ = builder.ToTable("Outfits");
         _ = builder.HasKey(outfit => outfit.Id);
         _ = builder.HasIndex(outfit => outfit.Name);

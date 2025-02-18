@@ -17,7 +17,7 @@ public sealed record SeedDatabase
 
     public required string Name { get; init; }
 
-    public required string Url { get; init; }
+    public required Uri Url { get; init; }
 
     public required string SHA256 { get; init; }
 }

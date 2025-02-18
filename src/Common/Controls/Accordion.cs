@@ -20,6 +20,7 @@ public sealed class Accordion : FlowPanel
 
     public void AddSection(string title, Control content)
     {
+        ThrowHelper.ThrowIfNull(content);
         Panel section = new()
         {
             Parent = this,

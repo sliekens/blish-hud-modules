@@ -1,5 +1,9 @@
 root = true
 
+[*.csproj]
+indent_style = space
+indent_size = 2
+
 # C# files
 [*.cs]
 
@@ -394,6 +398,11 @@ dotnet_naming_style.s_camelcase.required_suffix =
 dotnet_naming_style.s_camelcase.word_separator = 
 dotnet_naming_style.s_camelcase.capitalization = camel_case
 
+# CA1031: Do not catch general exception types
+dotnet_diagnostic.CA1031.severity = none
+
+# CA1062: Validate arguments of public methods
+dotnet_code_quality.CA1062.null_check_validation_methods = ThrowIfNull
 
 # CA1848: Use the LoggerMessage delegates
 dotnet_diagnostic.CA1848.severity = none

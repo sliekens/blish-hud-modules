@@ -12,6 +12,7 @@ public sealed class RecipeSheetEntityTypeConfiguration : IEntityTypeConfiguratio
 {
     public void Configure(EntityTypeBuilder<RecipeSheet> builder)
     {
+        ThrowHelper.ThrowIfNull(builder);
         builder.Property(recipeSheet => recipeSheet.ExtraRecipeIds)
             .HasJsonValueConversion()
             .Metadata.SetValueComparer(new CollectionComparer<int>());

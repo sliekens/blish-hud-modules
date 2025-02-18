@@ -14,7 +14,7 @@
         <AnalysisLevel>latest</AnalysisLevel>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/design-warnings -->
-        <AnalysisModeDesign>Recommended</AnalysisModeDesign>
+        <AnalysisModeDesign>All</AnalysisModeDesign>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/documentation-warnings -->
         <AnalysisModeDocumentation>Recommended</AnalysisModeDocumentation>
@@ -35,18 +35,18 @@
         <AnalysisModePerformance>Recommended</AnalysisModePerformance>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/core/deploying/single-file/warnings/overview -->
-        <AnalysisModeSingleFile>Minimum</AnalysisModeSingleFile>
+        <AnalysisModeSingleFile>Recommended</AnalysisModeSingleFile>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/reliability-warnings -->
-        <AnalysisModeReliability>Minimum</AnalysisModeReliability>
+        <AnalysisModeReliability>Recommended</AnalysisModeReliability>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/security-warnings -->
-        <AnalysisModeSecurity>Minimum</AnalysisModeSecurity>
+        <AnalysisModeSecurity>Recommended</AnalysisModeSecurity>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ -->
-        <AnalysisModeStyle>Minimum</AnalysisModeStyle>
+        <AnalysisModeStyle>Recommended</AnalysisModeStyle>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/usage-warnings -->
-        <AnalysisModeUsage>Minimum</AnalysisModeUsage>
+        <AnalysisModeUsage>Recommended</AnalysisModeUsage>
     </PropertyGroup>
 </Project>

@@ -4,7 +4,6 @@ using GuildWars2.Items;
 using Microsoft.EntityFrameworkCore;
 
 using SL.ChatLinks.Storage;
-using SL.Common;
 
 namespace SL.ChatLinks.UI.Tabs.Items;
 

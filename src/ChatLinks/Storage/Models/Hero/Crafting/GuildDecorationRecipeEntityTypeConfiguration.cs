@@ -13,6 +13,7 @@ public sealed class GuildDecorationRecipeEntityTypeConfiguration : IEntityTypeCo
 {
     public void Configure(EntityTypeBuilder<GuildDecorationRecipe> builder)
     {
+        ThrowHelper.ThrowIfNull(builder);
         builder.Property(recipe => recipe.GuildIngredients)
             .HasColumnName(nameof(GuildDecorationRecipe.GuildIngredients))
             .HasJsonValueConversion()

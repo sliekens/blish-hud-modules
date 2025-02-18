@@ -22,9 +22,10 @@ public sealed class GenericBinding<TViewModel, TControl, TData> : ViewModelBindi
         TControl control,
         Expression<Func<TControl, TData>> controlPropertySelector,
         BindingMode bindingMode
-    )
-        : base(viewModel, viewModelPropertySelector, bindingMode)
+    ) : base(viewModel, viewModelPropertySelector, bindingMode)
     {
+        ThrowHelper.ThrowIfNull(control);
+        ThrowHelper.ThrowIfNull(controlPropertySelector);
         Control = control;
         ControlPropertyName = ((MemberExpression)controlPropertySelector.Body).Member.Name;
         ControlRead = new Lazy<Func<TData>>(() =>

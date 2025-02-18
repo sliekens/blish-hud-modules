@@ -15,6 +15,7 @@ public sealed class RingEntityTypeConfiguration(
 {
     public void Configure(EntityTypeBuilder<Ring> builder)
     {
+        ThrowHelper.ThrowIfNull(builder);
         builder.Property(ring => ring.UpgradesFrom)
             .HasColumnName("UpgradesFrom")
             .HasJsonValueConversion()

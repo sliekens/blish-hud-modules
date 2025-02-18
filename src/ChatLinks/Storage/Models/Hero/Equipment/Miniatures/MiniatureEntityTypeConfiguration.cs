@@ -9,6 +9,7 @@ public sealed class MiniatureEntityTypeConfiguration : IEntityTypeConfiguration<
 {
     public void Configure(EntityTypeBuilder<Miniature> builder)
     {
+        ThrowHelper.ThrowIfNull(builder);
         _ = builder.ToTable("Miniatures");
         _ = builder.HasKey(mini => mini.Id);
         _ = builder.HasIndex(mini => mini.Name);

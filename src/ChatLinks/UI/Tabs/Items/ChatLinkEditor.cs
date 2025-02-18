@@ -9,7 +9,6 @@ using Microsoft.Xna.Framework;
 
 using SL.ChatLinks.UI.Tabs.Items.Tooltips;
 using SL.ChatLinks.UI.Tabs.Items.Upgrades;
-using SL.Common;
 using SL.Common.Controls;
 using SL.Common.ModelBinding;
 
@@ -29,6 +28,7 @@ public sealed class ChatLinkEditor : FlowPanel
 
     public ChatLinkEditor(ChatLinkEditorViewModel viewModel)
     {
+        ThrowHelper.ThrowIfNull(viewModel);
         ViewModel = viewModel;
         FlowDirection = ControlFlowDirection.SingleTopToBottom;
         ControlPadding = new Vector2(0f, 15f);

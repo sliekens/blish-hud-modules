@@ -19,6 +19,7 @@ public class UpgradeComponentEntityTypeConfiguration(
 {
     public void Configure(EntityTypeBuilder<UpgradeComponent> builder)
     {
+        ThrowHelper.ThrowIfNull(builder);
         _ = builder.Property(upgradeComponent => upgradeComponent.AttributeCombinationId)
             .HasColumnName("AttributeCombinationId");
         builder.Property(upgradeComponent => upgradeComponent.Attributes)

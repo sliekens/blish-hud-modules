@@ -5,7 +5,6 @@ using GuildWars2.Items;
 using Microsoft.Extensions.Localization;
 
 using SL.ChatLinks.UI.Tabs.Items.Collections;
-using SL.Common;
 using SL.Common.ModelBinding;
 
 namespace SL.ChatLinks.UI.Tabs.Items.Upgrades;
@@ -38,6 +37,7 @@ public sealed class UpgradeSelectorViewModel : ViewModel, IDisposable
         IEventAggregator eventAggregator
 )
     {
+        ThrowHelper.ThrowIfNull(eventAggregator);
         _localizer = localizer;
         _customizer = customizer;
         _itemsListViewModelFactory = itemsListViewModelFactory;
@@ -53,7 +53,7 @@ public sealed class UpgradeSelectorViewModel : ViewModel, IDisposable
         Options = null!;
     }
 
-    public event EventHandler<UpgradeComponent>? Selected;
+    public event EventHandler<UpgradeSelectedEventArgs>? Selected;
 
     public event EventHandler? Deselected;
 
@@ -74,7 +74,10 @@ public sealed class UpgradeSelectorViewModel : ViewModel, IDisposable
             option.IsSelected = option == selection;
         }
 
-        Selected?.Invoke(this, (UpgradeComponent)selection.Item);
+        Selected?.Invoke(this, new()
+        {
+            Selected = (UpgradeComponent)selection.Item
+        });
     }
 
     public RelayCommand DeselectCommand => new(OnRemove);

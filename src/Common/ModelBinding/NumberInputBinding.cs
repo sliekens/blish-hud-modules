@@ -16,6 +16,7 @@ public sealed class NumberInputBinding<TViewModel> : ViewModelBinding<TViewModel
         BindingMode bindingMode
     ) : base(viewModel, propertySelector, bindingMode)
     {
+        ThrowHelper.ThrowIfNull(numberInput);
         NumberInput = numberInput;
 
         if (bindingMode is BindingMode.ToView or BindingMode.Bidirectional)

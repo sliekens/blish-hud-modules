@@ -3,7 +3,6 @@
 using Microsoft.Extensions.Localization;
 
 using SL.ChatLinks.UI.Tabs.Items.Collections;
-using SL.Common;
 
 namespace SL.ChatLinks.UI.Tabs.Items.Upgrades;
 

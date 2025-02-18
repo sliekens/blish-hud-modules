@@ -100,18 +100,20 @@ public sealed class SeedDatabaseJsonConverter : JsonConverter<SeedDatabase>
                 SchemaVersion = schemaVersion,
                 Language = language!,
                 Name = name!,
-                Url = url!,
+                Url = new Uri(url, UriKind.RelativeOrAbsolute),
                 SHA256 = sha256!
             };
     }
 
     public override void Write(Utf8JsonWriter writer, SeedDatabase value, JsonSerializerOptions options)
     {
+        ThrowHelper.ThrowIfNull(writer);
+        ThrowHelper.ThrowIfNull(value);
         writer.WriteStartObject();
         writer.WriteNumber("schema_version", value.SchemaVersion);
         writer.WriteString("lang", value.Language);
         writer.WriteString("name", value.Name);
-        writer.WriteString("url", value.Url);
+        writer.WriteString("url", value.Url.ToString());
         writer.WriteString("sha256", value.SHA256);
         writer.WriteEndObject();
     }

@@ -8,8 +8,6 @@ using GuildWars2.Items;
 
 using Microsoft.Xna.Framework.Graphics;
 
-using SL.Common;
-
 namespace SL.ChatLinks.UI.Tabs.Items;
 
 public class ItemIcons(HttpClient httpClient)
@@ -18,6 +16,7 @@ public class ItemIcons(HttpClient httpClient)
 
     public AsyncTexture2D? GetIcon(Item item)
     {
+        ThrowHelper.ThrowIfNull(item);
         if (item.IconHref is null)
         {
             return null;

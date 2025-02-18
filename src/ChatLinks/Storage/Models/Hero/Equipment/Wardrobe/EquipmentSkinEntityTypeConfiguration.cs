@@ -15,6 +15,7 @@ public sealed class EquipmentSkinEntityTypeConfiguration : IEntityTypeConfigurat
 {
     public void Configure(EntityTypeBuilder<EquipmentSkin> builder)
     {
+        ThrowHelper.ThrowIfNull(builder);
         _ = builder.ToTable("Skins");
         _ = builder.HasKey(skin => skin.Id);
         _ = builder.HasIndex(skin => skin.Name);

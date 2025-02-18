@@ -12,6 +12,7 @@ public sealed class MailCarrierEntityTypeConfiguration : IEntityTypeConfiguratio
 {
     public void Configure(EntityTypeBuilder<MailCarrier> builder)
     {
+        ThrowHelper.ThrowIfNull(builder);
         _ = builder.ToTable("MailCarriers");
         _ = builder.HasKey(mailCarrier => mailCarrier.Id);
         _ = builder.HasIndex(mailCarrier => mailCarrier.Name);

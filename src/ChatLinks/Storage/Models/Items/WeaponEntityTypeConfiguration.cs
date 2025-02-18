@@ -21,6 +21,7 @@ public sealed class WeaponEntityTypeConfiguration(
 {
     public void Configure(EntityTypeBuilder<Weapon> builder)
     {
+        ThrowHelper.ThrowIfNull(builder);
         _ = builder.Property(weapon => weapon.DamageType).HasConversion(new ExtensibleEnumConverter<DamageType>());
         _ = builder.Property(weapon => weapon.Defense).HasColumnName("Defense");
         _ = builder.Property(weapon => weapon.DefaultSkinId).HasColumnName("DefaultSkinId");

@@ -14,6 +14,7 @@ public sealed class CraftingMaterialEntityTypeConfiguration(
 {
     public void Configure(EntityTypeBuilder<CraftingMaterial> builder)
     {
+        ThrowHelper.ThrowIfNull(builder);
         builder.Property(craftingMaterial => craftingMaterial.UpgradesInto)
             .HasColumnName("UpgradesInto")
             .HasJsonValueConversion()

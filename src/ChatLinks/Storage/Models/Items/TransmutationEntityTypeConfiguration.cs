@@ -12,6 +12,7 @@ public sealed class TransmutationEntityTypeConfiguration : IEntityTypeConfigurat
 {
     public void Configure(EntityTypeBuilder<Transmutation> builder)
     {
+        ThrowHelper.ThrowIfNull(builder);
         builder.Property(transmutation => transmutation.SkinIds)
             .HasJsonValueConversion()
             .Metadata.SetValueComparer(new CollectionComparer<int>());

@@ -5,7 +5,6 @@ using Blish_HUD.Content;
 using Microsoft.Extensions.Localization;
 
 using SL.ChatLinks.UI.Tabs.Items;
-using SL.Common;
 
 namespace SL.ChatLinks.UI;
 

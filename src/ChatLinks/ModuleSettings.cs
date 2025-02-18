@@ -19,6 +19,7 @@ public sealed class ModuleSettings : IConfigureOptions<ChatLinkOptions>, IOption
 
     public ModuleSettings(SettingCollection settings)
     {
+        ThrowHelper.ThrowIfNull(settings);
         _bananaMode = settings.DefineSetting(
             "BananaMode",
             false,
@@ -65,6 +66,7 @@ public sealed class ModuleSettings : IConfigureOptions<ChatLinkOptions>, IOption
 
     public void Configure(ChatLinkOptions options)
     {
+        ThrowHelper.ThrowIfNull(options);
         options.RaiseStackSize = RaiseStackSize;
         options.BananaMode = BananaMode;
         options.MaxResultCount = MaxResultCount;

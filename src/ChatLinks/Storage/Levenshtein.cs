@@ -2,10 +2,11 @@
 
 namespace SL.ChatLinks.Storage;
 
-public class Levenshtein
+public static class Levenshtein
 {
     public static void RegisterLevenshteinFunction(SqliteConnection connection)
     {
+        ThrowHelper.ThrowIfNull(connection);
         connection.CreateFunction(
             "LevenshteinDistance",
             (string s, string t) => LevenshteinDistance(s, t)

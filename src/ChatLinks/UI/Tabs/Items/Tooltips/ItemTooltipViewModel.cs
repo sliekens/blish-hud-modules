@@ -18,7 +18,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 
 using SL.ChatLinks.Storage;
-using SL.Common;
 
 using Miniature = GuildWars2.Hero.Equipment.Miniatures.Miniature;
 using MiniatureItem = GuildWars2.Items.Miniature;
@@ -139,6 +138,7 @@ public sealed class ItemTooltipViewModel(
 
     public async Task Load(IProgress<string> progress)
     {
+        ThrowHelper.ThrowIfNull(progress);
         switch (Item)
         {
             case Transmutation transmutation:

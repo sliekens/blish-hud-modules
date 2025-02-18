@@ -13,6 +13,7 @@ public sealed class DyeColorEntityTypeConfiguration : IEntityTypeConfiguration<D
 {
     public void Configure(EntityTypeBuilder<DyeColor> builder)
     {
+        ThrowHelper.ThrowIfNull(builder);
         _ = builder.ToTable("Colors");
         _ = builder.HasKey(color => color.Id);
         _ = builder.HasIndex(color => color.Name);

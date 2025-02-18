@@ -17,6 +17,8 @@ public abstract class ViewModelBinding<TViewModel, TData> : IDisposable where TV
         BindingMode bindingMode
     )
     {
+        ThrowHelper.ThrowIfNull(viewModel);
+        ThrowHelper.ThrowIfNull(viewModelPropertySelector);
         ViewModel = viewModel;
         ViewModelPropertyName = ((MemberExpression)viewModelPropertySelector.Body).Member.Name;
         ViewModelRead = new Lazy<Func<TData>>(() =>

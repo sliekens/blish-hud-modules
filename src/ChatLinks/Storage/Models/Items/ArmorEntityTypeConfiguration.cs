@@ -21,6 +21,7 @@ public sealed class ArmorEntityTypeConfiguration(
 {
     public void Configure(EntityTypeBuilder<Armor> builder)
     {
+        ThrowHelper.ThrowIfNull(builder);
         _ = builder.Property(armor => armor.WeightClass).HasConversion(new ExtensibleEnumConverter<WeightClass>());
         _ = builder.Property(armor => armor.Defense).HasColumnName("Defense");
         _ = builder.Property(armor => armor.DefaultSkinId).HasColumnName("DefaultSkinId");

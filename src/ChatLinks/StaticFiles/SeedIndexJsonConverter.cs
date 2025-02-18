@@ -48,6 +48,8 @@ public sealed class SeedIndexJsonConverter : JsonConverter<SeedIndex>
 
     public override void Write(Utf8JsonWriter writer, SeedIndex value, JsonSerializerOptions options)
     {
+        ThrowHelper.ThrowIfNull(writer);
+        ThrowHelper.ThrowIfNull(value);
         writer.WriteStartObject();
         writer.WriteStartArray("databases");
         foreach (SeedDatabase database in value.Databases)

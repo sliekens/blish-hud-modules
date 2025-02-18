@@ -16,6 +16,7 @@ public sealed class ListItemBinding<TViewModel, TData> : ViewModelBinding<TViewM
         BindingMode bindingMode
     ) : base(viewModel, propertySelector, bindingMode)
     {
+        ThrowHelper.ThrowIfNull(listItem);
         ListItem = listItem;
 
         if (bindingMode is BindingMode.ToView or BindingMode.Bidirectional)

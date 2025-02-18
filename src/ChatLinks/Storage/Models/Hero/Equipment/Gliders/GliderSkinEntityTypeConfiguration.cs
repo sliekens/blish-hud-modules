@@ -12,6 +12,7 @@ public sealed class GliderSkinEntityTypeConfiguration : IEntityTypeConfiguration
 {
     public void Configure(EntityTypeBuilder<GliderSkin> builder)
     {
+        ThrowHelper.ThrowIfNull(builder);
         _ = builder.ToTable("Gliders");
         _ = builder.HasKey(glider => glider.Id);
         _ = builder.HasIndex(glider => glider.Name);

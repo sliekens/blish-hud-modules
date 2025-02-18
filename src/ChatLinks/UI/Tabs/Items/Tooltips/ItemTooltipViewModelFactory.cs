@@ -4,7 +4,6 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
 using SL.ChatLinks.Storage;
-using SL.Common;
 
 namespace SL.ChatLinks.UI.Tabs.Items.Tooltips;
 

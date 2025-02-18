@@ -9,7 +9,6 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Xna.Framework;
 
 using SL.ChatLinks.UI.Tabs.Items.Tooltips;
-using SL.Common;
 using SL.Common.ModelBinding;
 
 using UpgradeSlot = SL.ChatLinks.UI.Tabs.Items.Tooltips.UpgradeSlot;

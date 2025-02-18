@@ -21,6 +21,7 @@ public sealed class TrinketEntityTypeConfiguration(
 {
     public void Configure(EntityTypeBuilder<Trinket> builder)
     {
+        ThrowHelper.ThrowIfNull(builder);
         _ = builder.Property(trinket => trinket.SuffixItemId).HasColumnName("SuffixItemId");
         _ = builder.Property(trinket => trinket.AttributeCombinationId).HasColumnName("AttributeCombinationId");
         builder.Property(trinket => trinket.Attributes)

@@ -12,6 +12,7 @@ public sealed class NoveltyEntityTypeConfiguration : IEntityTypeConfiguration<No
 {
     public void Configure(EntityTypeBuilder<Novelty> builder)
     {
+        ThrowHelper.ThrowIfNull(builder);
         _ = builder.ToTable("Novelties");
         _ = builder.HasKey(novelty => novelty.Id);
         _ = builder.HasIndex(novelty => novelty.Name);

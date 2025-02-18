@@ -16,6 +16,8 @@ public static class FormattedLabelBuilderExtensions
 
     public static FormattedLabelBuilder AddMarkup(this FormattedLabelBuilder builder, string markup, Color? primaryColor = null)
     {
+        ThrowHelper.ThrowIfNull(builder);
+        ThrowHelper.ThrowIfNull(markup);
         IEnumerable<MarkupToken> tokens = Lexer.Tokenize(markup);
         RootNode syntax = Parser.Parse(tokens);
         foreach (FormattedLabelPartBuilder? part in syntax.Children.SelectMany(node => builder.CreateParts(node, primaryColor ?? Color.White)))

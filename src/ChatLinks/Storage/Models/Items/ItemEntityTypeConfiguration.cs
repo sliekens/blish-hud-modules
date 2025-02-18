@@ -13,6 +13,7 @@ public sealed class ItemEntityTypeConfiguration : IEntityTypeConfiguration<Item>
 {
     public void Configure(EntityTypeBuilder<Item> builder)
     {
+        ThrowHelper.ThrowIfNull(builder);
         _ = builder.HasIndex(item => item.Name);
         _ = builder.HasIndex(item => item.ChatLink);
         _ = builder.Property(item => item.Id).ValueGeneratedNever();

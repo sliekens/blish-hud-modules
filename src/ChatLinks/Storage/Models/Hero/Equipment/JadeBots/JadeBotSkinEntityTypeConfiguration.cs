@@ -9,6 +9,7 @@ public sealed class JadeBotSkinEntityTypeConfiguration : IEntityTypeConfiguratio
 {
     public void Configure(EntityTypeBuilder<JadeBotSkin> builder)
     {
+        ThrowHelper.ThrowIfNull(builder);
         _ = builder.ToTable("JadeBots");
         _ = builder.HasKey(jadeBot => jadeBot.Id);
         _ = builder.HasIndex(jadeBot => jadeBot.Name);

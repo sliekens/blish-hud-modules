@@ -17,11 +17,12 @@ public sealed class MainWindow : TabbedWindow2
     private readonly Tab _itemsTab;
 
     public MainWindow(MainWindowViewModel viewModel) : base(
-        viewModel.BackgroundTexture,
+        viewModel?.BackgroundTexture,
         new Rectangle(0, 26, 953, 691),
         new Rectangle(70, 35, 880, 650)
     )
     {
+        ThrowHelper.ThrowIfNull(viewModel);
         ViewModel = viewModel;
         _emblem = AsyncEmblem.Attach(this, viewModel.EmblemTexture);
         Parent = Graphics.SpriteScreen;

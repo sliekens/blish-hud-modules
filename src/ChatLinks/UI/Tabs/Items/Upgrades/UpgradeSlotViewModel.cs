@@ -5,7 +5,6 @@ using GuildWars2.Items;
 using Microsoft.Extensions.Localization;
 
 using SL.ChatLinks.UI.Tabs.Items.Tooltips;
-using SL.Common;
 
 namespace SL.ChatLinks.UI.Tabs.Items.Upgrades;
 
@@ -35,6 +34,7 @@ public sealed class UpgradeSlotViewModel : ViewModel, IDisposable
         Customizer customizer
 )
     {
+        ThrowHelper.ThrowIfNull(eventAggregator);
         _icons = icons;
         _localizer = localizer;
         _itemTooltipViewModelFactory = itemTooltipViewModelFactory;

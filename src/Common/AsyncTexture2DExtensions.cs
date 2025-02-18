@@ -9,6 +9,7 @@ public static class AsyncTexture2DExtensions
 {
     public static AsyncTexture2D Duplicate(this AsyncTexture2D instance)
     {
+        ThrowHelper.ThrowIfNull(instance);
         if (instance.HasSwapped)
         {
             return instance.Texture.Duplicate();

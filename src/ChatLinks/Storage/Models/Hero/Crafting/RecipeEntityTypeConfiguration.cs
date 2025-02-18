@@ -15,6 +15,7 @@ public sealed class RecipeEntityTypeConfiguration : IEntityTypeConfiguration<Rec
 {
     public void Configure(EntityTypeBuilder<Recipe> builder)
     {
+        ThrowHelper.ThrowIfNull(builder);
         _ = builder.ToTable("Recipes");
         _ = builder.HasKey(recipe => recipe.Id);
         _ = builder.HasIndex(recipe => recipe.ChatLink);

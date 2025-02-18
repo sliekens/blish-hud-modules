@@ -14,7 +14,6 @@ using Microsoft.Xna.Framework;
 using SL.ChatLinks.Storage;
 using SL.ChatLinks.UI.Tabs.Items.Tooltips;
 using SL.ChatLinks.UI.Tabs.Items.Upgrades;
-using SL.Common;
 using SL.Common.ModelBinding;
 
 using UpgradeSlot = SL.ChatLinks.UI.Tabs.Items.Tooltips.UpgradeSlot;
@@ -69,6 +68,9 @@ public sealed class ChatLinkEditorViewModel : ViewModel, IDisposable
         IClipBoard clipboard,
         Item item)
     {
+        ThrowHelper.ThrowIfNull(options);
+        ThrowHelper.ThrowIfNull(eventAggregator);
+        ThrowHelper.ThrowIfNull(item);
         _options = options;
         _localizer = localizer;
         _eventAggregator = eventAggregator;

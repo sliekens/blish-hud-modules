@@ -21,6 +21,7 @@ public sealed class ItemsTabView : View, IDisposable
 
     public ItemsTabView(ItemsTabViewModel viewModel)
     {
+        ThrowHelper.ThrowIfNull(viewModel);
         ViewModel = viewModel;
         ViewModel.Initialize();
 
@@ -115,7 +116,7 @@ public sealed class ItemsTabView : View, IDisposable
         };
     }
 
-    private void SelectionChanged(ListBox<ItemsListViewModel> sender, ListBoxSelectionChangedEventArgs<ItemsListViewModel> args)
+    private void SelectionChanged(object sender, ListBoxSelectionChangedEventArgs<ItemsListViewModel> args)
     {
         if (args.AddedItems is [{ Data: { } listItem }])
         {

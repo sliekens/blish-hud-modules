@@ -12,6 +12,7 @@ public sealed class MistChampionSkinEntityTypeConfiguration : IEntityTypeConfigu
 {
     public void Configure(EntityTypeBuilder<MistChampionSkin> builder)
     {
+        ThrowHelper.ThrowIfNull(builder);
         _ = builder.ToTable("MistChampions");
         _ = builder.HasKey(mistChampion => mistChampion.Id);
         _ = builder.HasIndex(mistChampion => mistChampion.Name);

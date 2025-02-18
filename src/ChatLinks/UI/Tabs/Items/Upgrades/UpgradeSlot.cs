@@ -8,7 +8,6 @@ using GuildWars2.Items;
 using Microsoft.Xna.Framework;
 
 using SL.ChatLinks.UI.Tabs.Items.Tooltips;
-using SL.Common;
 
 using Container = Blish_HUD.Controls.Container;
 
@@ -22,8 +21,9 @@ public sealed class UpgradeSlot : Container
 
     public UpgradeSlot(UpgradeSlotViewModel viewModel)
     {
+        ThrowHelper.ThrowIfNull(viewModel);
         ViewModel = viewModel;
-        ViewModel.PropertyChanged += PropertyChanged;
+        viewModel.PropertyChanged += PropertyChanged;
         _label = FormatSlot();
         _label.Parent = this;
     }

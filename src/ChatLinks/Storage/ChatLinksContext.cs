@@ -64,6 +64,7 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
+        ThrowHelper.ThrowIfNull(optionsBuilder);
         if (!optionsBuilder.IsConfigured)
         {
             _ = optionsBuilder.UseSqlite("Data Source=data.db");
@@ -82,6 +83,7 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        ThrowHelper.ThrowIfNull(modelBuilder);
         _ = modelBuilder.ApplyConfiguration(new ItemEntityTypeConfiguration());
 
         ValueConverter<IDictionary<Extensible<AttributeName>, int>, string> attributesConverter = new(

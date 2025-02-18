@@ -10,8 +10,9 @@ public sealed class MainIcon : CornerIcon
     public MainIconViewModel ViewModel { get; }
 
     public MainIcon(MainIconViewModel viewModel)
-        : base(viewModel.Texture, viewModel.HoverTexture, viewModel.Name)
+        : base(viewModel?.Texture, viewModel?.HoverTexture, viewModel?.Name)
     {
+        ThrowHelper.ThrowIfNull(viewModel);
         Parent = Graphics.SpriteScreen;
         Priority = viewModel.Priority;
         ViewModel = viewModel;

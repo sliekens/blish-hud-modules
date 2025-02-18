@@ -95,6 +95,8 @@ public sealed class DataManifestJsonConverter : JsonConverter<DataManifest>
 
     public override void Write(Utf8JsonWriter writer, DataManifest value, JsonSerializerOptions options)
     {
+        ThrowHelper.ThrowIfNull(writer);
+        ThrowHelper.ThrowIfNull(value);
         writer.WriteStartObject();
         writer.WriteNumber("version", value.Version);
         writer.WriteStartObject("databases");

@@ -13,6 +13,7 @@ public sealed class GuildConsumableRecipeEntityTypeConfiguration : IEntityTypeCo
 {
     public void Configure(EntityTypeBuilder<GuildConsumableRecipe> builder)
     {
+        ThrowHelper.ThrowIfNull(builder);
         builder.Property(recipe => recipe.GuildIngredients)
             .HasColumnName(nameof(GuildConsumableRecipe.GuildIngredients))
             .HasJsonValueConversion()

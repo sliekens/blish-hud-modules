@@ -15,7 +15,6 @@ using GuildWars2.Items;
 
 using Microsoft.Xna.Framework;
 
-using SL.Common;
 using SL.Common.Controls;
 using SL.Common.ModelBinding;
 
@@ -91,7 +90,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintDescription(armor.Description);
         PrintInBank();
         PrintStatChoices(armor);
-        PrintUniqueness(armor);
+        PrintUniqueness();
         PrintItemBinding(armor);
         PrintVendorValue();
     }
@@ -114,7 +113,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintDescription(back.Description);
         PrintInBank();
         PrintStatChoices(back);
-        PrintUniqueness(back);
+        PrintUniqueness();
         PrintItemBinding(back);
         PrintVendorValue();
     }
@@ -124,7 +123,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintHeader();
         PrintDescription(bag.Description);
         PrintInBank();
-        PrintUniqueness(bag);
+        PrintUniqueness();
         PrintItemBinding(bag);
         PrintVendorValue();
     }
@@ -459,7 +458,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
         PrintRequiredLevel(consumable.Level);
         PrintInBank();
-        PrintUniqueness(consumable);
+        PrintUniqueness();
         PrintItemBinding(consumable);
         PrintVendorValue();
     }
@@ -477,7 +476,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
             PrintPlainText("\r\n" + ViewModel.Localizer["Consumable"]);
         }
         PrintInBank();
-        PrintUniqueness(container);
+        PrintUniqueness();
         PrintItemBinding(container);
         PrintVendorValue();
     }
@@ -487,7 +486,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintHeader();
         PrintDescription(craftingMaterial.Description);
         PrintInBank();
-        PrintUniqueness(craftingMaterial);
+        PrintUniqueness();
         PrintItemBinding(craftingMaterial);
         PrintVendorValue();
     }
@@ -497,7 +496,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintHeader();
         PrintDescription(gatheringTool.Description);
         PrintInBank();
-        PrintUniqueness(gatheringTool);
+        PrintUniqueness();
         PrintItemBinding(gatheringTool);
         PrintVendorValue();
     }
@@ -532,7 +531,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintDescription(trinket.Description);
         PrintInBank();
         PrintStatChoices(trinket);
-        PrintUniqueness(trinket);
+        PrintUniqueness();
         PrintItemBinding(trinket);
         PrintVendorValue();
     }
@@ -577,7 +576,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
         PrintRequiredLevel(gizmo.Level);
         PrintInBank();
-        PrintUniqueness(gizmo);
+        PrintUniqueness();
         PrintItemBinding(gizmo);
         PrintVendorValue();
     }
@@ -591,7 +590,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintRequiredLevel(jadeTechModule.Level);
         PrintPlainText(ViewModel.Localizer["Required Mastery: Jade Bots"]);
         PrintInBank();
-        PrintUniqueness(jadeTechModule);
+        PrintUniqueness();
         PrintItemBinding(jadeTechModule);
         PrintVendorValue();
     }
@@ -633,7 +632,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
         PrintPlainText(ViewModel.Localizer["Mini"]);
         PrintInBank();
-        PrintUniqueness(miniature);
+        PrintUniqueness();
         PrintItemBinding(miniature);
         PrintVendorValue();
     }
@@ -646,7 +645,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintPlainText(ViewModel.Localizer["Power Core"]);
         PrintRequiredLevel(powerCore.Level);
         PrintInBank();
-        PrintUniqueness(powerCore);
+        PrintUniqueness();
         PrintItemBinding(powerCore);
         PrintVendorValue();
     }
@@ -659,7 +658,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintPlainText(ViewModel.Localizer["Relic"]);
         PrintRequiredLevel(relic.Level);
         PrintInBank();
-        PrintUniqueness(relic);
+        PrintUniqueness();
         PrintItemBinding(relic);
         PrintVendorValue();
     }
@@ -672,7 +671,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintPlainText(ViewModel.Localizer["Consumable"]);
         PrintDescription(salvageTool.Description);
         PrintInBank();
-        PrintUniqueness(salvageTool);
+        PrintUniqueness();
         PrintItemBinding(salvageTool);
         PrintVendorValue();
     }
@@ -683,7 +682,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintDescription(trophy.Description);
         PrintPlainText(ViewModel.Localizer["Trophy"]);
         PrintInBank();
-        PrintUniqueness(trophy);
+        PrintUniqueness();
         PrintItemBinding(trophy);
         PrintVendorValue();
     }
@@ -710,7 +709,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintDescription(upgradeComponent.Description);
         PrintRequiredLevel(upgradeComponent.Level);
         PrintInBank();
-        PrintUniqueness(upgradeComponent);
+        PrintUniqueness();
         PrintItemBinding(upgradeComponent);
         PrintVendorValue();
     }
@@ -805,7 +804,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintDescription(weapon.Description);
         PrintInBank();
         PrintStatChoices(weapon);
-        PrintUniqueness(weapon);
+        PrintUniqueness();
         PrintItemBinding(weapon);
         PrintVendorValue();
     }
@@ -815,12 +814,12 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintHeader();
         PrintDescription(item.Description);
         PrintInBank();
-        PrintUniqueness(item);
+        PrintUniqueness();
         PrintItemBinding(item);
         PrintVendorValue();
     }
 
-    public void PrintPlainText(string text, Color? textColor = null)
+    private void PrintPlainText(string text, Color? textColor = null)
     {
         _ = new Label
         {
@@ -834,7 +833,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         };
     }
 
-    public void PrintHeader()
+    private void PrintHeader()
     {
         FlowPanel header = new()
         {
@@ -868,7 +867,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         name.Text = name.Text.Replace(" ", "  ");
     }
 
-    public void PrintDefense(int defense)
+    private void PrintDefense(int defense)
     {
         if (defense > 0)
         {
@@ -876,7 +875,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         }
     }
 
-    public void PrintAttributes(IReadOnlyDictionary<string, int> attributes)
+    private void PrintAttributes(Dictionary<string, int> attributes)
     {
         if (attributes.Count > 0)
         {
@@ -895,7 +894,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         }
     }
 
-    public void PrintUpgrades()
+    private void PrintUpgrades()
     {
         foreach (UpgradeSlot slot in ViewModel.UpgradesSlots)
         {
@@ -987,7 +986,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
     }
 
-    public void PrintItemSkin()
+    private void PrintItemSkin()
     {
         if (ViewModel.DefaultLocked)
         {
@@ -1021,7 +1020,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         }
     }
 
-    public void PrintTransmutation()
+    private void PrintTransmutation()
     {
         if (ViewModel.DefaultLocked)
         {
@@ -1052,7 +1051,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         }
     }
 
-    public void PrintItemRarity(Extensible<Rarity> rarity)
+    private void PrintItemRarity(Extensible<Rarity> rarity)
     {
         if (rarity == Rarity.Basic)
         {
@@ -1064,7 +1063,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         }
     }
 
-    public void PrintWeightClass(Extensible<WeightClass> weightClass)
+    private void PrintWeightClass(Extensible<WeightClass> weightClass)
     {
         if (weightClass != WeightClass.Clothing)
         {
@@ -1072,7 +1071,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         }
     }
 
-    public void PrintRequiredLevel(int level)
+    private void PrintRequiredLevel(int level)
     {
         if (level > 0)
         {
@@ -1080,7 +1079,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         }
     }
 
-    public void PrintDescription(string description, bool finalNewLine = false)
+    private void PrintDescription(string description, bool finalNewLine = false)
     {
         if (string.IsNullOrEmpty(description))
         {
@@ -1104,12 +1103,12 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static")]
-    public void PrintInBank()
+    private void PrintInBank()
     {
         // TODO: bank count
     }
 
-    public void PrintItemBinding(Item item)
+    private void PrintItemBinding(Item item)
     {
         if (item is Currency or Service)
         {
@@ -1135,7 +1134,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         }
     }
 
-    public void PrintVendorValue()
+    private void PrintVendorValue()
     {
         Coin totalValue = ViewModel.TotalVendorValue;
         if (totalValue == Coin.Zero || ViewModel.Item.Flags.NoSell)
@@ -1181,7 +1180,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         label.Width = _layout.Width;
     }
 
-    public void PrintEffect(Effect effect)
+    private void PrintEffect(Effect effect)
     {
         FlowPanel panel = new()
         {
@@ -1228,7 +1227,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         };
     }
 
-    public void PrintBuff(Buff buff)
+    private void PrintBuff(Buff buff)
     {
         FormattedLabel? label = new FormattedLabelBuilder()
             .SetWidth(_layout.Width)
@@ -1240,7 +1239,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         label.Parent = _layout;
     }
 
-    public void PrintBonuses(IReadOnlyList<string> bonuses)
+    private void PrintBonuses(IReadOnlyList<string> bonuses)
     {
         StringBuilder text = new();
         foreach ((string? bonus, int ordinal) in bonuses
@@ -1252,7 +1251,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintPlainText(text.ToString(), Gray);
     }
 
-    public void PrintWeaponStrength(Weapon weapon)
+    private void PrintWeaponStrength(Weapon weapon)
     {
         FormattedLabelBuilder? builder = new FormattedLabelBuilder()
             .SetWidth(_layout.Width)
@@ -1283,7 +1282,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         label.Parent = _layout;
     }
 
-    public void PrintStatChoices(ICombatEquipment equipment)
+    private void PrintStatChoices(ICombatEquipment equipment)
     {
         if (equipment.StatChoices.Count > 0)
         {
@@ -1291,9 +1290,9 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         }
     }
 
-    public void PrintUniqueness(Item item)
+    private void PrintUniqueness()
     {
-        if (item.Flags.Unique)
+        if (ViewModel.Item.Flags.Unique)
         {
             PrintPlainText(ViewModel.Localizer["Unique"]);
         }

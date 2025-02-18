@@ -18,6 +18,7 @@ public sealed class UpgradeSelector : FlowPanel
 
     public UpgradeSelector(UpgradeSelectorViewModel viewModel)
     {
+        ThrowHelper.ThrowIfNull(viewModel);
         ViewModel = viewModel;
         WidthSizingMode = SizingMode.Fill;
         HeightSizingMode = SizingMode.AutoSize;
@@ -65,7 +66,7 @@ public sealed class UpgradeSelector : FlowPanel
         }
     }
 
-    private void SelectionChanged(ListBox<ItemsListViewModel> sender, ListBoxSelectionChangedEventArgs<ItemsListViewModel> args)
+    private void SelectionChanged(object sender, ListBoxSelectionChangedEventArgs<ItemsListViewModel> args)
     {
         if (args.AddedItems is [{ } item])
         {

@@ -25,6 +25,7 @@ public class Gw2SharpTokenProvider : ITokenProvider
         IEventAggregator eventAggregator
     )
     {
+        ThrowHelper.ThrowIfNull(parameters);
         _logger = logger;
         _parameters = parameters;
         _eventAggregator = eventAggregator;

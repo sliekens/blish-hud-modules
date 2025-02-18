@@ -12,6 +12,7 @@ public sealed class RuneEntityTypeConfiguration : IEntityTypeConfiguration<Rune>
 {
     public void Configure(EntityTypeBuilder<Rune> builder)
     {
+        ThrowHelper.ThrowIfNull(builder);
         builder.Property(rune => rune.Bonuses)
             .HasJsonValueConversion()
             .Metadata.SetValueComparer(new ListComparer<string>());

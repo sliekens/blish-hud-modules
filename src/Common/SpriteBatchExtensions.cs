@@ -31,10 +31,19 @@ public static class SpriteBatchExtensions
         VerticalAlignment verticalAlignment = VerticalAlignment.Middle,
         Rectangle? clippingRectangle = null)
     {
-
         if (string.IsNullOrEmpty(text))
         {
             return;
+        }
+
+        if (ctrl is null)
+        {
+            throw new ArgumentNullException(nameof(ctrl));
+        }
+
+        if (font is null)
+        {
+            throw new ArgumentNullException(nameof(font));
         }
 
         text = wrap ? DrawUtil.WrapText(font, text, destinationRectangle.Width) : text;

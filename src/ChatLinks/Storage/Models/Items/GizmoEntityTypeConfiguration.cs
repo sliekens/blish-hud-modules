@@ -9,6 +9,7 @@ public sealed class GizmoEntityTypeConfiguration : IEntityTypeConfiguration<Gizm
 {
     public void Configure(EntityTypeBuilder<Gizmo> builder)
     {
+        ThrowHelper.ThrowIfNull(builder);
         _ = builder.Property(gizmo => gizmo.GuildUpgradeId).HasColumnName("GuildUpgradeId");
     }
 }

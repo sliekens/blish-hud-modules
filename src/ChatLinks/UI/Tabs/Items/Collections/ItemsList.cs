@@ -15,6 +15,7 @@ public class ItemsList : ListBox<ItemsListViewModel>
 
     protected override void Bind(ItemsListViewModel viewModel, ListItem<ItemsListViewModel> listItem)
     {
+        ThrowHelper.ThrowIfNull(listItem);
         _ = Binder.Bind(viewModel, vm => vm.IsSelected, listItem);
         listItem.Menu = new ContextMenuStrip(() =>
         [

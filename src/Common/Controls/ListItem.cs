@@ -5,7 +5,7 @@ namespace SL.Common.Controls;
 
 public sealed class ListItem<TData> : Panel
 {
-    public event Action<ListItem<TData>, ListItemSelectionChangedEventArgs>? SelectionChanged;
+    public event EventHandler<ListItemSelectionChangedEventArgs>? SelectionChanged;
 
     private readonly object _lock = new();
 

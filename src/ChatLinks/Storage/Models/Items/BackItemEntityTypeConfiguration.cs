@@ -24,6 +24,7 @@ public sealed class BackItemEntityTypeConfiguration(
 {
     public void Configure(EntityTypeBuilder<Backpack> builder)
     {
+        ThrowHelper.ThrowIfNull(builder);
         _ = builder.Property(backpack => backpack.DefaultSkinId).HasColumnName("DefaultSkinId");
         _ = builder.Property(backpack => backpack.SuffixItemId).HasColumnName("SuffixItemId");
         _ = builder.Property(backpack => backpack.AttributeCombinationId).HasColumnName("AttributeCombinationId");

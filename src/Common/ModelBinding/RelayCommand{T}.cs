@@ -19,6 +19,8 @@ public sealed class RelayCommand<T>(Action<T> execute) : ICommand
         Action<EventHandler> unsubscribeCanExecuteChanged
     ) : this(execute, canExecute)
     {
+        ThrowHelper.ThrowIfNull(subscribeCanExecuteChanged);
+        ThrowHelper.ThrowIfNull(unsubscribeCanExecuteChanged);
         subscribeCanExecuteChanged.Invoke((sender, args) =>
         {
             CanExecuteChanged?.Invoke(sender, args);

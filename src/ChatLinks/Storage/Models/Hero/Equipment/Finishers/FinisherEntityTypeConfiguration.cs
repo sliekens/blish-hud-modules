@@ -12,6 +12,7 @@ public sealed class FinisherEntityTypeConfiguration : IEntityTypeConfiguration<F
 {
     public void Configure(EntityTypeBuilder<Finisher> builder)
     {
+        ThrowHelper.ThrowIfNull(builder);
         _ = builder.ToTable("Finishers");
         _ = builder.HasKey(finisher => finisher.Id);
         _ = builder.HasIndex(finisher => finisher.Name);

@@ -5,7 +5,6 @@ using GuildWars2.Items;
 
 using Microsoft.Extensions.Localization;
 
-using SL.Common;
 using SL.Common.ModelBinding;
 
 namespace SL.ChatLinks.UI.Tabs.Items.Upgrades;
@@ -26,6 +25,8 @@ public sealed class UpgradeEditorViewModel : ViewModel, IDisposable
         UpgradeSelectorViewModelFactory upgradeComponentListViewModelFactory,
         Item target)
     {
+        ThrowHelper.ThrowIfNull(eventAggregator);
+        ThrowHelper.ThrowIfNull(upgradeSlotViewModel);
         _localizer = localizer;
         _eventAggregator = eventAggregator;
         _clipboard = clipboard;
@@ -168,9 +169,9 @@ public sealed class UpgradeEditorViewModel : ViewModel, IDisposable
         return upgradeComponentListViewModel;
     }
 
-    private void Selected(object sender, UpgradeComponent args)
+    private void Selected(object sender, UpgradeSelectedEventArgs args)
     {
-        UpgradeSlotViewModel.SelectedUpgradeComponent = args;
+        UpgradeSlotViewModel.SelectedUpgradeComponent = args.Selected;
         Customizing = false;
         _eventAggregator.Publish(new UpgradeSlotChanged());
     }

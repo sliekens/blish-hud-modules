@@ -8,6 +8,8 @@ public static class ContextMenuExtensions
 {
     public static ContextMenuStripItem ToMenuItem(this ICommand command, Func<string> itemText)
     {
+        ThrowHelper.ThrowIfNull(command);
+        ThrowHelper.ThrowIfNull(itemText);
         ContextMenuStripItem item = new(itemText());
         item.Click += (_, _) =>
         {

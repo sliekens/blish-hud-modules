@@ -21,7 +21,6 @@ using Microsoft.Extensions.Options;
 using SL.ChatLinks.StaticFiles;
 using SL.ChatLinks.Storage;
 using SL.ChatLinks.Storage.Metadata;
-using SL.Common;
 
 using Language = GuildWars2.Language;
 
@@ -47,6 +46,7 @@ public sealed class DatabaseSeeder : IDisposable
         StaticDataClient staticDataClient
     )
     {
+        ThrowHelper.ThrowIfNull(eventAggregator);
         _logger = logger;
         _options = options;
         _contextFactory = contextFactory;
@@ -107,6 +107,7 @@ public sealed class DatabaseSeeder : IDisposable
 
     public async Task Migrate(Language language)
     {
+        ThrowHelper.ThrowIfNull(language);
         DataManifest currentDataManifest = await DataManifest() ?? new DataManifest
         {
             Version = 1,

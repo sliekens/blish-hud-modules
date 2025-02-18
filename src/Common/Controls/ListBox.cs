@@ -8,7 +8,7 @@ namespace SL.Common.Controls;
 
 public class ListBox<T> : FlowPanel
 {
-    public event Action<ListBox<T>, ListBoxSelectionChangedEventArgs<T>>? SelectionChanged;
+    public event EventHandler<ListBoxSelectionChangedEventArgs<T>>? SelectionChanged;
 
     private ObservableCollection<T>? _entries;
 
@@ -152,7 +152,7 @@ public class ListBox<T> : FlowPanel
         Invalidate();
     }
 
-    private void ListItemSelectionChanged(ListItem<T> sender, ListItemSelectionChangedEventArgs args)
+    private void ListItemSelectionChanged(object sender, ListItemSelectionChangedEventArgs args)
     {
         // Avoid recursively entering this routine when we update the selection
         if (_selectionChange is not null)
@@ -185,6 +185,7 @@ public class ListBox<T> : FlowPanel
 
     protected virtual void MoveItems(IList children, int oldStartingIndex, int newStartingIndex)
     {
+        ThrowHelper.ThrowIfNull(children);
         List<Control> collected = new(children.Count);
 
         for (int i = 0; i < children.Count; i++)

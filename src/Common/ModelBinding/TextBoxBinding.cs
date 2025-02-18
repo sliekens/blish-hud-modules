@@ -16,6 +16,7 @@ public sealed class TextBoxBinding<TViewModel> : ViewModelBinding<TViewModel, st
         BindingMode bindingMode
     ) : base(viewModel, propertySelector, bindingMode)
     {
+        ThrowHelper.ThrowIfNull(textBox);
         TextBox = textBox;
 
         if (bindingMode is BindingMode.ToView or BindingMode.Bidirectional)

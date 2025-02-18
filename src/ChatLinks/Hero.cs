@@ -3,8 +3,6 @@ using GuildWars2.Authorization;
 
 using Microsoft.Extensions.Logging;
 
-using SL.Common;
-
 namespace SL.ChatLinks;
 
 public sealed partial class Hero : IDisposable
@@ -23,6 +21,7 @@ public sealed partial class Hero : IDisposable
         ITokenProvider tokenProvider,
         IEventAggregator eventAggregator)
     {
+        ThrowHelper.ThrowIfNull(eventAggregator);
         _logger = logger;
         _gw2Client = gw2Client;
         _tokenProvider = tokenProvider;

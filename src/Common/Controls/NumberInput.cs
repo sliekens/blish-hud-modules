@@ -119,6 +119,7 @@ public class NumberInput : TextInputBase
 
     public override void DoUpdate(GameTime gameTime)
     {
+        ThrowHelper.ThrowIfNull(gameTime);
         switch (_action)
         {
             case NumberInputAction.Increment:
@@ -246,6 +247,7 @@ public class NumberInput : TextInputBase
 
     protected override void OnMouseMoved(MouseEventArgs e)
     {
+        ThrowHelper.ThrowIfNull(e);
         bool mouseOverSpinner = e.MousePosition.X > AbsoluteBounds.Right - SpinnerWidth;
         bool mouseOverUpButton = mouseOverSpinner && e.MousePosition.Y < AbsoluteBounds.Top + SpinnerButtonHeight;
         _glow = (mouseOverSpinner, mouseOverUpButton) switch
@@ -283,6 +285,7 @@ public class NumberInput : TextInputBase
 
     protected override void OnLeftMouseButtonPressed(MouseEventArgs e)
     {
+        ThrowHelper.ThrowIfNull(e);
         if (e.MousePosition.X > AbsoluteBounds.Right - SpinnerWidth)
         {
             UnsetFocus();

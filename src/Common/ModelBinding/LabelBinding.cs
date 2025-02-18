@@ -15,6 +15,7 @@ public sealed class LabelBinding<TViewModel> : ViewModelBinding<TViewModel, stri
         Label label
     ) : base(viewModel, propertySelector, BindingMode.ToView)
     {
+        ThrowHelper.ThrowIfNull(label);
         Label = label;
         label.Text = Snapshot();
     }

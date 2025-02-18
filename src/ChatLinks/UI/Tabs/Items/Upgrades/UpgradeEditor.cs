@@ -6,7 +6,6 @@ using Blish_HUD.Input;
 
 using Microsoft.Xna.Framework;
 
-using SL.Common;
 using SL.Common.Controls;
 using SL.Common.ModelBinding;
 
@@ -24,6 +23,7 @@ public sealed class UpgradeEditor : FlowPanel
 
     public UpgradeEditor(UpgradeEditorViewModel viewModel)
     {
+        ThrowHelper.ThrowIfNull(viewModel);
         FlowDirection = ControlFlowDirection.SingleTopToBottom;
         Width = 350;
         HeightSizingMode = SizingMode.AutoSize;
