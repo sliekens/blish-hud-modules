@@ -23,8 +23,10 @@ public sealed class DictionaryComparer<TKey, TValue>() : ValueComparer<IDictiona
         return dictionary?.Aggregate(0, (hash, pair) => HashCode.Combine(hash, pair.Key, pair.Value)) ?? 0;
     }
 
-    private static Dictionary<TKey, TValue> GetSnapshot(IDictionary<TKey, TValue> dictionary)
+#pragma warning disable CA1859 // Use concrete types when possible for improved performance
+    private static IDictionary<TKey, TValue> GetSnapshot(IDictionary<TKey, TValue> dictionary)
     {
         return new Dictionary<TKey, TValue>(dictionary);
     }
+#pragma warning restore CA1859 // Use concrete types when possible for improved performance
 }
