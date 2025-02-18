@@ -69,6 +69,8 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
         {
             _ = optionsBuilder.UseSqlite("Data Source=data.db");
         }
+
+        optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
     }
 
     private static string Serialize<T>(T value)

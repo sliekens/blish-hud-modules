@@ -29,7 +29,6 @@ public sealed class ItemSearch(IDbContextFactory contextFactory, ILocale locale)
     {
         await using ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
         await foreach (Item? item in context.Items
-           .AsNoTracking()
            .OrderByDescending(item => item.Id)
            .Take(limit)
            .AsAsyncEnumerable())
@@ -66,7 +65,6 @@ public sealed class ItemSearch(IDbContextFactory contextFactory, ILocale locale)
             resultContext.ResultTotal = await query.CountAsync(cancellationToken: cancellationToken);
 
             await foreach (Item? item in query
-               .AsNoTracking()
                .Take(limit)
                .AsAsyncEnumerable()
                .WithCancellation(cancellationToken))
@@ -83,7 +81,7 @@ public sealed class ItemSearch(IDbContextFactory contextFactory, ILocale locale)
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         await using ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
-        Item item = await context.Items.AsNoTracking()
+        Item item = await context.Items
             .SingleOrDefaultAsync(row => row.Id == link.ItemId, cancellationToken);
         if (item is null)
         {
@@ -197,7 +195,6 @@ public sealed class ItemSearch(IDbContextFactory contextFactory, ILocale locale)
 
         resultContext.ResultTotal += relatedItems.Count;
         await foreach (Item? relatedItem in context.Items
-                           .AsNoTracking()
                            .Where(i => relatedItems.Contains(i.Id))
                            .AsAsyncEnumerable()
                            .WithCancellation(cancellationToken))
