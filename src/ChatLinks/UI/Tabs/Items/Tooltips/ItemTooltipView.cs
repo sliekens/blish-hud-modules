@@ -1286,7 +1286,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
     {
         if (equipment.StatChoices.Count > 0)
         {
-            PrintPlainText(ViewModel.Localizer["Double-click to select stats."]);
+            PrintPlainText(ViewModel.Localizer["Double-click to select stats"]);
         }
     }
 
