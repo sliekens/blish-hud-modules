@@ -36,10 +36,8 @@ public sealed class UpgradeSelector : FlowPanel
     {
         foreach (IGrouping<string, ItemsListViewModel> group in ViewModel.Options)
         {
-            ItemsList list = new()
-            {
-                Entries = [.. group]
-            };
+            ItemsList list = new();
+            list.SetEntries([.. group]);
 
             _accordion.AddSection(group.Key, list);
 

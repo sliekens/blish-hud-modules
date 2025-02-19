@@ -7,9 +7,11 @@ namespace SL.ChatLinks.StaticFiles;
 
 public sealed class StaticDataClient(HttpClient httpClient)
 {
+    private static readonly Uri SeedIndex = new("seed-index.json", UriKind.Relative);
+
     public async Task<SeedIndex> GetSeedIndex(CancellationToken cancellationToken)
     {
-        using HttpResponseMessage response = await httpClient.GetAsync("seed-index.json", cancellationToken).ConfigureAwait(false);
+        using HttpResponseMessage response = await httpClient.GetAsync(SeedIndex, cancellationToken).ConfigureAwait(false);
         using Stream content = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
         _ = response.EnsureSuccessStatusCode();
         return await JsonSerializer.DeserializeAsync<SeedIndex>(content, cancellationToken: cancellationToken).ConfigureAwait(false)

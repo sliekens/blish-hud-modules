@@ -10,8 +10,6 @@ public class ListBox<T> : FlowPanel
 {
     public event EventHandler<ListBoxSelectionChangedEventArgs<T>>? SelectionChanged;
 
-    private ObservableCollection<T>? _entries;
-
     private ListBoxSelectionChange<T>? _selectionChange;
 
     private event EventHandler<ListItemSelectionChangedEventArgs>? SelectionChanging;
@@ -26,27 +24,25 @@ public class ListBox<T> : FlowPanel
         // ReSharper restore VirtualMemberCallInConstructor
     }
 
-    public ObservableCollection<T>? Entries
+    public ObservableCollection<T>? Entries { get; private set; }
+
+    public void SetEntries(ObservableCollection<T>? value)
     {
-        get => _entries;
-        set
+        if (Entries == value)
         {
-            if (_entries == value)
-            {
-                return;
-            }
+            return;
+        }
 
-            if (_entries is not null)
-            {
-                _entries.CollectionChanged -= EntriesCollectionChanged;
-            }
+        if (Entries is not null)
+        {
+            Entries.CollectionChanged -= EntriesCollectionChanged;
+        }
 
-            _entries = value;
-            if (value is not null)
-            {
-                value.CollectionChanged += EntriesCollectionChanged;
-                RefreshItems();
-            }
+        Entries = value;
+        if (value is not null)
+        {
+            value.CollectionChanged += EntriesCollectionChanged;
+            RefreshItems();
         }
     }
 
@@ -218,13 +214,13 @@ public class ListBox<T> : FlowPanel
 
     private void RefreshItems()
     {
-        if (_entries is null)
+        if (Entries is null)
         {
             return;
         }
 
         ClearItems();
-        foreach (T? item in _entries)
+        foreach (T? item in Entries)
         {
             _ = AddItem(item);
         }

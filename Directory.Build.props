@@ -41,12 +41,12 @@
         <AnalysisModeReliability>All</AnalysisModeReliability>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/security-warnings -->
-        <AnalysisModeSecurity>Recommended</AnalysisModeSecurity>
+        <AnalysisModeSecurity>All</AnalysisModeSecurity>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ -->
-        <AnalysisModeStyle>Recommended</AnalysisModeStyle>
+        <AnalysisModeStyle>All</AnalysisModeStyle>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/usage-warnings -->
-        <AnalysisModeUsage>Recommended</AnalysisModeUsage>
+        <AnalysisModeUsage>All</AnalysisModeUsage>
     </PropertyGroup>
 </Project>

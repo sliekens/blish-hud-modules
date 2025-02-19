@@ -145,7 +145,16 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
     protected override void Unload()
     {
         _eventAggregator?.Publish(new ModuleUnloading());
-        _serviceProvider?.Dispose();
-        _moduleSettings?.Dispose();
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _serviceProvider?.Dispose();
+            _moduleSettings?.Dispose();
+        }
+
+        base.Dispose(disposing);
     }
 }

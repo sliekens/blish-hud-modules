@@ -677,5 +677,6 @@ public sealed class DatabaseSeeder : IDisposable
     public void Dispose()
     {
         _eventAggregator.Unsubscribe<LocaleChanged>(OnLocaleChanged);
+        _syncSemaphore.Dispose();
     }
 }

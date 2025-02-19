@@ -81,9 +81,10 @@ public sealed class ItemsTabView : View, IDisposable
             Parent = searchLayout,
             WidthSizingMode = SizingMode.Standard,
             Width = 400,
-            HeightSizingMode = SizingMode.Fill,
-            Entries = ViewModel.SearchResults
+            HeightSizingMode = SizingMode.Fill
         };
+
+        searchResults.SetEntries(ViewModel.SearchResults);
 
         searchResults.SelectionChanged += SelectionChanged;
 
@@ -108,7 +109,7 @@ public sealed class ItemsTabView : View, IDisposable
                     break;
 
                 case nameof(ViewModel.SearchResults):
-                    searchResults.Entries = ViewModel.SearchResults;
+                    searchResults.SetEntries(ViewModel.SearchResults);
                     break;
                 default:
                     break;
