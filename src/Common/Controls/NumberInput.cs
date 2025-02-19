@@ -469,7 +469,7 @@ public class NumberInput : TextInputBase
 
     private void OnTextChanged(object sender, EventArgs e)
     {
-        if (_text == "")
+        if (string.IsNullOrEmpty(_text))
         {
             return;
         }

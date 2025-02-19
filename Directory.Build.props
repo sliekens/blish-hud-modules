@@ -32,7 +32,7 @@
         <AnalysisModeNaming>All</AnalysisModeNaming>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/performance-warnings -->
-        <AnalysisModePerformance>Recommended</AnalysisModePerformance>
+        <AnalysisModePerformance>All</AnalysisModePerformance>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/core/deploying/single-file/warnings/overview -->
         <AnalysisModeSingleFile>Recommended</AnalysisModeSingleFile>

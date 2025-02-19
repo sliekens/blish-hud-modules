@@ -7,6 +7,7 @@ using SQLitePCL;
 
 namespace SL.ChatLinks.EF;
 
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812", Justification = "This class is used by Entity Framework tooling.")]
 internal sealed class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ChatLinksContext>
 {
     static DesignTimeDbContextFactory()
