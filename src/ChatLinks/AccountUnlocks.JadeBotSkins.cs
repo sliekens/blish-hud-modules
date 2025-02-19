@@ -15,7 +15,7 @@ public sealed partial class AccountUnlocks
     {
         try
         {
-            return _unlockedJadeBotSkins ??= await GetUnlockedJadeBotSkinsInternal(cancellationToken);
+            return _unlockedJadeBotSkins ??= await GetUnlockedJadeBotSkinsInternal(cancellationToken).ConfigureAwait(false);
         }
         catch (Exception reason)
         {
@@ -32,10 +32,10 @@ public sealed partial class AccountUnlocks
             return [];
         }
 
-        string? token = await _tokenProvider.GetTokenAsync(cancellationToken);
+        string? token = await _tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
         HashSet<int> values = await _gw2Client.Hero.Equipment.JadeBots
             .GetUnlockedJadeBotSkins(token, cancellationToken: cancellationToken)
-            .ValueOnly();
+            .ValueOnly().ConfigureAwait(false);
 
         return [.. values];
     }

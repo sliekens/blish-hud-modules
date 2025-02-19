@@ -9,23 +9,23 @@ public sealed class StaticDataClient(HttpClient httpClient)
 {
     public async Task<SeedIndex> GetSeedIndex(CancellationToken cancellationToken)
     {
-        using HttpResponseMessage response = await httpClient.GetAsync("seed-index.json", cancellationToken);
-        using Stream content = await response.Content.ReadAsStreamAsync();
+        using HttpResponseMessage response = await httpClient.GetAsync("seed-index.json", cancellationToken).ConfigureAwait(false);
+        using Stream content = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
         _ = response.EnsureSuccessStatusCode();
-        return await JsonSerializer.DeserializeAsync<SeedIndex>(content, cancellationToken: cancellationToken)
+        return await JsonSerializer.DeserializeAsync<SeedIndex>(content, cancellationToken: cancellationToken).ConfigureAwait(false)
             ?? throw new InvalidOperationException("Couldn't retrieve seed index.");
     }
 
     public async Task Download(SeedDatabase database, string destination, CancellationToken cancellationToken)
     {
         ThrowHelper.ThrowIfNull(database);
-        using HttpResponseMessage response = await httpClient.GetAsync(database.Url, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-        using Stream content = await response.Content.ReadAsStreamAsync();
+        using HttpResponseMessage response = await httpClient.GetAsync(database.Url, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+        using Stream content = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
         _ = response.EnsureSuccessStatusCode();
         string tmp = Path.GetTempFileName();
         using (FileStream fileStream = File.OpenWrite(tmp))
         {
-            await content.CopyToAsync(fileStream, 8192, cancellationToken);
+            await content.CopyToAsync(fileStream, 8192, cancellationToken).ConfigureAwait(false);
         }
 
         using (SHA256 sha256 = SHA256.Create())

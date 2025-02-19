@@ -147,8 +147,11 @@ public sealed class ChatLinkEditorViewModel : ViewModel, IDisposable
         OnPropertyChanged(nameof(ResetTooltip));
         OnPropertyChanged(nameof(InfusionWarning));
 
-        await using ChatLinksContext context = _contextFactory.CreateDbContext(args.Language);
-        Item = context.Items.SingleOrDefault(item => item.Id == Item.Id);
+        ChatLinksContext context = _contextFactory.CreateDbContext(args.Language);
+        await using (context.ConfigureAwait(false))
+        {
+            Item = context.Items.SingleOrDefault(item => item.Id == Item.Id);
+        }
     }
 
     public int MaxStackSize

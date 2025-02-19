@@ -24,10 +24,13 @@ public sealed class Customizer(
             return null;
         }
 
-        await using ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
-        return await context.Items
-            .OfType<UpgradeComponent>()
-            .SingleOrDefaultAsync(item => item.Id == upgradeComponentId.Value);
+        ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
+        await using (context.ConfigureAwait(false))
+        {
+            return await context.Items
+                .OfType<UpgradeComponent>()
+                .SingleOrDefaultAsync(item => item.Id == upgradeComponentId.Value).ConfigureAwait(false);
+        }
     }
 
     public UpgradeComponent? GetUpgradeComponent(int? upgradeComponentId)

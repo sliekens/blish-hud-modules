@@ -12,7 +12,9 @@ public static class LogProcessor
     {
         _ = Task.Factory.StartNew(
             ProcessQueue,
-            TaskCreationOptions.LongRunning
+            CancellationToken.None,
+            TaskCreationOptions.LongRunning,
+            TaskScheduler.Default
         );
     }
 
@@ -26,7 +28,7 @@ public static class LogProcessor
     {
         while (true)
         {
-            await QueueSemaphore.WaitAsync();
+            await QueueSemaphore.WaitAsync().ConfigureAwait(false);
 
             while (Work.TryDequeue(out Action? work))
             {

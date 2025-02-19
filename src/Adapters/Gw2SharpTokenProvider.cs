@@ -44,7 +44,7 @@ public class Gw2SharpTokenProvider : ITokenProvider
 
     public async Task<string?> GetTokenAsync(CancellationToken cancellationToken)
     {
-        return Token ??= await GetTokenInternal(cancellationToken);
+        return Token ??= await GetTokenInternal(cancellationToken).ConfigureAwait(false);
     }
 
     private async Task<string?> GetTokenInternal(CancellationToken cancellationToken)
@@ -63,7 +63,7 @@ public class Gw2SharpTokenProvider : ITokenProvider
                 .V2
                 .CreateSubtoken
                 .WithPermissions(_parameters.Gw2ApiManager.Permissions)
-                .GetAsync(cancellationToken);
+                .GetAsync(cancellationToken).ConfigureAwait(false);
 
             return createdSubToken.Subtoken;
         }

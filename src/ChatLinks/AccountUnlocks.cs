@@ -37,13 +37,13 @@ public sealed partial class AccountUnlocks : IDisposable
 
     private async Task OnAuthorizationInvalidated(AuthorizationInvalidated _)
     {
-        string? token = await _tokenProvider.GetTokenAsync(CancellationToken.None);
+        string? token = await _tokenProvider.GetTokenAsync(CancellationToken.None).ConfigureAwait(false);
         if (token is null)
         {
             return;
         }
 
-        if (!await HasAccountPermission(token))
+        if (!await HasAccountPermission(token).ConfigureAwait(false))
         {
             return;
         }
@@ -61,7 +61,7 @@ public sealed partial class AccountUnlocks : IDisposable
 
         try
         {
-            _unlockedFinishers = await unlockedFinishersTask;
+            _unlockedFinishers = await unlockedFinishersTask.ConfigureAwait(false);
         }
         catch (Exception reason)
         {
@@ -70,7 +70,7 @@ public sealed partial class AccountUnlocks : IDisposable
 
         try
         {
-            _unlockedGliderSkins = await unlockedGliderSkinsTask;
+            _unlockedGliderSkins = await unlockedGliderSkinsTask.ConfigureAwait(false);
         }
         catch (Exception reason)
         {
@@ -79,7 +79,7 @@ public sealed partial class AccountUnlocks : IDisposable
 
         try
         {
-            _unlockedJadeBotSkins = await unlockedJadeBotSkinsTask;
+            _unlockedJadeBotSkins = await unlockedJadeBotSkinsTask.ConfigureAwait(false);
         }
         catch (Exception reason)
         {
@@ -88,7 +88,7 @@ public sealed partial class AccountUnlocks : IDisposable
 
         try
         {
-            _unlockedMailCarriers = await unlockedMailCarriersTask;
+            _unlockedMailCarriers = await unlockedMailCarriersTask.ConfigureAwait(false);
         }
         catch (Exception reason)
         {
@@ -97,7 +97,7 @@ public sealed partial class AccountUnlocks : IDisposable
 
         try
         {
-            _unlockedMiniatures = await unlockedMiniaturesTask;
+            _unlockedMiniatures = await unlockedMiniaturesTask.ConfigureAwait(false);
         }
         catch (Exception reason)
         {
@@ -106,7 +106,7 @@ public sealed partial class AccountUnlocks : IDisposable
 
         try
         {
-            _unlockedMistChampionSkins = await unlockedMistChampionSkinsTask;
+            _unlockedMistChampionSkins = await unlockedMistChampionSkinsTask.ConfigureAwait(false);
         }
         catch (Exception reason)
         {
@@ -115,7 +115,7 @@ public sealed partial class AccountUnlocks : IDisposable
 
         try
         {
-            _unlockedNovelties = await unlockedNoveltiesTask;
+            _unlockedNovelties = await unlockedNoveltiesTask.ConfigureAwait(false);
         }
         catch (Exception reason)
         {
@@ -124,7 +124,7 @@ public sealed partial class AccountUnlocks : IDisposable
 
         try
         {
-            _unlockedOutfits = await unlockedOutfitsTask;
+            _unlockedOutfits = await unlockedOutfitsTask.ConfigureAwait(false);
         }
         catch (Exception reason)
         {
@@ -133,7 +133,7 @@ public sealed partial class AccountUnlocks : IDisposable
 
         try
         {
-            _unlockedWardrobe = await unlockedWardrobeTask;
+            _unlockedWardrobe = await unlockedWardrobeTask.ConfigureAwait(false);
         }
         catch (Exception reason)
         {
@@ -142,7 +142,7 @@ public sealed partial class AccountUnlocks : IDisposable
 
         try
         {
-            _unlockedRecipes = await unlockedRecipesTask;
+            _unlockedRecipes = await unlockedRecipesTask.ConfigureAwait(false);
         }
         catch (Exception reason)
         {
@@ -159,14 +159,14 @@ public sealed partial class AccountUnlocks : IDisposable
         {
             if (attempt > 0)
             {
-                await Task.Delay(1000);
+                await Task.Delay(1000).ConfigureAwait(false);
             }
 
             try
             {
                 TokenInfo tokenInfo = await _gw2Client.Tokens
                     .GetTokenInfo(token, MissingMemberBehavior.Undefined, CancellationToken.None)
-                    .ValueOnly();
+                    .ValueOnly().ConfigureAwait(false);
                 return tokenInfo.Permissions.Contains(Permission.Account);
             }
             catch (Exception reason)

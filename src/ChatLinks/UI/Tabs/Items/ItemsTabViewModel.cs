@@ -53,19 +53,19 @@ public sealed class ItemsTabViewModel(
     private async Task OnLocaleChanged(LocaleChanged args)
     {
         OnPropertyChanged(nameof(SearchPlaceholderText));
-        await Task.Run(OnSearch);
+        await Task.Run(OnSearch).ConfigureAwait(false);
     }
 
     private async Task OnDatabaseDownloaded(DatabaseDownloaded downloaded)
     {
-        await Task.Run(OnSearch);
+        await Task.Run(OnSearch).ConfigureAwait(false);
     }
 
     private async Task OnDatabaseSeeded(DatabaseSeeded args)
     {
         if (args.Updated["items"] > 0)
         {
-            await Task.Run(OnSearch);
+            await Task.Run(OnSearch).ConfigureAwait(false);
         }
     }
 
@@ -97,14 +97,14 @@ public sealed class ItemsTabViewModel(
 
     public ICommand SearchCommand => new AsyncRelayCommand(async () =>
     {
-        await Task.Run(OnSearch);
+        await Task.Run(OnSearch).ConfigureAwait(false);
     });
 
     public string SearchPlaceholderText => localizer["Search placeholder"];
 
     public async Task LoadAsync()
     {
-        await Task.Run(async () => await NewItems(CancellationToken.None));
+        await Task.Run(async () => await NewItems(CancellationToken.None).ConfigureAwait(false)).ConfigureAwait(false);
     }
 
     public ChatLinkEditorViewModel CreateChatLinkEditorViewModel(Item item)
@@ -125,13 +125,13 @@ public sealed class ItemsTabViewModel(
         try
         {
             // Debounce search
-            await Task.Delay(300, cancellationTokenSource.Token);
+            await Task.Delay(300, cancellationTokenSource.Token).ConfigureAwait(false);
 
             // Ensure exclusive access to the DbContext (not thread-safe)
-            await _searchLock.WaitAsync(cancellationTokenSource.Token);
+            await _searchLock.WaitAsync(cancellationTokenSource.Token).ConfigureAwait(false);
             try
             {
-                await DoSearch(cancellationTokenSource.Token);
+                await DoSearch(cancellationTokenSource.Token).ConfigureAwait(false);
             }
             finally
             {
@@ -167,10 +167,10 @@ public sealed class ItemsTabViewModel(
         switch (query.Length)
         {
             case 0:
-                await NewItems(cancellationToken);
+                await NewItems(cancellationToken).ConfigureAwait(false);
                 break;
             case >= 3:
-                await Query(query, cancellationToken);
+                await Query(query, cancellationToken).ConfigureAwait(false);
                 break;
             default:
                 break;
@@ -186,7 +186,7 @@ public sealed class ItemsTabViewModel(
 
             int maxResults = options.CurrentValue.MaxResultCount;
             ResultContext context = new();
-            await foreach (Item item in search.Search(text, maxResults, context, cancellationToken))
+            await foreach (Item item in search.Search(text, maxResults, context, cancellationToken).ConfigureAwait(false))
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
@@ -227,7 +227,7 @@ public sealed class ItemsTabViewModel(
                 SearchResults.Add(viewModel);
             }
 
-            ResultTotal = await search.CountItems();
+            ResultTotal = await search.CountItems().ConfigureAwait(false);
             ResultText = ResultTotal <= maxResults
                 ? localizer["Total results", ResultTotal]
                 : localizer["Partial results", maxResults, ResultTotal];

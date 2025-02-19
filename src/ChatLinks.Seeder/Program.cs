@@ -30,4 +30,4 @@ IHost host = Host.CreateDefaultBuilder(args)
     .Build();
 
 using DatabaseSeeder seeder = host.Services.GetRequiredService<DatabaseSeeder>();
-await seeder.SeedAll();
+await seeder.SeedAll().ConfigureAwait(false);

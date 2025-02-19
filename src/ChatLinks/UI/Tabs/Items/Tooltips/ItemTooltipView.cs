@@ -40,7 +40,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
     protected override async Task<bool> Load(IProgress<string> progress)
     {
-        await ViewModel.Load(progress);
+        await ViewModel.Load(progress).ConfigureAwait(false);
         return true;
     }
 

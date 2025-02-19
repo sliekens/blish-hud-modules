@@ -113,7 +113,7 @@ public sealed class MainIconViewModel(
 
     public AsyncRelayCommand ClickCommand => new(async () =>
     {
-        await eventAggregator.PublishAsync(new MainIconClicked(), CancellationToken.None);
+        await eventAggregator.PublishAsync(new MainIconClicked(), CancellationToken.None).ConfigureAwait(false);
     });
 
     public AsyncRelayCommand SyncCommand => new(
@@ -121,10 +121,10 @@ public sealed class MainIconViewModel(
         {
             try
             {
-                await await Task.Factory.StartNew(async () =>
+                await Task.Run(async () =>
                 {
-                    await seeder.Sync(locale.Current, CancellationToken.None);
-                }, TaskCreationOptions.LongRunning);
+                    await seeder.Sync(locale.Current, CancellationToken.None).ConfigureAwait(false);
+                }).ConfigureAwait(false);
 
                 ScreenNotification.ShowNotification(localizer["Chat Links database is up-to-date"], ScreenNotification.NotificationType.Green);
             }
@@ -201,12 +201,9 @@ public sealed class MainIconViewModel(
 
         ContextMenuStripItem koFiItem = KoFiCommand.ToMenuItem(() => KoFiLabel);
 
-        return
-        [
-            bananaModeItem,
-            raiseStackSizeItem,
-            syncItem,
-            koFiItem
-        ];
+        yield return bananaModeItem;
+        yield return raiseStackSizeItem;
+        yield return syncItem;
+        yield return koFiItem;
     }
 }

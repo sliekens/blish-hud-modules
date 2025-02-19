@@ -13,11 +13,13 @@ public class ChatLinksContextTest
         DbContextOptions<ChatLinksContext> options = new DbContextOptionsBuilder<ChatLinksContext>()
             .Options;
         ChatLinksContext sut = new(options);
+        await using (sut.ConfigureAwait(true))
+        {
+            _ = await sut.Database.EnsureDeletedAsync().ConfigureAwait(true);
+            await sut.Database.MigrateAsync().ConfigureAwait(true);
+            IEnumerable<string> actual = await sut.Database.GetPendingMigrationsAsync().ConfigureAwait(true);
 
-        _ = await sut.Database.EnsureDeletedAsync();
-        await sut.Database.MigrateAsync();
-        IEnumerable<string> actual = await sut.Database.GetPendingMigrationsAsync();
-
-        Assert.Empty(actual);
+            Assert.Empty(actual);
+        }
     }
 }

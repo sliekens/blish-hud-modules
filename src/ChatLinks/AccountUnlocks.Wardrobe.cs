@@ -15,7 +15,7 @@ public sealed partial class AccountUnlocks
     {
         try
         {
-            return _unlockedWardrobe ??= await GetUnlockedWardrobeInternal(cancellationToken);
+            return _unlockedWardrobe ??= await GetUnlockedWardrobeInternal(cancellationToken).ConfigureAwait(false);
         }
         catch (Exception reason)
         {
@@ -31,10 +31,10 @@ public sealed partial class AccountUnlocks
             return [];
         }
 
-        string? token = await _tokenProvider.GetTokenAsync(cancellationToken);
+        string? token = await _tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
         HashSet<int> values = await _gw2Client.Hero.Equipment.Wardrobe
             .GetUnlockedSkins(token, cancellationToken)
-            .ValueOnly();
+            .ValueOnly().ConfigureAwait(false);
 
         return [.. values];
     }

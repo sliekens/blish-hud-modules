@@ -111,7 +111,7 @@ public sealed class DefaultEventAggregator : IEventAggregator
 
         if (tasks.Count > 0)
         {
-            await WhenAllWithCancellation(tasks, cancellationToken);
+            await WhenAllWithCancellation(tasks, cancellationToken).ConfigureAwait(false);
         }
     }
 

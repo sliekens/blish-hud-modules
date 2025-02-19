@@ -19,7 +19,7 @@ public class StaticDataClientTest
 
         StaticDataClient sut = sp.GetRequiredService<StaticDataClient>();
 
-        SeedIndex actual = await sut.GetSeedIndex(CancellationToken.None);
+        SeedIndex actual = await sut.GetSeedIndex(CancellationToken.None).ConfigureAwait(true);
 
         Assert.NotNull(actual);
         Assert.NotEmpty(actual.Databases);

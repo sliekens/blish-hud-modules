@@ -119,13 +119,13 @@ internal static class Resiliency
         }
 
         // IMPORTANT: buffer the Content to make ReadAsStreamAsync return a rewindable MemoryStream
-        await attempt.Result.Content.LoadIntoBufferAsync();
+        await attempt.Result.Content.LoadIntoBufferAsync().ConfigureAwait(false);
 
         // ALSO IMPORTANT: do not dispose the MemoryStream because subsequent ReadAsStreamAsync calls return the same instance
-        Stream? content = await attempt.Result.Content.ReadAsStreamAsync();
+        Stream? content = await attempt.Result.Content.ReadAsStreamAsync().ConfigureAwait(false);
         try
         {
-            using JsonDocument json = await JsonDocument.ParseAsync(content);
+            using JsonDocument json = await JsonDocument.ParseAsync(content).ConfigureAwait(false);
             return json.RootElement.TryGetProperty("text", out JsonElement text) ? text.GetString() : null;
         }
         finally

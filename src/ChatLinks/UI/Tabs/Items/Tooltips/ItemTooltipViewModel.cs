@@ -143,71 +143,73 @@ public sealed class ItemTooltipViewModel(
         {
             case Transmutation transmutation:
                 progress.Report("Checking unlock status...");
-                await GetSkin(transmutation.SkinIds.First());
+                await GetSkin(transmutation.SkinIds.First()).ConfigureAwait(false);
                 break;
             case Armor armor:
                 progress.Report("Checking unlock status...");
-                await GetSkin(armor.DefaultSkinId);
+                await GetSkin(armor.DefaultSkinId).ConfigureAwait(false);
                 break;
             case Backpack back:
                 progress.Report("Checking unlock status...");
-                await GetSkin(back.DefaultSkinId);
+                await GetSkin(back.DefaultSkinId).ConfigureAwait(false);
                 break;
             case Weapon weapon:
                 progress.Report("Checking unlock status...");
-                await GetSkin(weapon.DefaultSkinId);
+                await GetSkin(weapon.DefaultSkinId).ConfigureAwait(false);
                 break;
             case ContentUnlocker unlocker:
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    await using ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
-
-                    Finisher? finisher = await context.Finishers
-                        .FromSqlInterpolated($"""
+                    ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
+                    await using (context.ConfigureAwait(false))
+                    {
+                        Finisher? finisher = await context.Finishers
+                            .FromSqlInterpolated($"""
                                               SELECT *
                                               FROM Finishers, json_each(Finishers.UnlockItemIds)
                                               WHERE json_each.value = {unlocker.Id}
                                               """)
-                        .FirstOrDefaultAsync();
-                    if (finisher is not null)
-                    {
-                        if (hero.UnlocksAvailable)
+                            .FirstOrDefaultAsync().ConfigureAwait(false);
+                        if (finisher is not null)
                         {
-                            IReadOnlyList<int> unlocks = await hero.GetUnlockedFinishers(CancellationToken.None);
-                            Unlocked = unlocks.Contains(finisher.Id);
-                        }
-                        else
-                        {
-                            AuthorizationText = Localizer["Grant unlocks permission"];
+                            if (hero.UnlocksAvailable)
+                            {
+                                IReadOnlyList<int> unlocks = await hero.GetUnlockedFinishers(CancellationToken.None).ConfigureAwait(false);
+                                Unlocked = unlocks.Contains(finisher.Id);
+                            }
+                            else
+                            {
+                                AuthorizationText = Localizer["Grant unlocks permission"];
+                            }
+
+                            DefaultLocked = true;
+                            break;
                         }
 
-                        DefaultLocked = true;
-                        break;
-                    }
-
-                    MailCarrier? mailCarrier = await context.MailCarrriers
-                        .FromSqlInterpolated($"""
+                        MailCarrier? mailCarrier = await context.MailCarrriers
+                            .FromSqlInterpolated($"""
                                               SELECT *
                                               FROM MailCarriers, json_each(MailCarriers.UnlockItemIds)
                                               WHERE json_each.value = {unlocker.Id}
                                               """)
-                        .FirstOrDefaultAsync();
-                    if (mailCarrier is not null)
-                    {
-                        if (hero.UnlocksAvailable)
+                            .FirstOrDefaultAsync().ConfigureAwait(false);
+                        if (mailCarrier is not null)
                         {
-                            IReadOnlyList<int> unlocks = await hero.GetUnlockedMailCarriers(CancellationToken.None);
-                            Unlocked = unlocks.Contains(mailCarrier.Id);
-                        }
-                        else
-                        {
-                            AuthorizationText = Localizer["Grant unlocks permission"];
+                            if (hero.UnlocksAvailable)
+                            {
+                                IReadOnlyList<int> unlocks = await hero.GetUnlockedMailCarriers(CancellationToken.None).ConfigureAwait(false);
+                                Unlocked = unlocks.Contains(mailCarrier.Id);
+                            }
+                            else
+                            {
+                                AuthorizationText = Localizer["Grant unlocks permission"];
 
-                        }
+                            }
 
-                        DefaultLocked = true;
-                        break;
+                            DefaultLocked = true;
+                            break;
+                        }
                     }
                 }
                 catch (Exception reason)
@@ -220,21 +222,24 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    await using ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
-                    DyeColor? dye = context.Colors.FirstOrDefault(dye => dye.ItemId == unlocker.Id);
-                    if (dye is not null)
+                    ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
+                    await using (context.ConfigureAwait(false))
                     {
-                        if (hero.UnlocksAvailable)
+                        DyeColor? dye = context.Colors.FirstOrDefault(dye => dye.ItemId == unlocker.Id);
+                        if (dye is not null)
                         {
-                            IReadOnlyList<int> unlocks = await hero.GetUnlockedDyes(CancellationToken.None);
-                            Unlocked = unlocks.Contains(dye.Id);
-                        }
-                        else
-                        {
-                            AuthorizationText = Localizer["Grant unlocks permission"];
-                        }
+                            if (hero.UnlocksAvailable)
+                            {
+                                IReadOnlyList<int> unlocks = await hero.GetUnlockedDyes(CancellationToken.None).ConfigureAwait(false);
+                                Unlocked = unlocks.Contains(dye.Id);
+                            }
+                            else
+                            {
+                                AuthorizationText = Localizer["Grant unlocks permission"];
+                            }
 
-                        DefaultLocked = true;
+                            DefaultLocked = true;
+                        }
                     }
                 }
                 catch (Exception reason)
@@ -247,28 +252,30 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    await using ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
-
-                    GliderSkin? gliderSkin = await context.Gliders
-                        .FromSqlInterpolated($"""
+                    ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
+                    await using (context.ConfigureAwait(false))
+                    {
+                        GliderSkin? gliderSkin = await context.Gliders
+                            .FromSqlInterpolated($"""
                                               SELECT *
                                               FROM Gliders, json_each(Gliders.UnlockItemIds)
                                               WHERE json_each.value = {unlocker.Id}
                                               """)
-                        .FirstOrDefaultAsync();
-                    if (gliderSkin is not null)
-                    {
-                        if (hero.UnlocksAvailable)
+                            .FirstOrDefaultAsync().ConfigureAwait(false);
+                        if (gliderSkin is not null)
                         {
-                            IReadOnlyList<int> unlocks = await hero.GetUnlockedGliderSkins(CancellationToken.None);
-                            Unlocked = unlocks.Contains(gliderSkin.Id);
-                        }
-                        else
-                        {
-                            AuthorizationText = Localizer["Grant unlocks permission"];
-                        }
+                            if (hero.UnlocksAvailable)
+                            {
+                                IReadOnlyList<int> unlocks = await hero.GetUnlockedGliderSkins(CancellationToken.None).ConfigureAwait(false);
+                                Unlocked = unlocks.Contains(gliderSkin.Id);
+                            }
+                            else
+                            {
+                                AuthorizationText = Localizer["Grant unlocks permission"];
+                            }
 
-                        DefaultLocked = true;
+                            DefaultLocked = true;
+                        }
                     }
                 }
                 catch (Exception reason)
@@ -281,23 +288,25 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    await using ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
-
-                    JadeBotSkin? jadeBotSkin =
-                        context.JadeBots.FirstOrDefault(jadeBotSkin => jadeBotSkin.UnlockItemId == unlocker.Id);
-                    if (jadeBotSkin is not null)
+                    ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
+                    await using (context.ConfigureAwait(false))
                     {
-                        if (hero.UnlocksAvailable && hero.InventoriesAvailable)
+                        JadeBotSkin? jadeBotSkin =
+                            context.JadeBots.FirstOrDefault(jadeBotSkin => jadeBotSkin.UnlockItemId == unlocker.Id);
+                        if (jadeBotSkin is not null)
                         {
-                            IReadOnlyList<int> unlocks = await hero.GetUnlockedJadeBotSkins(CancellationToken.None);
-                            Unlocked = unlocks.Contains(jadeBotSkin.Id);
-                        }
-                        else
-                        {
-                            AuthorizationText = Localizer["Grant unlocks and inventories permission"];
-                        }
+                            if (hero.UnlocksAvailable && hero.InventoriesAvailable)
+                            {
+                                IReadOnlyList<int> unlocks = await hero.GetUnlockedJadeBotSkins(CancellationToken.None).ConfigureAwait(false);
+                                Unlocked = unlocks.Contains(jadeBotSkin.Id);
+                            }
+                            else
+                            {
+                                AuthorizationText = Localizer["Grant unlocks and inventories permission"];
+                            }
 
-                        DefaultLocked = true;
+                            DefaultLocked = true;
+                        }
                     }
                 }
                 catch (Exception reason)
@@ -311,23 +320,26 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    await using ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
-                    Miniature? miniature =
-                        await context.Miniatures.FirstOrDefaultAsync(miniature => miniature.ItemId == Item.Id);
-                    if (miniature is not null)
+                    ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
+                    await using (context.ConfigureAwait(false))
                     {
-                        if (hero.UnlocksAvailable)
+                        Miniature? miniature =
+                            await context.Miniatures.FirstOrDefaultAsync(miniature => miniature.ItemId == Item.Id).ConfigureAwait(false);
+                        if (miniature is not null)
                         {
-                            IReadOnlyList<int> unlocks = await hero.GetUnlockedMiniatures(CancellationToken.None);
-                            Unlocked = unlocks.Contains(miniature.Id);
-                        }
-                        else
-                        {
-                            AuthorizationText = Localizer["Grant unlocks permission"];
-                        }
+                            if (hero.UnlocksAvailable)
+                            {
+                                IReadOnlyList<int> unlocks = await hero.GetUnlockedMiniatures(CancellationToken.None).ConfigureAwait(false);
+                                Unlocked = unlocks.Contains(miniature.Id);
+                            }
+                            else
+                            {
+                                AuthorizationText = Localizer["Grant unlocks permission"];
+                            }
 
-                        DefaultLocked = true;
-                        break;
+                            DefaultLocked = true;
+                            break;
+                        }
                     }
                 }
                 catch (Exception reason)
@@ -340,29 +352,31 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    await using ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
-
-                    Outfit? outfit = await context.Outfits
-                        .FromSqlInterpolated($"""
+                    ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
+                    await using (context.ConfigureAwait(false))
+                    {
+                        Outfit? outfit = await context.Outfits
+                            .FromSqlInterpolated($"""
                                               SELECT *
                                               FROM Outfits, json_each(Outfits.UnlockItemIds)
                                               WHERE json_each.value = {unlocker.Id}
                                               """)
-                        .FirstOrDefaultAsync();
-                    if (outfit is not null)
-                    {
-                        if (hero.UnlocksAvailable)
+                            .FirstOrDefaultAsync().ConfigureAwait(false);
+                        if (outfit is not null)
                         {
-                            IReadOnlyList<int> unlocks = await hero.GetUnlockedOutfits(CancellationToken.None);
-                            Unlocked = unlocks.Contains(outfit.Id);
-                        }
-                        else
-                        {
-                            AuthorizationText = Localizer["Grant unlocks permission"];
-                        }
+                            if (hero.UnlocksAvailable)
+                            {
+                                IReadOnlyList<int> unlocks = await hero.GetUnlockedOutfits(CancellationToken.None).ConfigureAwait(false);
+                                Unlocked = unlocks.Contains(outfit.Id);
+                            }
+                            else
+                            {
+                                AuthorizationText = Localizer["Grant unlocks permission"];
+                            }
 
-                        DefaultLocked = true;
-                        break;
+                            DefaultLocked = true;
+                            break;
+                        }
                     }
                 }
                 catch (Exception reason)
@@ -375,29 +389,31 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    await using ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
-
-                    MistChampionSkin? mistChampionSkin = await context.MistChampions
-                        .FromSqlInterpolated($"""
+                    ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
+                    await using (context.ConfigureAwait(false))
+                    {
+                        MistChampionSkin? mistChampionSkin = await context.MistChampions
+                            .FromSqlInterpolated($"""
                                               SELECT *
                                               FROM MistChampions, json_each(MistChampions.UnlockItemIds)
                                               WHERE json_each.value = {unlocker.Id}
                                               """)
-                        .FirstOrDefaultAsync();
-                    if (mistChampionSkin is not null)
-                    {
-                        if (hero.UnlocksAvailable)
+                            .FirstOrDefaultAsync().ConfigureAwait(false);
+                        if (mistChampionSkin is not null)
                         {
-                            IReadOnlyList<int> unlocks = await hero.GetUnlockedMistChampionSkins(CancellationToken.None);
-                            Unlocked = unlocks.Contains(mistChampionSkin.Id);
-                        }
-                        else
-                        {
-                            AuthorizationText = Localizer["Grant unlocks permission"];
-                        }
+                            if (hero.UnlocksAvailable)
+                            {
+                                IReadOnlyList<int> unlocks = await hero.GetUnlockedMistChampionSkins(CancellationToken.None).ConfigureAwait(false);
+                                Unlocked = unlocks.Contains(mistChampionSkin.Id);
+                            }
+                            else
+                            {
+                                AuthorizationText = Localizer["Grant unlocks permission"];
+                            }
 
-                        DefaultLocked = true;
-                        break;
+                            DefaultLocked = true;
+                            break;
+                        }
                     }
                 }
                 catch (Exception reason)
@@ -412,7 +428,7 @@ public sealed class ItemTooltipViewModel(
                 {
                     if (hero.UnlocksAvailable)
                     {
-                        IReadOnlyList<int> unlocks = await hero.GetUnlockedRecipes(CancellationToken.None);
+                        IReadOnlyList<int> unlocks = await hero.GetUnlockedRecipes(CancellationToken.None).ConfigureAwait(false);
                         if (unlocks.Contains(unlocker.RecipeId))
                         {
                             Unlocked = true;
@@ -454,28 +470,30 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    await using ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
-
-                    Novelty? novelty = await context.Novelties
-                        .FromSqlInterpolated($"""
+                    ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
+                    await using (context.ConfigureAwait(false))
+                    {
+                        Novelty? novelty = await context.Novelties
+                            .FromSqlInterpolated($"""
                                               SELECT *
                                               FROM Novelties, json_each(Novelties.UnlockItemIds)
                                               WHERE json_each.value = {gizmo.Id}
                                               """)
-                        .FirstOrDefaultAsync();
-                    if (novelty is not null)
-                    {
-                        if (hero.UnlocksAvailable)
+                            .FirstOrDefaultAsync().ConfigureAwait(false);
+                        if (novelty is not null)
                         {
-                            IReadOnlyList<int> unlocks = await hero.GetUnlockedNovelties(CancellationToken.None);
-                            Unlocked = unlocks.Contains(novelty.Id);
-                        }
-                        else
-                        {
-                            AuthorizationText = Localizer["Grant unlocks permission"];
-                        }
+                            if (hero.UnlocksAvailable)
+                            {
+                                IReadOnlyList<int> unlocks = await hero.GetUnlockedNovelties(CancellationToken.None).ConfigureAwait(false);
+                                Unlocked = unlocks.Contains(novelty.Id);
+                            }
+                            else
+                            {
+                                AuthorizationText = Localizer["Grant unlocks permission"];
+                            }
 
-                        DefaultLocked = true;
+                            DefaultLocked = true;
+                        }
                     }
                 }
                 catch (Exception reason)
@@ -495,17 +513,20 @@ public sealed class ItemTooltipViewModel(
         {
             DefaultLocked = true;
 
-            await using ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
-            DefaultSkin = await context.Skins.FirstOrDefaultAsync(skin => skin.Id == skinId);
+            ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
+            await using (context.ConfigureAwait(false))
+            {
+                DefaultSkin = await context.Skins.FirstOrDefaultAsync(skin => skin.Id == skinId).ConfigureAwait(false);
 
-            if (hero.UnlocksAvailable)
-            {
-                IReadOnlyList<int> unlocks = await hero.GetUnlockedWardrobe(CancellationToken.None);
-                Unlocked = unlocks.Contains(skinId);
-            }
-            else
-            {
-                AuthorizationText = Localizer["Grant unlocks permission"];
+                if (hero.UnlocksAvailable)
+                {
+                    IReadOnlyList<int> unlocks = await hero.GetUnlockedWardrobe(CancellationToken.None).ConfigureAwait(false);
+                    Unlocked = unlocks.Contains(skinId);
+                }
+                else
+                {
+                    AuthorizationText = Localizer["Grant unlocks permission"];
+                }
             }
         }
         catch (Exception reason)

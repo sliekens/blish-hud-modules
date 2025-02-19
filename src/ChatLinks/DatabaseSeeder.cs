@@ -60,9 +60,9 @@ public sealed class DatabaseSeeder : IDisposable
     {
         await Task.Run(async () =>
         {
-            await Migrate(args.Language);
-            await Sync(args.Language, CancellationToken.None);
-        });
+            await Migrate(args.Language).ConfigureAwait(false);
+            await Sync(args.Language, CancellationToken.None).ConfigureAwait(false);
+        }).ConfigureAwait(false);
     }
 
     private async ValueTask<DataManifest?> DataManifest()
@@ -76,7 +76,7 @@ public sealed class DatabaseSeeder : IDisposable
             }
 
             using FileStream stream = File.OpenRead(path);
-            return await JsonSerializer.DeserializeAsync<DataManifest>(stream);
+            return await JsonSerializer.DeserializeAsync<DataManifest>(stream).ConfigureAwait(false);
         }
         catch (Exception reason)
         {
@@ -91,7 +91,7 @@ public sealed class DatabaseSeeder : IDisposable
         {
             string path = Path.Combine(_options.Value.Directory, "manifest.json");
             using FileStream stream = File.OpenWrite(path);
-            await JsonSerializer.SerializeAsync(stream, manifest);
+            await JsonSerializer.SerializeAsync(stream, manifest).ConfigureAwait(false);
         }
         catch (Exception reason)
         {
@@ -108,7 +108,7 @@ public sealed class DatabaseSeeder : IDisposable
     public async Task Migrate(Language language)
     {
         ThrowHelper.ThrowIfNull(language);
-        DataManifest currentDataManifest = await DataManifest() ?? new DataManifest
+        DataManifest currentDataManifest = await DataManifest().ConfigureAwait(false) ?? new DataManifest
         {
             Version = 1,
             Databases = []
@@ -120,15 +120,15 @@ public sealed class DatabaseSeeder : IDisposable
 
         if (shouldDownload)
         {
-            Database? seedDatabase = await DownloadDatabase(language);
+            Database? seedDatabase = await DownloadDatabase(language).ConfigureAwait(false);
             if (seedDatabase is not null)
             {
                 currentDatabase = seedDatabase;
                 currentDataManifest.Databases[language.Alpha2Code] = seedDatabase;
 
-                await SaveManifest(currentDataManifest);
+                await SaveManifest(currentDataManifest).ConfigureAwait(false);
 
-                await _eventAggregator.PublishAsync(new DatabaseDownloaded());
+                await _eventAggregator.PublishAsync(new DatabaseDownloaded()).ConfigureAwait(false);
             }
         }
 
@@ -138,13 +138,16 @@ public sealed class DatabaseSeeder : IDisposable
             return;
         }
 
-        await using ChatLinksContext context = _contextFactory.CreateDbContext(currentDatabase.Name);
-        await context.Database.MigrateAsync();
+        ChatLinksContext context = _contextFactory.CreateDbContext(currentDatabase.Name);
+        await using (context.ConfigureAwait(false))
+        {
+            await context.Database.MigrateAsync().ConfigureAwait(false);
+        }
     }
 
     private async Task<Database?> DownloadDatabase(Language language)
     {
-        SeedIndex seedDataManifest = await _staticDataClient.GetSeedIndex(CancellationToken.None);
+        SeedIndex seedDataManifest = await _staticDataClient.GetSeedIndex(CancellationToken.None).ConfigureAwait(false);
         SeedDatabase? seedDatabase = seedDataManifest.Databases
             .SingleOrDefault(seed => seed.SchemaVersion == ChatLinksContext.SchemaVersion && seed.Language == language.Alpha2Code);
 
@@ -154,7 +157,7 @@ public sealed class DatabaseSeeder : IDisposable
         }
 
         string destination = Path.Combine(_options.Value.Directory, seedDatabase.Name);
-        await _staticDataClient.Download(seedDatabase, destination, CancellationToken.None);
+        await _staticDataClient.Download(seedDatabase, destination, CancellationToken.None).ConfigureAwait(false);
 
         return new Database
         {
@@ -167,16 +170,19 @@ public sealed class DatabaseSeeder : IDisposable
 
     public async Task Sync(Language language, CancellationToken cancellationToken)
     {
-        await _syncSemaphore.WaitAsync(cancellationToken);
+        await _syncSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
             if (_currentSync is null || _currentSync.IsCompleted)
             {
                 _currentSync = Task.Run(async () =>
                 {
-                    await using ChatLinksContext context = _contextFactory.CreateDbContext(language);
-                    context.ChangeTracker.AutoDetectChangesEnabled = false;
-                    await Seed(context, language, cancellationToken);
+                    ChatLinksContext context = _contextFactory.CreateDbContext(language);
+                    await using (context.ConfigureAwait(false))
+                    {
+                        context.ChangeTracker.AutoDetectChangesEnabled = false;
+                        await Seed(context, language, cancellationToken).ConfigureAwait(false);
+                    }
                 }, cancellationToken);
             }
         }
@@ -185,8 +191,8 @@ public sealed class DatabaseSeeder : IDisposable
             _ = _syncSemaphore.Release();
         }
 
-        await _currentSync;
-        await _eventAggregator.PublishAsync(new DatabaseSyncCompleted(), cancellationToken);
+        await _currentSync.ConfigureAwait(false);
+        await _eventAggregator.PublishAsync(new DatabaseSyncCompleted(), cancellationToken).ConfigureAwait(false);
     }
 
     public async Task SeedAll()
@@ -206,35 +212,38 @@ public sealed class DatabaseSeeder : IDisposable
                 SchemaVersion = ChatLinksContext.SchemaVersion
             };
 
-            await using ChatLinksContext context = _contextFactory.CreateDbContext(database.Name);
-            await context.Database.MigrateAsync();
-            await Seed(context, language, CancellationToken.None);
+            ChatLinksContext context = _contextFactory.CreateDbContext(database.Name);
+            await using (context.ConfigureAwait(false))
+            {
+                await context.Database.MigrateAsync().ConfigureAwait(false);
+                await Seed(context, language, CancellationToken.None).ConfigureAwait(false);
+            }
 
             manifest.Databases[language.Alpha2Code] = database;
         }
 
-        await SaveManifest(manifest);
+        await SaveManifest(manifest).ConfigureAwait(false);
     }
 
     private async Task Seed(ChatLinksContext context, Language language, CancellationToken cancellationToken)
     {
         Dictionary<string, int> inserted = new()
         {
-            ["items"] = await SeedItems(context, language, cancellationToken),
-            ["skins"] = await SeedSkins(context, language, cancellationToken),
-            ["recipes"] = await SeedRecipes(context, cancellationToken),
-            ["colors"] = await SeedColors(context, language, cancellationToken),
-            ["finishers"] = await SeedFinishers(context, language, cancellationToken),
-            ["gliders"] = await SeedGliders(context, language, cancellationToken),
-            ["jadeBots"] = await SeedJadeBots(context, language, cancellationToken),
-            ["mailCarriers"] = await SeedMailCarriers(context, language, cancellationToken),
-            ["miniatures"] = await SeedMiniatures(context, language, cancellationToken),
-            ["mistChampions"] = await SeedMistChampions(context, language, cancellationToken),
-            ["novelties"] = await SeedNovelties(context, language, cancellationToken),
-            ["outfits"] = await SeedOutfits(context, language, cancellationToken)
+            ["items"] = await SeedItems(context, language, cancellationToken).ConfigureAwait(false),
+            ["skins"] = await SeedSkins(context, language, cancellationToken).ConfigureAwait(false),
+            ["recipes"] = await SeedRecipes(context, cancellationToken).ConfigureAwait(false),
+            ["colors"] = await SeedColors(context, language, cancellationToken).ConfigureAwait(false),
+            ["finishers"] = await SeedFinishers(context, language, cancellationToken).ConfigureAwait(false),
+            ["gliders"] = await SeedGliders(context, language, cancellationToken).ConfigureAwait(false),
+            ["jadeBots"] = await SeedJadeBots(context, language, cancellationToken).ConfigureAwait(false),
+            ["mailCarriers"] = await SeedMailCarriers(context, language, cancellationToken).ConfigureAwait(false),
+            ["miniatures"] = await SeedMiniatures(context, language, cancellationToken).ConfigureAwait(false),
+            ["mistChampions"] = await SeedMistChampions(context, language, cancellationToken).ConfigureAwait(false),
+            ["novelties"] = await SeedNovelties(context, language, cancellationToken).ConfigureAwait(false),
+            ["outfits"] = await SeedOutfits(context, language, cancellationToken).ConfigureAwait(false)
         };
 
-        await _eventAggregator.PublishAsync(new DatabaseSeeded(language, inserted), cancellationToken);
+        await _eventAggregator.PublishAsync(new DatabaseSeeded(language, inserted), cancellationToken).ConfigureAwait(false);
     }
 
     private async Task<int> SeedItems(ChatLinksContext context, Language language, CancellationToken cancellationToken)
@@ -243,11 +252,11 @@ public sealed class DatabaseSeeder : IDisposable
 
         HashSet<int> index = await _gw2Client.Items
             .GetItemsIndex(cancellationToken)
-            .ValueOnly();
+            .ValueOnly().ConfigureAwait(false);
 
         _logger.LogDebug("Found {Count} items in the API.", index.Count);
         List<int> existing = await context.Items.Select(item => item.Id)
-            .ToListAsync(cancellationToken: cancellationToken);
+            .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
         index.ExceptWith(existing);
         if (index.Count != 0)
@@ -267,17 +276,17 @@ public sealed class DatabaseSeeder : IDisposable
                                    200,
                                    bulkProgress,
                                    cancellationToken)
-                               .ValueOnly(cancellationToken: cancellationToken))
+                               .ValueOnly(cancellationToken: cancellationToken).ConfigureAwait(false))
             {
                 _ = context.Add(item);
                 if (++count % 333 == 0)
                 {
-                    _ = await context.SaveChangesAsync(cancellationToken);
+                    _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
                     DetachAllEntities(context);
                 }
             }
 
-            _ = await context.SaveChangesAsync(cancellationToken);
+            _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             DetachAllEntities(context);
         }
 
@@ -291,11 +300,11 @@ public sealed class DatabaseSeeder : IDisposable
 
         HashSet<int> index = await _gw2Client.Hero.Equipment.Wardrobe
             .GetSkinsIndex(cancellationToken)
-            .ValueOnly();
+            .ValueOnly().ConfigureAwait(false);
 
         _logger.LogDebug("Found {Count} skins in the API.", index.Count);
         List<int> existing = await context.Skins.Select(skin => skin.Id)
-            .ToListAsync(cancellationToken: cancellationToken);
+            .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
         index.ExceptWith(existing);
         if (index.Count != 0)
@@ -315,17 +324,17 @@ public sealed class DatabaseSeeder : IDisposable
                                    200,
                                    bulkProgress,
                                    cancellationToken)
-                               .ValueOnly(cancellationToken: cancellationToken))
+                               .ValueOnly(cancellationToken: cancellationToken).ConfigureAwait(false))
             {
                 _ = context.Add(skin);
                 if (++count % 333 == 0)
                 {
-                    _ = await context.SaveChangesAsync(cancellationToken);
+                    _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
                     DetachAllEntities(context);
                 }
             }
 
-            _ = await context.SaveChangesAsync(cancellationToken);
+            _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             DetachAllEntities(context);
         }
 
@@ -339,11 +348,11 @@ public sealed class DatabaseSeeder : IDisposable
 
         HashSet<int> index = await _gw2Client.Hero.Equipment.Dyes
             .GetColorsIndex(cancellationToken)
-            .ValueOnly();
+            .ValueOnly().ConfigureAwait(false);
 
         _logger.LogDebug("Found {Count} colors in the API.", index.Count);
         List<int> existing = await context.Colors.Select(color => color.Id)
-            .ToListAsync(cancellationToken: cancellationToken);
+            .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
         index.ExceptWith(existing);
         if (index.Count != 0)
@@ -352,10 +361,10 @@ public sealed class DatabaseSeeder : IDisposable
 
             // TODO: incremental query
             HashSet<DyeColor> colors = await _gw2Client.Hero.Equipment.Dyes
-                .GetColors(language, MissingMemberBehavior.Undefined, cancellationToken).ValueOnly();
+                .GetColors(language, MissingMemberBehavior.Undefined, cancellationToken).ValueOnly().ConfigureAwait(false);
 
-            await context.AddRangeAsync(colors.Where(color => index.Contains(color.Id)), cancellationToken);
-            _ = await context.SaveChangesAsync(cancellationToken);
+            await context.AddRangeAsync(colors.Where(color => index.Contains(color.Id)), cancellationToken).ConfigureAwait(false);
+            _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             DetachAllEntities(context);
         }
 
@@ -369,11 +378,11 @@ public sealed class DatabaseSeeder : IDisposable
 
         HashSet<int> index = await _gw2Client.Hero.Crafting.Recipes
             .GetRecipesIndex(cancellationToken)
-            .ValueOnly();
+            .ValueOnly().ConfigureAwait(false);
 
         _logger.LogDebug("Found {Count} recipes in the API.", index.Count);
         List<int> existing = await context.Recipes.Select(recipe => recipe.Id)
-            .ToListAsync(cancellationToken: cancellationToken);
+            .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
         index.ExceptWith(existing);
         if (index.Count != 0)
@@ -392,17 +401,17 @@ public sealed class DatabaseSeeder : IDisposable
                                    200,
                                    bulkProgress,
                                    cancellationToken)
-                               .ValueOnly(cancellationToken: cancellationToken))
+                               .ValueOnly(cancellationToken: cancellationToken).ConfigureAwait(false))
             {
                 _ = context.Add(recipe);
                 if (++count % 333 == 0)
                 {
-                    _ = await context.SaveChangesAsync(cancellationToken);
+                    _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
                     DetachAllEntities(context);
                 }
             }
 
-            _ = await context.SaveChangesAsync(cancellationToken);
+            _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             DetachAllEntities(context);
         }
 
@@ -416,11 +425,11 @@ public sealed class DatabaseSeeder : IDisposable
 
         HashSet<int> index = await _gw2Client.Hero.Equipment.Finishers
             .GetFinishersIndex(cancellationToken)
-            .ValueOnly();
+            .ValueOnly().ConfigureAwait(false);
 
         _logger.LogDebug("Found {Count} finishers in the API.", index.Count);
         List<int> existing = await context.Finishers.Select(finisher => finisher.Id)
-            .ToListAsync(cancellationToken: cancellationToken);
+            .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
         index.ExceptWith(existing);
         if (index.Count != 0)
@@ -429,10 +438,10 @@ public sealed class DatabaseSeeder : IDisposable
 
             HashSet<Finisher> finishers = await _gw2Client.Hero.Equipment.Finishers
                 .GetFinishersByIds(index, language, MissingMemberBehavior.Undefined, cancellationToken)
-                .ValueOnly();
+                .ValueOnly().ConfigureAwait(false);
 
-            await context.AddRangeAsync(finishers, cancellationToken);
-            _ = await context.SaveChangesAsync(cancellationToken);
+            await context.AddRangeAsync(finishers, cancellationToken).ConfigureAwait(false);
+            _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             DetachAllEntities(context);
         }
 
@@ -446,11 +455,11 @@ public sealed class DatabaseSeeder : IDisposable
 
         HashSet<int> index = await _gw2Client.Hero.Equipment.Gliders
             .GetGliderSkinsIndex(cancellationToken)
-            .ValueOnly();
+            .ValueOnly().ConfigureAwait(false);
 
         _logger.LogDebug("Found {Count} gliders in the API.", index.Count);
         List<int> existing = await context.Gliders.Select(glider => glider.Id)
-            .ToListAsync(cancellationToken: cancellationToken);
+            .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
         index.ExceptWith(existing);
         if (index.Count != 0)
@@ -459,10 +468,10 @@ public sealed class DatabaseSeeder : IDisposable
 
             HashSet<GliderSkin> gliders = await _gw2Client.Hero.Equipment.Gliders
                 .GetGliderSkinsByIds(index, language, MissingMemberBehavior.Undefined, cancellationToken)
-                .ValueOnly();
+                .ValueOnly().ConfigureAwait(false);
 
-            await context.AddRangeAsync(gliders, cancellationToken);
-            _ = await context.SaveChangesAsync(cancellationToken);
+            await context.AddRangeAsync(gliders, cancellationToken).ConfigureAwait(false);
+            _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             DetachAllEntities(context);
         }
 
@@ -476,11 +485,11 @@ public sealed class DatabaseSeeder : IDisposable
 
         HashSet<int> index = await _gw2Client.Hero.Equipment.JadeBots
             .GetJadeBotSkinsIndex(cancellationToken)
-            .ValueOnly();
+            .ValueOnly().ConfigureAwait(false);
 
         _logger.LogDebug("Found {Count} jade bots in the API.", index.Count);
         List<int> existing = await context.JadeBots.Select(jadeBot => jadeBot.Id)
-            .ToListAsync(cancellationToken: cancellationToken);
+            .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
         index.ExceptWith(existing);
         if (index.Count != 0)
@@ -489,10 +498,10 @@ public sealed class DatabaseSeeder : IDisposable
 
             HashSet<JadeBotSkin> jadeBots = await _gw2Client.Hero.Equipment.JadeBots
                 .GetJadeBotSkinsByIds(index, language, MissingMemberBehavior.Undefined, cancellationToken)
-                .ValueOnly();
+                .ValueOnly().ConfigureAwait(false);
 
-            await context.AddRangeAsync(jadeBots, cancellationToken);
-            _ = await context.SaveChangesAsync(cancellationToken);
+            await context.AddRangeAsync(jadeBots, cancellationToken).ConfigureAwait(false);
+            _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             DetachAllEntities(context);
         }
 
@@ -507,11 +516,11 @@ public sealed class DatabaseSeeder : IDisposable
 
         HashSet<int> index = await _gw2Client.Hero.Equipment.MailCarriers
             .GetMailCarriersIndex(cancellationToken)
-            .ValueOnly();
+            .ValueOnly().ConfigureAwait(false);
 
         _logger.LogDebug("Found {Count} mail carriers in the API.", index.Count);
         List<int> existing = await context.MailCarrriers.Select(mailCarrier => mailCarrier.Id)
-            .ToListAsync(cancellationToken: cancellationToken);
+            .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
         index.ExceptWith(existing);
         if (index.Count != 0)
@@ -520,10 +529,10 @@ public sealed class DatabaseSeeder : IDisposable
 
             HashSet<MailCarrier> mailCarriers = await _gw2Client.Hero.Equipment.MailCarriers
                 .GetMailCarriersByIds(index, language, MissingMemberBehavior.Undefined, cancellationToken)
-                .ValueOnly();
+                .ValueOnly().ConfigureAwait(false);
 
-            await context.AddRangeAsync(mailCarriers, cancellationToken);
-            _ = await context.SaveChangesAsync(cancellationToken);
+            await context.AddRangeAsync(mailCarriers, cancellationToken).ConfigureAwait(false);
+            _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             DetachAllEntities(context);
         }
 
@@ -538,11 +547,11 @@ public sealed class DatabaseSeeder : IDisposable
 
         HashSet<int> index = await _gw2Client.Hero.Equipment.Miniatures
             .GetMiniaturesIndex(cancellationToken)
-            .ValueOnly();
+            .ValueOnly().ConfigureAwait(false);
 
         _logger.LogDebug("Found {Count} miniatures in the API.", index.Count);
         List<int> existing = await context.Miniatures.Select(miniature => miniature.Id)
-            .ToListAsync(cancellationToken: cancellationToken);
+            .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
         index.ExceptWith(existing);
         if (index.Count != 0)
@@ -551,10 +560,10 @@ public sealed class DatabaseSeeder : IDisposable
 
             // TODO: incremental query
             HashSet<GuildWars2.Hero.Equipment.Miniatures.Miniature> miniatures = await _gw2Client.Hero.Equipment.Miniatures
-                .GetMiniatures(language, MissingMemberBehavior.Undefined, cancellationToken).ValueOnly();
+                .GetMiniatures(language, MissingMemberBehavior.Undefined, cancellationToken).ValueOnly().ConfigureAwait(false);
 
-            await context.AddRangeAsync(miniatures.Where(miniature => index.Contains(miniature.Id)), cancellationToken);
-            _ = await context.SaveChangesAsync(cancellationToken);
+            await context.AddRangeAsync(miniatures.Where(miniature => index.Contains(miniature.Id)), cancellationToken).ConfigureAwait(false);
+            _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             DetachAllEntities(context);
         }
 
@@ -569,13 +578,13 @@ public sealed class DatabaseSeeder : IDisposable
 
         HashSet<MistChampion> champions = await _gw2Client.Pvp
             .GetMistChampions(language, MissingMemberBehavior.Undefined, cancellationToken: cancellationToken)
-            .ValueOnly();
+            .ValueOnly().ConfigureAwait(false);
 
         HashSet<int> index = [.. champions.SelectMany(champion => champion.Skins.Select(skin => skin.Id))];
 
         _logger.LogDebug("Found {Count} mist champions in the API.", index.Count);
         List<int> existing = await context.MistChampions.Select(mistChampion => mistChampion.Id)
-            .ToListAsync(cancellationToken: cancellationToken);
+            .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
         index.ExceptWith(existing);
         if (index.Count != 0)
@@ -585,8 +594,8 @@ public sealed class DatabaseSeeder : IDisposable
                 .SelectMany(champion => champion.Skins)
                 .Where(skin => index.Contains(skin.Id))];
 
-            await context.AddRangeAsync(mistChampions, cancellationToken);
-            _ = await context.SaveChangesAsync(cancellationToken);
+            await context.AddRangeAsync(mistChampions, cancellationToken).ConfigureAwait(false);
+            _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             DetachAllEntities(context);
         }
 
@@ -601,11 +610,11 @@ public sealed class DatabaseSeeder : IDisposable
 
         HashSet<int> index = await _gw2Client.Hero.Equipment.Novelties
             .GetNoveltiesIndex(cancellationToken)
-            .ValueOnly();
+            .ValueOnly().ConfigureAwait(false);
 
         _logger.LogDebug("Found {Count} novelties in the API.", index.Count);
         List<int> existing = await context.Novelties.Select(novelty => novelty.Id)
-            .ToListAsync(cancellationToken: cancellationToken);
+            .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
         index.ExceptWith(existing);
         if (index.Count != 0)
@@ -614,10 +623,10 @@ public sealed class DatabaseSeeder : IDisposable
 
             // TODO: incremental query
             HashSet<Novelty> novelties = await _gw2Client.Hero.Equipment.Novelties
-                .GetNovelties(language, MissingMemberBehavior.Undefined, cancellationToken).ValueOnly();
+                .GetNovelties(language, MissingMemberBehavior.Undefined, cancellationToken).ValueOnly().ConfigureAwait(false);
 
-            await context.AddRangeAsync(novelties.Where(novelty => index.Contains(novelty.Id)), cancellationToken);
-            _ = await context.SaveChangesAsync(cancellationToken);
+            await context.AddRangeAsync(novelties.Where(novelty => index.Contains(novelty.Id)), cancellationToken).ConfigureAwait(false);
+            _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             DetachAllEntities(context);
         }
 
@@ -632,11 +641,11 @@ public sealed class DatabaseSeeder : IDisposable
 
         HashSet<int> index = await _gw2Client.Hero.Equipment.Outfits
             .GetOutfitsIndex(cancellationToken)
-            .ValueOnly();
+            .ValueOnly().ConfigureAwait(false);
 
         _logger.LogDebug("Found {Count} outfits in the API.", index.Count);
         List<int> existing = await context.Outfits.Select(outfit => outfit.Id)
-            .ToListAsync(cancellationToken: cancellationToken);
+            .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
         index.ExceptWith(existing);
         if (index.Count != 0)
@@ -645,10 +654,10 @@ public sealed class DatabaseSeeder : IDisposable
 
             // TODO: incremental query
             HashSet<Outfit> outfits = await _gw2Client.Hero.Equipment.Outfits
-                .GetOutfits(language, MissingMemberBehavior.Undefined, cancellationToken).ValueOnly();
+                .GetOutfits(language, MissingMemberBehavior.Undefined, cancellationToken).ValueOnly().ConfigureAwait(false);
 
-            await context.AddRangeAsync(outfits.Where(outfit => index.Contains(outfit.Id)), cancellationToken);
-            _ = await context.SaveChangesAsync(cancellationToken);
+            await context.AddRangeAsync(outfits.Where(outfit => index.Contains(outfit.Id)), cancellationToken).ConfigureAwait(false);
+            _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             DetachAllEntities(context);
         }
 

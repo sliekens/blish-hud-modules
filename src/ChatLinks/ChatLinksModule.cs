@@ -115,7 +115,7 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
 
         try
         {
-            await seeder.Migrate(locale.Current);
+            await seeder.Migrate(locale.Current).ConfigureAwait(false);
         }
         catch (Exception reason)
         {
@@ -128,7 +128,7 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
 
         try
         {
-            await seeder.Sync(locale.Current, CancellationToken.None);
+            await seeder.Sync(locale.Current, CancellationToken.None).ConfigureAwait(false);
         }
         catch (Exception reason)
         {

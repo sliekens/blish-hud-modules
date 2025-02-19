@@ -35,10 +35,10 @@
         <AnalysisModePerformance>All</AnalysisModePerformance>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/core/deploying/single-file/warnings/overview -->
-        <AnalysisModeSingleFile>Recommended</AnalysisModeSingleFile>
+        <AnalysisModeSingleFile>All</AnalysisModeSingleFile>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/reliability-warnings -->
-        <AnalysisModeReliability>Recommended</AnalysisModeReliability>
+        <AnalysisModeReliability>All</AnalysisModeReliability>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/security-warnings -->
         <AnalysisModeSecurity>Recommended</AnalysisModeSecurity>

@@ -51,13 +51,13 @@ public sealed class UpgradeSlotViewModel : ViewModel, IDisposable
         if (SelectedUpgradeComponent is not null)
         {
             int id = SelectedUpgradeComponent.Id;
-            SelectedUpgradeComponent = await _customizer.GetUpgradeComponentAsync(id);
+            SelectedUpgradeComponent = await _customizer.GetUpgradeComponentAsync(id).ConfigureAwait(false);
         }
 
         if (DefaultUpgradeComponent is not null)
         {
             int id = DefaultUpgradeComponent.Id;
-            DefaultUpgradeComponent = await _customizer.GetUpgradeComponentAsync(id);
+            DefaultUpgradeComponent = await _customizer.GetUpgradeComponentAsync(id).ConfigureAwait(false);
         }
         else
         {

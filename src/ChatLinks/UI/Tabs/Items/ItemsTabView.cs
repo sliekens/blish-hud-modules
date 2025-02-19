@@ -121,7 +121,8 @@ public sealed class ItemsTabView : View, IDisposable
         if (args.AddedItems is [{ Data: { } listItem }])
         {
             ViewModel.SelectedItem = listItem.Item;
-            _editor.Show(new ChatLinkEditorView(ViewModel.CreateChatLinkEditorViewModel(listItem.Item)));
+            ChatLinkEditorView view = new(ViewModel.CreateChatLinkEditorViewModel(listItem.Item));
+            _editor.Show(view);
         }
         else
         {
@@ -132,7 +133,7 @@ public sealed class ItemsTabView : View, IDisposable
 
     protected override async Task<bool> Load(IProgress<string> progress)
     {
-        await ViewModel.LoadAsync();
+        await ViewModel.LoadAsync().ConfigureAwait(false);
         return true;
     }
 

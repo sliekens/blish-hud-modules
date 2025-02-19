@@ -36,7 +36,7 @@ public class ItemIcons(HttpClient httpClient)
                     using Stream data = task.Result;
                     Texture2D texture = TextureUtil.FromStreamPremultiplied(data);
                     newTexture.SwapTexture(texture);
-                });
+                }, TaskScheduler.Default);
 
                 return newTexture;
             });

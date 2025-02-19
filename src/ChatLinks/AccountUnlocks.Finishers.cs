@@ -15,7 +15,7 @@ public sealed partial class AccountUnlocks
     {
         try
         {
-            return _unlockedFinishers ??= await GetUnlockedFinishersInternal(cancellationToken);
+            return _unlockedFinishers ??= await GetUnlockedFinishersInternal(cancellationToken).ConfigureAwait(false);
         }
         catch (Exception reason)
         {
@@ -31,10 +31,10 @@ public sealed partial class AccountUnlocks
             return [];
         }
 
-        string? token = await _tokenProvider.GetTokenAsync(cancellationToken);
+        string? token = await _tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
         HashSet<GuildWars2.Hero.Equipment.Finishers.UnlockedFinisher> values = await _gw2Client.Hero.Equipment.Finishers
             .GetUnlockedFinishers(token, cancellationToken: cancellationToken)
-            .ValueOnly();
+            .ValueOnly().ConfigureAwait(false);
 
         return [.. values.Select(finisher => finisher.Id)];
     }
