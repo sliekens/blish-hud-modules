@@ -74,7 +74,6 @@
     <EditorConfigFiles Remove="X:\src\my-blish-modules\src\ChatLinks\Migrations\.editorconfig" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="X:\src\my-blish-modules\src\ChatLinks\.editorconfig" />
     <None Include="X:\src\my-blish-modules\src\ChatLinks\Migrations\.editorconfig" />
   </ItemGroup>
   <ItemGroup>

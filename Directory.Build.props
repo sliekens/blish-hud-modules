@@ -29,7 +29,7 @@
         <AnalysisModeMaintainability>All</AnalysisModeMaintainability>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/naming-warnings -->
-        <AnalysisModeNaming>Recommended</AnalysisModeNaming>
+        <AnalysisModeNaming>All</AnalysisModeNaming>
 
         <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/performance-warnings -->
         <AnalysisModePerformance>Recommended</AnalysisModePerformance>

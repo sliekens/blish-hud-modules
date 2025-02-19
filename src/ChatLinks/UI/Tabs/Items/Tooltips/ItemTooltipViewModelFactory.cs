@@ -13,7 +13,7 @@ public sealed class ItemTooltipViewModelFactory(
     ILocale locale,
     ItemIcons icons,
     Customizer customizer,
-    Hero hero,
+    AccountUnlocks hero,
     IStringLocalizer<ItemTooltipView> localizer)
 {
     public ItemTooltipViewModel Create(Item item, int quantity, IEnumerable<UpgradeSlot> upgrades)

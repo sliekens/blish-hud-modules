@@ -30,7 +30,7 @@ public sealed class ItemTooltipViewModel(
     ILocale locale,
     ItemIcons icons,
     Customizer customizer,
-    Hero hero,
+    AccountUnlocks hero,
     Item item,
     int quantity,
     IEnumerable<UpgradeSlot> upgrades,

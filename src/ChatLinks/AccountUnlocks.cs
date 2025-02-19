@@ -5,9 +5,9 @@ using Microsoft.Extensions.Logging;
 
 namespace SL.ChatLinks;
 
-public sealed partial class Hero : IDisposable
+public sealed partial class AccountUnlocks : IDisposable
 {
-    private readonly ILogger<Hero> _logger;
+    private readonly ILogger<AccountUnlocks> _logger;
 
     private readonly Gw2Client _gw2Client;
 
@@ -15,8 +15,8 @@ public sealed partial class Hero : IDisposable
 
     private readonly IEventAggregator _eventAggregator;
 
-    public Hero(
-        ILogger<Hero> logger,
+    public AccountUnlocks(
+        ILogger<AccountUnlocks> logger,
         Gw2Client gw2Client,
         ITokenProvider tokenProvider,
         IEventAggregator eventAggregator)

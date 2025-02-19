@@ -11,7 +11,7 @@ using SL.ChatLinks.Storage;
 
 namespace SL.ChatLinks.Integrations;
 
-public static class Integrations
+public static class IntegrationServices
 {
     public static void AddDatabase(
         this IServiceCollection services,

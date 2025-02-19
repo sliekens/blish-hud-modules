@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace SL.ChatLinks;
 
-public sealed partial class Hero
+public sealed partial class AccountUnlocks
 {
     private IReadOnlyList<int>? _unlockedGliderSkins;
 

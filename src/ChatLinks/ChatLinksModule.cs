@@ -73,7 +73,7 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
         _ = services.AddTransient<UpgradeSelectorViewModelFactory>();
         _ = services.AddTransient<ItemSearch>();
         _ = services.AddSingleton<Customizer>();
-        _ = services.AddSingleton<Hero>();
+        _ = services.AddSingleton<AccountUnlocks>();
         _ = services.AddHttpClient<ItemIcons>();
         _ = services.AddTransient<IClipBoard, WpfClipboard>();
 
