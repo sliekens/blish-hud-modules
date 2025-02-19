@@ -7,7 +7,7 @@ using SQLitePCL;
 
 namespace SL.ChatLinks.EF;
 
-public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ChatLinksContext>
+internal sealed class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ChatLinksContext>
 {
     static DesignTimeDbContextFactory()
     {

@@ -2,7 +2,7 @@
 
 namespace SL.ChatLinks.EF;
 
-public static class DotnetEF
+internal static class DotnetEF
 {
     public static void Run(string arguments)
     {
@@ -33,8 +33,11 @@ public static class DotnetEF
         Console.WriteLine(output);
         if (!string.IsNullOrEmpty(error))
         {
+
+#pragma warning disable CA1303 // Do not pass literals as localized parameters
             Console.WriteLine("Error: ");
             Console.WriteLine(error);
+#pragma warning restore CA1303 // Do not pass literals as localized parameters
         }
 
         static string GetModuleDirectory()
