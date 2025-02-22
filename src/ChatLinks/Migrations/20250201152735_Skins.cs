@@ -6,37 +6,37 @@ public partial class Skins : Migration
 {
     protected override void Up(MigrationBuilder migrationBuilder)
     {
-        _ = migrationBuilder.CreateTable(
-            name: "Skins",
-            columns: table => new
-            {
-                Id = table.Column<int>(nullable: false)
-                    .Annotation("Sqlite:Autoincrement", true),
-                Name = table.Column<string>(nullable: false),
-                Description = table.Column<string>(nullable: false),
-                Flags = table.Column<string>(nullable: false),
-                Races = table.Column<string>(nullable: false),
-                Rarity = table.Column<string>(nullable: false),
-                IconHref = table.Column<string>(nullable: true),
-                Type = table.Column<string>(nullable: false),
-                WeightClass = table.Column<string>(nullable: true),
-                DyeSlots = table.Column<string>(nullable: true),
-                DamageType = table.Column<string>(nullable: true)
-            },
-            constraints: table =>
-            {
-                _ = table.PrimaryKey("PK_Skins", x => x.Id);
-            });
+        migrationBuilder.CreateTable(
+           name: "Skins",
+           columns: table => new
+           {
+               Id = table.Column<int>(nullable: false)
+                   .Annotation("Sqlite:Autoincrement", true),
+               Name = table.Column<string>(nullable: false),
+               Description = table.Column<string>(nullable: false),
+               Flags = table.Column<string>(nullable: false),
+               Races = table.Column<string>(nullable: false),
+               Rarity = table.Column<string>(nullable: false),
+               IconHref = table.Column<string>(nullable: true),
+               Type = table.Column<string>(nullable: false),
+               WeightClass = table.Column<string>(nullable: true),
+               DyeSlots = table.Column<string>(nullable: true),
+               DamageType = table.Column<string>(nullable: true)
+           },
+           constraints: table =>
+           {
+               table.PrimaryKey("PK_Skins", x => x.Id);
+           });
 
-        _ = migrationBuilder.CreateIndex(
-            name: "IX_Skins_Name",
-            table: "Skins",
-            column: "Name");
+        migrationBuilder.CreateIndex(
+           name: "IX_Skins_Name",
+           table: "Skins",
+           column: "Name");
     }
 
     protected override void Down(MigrationBuilder migrationBuilder)
     {
-        _ = migrationBuilder.DropTable(
-            name: "Skins");
+        migrationBuilder.DropTable(
+           name: "Skins");
     }
 }
