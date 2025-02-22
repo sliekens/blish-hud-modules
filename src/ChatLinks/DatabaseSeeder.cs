@@ -1,6 +1,9 @@
 ﻿using System.Text.Json;
 
 using GuildWars2;
+using GuildWars2.Hero.Achievements;
+using GuildWars2.Hero.Achievements.Categories;
+using GuildWars2.Hero.Achievements.Groups;
 using GuildWars2.Hero.Crafting.Recipes;
 using GuildWars2.Hero.Equipment.Dyes;
 using GuildWars2.Hero.Equipment.Finishers;
@@ -235,12 +238,15 @@ public sealed class DatabaseSeeder : IDisposable
             ["colors"] = await SeedColors(context, language, cancellationToken).ConfigureAwait(false),
             ["finishers"] = await SeedFinishers(context, language, cancellationToken).ConfigureAwait(false),
             ["gliders"] = await SeedGliders(context, language, cancellationToken).ConfigureAwait(false),
-            ["jadeBots"] = await SeedJadeBots(context, language, cancellationToken).ConfigureAwait(false),
-            ["mailCarriers"] = await SeedMailCarriers(context, language, cancellationToken).ConfigureAwait(false),
+            ["jade_bots"] = await SeedJadeBots(context, language, cancellationToken).ConfigureAwait(false),
+            ["mail_carriers"] = await SeedMailCarriers(context, language, cancellationToken).ConfigureAwait(false),
             ["miniatures"] = await SeedMiniatures(context, language, cancellationToken).ConfigureAwait(false),
-            ["mistChampions"] = await SeedMistChampions(context, language, cancellationToken).ConfigureAwait(false),
+            ["mist_champions"] = await SeedMistChampions(context, language, cancellationToken).ConfigureAwait(false),
             ["novelties"] = await SeedNovelties(context, language, cancellationToken).ConfigureAwait(false),
-            ["outfits"] = await SeedOutfits(context, language, cancellationToken).ConfigureAwait(false)
+            ["outfits"] = await SeedOutfits(context, language, cancellationToken).ConfigureAwait(false),
+            ["achievements"] = await SeedAchievements(context, language, cancellationToken).ConfigureAwait(false),
+            ["achievement_categories"] = await SeedAchievementCategories(context, language, cancellationToken).ConfigureAwait(false),
+            ["achievement_groups"] = await SeedAchievementGroups(context, language, cancellationToken).ConfigureAwait(false)
         };
 
         await _eventAggregator.PublishAsync(new DatabaseSeeded(language, inserted), cancellationToken).ConfigureAwait(false);
@@ -662,6 +668,125 @@ public sealed class DatabaseSeeder : IDisposable
         }
 
         _logger.LogInformation("Finished seeding {Count} outfits.", index.Count);
+        return index.Count;
+    }
+
+    private async Task<int> SeedAchievements(ChatLinksContext context, Language language,
+        CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Start seeding achievements.");
+
+        HashSet<int> index = await _gw2Client.Hero.Achievements
+            .GetAchievementsIndex(cancellationToken)
+            .ValueOnly().ConfigureAwait(false);
+
+        _logger.LogDebug("Found {Count} achievements in the API.", index.Count);
+        List<int> existing = await context.Achievements.Select(achievement => achievement.Id)
+            .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
+
+        index.ExceptWith(existing);
+        if (index.Count != 0)
+        {
+            _logger.LogDebug("Start seeding {Count} achievements.", index.Count);
+            Progress<BulkProgress> bulkProgress = new(report =>
+            {
+                _eventAggregator.Publish(new DatabaseSyncProgress("achievements", report));
+            });
+
+            int count = 0;
+            await foreach (Achievement achievement in _gw2Client.Hero.Achievements
+                .GetAchievementsBulk(
+                    index,
+                    language,
+                    MissingMemberBehavior.Undefined,
+                    3,
+                    200,
+                    bulkProgress,
+                    cancellationToken
+                )
+                .ValueOnly(cancellationToken: cancellationToken).ConfigureAwait(false))
+            {
+                _ = context.Add(achievement);
+                if (++count % 333 == 0)
+                {
+                    _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+                    DetachAllEntities(context);
+                }
+            }
+
+            _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            DetachAllEntities(context);
+        }
+
+        _logger.LogInformation("Finished seeding {Count} achievements.", index.Count);
+        return index.Count;
+    }
+
+    private async Task<int> SeedAchievementCategories(ChatLinksContext context, Language language,
+        CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Start seeding achievement categories.");
+
+        HashSet<int> index = await _gw2Client.Hero.Achievements
+            .GetAchievementCategoriesIndex(cancellationToken)
+            .ValueOnly().ConfigureAwait(false);
+
+        _logger.LogDebug("Found {Count} achievement categories in the API.", index.Count);
+        List<int> existing = await context.AchievementCategories.Select(category => category.Id)
+            .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
+
+        _logger.LogDebug("Start seeding {Count} achievement categories.", index.Count);
+        HashSet<AchievementCategory> achievementCategories = await _gw2Client.Hero.Achievements
+            .GetAchievementCategories(language, MissingMemberBehavior.Undefined, cancellationToken)
+            .ValueOnly()
+            .ConfigureAwait(false);
+
+        foreach (AchievementCategory category in achievementCategories)
+        {
+            context.Entry(category).State = existing.Contains(category.Id)
+                ? EntityState.Modified
+                : EntityState.Added;
+        }
+
+        _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        DetachAllEntities(context);
+
+        _logger.LogInformation("Finished seeding {Count} achievement categories.", index.Count);
+        return index.Count;
+    }
+
+    private async Task<int> SeedAchievementGroups(ChatLinksContext context, Language language,
+        CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Start seeding achievement groups.");
+
+        HashSet<string> index = await _gw2Client.Hero.Achievements
+            .GetAchievementGroupsIndex(cancellationToken)
+            .ValueOnly()
+            .ConfigureAwait(false);
+
+        _logger.LogDebug("Found {Count} achievement groups in the API.", index.Count);
+        List<string> existing = await context.AchievementGroups.Select(group => group.Id)
+            .ToListAsync(cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        _logger.LogDebug("Start seeding {Count} achievement groups.", index.Count);
+        HashSet<AchievementGroup> achievementGroups = await _gw2Client.Hero.Achievements
+            .GetAchievementGroups(language, MissingMemberBehavior.Undefined, cancellationToken)
+            .ValueOnly()
+            .ConfigureAwait(false);
+
+        foreach (AchievementGroup group in achievementGroups)
+        {
+            context.Entry(group).State = existing.Contains(group.Id)
+                ? EntityState.Modified
+                : EntityState.Added;
+        }
+
+        _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        DetachAllEntities(context);
+
+        _logger.LogInformation("Finished seeding {Count} achievement groups.", index.Count);
         return index.Count;
     }
 

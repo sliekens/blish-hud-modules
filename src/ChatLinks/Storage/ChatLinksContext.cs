@@ -2,6 +2,9 @@
 
 using GuildWars2;
 using GuildWars2.Hero;
+using GuildWars2.Hero.Achievements;
+using GuildWars2.Hero.Achievements.Categories;
+using GuildWars2.Hero.Achievements.Groups;
 using GuildWars2.Hero.Crafting.Recipes;
 using GuildWars2.Hero.Equipment.Dyes;
 using GuildWars2.Hero.Equipment.Finishers;
@@ -19,6 +22,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 using SL.ChatLinks.Storage.Comparers;
+using SL.ChatLinks.Storage.Models.Hero.Achievements;
 using SL.ChatLinks.Storage.Models.Hero.Crafting;
 using SL.ChatLinks.Storage.Models.Hero.Equipment.Dyes;
 using SL.ChatLinks.Storage.Models.Hero.Equipment.Finishers;
@@ -61,6 +65,12 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
     public DbSet<GuildWars2.Hero.Equipment.Miniatures.Miniature> Miniatures => Set<GuildWars2.Hero.Equipment.Miniatures.Miniature>();
 
     public DbSet<Outfit> Outfits => Set<Outfit>();
+
+    public DbSet<Achievement> Achievements => Set<Achievement>();
+
+    public DbSet<AchievementCategory> AchievementCategories => Set<AchievementCategory>();
+
+    public DbSet<AchievementGroup> AchievementGroups => Set<AchievementGroup>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -207,5 +217,11 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
         _ = modelBuilder.ApplyConfiguration(new NoveltyEntityTypeConfiguration());
 
         _ = modelBuilder.ApplyConfiguration(new OutfitEntityTypeConfiguration());
+
+        _ = modelBuilder.ApplyConfiguration(new AchievementEntityTypeConfiguration());
+
+        _ = modelBuilder.ApplyConfiguration(new AchievementCategoryEntityTypeConfiguration());
+
+        _ = modelBuilder.ApplyConfiguration(new AchievementGroupEntityTypeConfiguration());
     }
 }
