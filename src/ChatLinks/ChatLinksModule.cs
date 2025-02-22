@@ -31,6 +31,8 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
 
     private ModuleSettings? _moduleSettings;
 
+    private readonly Clock _clock = new();
+
     protected override void DefineSettings(SettingCollection settings)
     {
         _moduleSettings = new ModuleSettings(settings);
@@ -125,7 +127,6 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
         _ = _serviceProvider.GetRequiredService<MainIcon>();
         _ = _serviceProvider.GetRequiredService<MainWindow>();
 
-
         try
         {
             await seeder.Sync(locale.Current, CancellationToken.None).ConfigureAwait(false);
@@ -134,6 +135,13 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
         {
             logger.LogWarning(reason, "Database sync failed, starting with potentially stale data.");
         }
+
+        _clock.HourStarted += OnHourStarted;
+    }
+
+    private void OnHourStarted(object sender, EventArgs e)
+    {
+        _eventAggregator?.Publish(new HourStarted());
     }
 
     private static void SetupSqlite3()
@@ -151,6 +159,7 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
     {
         if (disposing)
         {
+            _clock.Dispose();
             _serviceProvider?.Dispose();
             _moduleSettings?.Dispose();
         }

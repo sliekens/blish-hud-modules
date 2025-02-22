@@ -37,7 +37,7 @@ public sealed class DatabaseSeeder : IDisposable
     private readonly IEventAggregator _eventAggregator;
     private readonly Gw2Client _gw2Client;
     private readonly StaticDataClient _staticDataClient;
-
+    private readonly ILocale _locale;
     private readonly SemaphoreSlim _syncSemaphore = new(1, 1);
     private Task? _currentSync;
 
@@ -46,7 +46,8 @@ public sealed class DatabaseSeeder : IDisposable
         IDbContextFactory contextFactory,
         IEventAggregator eventAggregator,
         Gw2Client gw2Client,
-        StaticDataClient staticDataClient
+        StaticDataClient staticDataClient,
+        ILocale locale
     )
     {
         ThrowHelper.ThrowIfNull(eventAggregator);
@@ -56,7 +57,9 @@ public sealed class DatabaseSeeder : IDisposable
         _eventAggregator = eventAggregator;
         _gw2Client = gw2Client;
         _staticDataClient = staticDataClient;
+        _locale = locale;
         eventAggregator.Subscribe<LocaleChanged>(OnLocaleChanged);
+        eventAggregator.Subscribe<HourStarted>(OnHourStarted);
     }
 
     private async Task OnLocaleChanged(LocaleChanged args)
@@ -65,6 +68,15 @@ public sealed class DatabaseSeeder : IDisposable
         {
             await Migrate(args.Language).ConfigureAwait(false);
             await Sync(args.Language, CancellationToken.None).ConfigureAwait(false);
+        }).ConfigureAwait(false);
+    }
+
+    private async Task OnHourStarted(HourStarted args)
+    {
+        await Task.Run(async () =>
+        {
+            await Migrate(_locale.Current).ConfigureAwait(false);
+            await Sync(_locale.Current, CancellationToken.None).ConfigureAwait(false);
         }).ConfigureAwait(false);
     }
 
@@ -801,6 +813,7 @@ public sealed class DatabaseSeeder : IDisposable
 
     public void Dispose()
     {
+        _eventAggregator.Unsubscribe<HourStarted>(OnHourTicked);
         _eventAggregator.Unsubscribe<LocaleChanged>(OnLocaleChanged);
         _syncSemaphore.Dispose();
     }
