@@ -7,29 +7,29 @@
   <ItemGroup>
     <PackageVersion Include="BlishHUD" Version="1.2.0" />
     <PackageVersion Include="Costura.Fody" Version="6.0.0" />
-    <PackageVersion Include="coverlet.collector" Version="6.0.2" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.4" />
     <PackageVersion Include="Fody" Version="6.9.1" />
-    <PackageVersion Include="GW2SDK" Version="2.2.0" />
+    <PackageVersion Include="GW2SDK" Version="2.3.0" />
     <PackageVersion Include="Gw2Sharp" Version="1.7.4" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.32" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="3.1.32" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.32" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="3.1.32" />
-    <PackageVersion Include="Microsoft.Extensions.Http" Version="3.1.32" />
-    <PackageVersion Include="Microsoft.Extensions.Localization" Version="3.1.32" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.32" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-    <PackageVersion Include="Microsoft.Windows.CsWin32" Version="0.3.106" />
-    <PackageVersion Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageVersion Include="Polly" Version="8.5.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="[3.1.32]" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="[3.1.32]" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="[3.1.32]" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="[3.1.32]" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="[3.1.32]" />
+    <PackageVersion Include="Microsoft.Extensions.Localization" Version="[3.1.32]" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="[3.1.32]" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+    <PackageVersion Include="Microsoft.Windows.CsWin32" Version="0.3.183" />
+    <PackageVersion Include="Newtonsoft.Json" Version="[13.0.1]" />
+    <PackageVersion Include="Polly" Version="8.5.2" />
     <PackageVersion Include="PolySharp" Version="1.15.0" />
     <PackageVersion Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.10" />
     <PackageVersion Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.10" />
     <PackageVersion Include="SQLitePCLRaw.provider.dynamic_cdecl" Version="2.1.10" />
-    <PackageVersion Include="System.Collections.Immutable" Version="1.7.1" />
-    <PackageVersion Include="System.ComponentModel.Composition" Version="6.0.0" />
-    <PackageVersion Include="System.Text.Json" Version="9.0.1" />
-    <PackageVersion Include="xunit" Version="2.9.2" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageVersion Include="System.Collections.Immutable" Version="[1.7.1]" />
+    <PackageVersion Include="System.ComponentModel.Composition" Version="[6.0.0]" />
+    <PackageVersion Include="System.Text.Json" Version="9.0.2" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.2" />
   </ItemGroup>
 </Project>
