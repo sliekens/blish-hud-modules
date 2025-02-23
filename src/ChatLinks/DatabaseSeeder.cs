@@ -813,7 +813,7 @@ public sealed class DatabaseSeeder : IDisposable
 
     public void Dispose()
     {
-        _eventAggregator.Unsubscribe<HourStarted>(OnHourTicked);
+        _eventAggregator.Unsubscribe<HourStarted>(OnHourStarted);
         _eventAggregator.Unsubscribe<LocaleChanged>(OnLocaleChanged);
         _syncSemaphore.Dispose();
     }
