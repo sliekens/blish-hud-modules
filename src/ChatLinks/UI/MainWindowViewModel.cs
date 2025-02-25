@@ -4,6 +4,7 @@ using Blish_HUD.Content;
 
 using Microsoft.Extensions.Localization;
 
+using SL.ChatLinks.UI.Tabs.Achievements;
 using SL.ChatLinks.UI.Tabs.Items;
 
 namespace SL.ChatLinks.UI;
@@ -11,6 +12,7 @@ namespace SL.ChatLinks.UI;
 public sealed class MainWindowViewModel(
     IEventAggregator eventAggregator,
     ItemsTabViewModelFactory itemsTabViewModelFactory,
+    AchievementsTabViewModelFactory achievementsTabViewModelFactory,
     IStringLocalizer<MainWindow> localizer) : ViewModel
 {
     private bool _visible;
@@ -46,6 +48,8 @@ public sealed class MainWindowViewModel(
 
     public string ItemsTabName => localizer["Items"];
 
+    public string AchievementsTabName => localizer["Achievements"];
+
     [SuppressMessage("Performance", "CA1822:Mark members as static")]
     public AsyncTexture2D BackgroundTexture => AsyncTexture2D.FromAssetId(155985);
 
@@ -56,6 +60,11 @@ public sealed class MainWindowViewModel(
     public ItemsTabViewModel CreateItemsTabViewModel()
     {
         return itemsTabViewModelFactory.Create();
+    }
+
+    public AchievementsTabViewModel CreateAchievementsTabViewModel()
+    {
+        return achievementsTabViewModelFactory.Create();
     }
 
     private void ModuleUnloading(ModuleUnloading obj)

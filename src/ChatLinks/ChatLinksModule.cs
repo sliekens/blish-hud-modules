@@ -12,6 +12,7 @@ using SL.Adapters;
 using SL.ChatLinks.Integrations;
 using SL.ChatLinks.Logging;
 using SL.ChatLinks.UI;
+using SL.ChatLinks.UI.Tabs.Achievements;
 using SL.ChatLinks.UI.Tabs.Items;
 using SL.ChatLinks.UI.Tabs.Items.Collections;
 using SL.ChatLinks.UI.Tabs.Items.Tooltips;
@@ -46,14 +47,17 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
         }
 
         ServiceCollection services = new();
+
+        #region Settings
+
         _ = services.AddSingleton(ModuleParameters);
         _ = services.AddSingleton(_moduleSettings);
         _ = services.ConfigureOptions(_moduleSettings);
         _ = services.AddSingleton<IOptionsChangeTokenSource<ChatLinkOptions>>(_moduleSettings);
 
-        _ = services.AddSingleton<ILocale, OverlayLocale>();
-        services.AddGw2Client();
-        services.AddStaticDataClient();
+        #endregion Settings
+
+        #region Persistence
 
         services.AddDatabase(options =>
         {
@@ -62,22 +66,34 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
 
         _ = services.AddSingleton<DatabaseSeeder>();
 
+        #endregion Persistence
+
+        #region Localization
+
+        _ = services.AddSingleton<ILocale, OverlayLocale>();
+        _ = services.AddLocalization(options =>
+        {
+            options.ResourcesPath = "Resources";
+        });
+
+        #endregion Localization
+
+        #region Web services
+
+        services.AddGw2Client();
+        services.AddStaticDataClient();
+        _ = services.AddSingleton<ITokenProvider, Gw2SharpTokenProvider>();
+
+        #endregion Web services
+
+        #region Supportive services
+
         _ = services.AddSingleton<IEventAggregator, DefaultEventAggregator>();
-        _ = services.AddTransient<MainIcon>();
-        _ = services.AddTransient<MainIconViewModel>();
-        _ = services.AddTransient<MainWindow>();
-        _ = services.AddTransient<MainWindowViewModel>();
-        _ = services.AddTransient<ItemsTabViewModelFactory>();
-        _ = services.AddTransient<ItemsListViewModelFactory>();
-        _ = services.AddTransient<ItemTooltipViewModelFactory>();
-        _ = services.AddTransient<ChatLinkEditorViewModelFactory>();
-        _ = services.AddTransient<UpgradeEditorViewModelFactory>();
-        _ = services.AddTransient<UpgradeSelectorViewModelFactory>();
-        _ = services.AddTransient<ItemSearch>();
-        _ = services.AddSingleton<Customizer>();
-        _ = services.AddSingleton<AccountUnlocks>();
-        _ = services.AddHttpClient<ItemIcons>();
         _ = services.AddTransient<IClipBoard, WpfClipboard>();
+
+        #endregion Supportive services
+
+        #region Logging
 
         _ = services.AddLogging(builder =>
         {
@@ -97,12 +113,34 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
             }
         });
 
-        _ = services.AddSingleton<ITokenProvider, Gw2SharpTokenProvider>();
+        #endregion Logging
 
-        _ = services.AddLocalization(options =>
-        {
-            options.ResourcesPath = "Resources";
-        });
+        #region UI
+
+        // Corner icon
+        _ = services.AddTransient<MainIcon>();
+        _ = services.AddTransient<MainIconViewModel>();
+
+        // Main window
+        _ = services.AddTransient<MainWindow>();
+        _ = services.AddTransient<MainWindowViewModel>();
+
+        // Items tab
+        _ = services.AddTransient<ItemsTabViewModelFactory>();
+        _ = services.AddTransient<ItemsListViewModelFactory>();
+        _ = services.AddTransient<ItemTooltipViewModelFactory>();
+        _ = services.AddTransient<ChatLinkEditorViewModelFactory>();
+        _ = services.AddTransient<UpgradeEditorViewModelFactory>();
+        _ = services.AddTransient<UpgradeSelectorViewModelFactory>();
+        _ = services.AddTransient<ItemSearch>();
+        _ = services.AddSingleton<Customizer>();
+        _ = services.AddSingleton<AccountUnlocks>();
+        _ = services.AddHttpClient<ItemIcons>();
+
+        // Achievements tab
+        _ = services.AddTransient<AchievementsTabViewModelFactory>();
+
+        #endregion
 
         _serviceProvider = services.BuildServiceProvider();
         _eventAggregator = _serviceProvider.GetRequiredService<IEventAggregator>();

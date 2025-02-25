@@ -6,6 +6,7 @@ using Blish_HUD.Controls;
 
 using Microsoft.Xna.Framework;
 
+using SL.ChatLinks.UI.Tabs.Achievements;
 using SL.ChatLinks.UI.Tabs.Items;
 
 namespace SL.ChatLinks.UI;
@@ -15,6 +16,8 @@ public sealed class MainWindow : TabbedWindow2
     private readonly AsyncEmblem _emblem;
 
     private readonly Tab _itemsTab;
+
+    private readonly Tab _achievementsTab;
 
     public MainWindow(MainWindowViewModel viewModel) : base(
         viewModel?.BackgroundTexture,
@@ -37,7 +40,14 @@ public sealed class MainWindow : TabbedWindow2
             viewModel.ItemsTabName,
             1);
 
+        _achievementsTab = new Tab(
+            AsyncTexture2D.FromAssetId(156710),
+            () => new AchievementsTabView(viewModel.CreateAchievementsTabViewModel()),
+            viewModel.AchievementsTabName,
+            1);
+
         Tabs.Add(_itemsTab);
+        Tabs.Add(_achievementsTab);
 
         PropertyChanged += ViewPropertyChanged;
         viewModel.PropertyChanged += ModelPropertyChanged;
