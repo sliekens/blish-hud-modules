@@ -1,9 +1,11 @@
-﻿namespace SL.ChatLinks.UI.Tabs.Achievements;
+﻿using Microsoft.Extensions.DependencyInjection;
 
-public sealed class AchievementsTabViewModelFactory
+namespace SL.ChatLinks.UI.Tabs.Achievements;
+
+public sealed class AchievementsTabViewModelFactory(IServiceProvider sp)
 {
     public AchievementsTabViewModel Create()
     {
-        return new AchievementsTabViewModel();
+        return ActivatorUtilities.CreateInstance<AchievementsTabViewModel>(sp);
     }
 }
