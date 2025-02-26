@@ -12,7 +12,7 @@ namespace SL.ChatLinks.UI.Tabs.Achievements;
 
 internal sealed class AchievementsTabView : View, IDisposable
 {
-    private FlowPanel _achievementsPanel = new();
+    private readonly ViewContainer _selectedCategoryView = new();
 
     public AchievementsTabViewModel ViewModel { get; }
 
@@ -65,11 +65,10 @@ internal sealed class AchievementsTabView : View, IDisposable
             }
         }
 
-        _achievementsPanel.Parent = buildPanel;
-        _achievementsPanel.Left = categoriesPanel.Right;
-        _achievementsPanel.Width = 600;
-        _achievementsPanel.Height = 600;
-        _achievementsPanel.Title = "Achievements";
+        _selectedCategoryView.Parent = buildPanel;
+        _selectedCategoryView.Left = categoriesPanel.Right;
+        _selectedCategoryView.Width = 660;
+        _selectedCategoryView.Height = 600;
 
         ViewModel.PropertyChanged += (sender, args) =>
         {
@@ -84,31 +83,17 @@ internal sealed class AchievementsTabView : View, IDisposable
 
     private void ShowAchievements(ObservableCollection<Achievement> achievements)
     {
-        foreach (Achievement achievement in achievements)
+        if (!string.IsNullOrEmpty(ViewModel.SelectedCategory?.Name))
         {
-            DetailsButton button = new()
-            {
-                Parent = _achievementsPanel,
-                Text = achievement.Name
-            };
-
-            if (!string.IsNullOrEmpty(achievement.Description))
-            {
-                button.BasicTooltipText = achievement.Description;
-            }
-
-            if (!string.IsNullOrEmpty(achievement.IconHref))
-            {
-                button.Icon = GameService.Content.GetRenderServiceTexture(achievement.IconHref);
-            }
-
-            _ = new TextBox
-            {
-                Parent = button,
-                Width = 200,
-                Text = achievement.GetChatLink().ToString()
-            };
+            _selectedCategoryView.Title = ViewModel.SelectedCategory!.Name;
         }
+
+        if (!string.IsNullOrEmpty(ViewModel.SelectedCategory?.IconHref))
+        {
+            _selectedCategoryView.Icon = GameService.Content.GetRenderServiceTexture(ViewModel.SelectedCategory!.IconHref);
+        }
+
+        _selectedCategoryView.Show(new AchievementsListView(achievements));
     }
 
     public void Dispose()

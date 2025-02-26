@@ -24,6 +24,8 @@ public sealed class AchievementsTabViewModel(IDbContextFactory contextFactory, I
 
     private ObservableCollection<Achievement> _achievements = [];
 
+    private AchievementCategory? _selectedCategory;
+
     public ObservableCollection<AchievementGroupMenuItem> MenuItems
     {
         get => _groups;
@@ -36,6 +38,11 @@ public sealed class AchievementsTabViewModel(IDbContextFactory contextFactory, I
         private set => SetField(ref _achievements, value);
     }
 
+    public AchievementCategory? SelectedCategory
+    {
+        get => _selectedCategory;
+        private set => SetField(ref _selectedCategory, value);
+    }
 
     public async Task<bool> Load()
     {
@@ -62,10 +69,6 @@ public sealed class AchievementsTabViewModel(IDbContextFactory contextFactory, I
         return true;
     }
 
-    public void Dispose()
-    {
-    }
-
     public async Task SelectCategory(AchievementCategory category)
     {
         ThrowHelper.ThrowIfNull(category);
@@ -79,7 +82,12 @@ public sealed class AchievementsTabViewModel(IDbContextFactory contextFactory, I
                 .ToListAsync()
                 .ConfigureAwait(false);
 
+            SelectedCategory = category;
             Achievements = [.. achievements];
         }
+    }
+
+    public void Dispose()
+    {
     }
 }
