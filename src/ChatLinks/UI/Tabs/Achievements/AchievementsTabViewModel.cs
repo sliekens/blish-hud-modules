@@ -79,11 +79,18 @@ public sealed class AchievementsTabViewModel(IDbContextFactory contextFactory, I
             IEnumerable<int> ids = category.Achievements.Select(r => r.Id);
             List<Achievement> achievements = await context.Achievements
                 .Where(achievement => ids.Contains(achievement.Id))
+                .OrderBy(achievement => achievement.Name)
                 .ToListAsync()
                 .ConfigureAwait(false);
 
             SelectedCategory = category;
-            Achievements = [.. achievements];
+            Achievements = [.. achievements
+                .Select(achievement => achievement with
+                {
+                    IconHref = !string.IsNullOrEmpty(achievement.IconHref)
+                        ? achievement.IconHref
+                        : category.IconHref
+                })];
         }
     }
 
