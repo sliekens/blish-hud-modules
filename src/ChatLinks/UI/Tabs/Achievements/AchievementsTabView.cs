@@ -33,8 +33,9 @@ internal sealed class AchievementsTabView : View, IDisposable
         {
             Parent = buildPanel,
             WidthSizingMode = SizingMode.AutoSize,
-            HeightSizingMode = SizingMode.AutoSize,
-            Title = "Categories"
+            HeightSizingMode = SizingMode.Fill,
+            Title = "Categories",
+            CanScroll = true
         };
 
         Menu menu = new()
