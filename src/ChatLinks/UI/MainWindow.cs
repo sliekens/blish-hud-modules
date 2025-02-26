@@ -32,6 +32,7 @@ public sealed class MainWindow : TabbedWindow2
         Id = viewModel.Id;
         Title = viewModel.Title;
         Location = new Point(300, 300);
+        Width = 1000;
         TabChanged += OnTabChanged;
 
         _itemsTab = new Tab(
