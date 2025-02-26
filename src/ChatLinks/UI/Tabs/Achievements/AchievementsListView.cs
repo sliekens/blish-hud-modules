@@ -19,6 +19,11 @@ public sealed class AchievementsListView(ObservableCollection<Achievement> achie
 
     protected override void Build(Container buildPanel)
     {
+        _achievementsPanel.Parent = buildPanel;
+        _achievementsPanel.FlowDirection = ControlFlowDirection.LeftToRight;
+        _achievementsPanel.WidthSizingMode = SizingMode.Fill;
+        _achievementsPanel.HeightSizingMode = SizingMode.AutoSize;
+        _achievementsPanel.ControlPadding = new(9, 7);
 
         foreach (Achievement achievement in achievements)
         {
@@ -47,11 +52,6 @@ public sealed class AchievementsListView(ObservableCollection<Achievement> achie
             };
         }
 
-        _achievementsPanel.Parent = buildPanel;
-        _achievementsPanel.WidthSizingMode = SizingMode.Fill;
-        _achievementsPanel.HeightSizingMode = SizingMode.Fill;
-        _achievementsPanel.FlowDirection = ControlFlowDirection.LeftToRight;
-        _achievementsPanel.ControlPadding = new(9, 7);
     }
 
     protected override void Unload()

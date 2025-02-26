@@ -12,7 +12,10 @@ namespace SL.ChatLinks.UI.Tabs.Achievements;
 
 internal sealed class AchievementsTabView : View, IDisposable
 {
-    private readonly ViewContainer _selectedCategoryView = new();
+    private readonly ViewContainer _selectedCategoryView = new()
+    {
+        CanScroll = true
+    };
 
     public AchievementsTabViewModel ViewModel { get; }
 
