@@ -1,5 +1,6 @@
 ﻿
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 using Blish_HUD;
 using Blish_HUD.Content;
@@ -11,6 +12,7 @@ using GuildWars2.Hero.Achievements.Groups;
 using Microsoft.EntityFrameworkCore;
 
 using SL.ChatLinks.Storage;
+using SL.Common.ModelBinding;
 
 namespace SL.ChatLinks.UI.Tabs.Achievements;
 
@@ -31,6 +33,8 @@ public sealed class AchievementsTabViewModel(IDbContextFactory contextFactory, I
 
     private AsyncTexture2D? _headerIcon;
 
+    private string _searchText = "";
+
     public ObservableCollection<AchievementGroupMenuItem> MenuItems
     {
         get => _groups;
@@ -46,14 +50,25 @@ public sealed class AchievementsTabViewModel(IDbContextFactory contextFactory, I
     public string? HeaderText
     {
         get => _headerText;
-        internal set => SetField(ref _headerText, value);
+        set => SetField(ref _headerText, value);
     }
 
     public AsyncTexture2D? HeaderIcon
     {
         get => _headerIcon;
-        internal set => SetField(ref _headerIcon, value);
+        set => SetField(ref _headerIcon, value);
     }
+
+    public string SearchText
+    {
+        get => _searchText;
+        set => SetField(ref _searchText, value);
+    }
+
+    public ICommand SearchCommand => new AsyncRelayCommand(async () =>
+    {
+        await Task.Run(OnSearch).ConfigureAwait(false);
+    });
 
     public async Task<bool> Load()
     {
@@ -78,6 +93,31 @@ public sealed class AchievementsTabViewModel(IDbContextFactory contextFactory, I
         }
 
         return true;
+    }
+
+    public async Task OnSearch()
+    {
+        ObservableCollection<Achievement> results = [];
+
+        string query = SearchText.Trim();
+        if (query.Length >= 3)
+        {
+            ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
+            await using (context.ConfigureAwait(false))
+            {
+                IQueryable<Achievement> search = context.Achievements
+                    .Where(achievement => EF.Functions.Like(achievement.Name, $"%{query}%"));
+                await foreach (Achievement achievement in search.AsAsyncEnumerable().ConfigureAwait(false))
+                {
+                    results.Add(achievement);
+                }
+
+            }
+        }
+
+        HeaderIcon = AsyncTexture2D.FromAssetId(155061);
+        HeaderText = SearchText;
+        Achievements = results;
     }
 
     public async Task SelectCategory(AchievementCategory category)

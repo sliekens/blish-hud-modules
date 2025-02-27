@@ -5,10 +5,19 @@ using Blish_HUD.Graphics.UI;
 
 using GuildWars2.Hero.Achievements.Categories;
 
+using SL.Common.ModelBinding;
+
 namespace SL.ChatLinks.UI.Tabs.Achievements;
 
 internal sealed class AchievementsTabView : View, IDisposable
 {
+    private readonly TextBox _searchBox = new()
+    {
+        Left = 4,
+        Width = Panel.MenuStandard.Size.X,
+        PlaceholderText = "Search...",
+    };
+
     private readonly ViewContainer _selectedCategoryView = new()
     {
         CanScroll = true
@@ -29,9 +38,12 @@ internal sealed class AchievementsTabView : View, IDisposable
 
     protected override void Build(Container buildPanel)
     {
+        _searchBox.Parent = buildPanel;
+
         Panel categoriesPanel = new()
         {
             Parent = buildPanel,
+            Top = _searchBox.Height + 9,
             WidthSizingMode = SizingMode.AutoSize,
             HeightSizingMode = SizingMode.Fill,
             Title = "Categories",
@@ -88,10 +100,25 @@ internal sealed class AchievementsTabView : View, IDisposable
                     break;
             }
         };
+
+        _ = Binder.Bind(ViewModel, vm => vm.SearchText, _searchBox);
+        _searchBox.TextChanged += SearchTextChanged;
+        _searchBox.EnterPressed += SearchEnterPressed;
+    }
+
+    private void SearchTextChanged(object sender, EventArgs e)
+    {
+        ViewModel.SearchCommand.Execute(null);
+    }
+
+    private void SearchEnterPressed(object sender, EventArgs e)
+    {
+        ViewModel.SearchCommand.Execute(null);
     }
 
     public void Dispose()
     {
+        _searchBox.Dispose();
         _selectedCategoryView.Dispose();
         ViewModel.Dispose();
     }
