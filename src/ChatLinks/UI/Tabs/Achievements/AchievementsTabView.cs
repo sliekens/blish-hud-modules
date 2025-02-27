@@ -98,6 +98,8 @@ internal sealed class AchievementsTabView : View, IDisposable
                 case nameof(ViewModel.Achievements):
                     _selectedCategoryView.Show(new AchievementsListView(ViewModel.Achievements));
                     break;
+                default:
+                    break;
             }
         };
 

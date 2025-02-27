@@ -107,11 +107,32 @@ public sealed class AchievementsTabViewModel(IDbContextFactory contextFactory, I
             {
                 IQueryable<Achievement> search = context.Achievements
                     .Where(achievement => EF.Functions.Like(achievement.Name, $"%{query}%"));
-                await foreach (Achievement achievement in search.AsAsyncEnumerable().ConfigureAwait(false))
-                {
-                    results.Add(achievement);
-                }
 
+                if (await search.AnyAsync().ConfigureAwait(false))
+                {
+                    List<AchievementCategory> categories = await context.AchievementCategories
+                        .OrderBy(category => category.Order)
+                        .ToListAsync()
+                        .ConfigureAwait(false);
+
+                    await foreach (Achievement achievement in search.AsAsyncEnumerable().ConfigureAwait(false))
+                    {
+                        Achievement local = achievement;
+
+                        // Use category icon if achievement does not have one
+                        if (string.IsNullOrEmpty(achievement.IconHref))
+                        {
+                            AchievementCategory? category = categories
+                                .FirstOrDefault(category => category.Achievements.Concat(category.Tomorrow ?? []).Any(reference => reference.Id == achievement.Id));
+                            if (category is not null)
+                            {
+                                local = achievement with { IconHref = category.IconHref };
+                            }
+                        }
+
+                        results.Add(local);
+                    }
+                }
             }
         }
 
