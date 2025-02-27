@@ -68,9 +68,9 @@ internal sealed class AchievementsTabView : View, IDisposable
         }
 
         _selectedCategoryView.Parent = buildPanel;
-        _selectedCategoryView.Left = categoriesPanel.Right;
-        _selectedCategoryView.Width = 660;
-        _selectedCategoryView.Height = 600;
+        _selectedCategoryView.Left = categoriesPanel.Right + 9;
+        _selectedCategoryView.Width = 650;
+        _selectedCategoryView.HeightSizingMode = SizingMode.Fill;
 
         ViewModel.PropertyChanged += (sender, args) =>
         {

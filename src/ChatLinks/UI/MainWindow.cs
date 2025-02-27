@@ -22,7 +22,7 @@ public sealed class MainWindow : TabbedWindow2
     public MainWindow(MainWindowViewModel viewModel) : base(
         viewModel?.BackgroundTexture,
         new Rectangle(0, 26, 953, 691),
-        new Rectangle(70, 35, 880, 650)
+        new Rectangle(60, 35, 890, 650)
     )
     {
         ThrowHelper.ThrowIfNull(viewModel);

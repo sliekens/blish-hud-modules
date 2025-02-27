@@ -23,6 +23,7 @@ public sealed class AchievementsListView(ObservableCollection<Achievement> achie
         _achievementsPanel.WidthSizingMode = SizingMode.Fill;
         _achievementsPanel.HeightSizingMode = SizingMode.AutoSize;
         _achievementsPanel.ControlPadding = new(9, 7);
+        _achievementsPanel.OuterControlPadding = new(0, 12);
 
         foreach (Achievement achievement in achievements)
         {
