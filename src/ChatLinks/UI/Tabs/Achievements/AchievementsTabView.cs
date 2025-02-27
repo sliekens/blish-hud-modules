@@ -35,7 +35,8 @@ internal sealed class AchievementsTabView : View, IDisposable
             WidthSizingMode = SizingMode.AutoSize,
             HeightSizingMode = SizingMode.Fill,
             Title = "Categories",
-            CanScroll = true
+            CanScroll = true,
+            ShowBorder = true
         };
 
         Menu menu = new()
