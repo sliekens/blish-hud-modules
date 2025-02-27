@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 
-using Blish_HUD;
 using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
 
@@ -27,31 +26,11 @@ public sealed class AchievementsListView(ObservableCollection<Achievement> achie
 
         foreach (Achievement achievement in achievements)
         {
-            DetailsButton button = new()
+            _ = new AchievementTile(achievement)
             {
-                Parent = _achievementsPanel,
-                Size = new(320, 90),
-                Text = achievement.Name
-            };
-
-            if (!string.IsNullOrEmpty(achievement.Description))
-            {
-                button.BasicTooltipText = achievement.Description;
-            }
-
-            if (!string.IsNullOrEmpty(achievement.IconHref))
-            {
-                button.Icon = GameService.Content.GetRenderServiceTexture(achievement.IconHref);
-            }
-
-            _ = new TextBox
-            {
-                Parent = button,
-                Width = 200,
-                Text = achievement.GetChatLink().ToString()
+                Parent = _achievementsPanel
             };
         }
-
     }
 
     protected override void Unload()
