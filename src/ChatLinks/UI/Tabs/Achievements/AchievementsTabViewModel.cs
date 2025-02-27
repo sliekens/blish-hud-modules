@@ -1,6 +1,9 @@
 ﻿
 using System.Collections.ObjectModel;
 
+using Blish_HUD;
+using Blish_HUD.Content;
+
 using GuildWars2.Hero.Achievements;
 using GuildWars2.Hero.Achievements.Categories;
 using GuildWars2.Hero.Achievements.Groups;
@@ -24,7 +27,9 @@ public sealed class AchievementsTabViewModel(IDbContextFactory contextFactory, I
 
     private ObservableCollection<Achievement> _achievements = [];
 
-    private AchievementCategory? _selectedCategory;
+    private string? _headerText;
+
+    private AsyncTexture2D? _headerIcon;
 
     public ObservableCollection<AchievementGroupMenuItem> MenuItems
     {
@@ -38,10 +43,16 @@ public sealed class AchievementsTabViewModel(IDbContextFactory contextFactory, I
         private set => SetField(ref _achievements, value);
     }
 
-    public AchievementCategory? SelectedCategory
+    public string? HeaderText
     {
-        get => _selectedCategory;
-        private set => SetField(ref _selectedCategory, value);
+        get => _headerText;
+        internal set => SetField(ref _headerText, value);
+    }
+
+    public AsyncTexture2D? HeaderIcon
+    {
+        get => _headerIcon;
+        internal set => SetField(ref _headerIcon, value);
     }
 
     public async Task<bool> Load()
@@ -83,7 +94,8 @@ public sealed class AchievementsTabViewModel(IDbContextFactory contextFactory, I
                 .ToListAsync()
                 .ConfigureAwait(false);
 
-            SelectedCategory = category;
+            HeaderText = !string.IsNullOrEmpty(category.Name) ? category.Name : null;
+            HeaderIcon = !string.IsNullOrEmpty(category.IconHref) ? GameService.Content.GetRenderServiceTexture(category.IconHref) : null;
             Achievements = [.. achievements
                 .Select(achievement => achievement with
                 {

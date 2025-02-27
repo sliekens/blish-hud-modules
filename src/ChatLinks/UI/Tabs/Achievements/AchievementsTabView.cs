@@ -1,11 +1,8 @@
-﻿using System.Collections.ObjectModel;
-
-using Blish_HUD;
+﻿using Blish_HUD;
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
 
-using GuildWars2.Hero.Achievements;
 using GuildWars2.Hero.Achievements.Categories;
 
 namespace SL.ChatLinks.UI.Tabs.Achievements;
@@ -78,30 +75,22 @@ internal sealed class AchievementsTabView : View, IDisposable
         {
             switch (args.PropertyName)
             {
+                case nameof(ViewModel.HeaderText):
+                    _selectedCategoryView.Title = ViewModel.HeaderText;
+                    break;
+                case nameof(ViewModel.HeaderIcon):
+                    _selectedCategoryView.Icon = ViewModel.HeaderIcon;
+                    break;
                 case nameof(ViewModel.Achievements):
-                    ShowAchievements(ViewModel.Achievements);
+                    _selectedCategoryView.Show(new AchievementsListView(ViewModel.Achievements));
                     break;
             }
         };
     }
 
-    private void ShowAchievements(ObservableCollection<Achievement> achievements)
-    {
-        if (!string.IsNullOrEmpty(ViewModel.SelectedCategory?.Name))
-        {
-            _selectedCategoryView.Title = ViewModel.SelectedCategory!.Name;
-        }
-
-        if (!string.IsNullOrEmpty(ViewModel.SelectedCategory?.IconHref))
-        {
-            _selectedCategoryView.Icon = GameService.Content.GetRenderServiceTexture(ViewModel.SelectedCategory!.IconHref);
-        }
-
-        _selectedCategoryView.Show(new AchievementsListView(achievements));
-    }
-
     public void Dispose()
     {
+        _selectedCategoryView.Dispose();
         ViewModel.Dispose();
     }
 }
