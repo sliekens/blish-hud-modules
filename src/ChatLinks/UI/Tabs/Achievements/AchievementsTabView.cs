@@ -42,7 +42,8 @@ internal sealed class AchievementsTabView : View, IDisposable
         Menu menu = new()
         {
             Parent = categoriesPanel,
-            Size = Panel.MenuStandard.Size
+            Size = Panel.MenuStandard.Size,
+            CanSelect = true
         };
 
         foreach (AchievementGroupMenuItem menuItem in ViewModel.MenuItems)
