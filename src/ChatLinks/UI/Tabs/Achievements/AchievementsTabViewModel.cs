@@ -94,6 +94,7 @@ public sealed class AchievementsTabViewModel(
         await LoadAchievementCategories().ConfigureAwait(false);
 
         eventAggregator.Subscribe<LocaleChanged>(OnLocaleChanged);
+        eventAggregator.Subscribe<DatabaseSeeded>(OnDatabaseSeeded);
 
         return true;
     }
@@ -127,6 +128,19 @@ public sealed class AchievementsTabViewModel(
         OnPropertyChanged(nameof(CategoriesTitle));
         await LoadAchievementCategories().ConfigureAwait(false);
         if (SelectedCategory is null)
+        {
+            await OnSearch().ConfigureAwait(false);
+        }
+    }
+
+    private async Task OnDatabaseSeeded(DatabaseSeeded seeded)
+    {
+        if (seeded.Updated["achievement_categories"] > 0)
+        {
+            await LoadAchievementCategories().ConfigureAwait(false);
+        }
+
+        if (SelectedCategory is null && seeded.Updated["achievements"] > 0)
         {
             await OnSearch().ConfigureAwait(false);
         }
