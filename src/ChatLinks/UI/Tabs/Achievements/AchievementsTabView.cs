@@ -18,6 +18,12 @@ internal sealed class AchievementsTabView : View, IDisposable
         PlaceholderText = "Search...",
     };
 
+    private readonly Menu _menu = new()
+    {
+        Size = Panel.MenuStandard.Size,
+        CanSelect = true
+    };
+
     private readonly ViewContainer _selectedCategoryView = new()
     {
         CanScroll = true
@@ -51,16 +57,11 @@ internal sealed class AchievementsTabView : View, IDisposable
             ShowBorder = true
         };
 
-        Menu menu = new()
-        {
-            Parent = categoriesPanel,
-            Size = Panel.MenuStandard.Size,
-            CanSelect = true
-        };
+        _menu.Parent = categoriesPanel;
 
         foreach (AchievementGroupMenuItem menuItem in ViewModel.MenuItems)
         {
-            MenuItem groupMenuItem = menu.AddMenuItem(menuItem.Group.Name);
+            MenuItem groupMenuItem = _menu.AddMenuItem(menuItem.Group.Name);
             groupMenuItem.BasicTooltipText = menuItem.Group.Description;
 
             foreach (AchievementCategory category in menuItem.Categories)
@@ -110,17 +111,20 @@ internal sealed class AchievementsTabView : View, IDisposable
 
     private void SearchTextChanged(object sender, EventArgs e)
     {
+        _menu.SelectedMenuItem?.Deselect();
         ViewModel.SearchCommand.Execute(null);
     }
 
     private void SearchEnterPressed(object sender, EventArgs e)
     {
+        _menu.SelectedMenuItem?.Deselect();
         ViewModel.SearchCommand.Execute(null);
     }
 
     public void Dispose()
     {
         _searchBox.Dispose();
+        _menu.Dispose();
         _selectedCategoryView.Dispose();
         ViewModel.Dispose();
     }
