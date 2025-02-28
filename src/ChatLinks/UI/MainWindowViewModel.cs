@@ -28,6 +28,7 @@ public sealed class MainWindowViewModel(
     {
         OnPropertyChanged(nameof(Title));
         OnPropertyChanged(nameof(ItemsTabName));
+        OnPropertyChanged(nameof(AchievementsTabName));
     }
 
     private void MainIconClicked(MainIconClicked obj)

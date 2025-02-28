@@ -10,6 +10,7 @@ using GuildWars2.Hero.Achievements.Categories;
 using GuildWars2.Hero.Achievements.Groups;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 
 using SL.ChatLinks.Storage;
 using SL.Common.ModelBinding;
@@ -24,7 +25,9 @@ public class AchievementGroupMenuItem
 }
 
 public sealed class AchievementsTabViewModel(
+    IEventAggregator eventAggregator,
     IDbContextFactory contextFactory,
+    IStringLocalizer<AchievementsTabView> localizer,
     ILocale locale,
     AchievementTileViewModelFactory achievementTileViewModelFactory
 ) : ViewModel, IDisposable
@@ -38,6 +41,8 @@ public sealed class AchievementsTabViewModel(
     private AsyncTexture2D? _headerIcon;
 
     private string _searchText = "";
+
+    private AchievementCategory? _selectedCategory;
 
     public ObservableCollection<AchievementGroupMenuItem> MenuItems
     {
@@ -74,7 +79,26 @@ public sealed class AchievementsTabViewModel(
         await Task.Run(OnSearch).ConfigureAwait(false);
     });
 
+    public string CategoriesTitle => localizer["Categories"];
+
+    public string SearchPlaceholder => localizer["Search"];
+
+    public AchievementCategory? SelectedCategory
+    {
+        get => _selectedCategory;
+        set => SetField(ref _selectedCategory, value);
+    }
+
     public async Task<bool> Load()
+    {
+        await LoadAchievementCategories().ConfigureAwait(false);
+
+        eventAggregator.Subscribe<LocaleChanged>(OnLocaleChanged);
+
+        return true;
+    }
+
+    private async Task LoadAchievementCategories()
     {
         ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
         await using (context.ConfigureAwait(false))
@@ -95,12 +119,22 @@ public sealed class AchievementsTabViewModel(
                     Categories = categories.Where(category => group.Categories.Contains(category.Id))
                 })];
         }
+    }
 
-        return true;
+    private async Task OnLocaleChanged(LocaleChanged changed)
+    {
+        OnPropertyChanged(nameof(SearchPlaceholder));
+        OnPropertyChanged(nameof(CategoriesTitle));
+        await LoadAchievementCategories().ConfigureAwait(false);
+        if (SelectedCategory is null)
+        {
+            await OnSearch().ConfigureAwait(false);
+        }
     }
 
     public async Task OnSearch()
     {
+        SelectedCategory = null;
         ObservableCollection<AchievementTileViewModel> results = [];
 
         string query = SearchText.Trim();
@@ -138,6 +172,7 @@ public sealed class AchievementsTabViewModel(
     public async Task SelectCategory(AchievementCategory category)
     {
         ThrowHelper.ThrowIfNull(category);
+        SelectedCategory = category;
 
         ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
         await using (context.ConfigureAwait(false))
@@ -157,5 +192,6 @@ public sealed class AchievementsTabViewModel(
 
     public void Dispose()
     {
+        eventAggregator.Unsubscribe<LocaleChanged>(OnLocaleChanged);
     }
 }

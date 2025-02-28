@@ -79,7 +79,12 @@ public sealed class MainWindow : TabbedWindow2
 
             case nameof(ViewModel.ItemsTabName):
                 _itemsTab.Name = ViewModel.ItemsTabName;
-                Subtitle = ViewModel.ItemsTabName;
+                Subtitle = SelectedTab.Name;
+                break;
+
+            case nameof(ViewModel.AchievementsTabName):
+                _achievementsTab.Name = ViewModel.AchievementsTabName;
+                Subtitle = SelectedTab.Name;
                 break;
 
             case nameof(ViewModel.Visible):

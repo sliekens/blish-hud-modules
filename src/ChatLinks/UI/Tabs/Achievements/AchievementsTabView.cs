@@ -9,25 +9,15 @@ using SL.Common.ModelBinding;
 
 namespace SL.ChatLinks.UI.Tabs.Achievements;
 
-internal sealed class AchievementsTabView : View, IDisposable
+public sealed class AchievementsTabView : View, IDisposable
 {
-    private readonly TextBox _searchBox = new()
-    {
-        Left = 4,
-        Width = Panel.MenuStandard.Size.X,
-        PlaceholderText = "Search...",
-    };
+    private readonly TextBox _searchBox;
 
-    private readonly Menu _menu = new()
-    {
-        Size = Panel.MenuStandard.Size,
-        CanSelect = true
-    };
+    private readonly Panel _categoriesPanel;
 
-    private readonly ViewContainer _selectedCategoryView = new()
-    {
-        CanScroll = true
-    };
+    private readonly Menu _menu;
+
+    private readonly ViewContainer _selectedCategoryView;
 
     public AchievementsTabViewModel ViewModel { get; }
 
@@ -35,6 +25,37 @@ internal sealed class AchievementsTabView : View, IDisposable
     {
         ThrowHelper.ThrowIfNull(viewModel);
         ViewModel = viewModel;
+
+        _searchBox = new()
+        {
+            Left = 4,
+            Width = Panel.MenuStandard.Size.X
+        };
+
+        _ = Binder.Bind(viewModel, vm => vm.SearchPlaceholder, _searchBox, searchBox => searchBox.PlaceholderText);
+
+        _categoriesPanel = new()
+        {
+            Top = _searchBox.Height + 9,
+            WidthSizingMode = SizingMode.AutoSize,
+            HeightSizingMode = SizingMode.Fill,
+            CanScroll = true,
+            ShowBorder = true
+        };
+
+        _ = Binder.Bind(viewModel, vm => vm.CategoriesTitle, _categoriesPanel, panel => panel.Title);
+
+        _menu = new()
+        {
+            Parent = _categoriesPanel,
+            Size = Panel.MenuStandard.Size,
+            CanSelect = true
+        };
+
+        _selectedCategoryView = new()
+        {
+            CanScroll = true
+        };
     }
 
     protected override Task<bool> Load(IProgress<string> progress)
@@ -45,20 +66,52 @@ internal sealed class AchievementsTabView : View, IDisposable
     protected override void Build(Container buildPanel)
     {
         _searchBox.Parent = buildPanel;
+        _categoriesPanel.Parent = buildPanel;
+        AddAchievementCategories();
 
-        Panel categoriesPanel = new()
+        _selectedCategoryView.Parent = buildPanel;
+        _selectedCategoryView.Left = _categoriesPanel.Right + 9;
+        _selectedCategoryView.Width = 650;
+        _selectedCategoryView.HeightSizingMode = SizingMode.Fill;
+
+        ViewModel.PropertyChanged += (sender, args) =>
         {
-            Parent = buildPanel,
-            Top = _searchBox.Height + 9,
-            WidthSizingMode = SizingMode.AutoSize,
-            HeightSizingMode = SizingMode.Fill,
-            Title = "Categories",
-            CanScroll = true,
-            ShowBorder = true
+            switch (args.PropertyName)
+            {
+                case nameof(ViewModel.HeaderText):
+                    _selectedCategoryView.Title = ViewModel.HeaderText;
+                    break;
+                case nameof(ViewModel.HeaderIcon):
+                    _selectedCategoryView.Icon = ViewModel.HeaderIcon;
+                    break;
+                case nameof(ViewModel.Achievements):
+                    _selectedCategoryView.Show(new AchievementsListView(ViewModel.Achievements));
+                    break;
+                case nameof(ViewModel.MenuItems):
+                    ReloadMenuItems();
+                    break;
+                default:
+                    break;
+            }
         };
 
-        _menu.Parent = categoriesPanel;
+        _ = Binder.Bind(ViewModel, vm => vm.SearchText, _searchBox);
+        _searchBox.TextChanged += SearchTextChanged;
+        _searchBox.EnterPressed += SearchEnterPressed;
+    }
 
+    private void ReloadMenuItems()
+    {
+        while (_menu.Children.Count > 0)
+        {
+            _menu.Children[0].Dispose();
+        }
+
+        AddAchievementCategories();
+    }
+
+    private void AddAchievementCategories()
+    {
         foreach (AchievementGroupMenuItem menuItem in ViewModel.MenuItems)
         {
             MenuItem groupMenuItem = _menu.AddMenuItem(menuItem.Group.Name);
@@ -78,35 +131,13 @@ internal sealed class AchievementsTabView : View, IDisposable
                 {
                     _ = Task.Run(() => ViewModel.SelectCategory(category));
                 };
+
+                if (category.Id == ViewModel.SelectedCategory?.Id)
+                {
+                    categoryItem.Select();
+                }
             }
         }
-
-        _selectedCategoryView.Parent = buildPanel;
-        _selectedCategoryView.Left = categoriesPanel.Right + 9;
-        _selectedCategoryView.Width = 650;
-        _selectedCategoryView.HeightSizingMode = SizingMode.Fill;
-
-        ViewModel.PropertyChanged += (sender, args) =>
-        {
-            switch (args.PropertyName)
-            {
-                case nameof(ViewModel.HeaderText):
-                    _selectedCategoryView.Title = ViewModel.HeaderText;
-                    break;
-                case nameof(ViewModel.HeaderIcon):
-                    _selectedCategoryView.Icon = ViewModel.HeaderIcon;
-                    break;
-                case nameof(ViewModel.Achievements):
-                    _selectedCategoryView.Show(new AchievementsListView(ViewModel.Achievements));
-                    break;
-                default:
-                    break;
-            }
-        };
-
-        _ = Binder.Bind(ViewModel, vm => vm.SearchText, _searchBox);
-        _searchBox.TextChanged += SearchTextChanged;
-        _searchBox.EnterPressed += SearchEnterPressed;
     }
 
     private void SearchTextChanged(object sender, EventArgs e)
@@ -124,6 +155,7 @@ internal sealed class AchievementsTabView : View, IDisposable
     public void Dispose()
     {
         _searchBox.Dispose();
+        _categoriesPanel.Dispose();
         _menu.Dispose();
         _selectedCategoryView.Dispose();
         ViewModel.Dispose();
