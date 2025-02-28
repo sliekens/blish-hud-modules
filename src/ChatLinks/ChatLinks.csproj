@@ -53,6 +53,20 @@
   <ItemGroup>
     <Reference Include="System.IO.Compression" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\UI\Tabs\Achievements\Tooltips\AchievementTooltipView.fr.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\UI\Tabs\Achievements\Tooltips\AchievementTooltipView.de.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\UI\Tabs\Achievements\Tooltips\AchievementTooltipView.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\UI\Tabs\Achievements\Tooltips\AchievementTooltipView.es.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
   <Target Name="EnsureRestore" BeforeTargets="ResolvePackageAssets">
     <MSBuild Projects="$(MSBuildProjectFile)" Targets="Restore" />
   </Target>

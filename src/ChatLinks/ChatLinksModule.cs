@@ -13,6 +13,7 @@ using SL.ChatLinks.Integrations;
 using SL.ChatLinks.Logging;
 using SL.ChatLinks.UI;
 using SL.ChatLinks.UI.Tabs.Achievements;
+using SL.ChatLinks.UI.Tabs.Achievements.Tooltips;
 using SL.ChatLinks.UI.Tabs.Items;
 using SL.ChatLinks.UI.Tabs.Items.Collections;
 using SL.ChatLinks.UI.Tabs.Items.Tooltips;
@@ -140,6 +141,7 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
         // Achievements tab
         _ = services.AddTransient<AchievementsTabViewModelFactory>();
         _ = services.AddTransient<AchievementTileViewModelFactory>();
+        _ = services.AddTransient<AchievementTooltipViewModelFactory>();
 
         #endregion
 

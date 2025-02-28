@@ -7,6 +7,7 @@ using GuildWars2.Hero.Achievements.Categories;
 using Microsoft.Extensions.Localization;
 
 using SL.ChatLinks.Storage;
+using SL.ChatLinks.UI.Tabs.Achievements.Tooltips;
 using SL.Common.ModelBinding;
 
 namespace SL.ChatLinks.UI.Tabs.Achievements;
@@ -21,6 +22,8 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
 
     private readonly IDbContextFactory _contextFactory;
 
+    private readonly AchievementTooltipViewModelFactory _achievementTooltipViewModelFactory;
+
     private Achievement _achievement;
 
     private AchievementCategory? _category;
@@ -30,6 +33,7 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
         IStringLocalizer<AchievementTile> localizer,
         IClipBoard clipboard,
         IDbContextFactory contextFactory,
+        AchievementTooltipViewModelFactory achievementTooltipViewModelFactory,
         Achievement achievement
 )
     {
@@ -38,6 +42,7 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
         _localizer = localizer;
         _clipboard = clipboard;
         _contextFactory = contextFactory;
+        _achievementTooltipViewModelFactory = achievementTooltipViewModelFactory;
         _achievement = achievement;
         eventAggregator.Subscribe<LocaleChanged>(OnLocaleChanged);
     }
@@ -69,9 +74,9 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
                 return Achievement.IconHref;
             }
 
-            if (_category != null && !string.IsNullOrEmpty(_category.IconHref))
+            if (!string.IsNullOrEmpty(_category?.IconHref))
             {
-                return _category.IconHref;
+                return _category!.IconHref;
             }
 
             return string.Empty;
@@ -107,6 +112,11 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
     {
         get => _category;
         set => SetField(ref _category, value);
+    }
+
+    public AchievementTooltipViewModel CreateAchievementTooltipViewModel()
+    {
+        return _achievementTooltipViewModelFactory.Create(Achievement);
     }
 
     public void Dispose()

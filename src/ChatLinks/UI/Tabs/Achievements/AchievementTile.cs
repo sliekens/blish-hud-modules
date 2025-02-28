@@ -1,12 +1,17 @@
 ﻿using Blish_HUD;
 using Blish_HUD.Controls;
 
+using Microsoft.Xna.Framework;
+
+using SL.ChatLinks.UI.Tabs.Achievements.Tooltips;
 using SL.Common.Controls;
 
 namespace SL.ChatLinks.UI.Tabs.Achievements;
 
 public sealed class AchievementTile : Container
 {
+    private readonly DetailsButton _detailsButton;
+
     private readonly TextBox _chatLink = new();
 
     public AchievementTileViewModel ViewModel { get; }
@@ -18,7 +23,7 @@ public sealed class AchievementTile : Container
         ViewModel = viewModel;
         Width = 320;
         Height = 90;
-        DetailsButton button = new()
+        _detailsButton = new DetailsButton()
         {
             Parent = this,
             WidthSizingMode = SizingMode.Fill,
@@ -26,19 +31,14 @@ public sealed class AchievementTile : Container
             Text = viewModel.Name
         };
 
-        if (!string.IsNullOrEmpty(viewModel.Description))
-        {
-            button.BasicTooltipText = viewModel.Description;
-        }
-
         if (!string.IsNullOrEmpty(viewModel.IconHref))
         {
-            button.Icon = GameService.Content.GetRenderServiceTexture(viewModel.IconHref);
+            _detailsButton.Icon = GameService.Content.GetRenderServiceTexture(viewModel.IconHref);
         }
 
         _chatLink = new()
         {
-            Parent = button,
+            Parent = _detailsButton,
             Width = 230,
             Height = 35,
             Left = 0,
@@ -66,6 +66,21 @@ public sealed class AchievementTile : Container
         {
             _chatLink.SelectionStart = _chatLink.SelectionEnd;
         }
+    }
+
+    public override void UpdateContainer(GameTime gameTime)
+    {
+        if (MouseOver)
+        {
+            _detailsButton.Tooltip ??= new Tooltip(new AchievementTooltipView(ViewModel.CreateAchievementTooltipViewModel()));
+        }
+        else
+        {
+            _detailsButton.Tooltip?.Dispose();
+            _detailsButton.Tooltip = null;
+        }
+
+        base.UpdateContainer(gameTime);
     }
 
     protected override void DisposeControl()
