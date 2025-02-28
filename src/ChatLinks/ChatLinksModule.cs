@@ -101,9 +101,9 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
             if (ApplicationSettings.Instance.DebugEnabled || GameService.Debug.EnableDebugLogging.Value)
             {
                 _ = builder.SetMinimumLevel(LogLevel.Debug);
-                //_ = builder.AddFilter("System", LogLevel.Information);
-                //_ = builder.AddFilter("Microsoft", LogLevel.Information);
-                //_ = builder.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning);
+                _ = builder.AddFilter("System", LogLevel.Information);
+                _ = builder.AddFilter("Microsoft", LogLevel.Information);
+                _ = builder.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning);
             }
             else
             {
