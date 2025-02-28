@@ -5,6 +5,8 @@ using Blish_HUD.Graphics.UI;
 
 using Microsoft.Xna.Framework;
 
+using SL.Common.Controls;
+
 
 namespace SL.ChatLinks.UI.Tabs.Achievements.Tooltips;
 
@@ -42,24 +44,27 @@ public sealed class AchievementTooltipView(AchievementTooltipViewModel viewModel
             AutoSizeHeight = true,
         };
 
-        Label requirement = new()
-        {
-            Parent = _layout,
-            Text = ViewModel.Requirement,
-            WrapText = true,
-            Width = _layout.Width,
-            AutoSizeHeight = true,
-        };
+        FormattedLabel requirement = new FormattedLabelBuilder()
+            .SetWidth(_layout.Width - 10)
+            .AutoSizeHeight()
+            .Wrap()
+            .AddMarkup(ViewModel.Requirement)
+            .Build();
 
-        Label description = new()
-        {
-            Parent = _layout,
-            Text = ViewModel.Description,
-            TextColor = Gray,
-            WrapText = true,
-            Width = _layout.Width,
-            AutoSizeHeight = true,
-        };
+        requirement.Parent = _layout;
+
+        FormattedLabel description = new FormattedLabelBuilder()
+            .SetWidth(_layout.Width - 10)
+            .AutoSizeHeight()
+            .Wrap()
+            .AddMarkup(ViewModel.Description, part =>
+            {
+                _ = part.SetFontSize(ContentService.FontSize.Size16)
+                    .MakeItalic();
+            }, Gray)
+            .Build();
+
+        description.Parent = _layout;
 
         _layout.Parent = buildPanel;
     }

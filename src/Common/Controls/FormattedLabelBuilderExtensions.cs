@@ -28,6 +28,25 @@ public static class FormattedLabelBuilderExtensions
 
         return builder;
     }
+    public static FormattedLabelBuilder AddMarkup(
+        this FormattedLabelBuilder builder,
+        string markup,
+        Action<FormattedLabelPartBuilder> creationFunc,
+        Color? primaryColor = null)
+    {
+        ThrowHelper.ThrowIfNull(builder);
+        ThrowHelper.ThrowIfNull(markup);
+        ThrowHelper.ThrowIfNull(creationFunc);
+        IEnumerable<MarkupToken> tokens = Lexer.Tokenize(markup);
+        RootNode syntax = Parser.Parse(tokens);
+        foreach (FormattedLabelPartBuilder? part in syntax.Children.SelectMany(node => builder.CreateParts(node, primaryColor ?? Color.White)))
+        {
+            creationFunc(part);
+            _ = builder.CreatePart(part);
+        }
+
+        return builder;
+    }
 
     private static IEnumerable<FormattedLabelPartBuilder> CreateParts(this FormattedLabelBuilder builder, MarkupNode node, Color currentColor)
     {
