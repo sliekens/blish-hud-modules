@@ -139,6 +139,7 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
 
         // Achievements tab
         _ = services.AddTransient<AchievementsTabViewModelFactory>();
+        _ = services.AddTransient<AchievementTileViewModelFactory>();
 
         #endregion
 

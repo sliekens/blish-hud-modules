@@ -23,11 +23,15 @@ public class AchievementGroupMenuItem
     public required IEnumerable<AchievementCategory> Categories { get; set; }
 }
 
-public sealed class AchievementsTabViewModel(IDbContextFactory contextFactory, ILocale locale) : ViewModel, IDisposable
+public sealed class AchievementsTabViewModel(
+    IDbContextFactory contextFactory,
+    ILocale locale,
+    AchievementTileViewModelFactory achievementTileViewModelFactory
+) : ViewModel, IDisposable
 {
     private ObservableCollection<AchievementGroupMenuItem> _groups = [];
 
-    private ObservableCollection<Achievement> _achievements = [];
+    private ObservableCollection<AchievementTileViewModel> _achievements = [];
 
     private string? _headerText;
 
@@ -41,7 +45,7 @@ public sealed class AchievementsTabViewModel(IDbContextFactory contextFactory, I
         private set => SetField(ref _groups, value);
     }
 
-    public ObservableCollection<Achievement> Achievements
+    public ObservableCollection<AchievementTileViewModel> Achievements
     {
         get => _achievements;
         private set => SetField(ref _achievements, value);
@@ -97,7 +101,7 @@ public sealed class AchievementsTabViewModel(IDbContextFactory contextFactory, I
 
     public async Task OnSearch()
     {
-        ObservableCollection<Achievement> results = [];
+        ObservableCollection<AchievementTileViewModel> results = [];
 
         string query = SearchText.Trim();
         if (query.Length >= 3)
@@ -117,20 +121,10 @@ public sealed class AchievementsTabViewModel(IDbContextFactory contextFactory, I
 
                     await foreach (Achievement achievement in search.AsAsyncEnumerable().ConfigureAwait(false))
                     {
-                        Achievement local = achievement;
+                        AchievementCategory? category = categories
+                            .FirstOrDefault(category => category.Achievements.Concat(category.Tomorrow ?? []).Any(reference => reference.Id == achievement.Id));
 
-                        // Use category icon if achievement does not have one
-                        if (string.IsNullOrEmpty(achievement.IconHref))
-                        {
-                            AchievementCategory? category = categories
-                                .FirstOrDefault(category => category.Achievements.Concat(category.Tomorrow ?? []).Any(reference => reference.Id == achievement.Id));
-                            if (category is not null)
-                            {
-                                local = achievement with { IconHref = category.IconHref };
-                            }
-                        }
-
-                        results.Add(local);
+                        results.Add(achievementTileViewModelFactory.Create(achievement, category));
                     }
                 }
             }
@@ -157,13 +151,7 @@ public sealed class AchievementsTabViewModel(IDbContextFactory contextFactory, I
 
             HeaderText = !string.IsNullOrEmpty(category.Name) ? category.Name : null;
             HeaderIcon = !string.IsNullOrEmpty(category.IconHref) ? GameService.Content.GetRenderServiceTexture(category.IconHref) : null;
-            Achievements = [.. achievements
-                .Select(achievement => achievement with
-                {
-                    IconHref = !string.IsNullOrEmpty(achievement.IconHref)
-                        ? achievement.IconHref
-                        : category.IconHref
-                })];
+            Achievements = [.. achievements.Select(achievement => achievementTileViewModelFactory.Create(achievement, category))];
         }
     }
 

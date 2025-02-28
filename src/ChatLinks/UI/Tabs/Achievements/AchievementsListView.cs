@@ -3,11 +3,9 @@
 using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
 
-using GuildWars2.Hero.Achievements;
-
 namespace SL.ChatLinks.UI.Tabs.Achievements;
 
-public sealed class AchievementsListView(ObservableCollection<Achievement> achievements) : View, IDisposable
+public sealed class AchievementsListView(ObservableCollection<AchievementTileViewModel> achievements) : View, IDisposable
 {
     private readonly FlowPanel _achievementsPanel = new();
 
@@ -25,7 +23,7 @@ public sealed class AchievementsListView(ObservableCollection<Achievement> achie
         _achievementsPanel.ControlPadding = new(9, 7);
         _achievementsPanel.OuterControlPadding = new(0, 12);
 
-        foreach (Achievement achievement in achievements)
+        foreach (AchievementTileViewModel achievement in achievements)
         {
             _ = new AchievementTile(achievement)
             {
@@ -41,6 +39,11 @@ public sealed class AchievementsListView(ObservableCollection<Achievement> achie
 
     public void Dispose()
     {
+        while (_achievementsPanel.Children.Count > 0)
+        {
+            _achievementsPanel.Children[0].Dispose();
+        }
+
         _achievementsPanel.Dispose();
     }
 }
