@@ -25,6 +25,8 @@ IHost host = Host.CreateDefaultBuilder(args)
 
         _ = services.AddSingleton<IEventAggregator, DefaultEventAggregator>();
 
+        _ = services.AddSingleton<ILocale, DefaultLocale>();
+
         _ = services.AddSingleton<DatabaseSeeder>();
     })
     .Build();
