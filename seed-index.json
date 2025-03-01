@@ -27,6 +27,34 @@
             "name": "data_fr.db",
             "url": "v3/data_fr.db.gz",
             "sha256": "7891AF540A2EC5E51862239E7249C72A9825ACE94B59DBAC9B73D8F9AB9B1801"
+        },
+        {
+            "schema_version": 4,
+            "lang": "en",
+            "name": "data.db",
+            "url": "v4/data.db.gz",
+            "sha256": "AD66686FE9230D41AFAAEDDC959151D9CC5CCA69339CF002DB5884764E0223F4"
+        },
+        {
+            "schema_version": 4,
+            "lang": "de",
+            "name": "data_de.db",
+            "url": "v4/data_de.db.gz",
+            "sha256": "AE5CDF8D8F752405BD1A06ACC82F30667F8339306020ED1AA83F6572AF2D23D0"
+        },
+        {
+            "schema_version": 4,
+            "lang": "es",
+            "name": "data_es.db",
+            "url": "v4/data_es.db.gz",
+            "sha256": "3CF99EA2DEDE47BFE56179361501ACEE4ABA018F278D8D784B791FA5D09D46BB"
+        },
+        {
+            "schema_version": 4,
+            "lang": "fr",
+            "name": "data_fr.db",
+            "url": "v4/data_fr.db.gz",
+            "sha256": "C355877D9C7D9AA33B2595B16586745E396A45AC677AAAF7DC4B9CB5418B6EF6"
         }
     ]
 }
