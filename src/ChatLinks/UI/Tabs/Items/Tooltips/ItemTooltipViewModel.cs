@@ -1,6 +1,7 @@
 ﻿using Blish_HUD.Content;
 
 using GuildWars2;
+using GuildWars2.Authorization;
 using GuildWars2.Hero.Equipment.Dyes;
 using GuildWars2.Hero.Equipment.Finishers;
 using GuildWars2.Hero.Equipment.Gliders;
@@ -30,7 +31,7 @@ public sealed class ItemTooltipViewModel(
     ILocale locale,
     ItemIcons icons,
     Customizer customizer,
-    AccountUnlocks hero,
+    AccountUnlocks unlocks,
     Item item,
     int quantity,
     IEnumerable<UpgradeSlot> upgrades,
@@ -173,10 +174,10 @@ public sealed class ItemTooltipViewModel(
                             .FirstOrDefaultAsync().ConfigureAwait(false);
                         if (finisher is not null)
                         {
-                            if (hero.UnlocksAvailable)
+                            if (unlocks.HasPermission(Permission.Unlocks))
                             {
-                                IReadOnlyList<int> unlocks = await hero.GetUnlockedFinishers(CancellationToken.None).ConfigureAwait(false);
-                                Unlocked = unlocks.Contains(finisher.Id);
+                                IReadOnlyList<int> unlocked = await unlocks.GetUnlockedFinishers(CancellationToken.None).ConfigureAwait(false);
+                                Unlocked = unlocked.Contains(finisher.Id);
                             }
                             else
                             {
@@ -196,10 +197,10 @@ public sealed class ItemTooltipViewModel(
                             .FirstOrDefaultAsync().ConfigureAwait(false);
                         if (mailCarrier is not null)
                         {
-                            if (hero.UnlocksAvailable)
+                            if (unlocks.HasPermission(Permission.Unlocks))
                             {
-                                IReadOnlyList<int> unlocks = await hero.GetUnlockedMailCarriers(CancellationToken.None).ConfigureAwait(false);
-                                Unlocked = unlocks.Contains(mailCarrier.Id);
+                                IReadOnlyList<int> unlocked = await unlocks.GetUnlockedMailCarriers(CancellationToken.None).ConfigureAwait(false);
+                                Unlocked = unlocked.Contains(mailCarrier.Id);
                             }
                             else
                             {
@@ -228,10 +229,10 @@ public sealed class ItemTooltipViewModel(
                         DyeColor? dye = context.Colors.FirstOrDefault(dye => dye.ItemId == unlocker.Id);
                         if (dye is not null)
                         {
-                            if (hero.UnlocksAvailable)
+                            if (unlocks.HasPermission(Permission.Unlocks))
                             {
-                                IReadOnlyList<int> unlocks = await hero.GetUnlockedDyes(CancellationToken.None).ConfigureAwait(false);
-                                Unlocked = unlocks.Contains(dye.Id);
+                                IReadOnlyList<int> unlocked = await unlocks.GetUnlockedDyes(CancellationToken.None).ConfigureAwait(false);
+                                Unlocked = unlocked.Contains(dye.Id);
                             }
                             else
                             {
@@ -264,10 +265,10 @@ public sealed class ItemTooltipViewModel(
                             .FirstOrDefaultAsync().ConfigureAwait(false);
                         if (gliderSkin is not null)
                         {
-                            if (hero.UnlocksAvailable)
+                            if (unlocks.HasPermission(Permission.Unlocks))
                             {
-                                IReadOnlyList<int> unlocks = await hero.GetUnlockedGliderSkins(CancellationToken.None).ConfigureAwait(false);
-                                Unlocked = unlocks.Contains(gliderSkin.Id);
+                                IReadOnlyList<int> unlocked = await unlocks.GetUnlockedGliderSkins(CancellationToken.None).ConfigureAwait(false);
+                                Unlocked = unlocked.Contains(gliderSkin.Id);
                             }
                             else
                             {
@@ -295,10 +296,10 @@ public sealed class ItemTooltipViewModel(
                             context.JadeBots.FirstOrDefault(jadeBotSkin => jadeBotSkin.UnlockItemId == unlocker.Id);
                         if (jadeBotSkin is not null)
                         {
-                            if (hero.UnlocksAvailable && hero.InventoriesAvailable)
+                            if (unlocks.HasPermissions(Permission.Unlocks, Permission.Inventories))
                             {
-                                IReadOnlyList<int> unlocks = await hero.GetUnlockedJadeBotSkins(CancellationToken.None).ConfigureAwait(false);
-                                Unlocked = unlocks.Contains(jadeBotSkin.Id);
+                                IReadOnlyList<int> unlocked = await unlocks.GetUnlockedJadeBotSkins(CancellationToken.None).ConfigureAwait(false);
+                                Unlocked = unlocked.Contains(jadeBotSkin.Id);
                             }
                             else
                             {
@@ -327,10 +328,10 @@ public sealed class ItemTooltipViewModel(
                             await context.Miniatures.FirstOrDefaultAsync(miniature => miniature.ItemId == Item.Id).ConfigureAwait(false);
                         if (miniature is not null)
                         {
-                            if (hero.UnlocksAvailable)
+                            if (unlocks.HasPermission(Permission.Unlocks))
                             {
-                                IReadOnlyList<int> unlocks = await hero.GetUnlockedMiniatures(CancellationToken.None).ConfigureAwait(false);
-                                Unlocked = unlocks.Contains(miniature.Id);
+                                IReadOnlyList<int> unlocked = await unlocks.GetUnlockedMiniatures(CancellationToken.None).ConfigureAwait(false);
+                                Unlocked = unlocked.Contains(miniature.Id);
                             }
                             else
                             {
@@ -364,10 +365,10 @@ public sealed class ItemTooltipViewModel(
                             .FirstOrDefaultAsync().ConfigureAwait(false);
                         if (outfit is not null)
                         {
-                            if (hero.UnlocksAvailable)
+                            if (unlocks.HasPermission(Permission.Unlocks))
                             {
-                                IReadOnlyList<int> unlocks = await hero.GetUnlockedOutfits(CancellationToken.None).ConfigureAwait(false);
-                                Unlocked = unlocks.Contains(outfit.Id);
+                                IReadOnlyList<int> unlocked = await unlocks.GetUnlockedOutfits(CancellationToken.None).ConfigureAwait(false);
+                                Unlocked = unlocked.Contains(outfit.Id);
                             }
                             else
                             {
@@ -401,10 +402,10 @@ public sealed class ItemTooltipViewModel(
                             .FirstOrDefaultAsync().ConfigureAwait(false);
                         if (mistChampionSkin is not null)
                         {
-                            if (hero.UnlocksAvailable)
+                            if (unlocks.HasPermission(Permission.Unlocks))
                             {
-                                IReadOnlyList<int> unlocks = await hero.GetUnlockedMistChampionSkins(CancellationToken.None).ConfigureAwait(false);
-                                Unlocked = unlocks.Contains(mistChampionSkin.Id);
+                                IReadOnlyList<int> unlocked = await unlocks.GetUnlockedMistChampionSkins(CancellationToken.None).ConfigureAwait(false);
+                                Unlocked = unlocked.Contains(mistChampionSkin.Id);
                             }
                             else
                             {
@@ -426,10 +427,10 @@ public sealed class ItemTooltipViewModel(
                 progress.Report("Checking unlock status...");
                 try
                 {
-                    if (hero.UnlocksAvailable)
+                    if (unlocks.HasPermission(Permission.Unlocks))
                     {
-                        IReadOnlyList<int> unlocks = await hero.GetUnlockedRecipes(CancellationToken.None).ConfigureAwait(false);
-                        if (unlocks.Contains(unlocker.RecipeId))
+                        IReadOnlyList<int> unlocked = await unlocks.GetUnlockedRecipes(CancellationToken.None).ConfigureAwait(false);
+                        if (unlocked.Contains(unlocker.RecipeId))
                         {
                             Unlocked = true;
                             UnlockedText = unlocker.ExtraRecipeIds.Count != 0
@@ -437,10 +438,10 @@ public sealed class ItemTooltipViewModel(
                                 : Localizer["Recipe unlocked"];
                             UnlockedTextColor = Color.Red;
                         }
-                        else if (unlocker.ExtraRecipeIds.Any(unlocks.Contains))
+                        else if (unlocker.ExtraRecipeIds.Any(unlocked.Contains))
                         {
                             Unlocked = true;
-                            int known = unlocker.ExtraRecipeIds.Count(unlocks.Contains);
+                            int known = unlocker.ExtraRecipeIds.Count(unlocked.Contains);
                             UnlockedText = Localizer["Recipes unlocked", known, unlocker.ExtraRecipeIds.Count + 1];
                             UnlockedTextColor = Color.Yellow;
                         }
@@ -482,10 +483,10 @@ public sealed class ItemTooltipViewModel(
                             .FirstOrDefaultAsync().ConfigureAwait(false);
                         if (novelty is not null)
                         {
-                            if (hero.UnlocksAvailable)
+                            if (unlocks.HasPermission(Permission.Unlocks))
                             {
-                                IReadOnlyList<int> unlocks = await hero.GetUnlockedNovelties(CancellationToken.None).ConfigureAwait(false);
-                                Unlocked = unlocks.Contains(novelty.Id);
+                                IReadOnlyList<int> unlocked = await unlocks.GetUnlockedNovelties(CancellationToken.None).ConfigureAwait(false);
+                                Unlocked = unlocked.Contains(novelty.Id);
                             }
                             else
                             {
@@ -518,10 +519,10 @@ public sealed class ItemTooltipViewModel(
             {
                 DefaultSkin = await context.Skins.FirstOrDefaultAsync(skin => skin.Id == skinId).ConfigureAwait(false);
 
-                if (hero.UnlocksAvailable)
+                if (unlocks.HasPermission(Permission.Unlocks))
                 {
-                    IReadOnlyList<int> unlocks = await hero.GetUnlockedWardrobe(CancellationToken.None).ConfigureAwait(false);
-                    Unlocked = unlocks.Contains(skinId);
+                    IReadOnlyList<int> unlocked = await unlocks.GetUnlockedWardrobe(CancellationToken.None).ConfigureAwait(false);
+                    Unlocked = unlocked.Contains(skinId);
                 }
                 else
                 {

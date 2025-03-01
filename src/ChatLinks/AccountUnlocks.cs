@@ -32,10 +32,6 @@ public sealed partial class AccountUnlocks : IDisposable
 
     public bool IsAuthorized => _tokenProvider.IsAuthorized;
 
-    public bool InventoriesAvailable => IsAuthorized && _tokenProvider.Grants.Contains(Permission.Inventories);
-
-    public bool UnlocksAvailable => IsAuthorized && _tokenProvider.Grants.Contains(Permission.Unlocks);
-
     public bool HasPermission(Permission permission)
     {
         return IsAuthorized && _tokenProvider.Grants.Contains(permission);
