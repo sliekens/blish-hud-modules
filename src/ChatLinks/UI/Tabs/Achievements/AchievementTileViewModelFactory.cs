@@ -7,11 +7,11 @@ namespace SL.ChatLinks.UI.Tabs.Achievements;
 
 public sealed class AchievementTileViewModelFactory(IServiceProvider sp)
 {
-    public AchievementTileViewModel Create(Achievement achievement, AchievementCategory? category, AccountAchievement? accountAchievement)
+    public AchievementTileViewModel Create(Achievement achievement, AchievementCategory? category, IReadOnlyList<AccountAchievement>? progression)
     {
         AchievementTileViewModel vm = ActivatorUtilities.CreateInstance<AchievementTileViewModel>(sp, achievement);
         vm.Category = category;
-        vm.AccountAchievement = accountAchievement;
+        vm.Progression = progression;
         return vm;
     }
 }

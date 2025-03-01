@@ -1,5 +1,8 @@
 ﻿using Blish_HUD;
+using Blish_HUD.Content;
 using Blish_HUD.Controls;
+
+using GuildWars2.Hero.Achievements;
 
 using Microsoft.Xna.Framework;
 
@@ -32,17 +35,22 @@ public sealed class AchievementTile : Container
             Text = viewModel.Name
         };
 
-        if (!string.IsNullOrEmpty(viewModel.IconHref))
+        if (viewModel.Locked)
+        {
+            _detailsButton.Icon = AsyncTexture2D.FromAssetId(240704);
+        }
+        else if (!string.IsNullOrEmpty(viewModel.IconHref))
         {
             _detailsButton.Icon = GameService.Content.GetRenderServiceTexture(viewModel.IconHref);
+            AccountAchievement? progress = viewModel.Progress;
+            if (progress is not null)
+            {
+                if (progress.Done)
+                {
+                    _ = Binder.Bind(viewModel, vm => vm.CompletedLabel, _detailsButton, ctl => ctl.IconDetails);
+                }
+            }
         }
-
-        if (viewModel.Completed == true)
-        {
-            _ = Binder.Bind(viewModel, vm => vm.CompletedLabel, _detailsButton, ctl => ctl.IconDetails);
-        }
-
-
 
         _chatLink = new()
         {

@@ -28,7 +28,9 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
 
     private AchievementCategory? _category;
 
-    private AccountAchievement? _accountAchievement;
+    private AccountAchievement? _progress;
+
+    private IReadOnlyList<AccountAchievement>? _progression;
 
     public AchievementTileViewModel(
         IEventAggregator eventAggregator,
@@ -87,8 +89,6 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
 
     public string CompletedLabel => _localizer["Completed"];
 
-    public bool? Completed => _accountAchievement?.Done;
-
     public string ChatLink => Achievement.GetChatLink().ToString();
 
     public string CopyNameLabel => _localizer["Copy Name"];
@@ -120,17 +120,25 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
         set => SetField(ref _category, value);
     }
 
-    public AccountAchievement? AccountAchievement
+    public IReadOnlyList<AccountAchievement>? Progression
     {
-        get => _accountAchievement;
+        get => _progression;
         set
         {
-            if (SetField(ref _accountAchievement, value))
+            if (SetField(ref _progression, value))
             {
-                OnPropertyChanged(nameof(Completed));
+                Progress = value?.SingleOrDefault(accountAchievement => accountAchievement.Id == Achievement.Id);
             }
         }
     }
+
+    public AccountAchievement? Progress
+    {
+        get => _progress;
+        set => SetField(ref _progress, value);
+    }
+
+    public bool Locked => Achievement.IsLocked(Progression);
 
     public AchievementTooltipViewModel CreateAchievementTooltipViewModel()
     {

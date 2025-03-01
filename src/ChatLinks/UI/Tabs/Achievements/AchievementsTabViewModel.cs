@@ -158,11 +158,6 @@ public sealed class AchievementsTabViewModel(
                     .ToListAsync()
                     .ConfigureAwait(false);
 
-                // Client side ordering, impractical to do in sql
-                achievements = [.. achievements
-                    .OrderBy(achievement => achievement.Flags.CategoryDisplay ? 0 : 1)
-                    .ThenBy(achievement => achievement.Flags.MoveToTop ? 0 : 1)
-                ];
 
                 if (achievements.Count > 0)
                 {
@@ -170,23 +165,21 @@ public sealed class AchievementsTabViewModel(
                         .ToListAsync()
                         .ConfigureAwait(false);
 
-                    IReadOnlyList<AccountAchievement> accountAchievements = [];
+                    IReadOnlyList<AccountAchievement>? progression = null;
                     if (unlocks.HasPermission(Permission.Progression))
                     {
-                        accountAchievements = await unlocks.GetAccountAchievements(CancellationToken.None)
+                        progression = await unlocks.GetAccountAchievements(CancellationToken.None)
                             .ConfigureAwait(false);
                     }
 
+                    achievements = SortAchievements(achievements, progression);
                     foreach (Achievement achievement in achievements)
                     {
                         AchievementCategory? category = categories
                             .FirstOrDefault(category => category.IsParentOf(achievement.Id) == true);
 
-                        AccountAchievement accountAchievement = accountAchievements
-                            .SingleOrDefault(accountAchievement => accountAchievement.Id == achievement.Id);
-
                         AchievementTileViewModel achievementTileViewModel = achievementTileViewModelFactory
-                            .Create(achievement, category, accountAchievement);
+                            .Create(achievement, category, progression);
 
                         results.Add(achievementTileViewModel);
                     }
@@ -214,19 +207,14 @@ public sealed class AchievementsTabViewModel(
                 .ToListAsync()
                 .ConfigureAwait(false);
 
-            // Client side ordering, impractical to do in sql
-            achievements = [.. achievements
-                .OrderBy(achievement => achievement.Flags.CategoryDisplay ? 0 : 1)
-                .ThenBy(achievement => achievement.Flags.MoveToTop ? 0 : 1)
-            ];
-
-            IReadOnlyList<AccountAchievement> accountAchievements = [];
+            IReadOnlyList<AccountAchievement>? progression = null;
             if (unlocks.HasPermission(Permission.Progression))
             {
-                accountAchievements = await unlocks.GetAccountAchievements(CancellationToken.None)
+                progression = await unlocks.GetAccountAchievements(CancellationToken.None)
                     .ConfigureAwait(false);
             }
 
+            achievements = SortAchievements(achievements, progression);
             HeaderText = !string.IsNullOrEmpty(category.Name) ? category.Name : null;
             HeaderIcon = !string.IsNullOrEmpty(category.IconHref) ? GameService.Content.GetRenderServiceTexture(category.IconHref) : null;
             Achievements = [
@@ -234,11 +222,22 @@ public sealed class AchievementsTabViewModel(
                     .Create(
                         achievement,
                         category,
-                        accountAchievements.SingleOrDefault(accountAchievement => accountAchievement.Id == achievement.Id)
+                        progression
                     )
                 )
             ];
         }
+    }
+
+    private static List<Achievement> SortAchievements(List<Achievement> achievements, IReadOnlyList<AccountAchievement>? progression)
+    {
+        // Client side ordering, impractical to do in sql
+        return [
+            .. achievements
+                .OrderBy(achievement => achievement.IsLocked(progression))
+                .ThenByDescending(achievement => achievement.Flags.CategoryDisplay)
+                .ThenByDescending(achievement => achievement.Flags.MoveToTop)
+        ];
     }
 
     public void Dispose()
