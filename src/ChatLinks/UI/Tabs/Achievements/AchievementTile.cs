@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 
 using SL.ChatLinks.UI.Tabs.Achievements.Tooltips;
 using SL.Common.Controls;
+using SL.Common.ModelBinding;
 
 namespace SL.ChatLinks.UI.Tabs.Achievements;
 
@@ -35,6 +36,13 @@ public sealed class AchievementTile : Container
         {
             _detailsButton.Icon = GameService.Content.GetRenderServiceTexture(viewModel.IconHref);
         }
+
+        if (viewModel.Completed == true)
+        {
+            _ = Binder.Bind(viewModel, vm => vm.CompletedLabel, _detailsButton, ctl => ctl.IconDetails);
+        }
+
+
 
         _chatLink = new()
         {

@@ -1,5 +1,6 @@
 ﻿using GuildWars2;
 using GuildWars2.Authorization;
+using GuildWars2.Hero.Achievements;
 
 using Microsoft.Extensions.Logging;
 
@@ -35,6 +36,16 @@ public sealed partial class AccountUnlocks : IDisposable
 
     public bool UnlocksAvailable => IsAuthorized && _tokenProvider.Grants.Contains(Permission.Unlocks);
 
+    public bool HasPermission(Permission permission)
+    {
+        return IsAuthorized && _tokenProvider.Grants.Contains(permission);
+    }
+
+    public bool HasPermissions(params Permission[] permissions)
+    {
+        return IsAuthorized && permissions.All(permission => _tokenProvider.Grants.Contains(permission));
+    }
+
     private async Task OnAuthorizationInvalidated(AuthorizationInvalidated _)
     {
         string? token = await _tokenProvider.GetTokenAsync(CancellationToken.None).ConfigureAwait(false);
@@ -58,6 +69,7 @@ public sealed partial class AccountUnlocks : IDisposable
         ValueTask<IReadOnlyList<int>> unlockedOutfitsTask = GetUnlockedOutfitsInternal(CancellationToken.None);
         ValueTask<IReadOnlyList<int>> unlockedWardrobeTask = GetUnlockedWardrobeInternal(CancellationToken.None);
         ValueTask<IReadOnlyList<int>> unlockedRecipesTask = GetUnlockedRecipesInternal(CancellationToken.None);
+        ValueTask<IReadOnlyList<AccountAchievement>> accountAchievementsTask = GetAccountAchievementsInternal(CancellationToken.None);
 
         try
         {
@@ -149,6 +161,14 @@ public sealed partial class AccountUnlocks : IDisposable
             _logger.LogWarning(reason, "Failed to retrieve unlocked recipes.");
         }
 
+        try
+        {
+            _accountAchievements = await accountAchievementsTask.ConfigureAwait(false);
+        }
+        catch (Exception reason)
+        {
+            _logger.LogWarning(reason, "Failed to retrieve unlocked recipes.");
+        }
     }
 
     private async Task<bool> HasAccountPermission(string token)

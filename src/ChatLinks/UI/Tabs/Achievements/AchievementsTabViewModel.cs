@@ -5,6 +5,7 @@ using System.Windows.Input;
 using Blish_HUD;
 using Blish_HUD.Content;
 
+using GuildWars2.Authorization;
 using GuildWars2.Hero.Achievements;
 using GuildWars2.Hero.Achievements.Categories;
 using GuildWars2.Hero.Achievements.Groups;
@@ -17,19 +18,13 @@ using SL.Common.ModelBinding;
 
 namespace SL.ChatLinks.UI.Tabs.Achievements;
 
-public class AchievementGroupMenuItem
-{
-    public required AchievementGroup Group { get; set; }
-
-    public required IEnumerable<AchievementCategory> Categories { get; set; }
-}
-
 public sealed class AchievementsTabViewModel(
     IEventAggregator eventAggregator,
     IDbContextFactory contextFactory,
     IStringLocalizer<AchievementsTabView> localizer,
     ILocale locale,
-    AchievementTileViewModelFactory achievementTileViewModelFactory
+    AchievementTileViewModelFactory achievementTileViewModelFactory,
+    AccountUnlocks unlocks
 ) : ViewModel, IDisposable
 {
     private ObservableCollection<AchievementGroupMenuItem> _groups = [];
@@ -175,12 +170,25 @@ public sealed class AchievementsTabViewModel(
                         .ToListAsync()
                         .ConfigureAwait(false);
 
+                    IReadOnlyList<AccountAchievement> accountAchievements = [];
+                    if (unlocks.HasPermission(Permission.Progression))
+                    {
+                        accountAchievements = await unlocks.GetAccountAchievements(CancellationToken.None)
+                            .ConfigureAwait(false);
+                    }
+
                     foreach (Achievement achievement in achievements)
                     {
                         AchievementCategory? category = categories
                             .FirstOrDefault(category => category.IsParentOf(achievement.Id) == true);
 
-                        results.Add(achievementTileViewModelFactory.Create(achievement, category));
+                        AccountAchievement accountAchievement = accountAchievements
+                            .SingleOrDefault(accountAchievement => accountAchievement.Id == achievement.Id);
+
+                        AchievementTileViewModel achievementTileViewModel = achievementTileViewModelFactory
+                            .Create(achievement, category, accountAchievement);
+
+                        results.Add(achievementTileViewModel);
                     }
                 }
             }
@@ -212,9 +220,24 @@ public sealed class AchievementsTabViewModel(
                 .ThenBy(achievement => achievement.Flags.MoveToTop ? 0 : 1)
             ];
 
+            IReadOnlyList<AccountAchievement> accountAchievements = [];
+            if (unlocks.HasPermission(Permission.Progression))
+            {
+                accountAchievements = await unlocks.GetAccountAchievements(CancellationToken.None)
+                    .ConfigureAwait(false);
+            }
+
             HeaderText = !string.IsNullOrEmpty(category.Name) ? category.Name : null;
             HeaderIcon = !string.IsNullOrEmpty(category.IconHref) ? GameService.Content.GetRenderServiceTexture(category.IconHref) : null;
-            Achievements = [.. achievements.Select(achievement => achievementTileViewModelFactory.Create(achievement, category))];
+            Achievements = [
+                .. achievements.Select(achievement => achievementTileViewModelFactory
+                    .Create(
+                        achievement,
+                        category,
+                        accountAchievements.SingleOrDefault(accountAchievement => accountAchievement.Id == achievement.Id)
+                    )
+                )
+            ];
         }
     }
 

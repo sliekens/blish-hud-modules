@@ -28,6 +28,8 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
 
     private AchievementCategory? _category;
 
+    private AccountAchievement? _accountAchievement;
+
     public AchievementTileViewModel(
         IEventAggregator eventAggregator,
         IStringLocalizer<AchievementTile> localizer,
@@ -83,6 +85,10 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
         }
     }
 
+    public string CompletedLabel => _localizer["Completed"];
+
+    public bool? Completed => _accountAchievement?.Done;
+
     public string ChatLink => Achievement.GetChatLink().ToString();
 
     public string CopyNameLabel => _localizer["Copy Name"];
@@ -112,6 +118,18 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
     {
         get => _category;
         set => SetField(ref _category, value);
+    }
+
+    public AccountAchievement? AccountAchievement
+    {
+        get => _accountAchievement;
+        set
+        {
+            if (SetField(ref _accountAchievement, value))
+            {
+                OnPropertyChanged(nameof(Completed));
+            }
+        }
     }
 
     public AchievementTooltipViewModel CreateAchievementTooltipViewModel()

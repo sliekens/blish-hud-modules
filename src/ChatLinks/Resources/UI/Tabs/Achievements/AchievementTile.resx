@@ -141,4 +141,7 @@
   <data name="Reset" xml:space="preserve">
     <value>Reset</value>
   </data>
+  <data name="Completed" xml:space="preserve">
+    <value>Completed</value>
+  </data>
 </root>
