@@ -144,4 +144,7 @@
   <data name="Completed" xml:space="preserve">
     <value>Completado</value>
   </data>
+  <data name="Account progress unavailable" xml:space="preserve">
+    <value>Progreso de la cuenta no disponible</value>
+  </data>
 </root>

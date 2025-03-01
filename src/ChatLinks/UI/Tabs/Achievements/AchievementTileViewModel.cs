@@ -140,6 +140,8 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
 
     public bool Locked => Achievement.IsLocked(Progression);
 
+    public string MissingProgressWarning => _localizer["Account progress unavailable"];
+
     public AchievementTooltipViewModel CreateAchievementTooltipViewModel()
     {
         return _achievementTooltipViewModelFactory.Create(Achievement);

@@ -15,10 +15,13 @@ internal static class AchievementExtensions
 
         if (achievement.Prerequisites.Count > 0)
         {
-            List<AccountAchievement>? prerequisites = progression?
-                .Where(progress => achievement.Prerequisites.Contains(progress.Id))
-                .ToList();
-            return prerequisites is null || prerequisites.Any(pre => !pre.Done);
+            List<AccountAchievement?> prerequisites = [
+                .. achievement.Prerequisites
+                    .Select(pre => progression?.SingleOrDefault(progress => progress.Id == pre))
+            ];
+
+            // Not all progress is in the API... assume Done if not available
+            return !prerequisites.All(progress => progress?.Done ?? true);
         }
 
         return false;

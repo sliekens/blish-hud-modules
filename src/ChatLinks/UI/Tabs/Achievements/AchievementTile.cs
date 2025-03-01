@@ -8,7 +8,6 @@ using Microsoft.Xna.Framework;
 
 using SL.ChatLinks.UI.Tabs.Achievements.Tooltips;
 using SL.Common.Controls;
-using SL.Common.ModelBinding;
 
 namespace SL.ChatLinks.UI.Tabs.Achievements;
 
@@ -45,25 +44,35 @@ public sealed class AchievementTile : Container
             AccountAchievement? progress = viewModel.Progress;
             if (progress is not null)
             {
-                _detailsButton.MaxFill = progress.Max;
-                _detailsButton.CurrentFill = progress.Current;
                 if (!viewModel.Achievement.Flags.Repeatable && progress.Done)
                 {
-                    _ = Binder.Bind(viewModel, vm => vm.CompletedLabel, _detailsButton, ctl => ctl.IconDetails);
+                    _detailsButton.ShowVignette = false;
+                    _detailsButton.IconDetails = viewModel.CompletedLabel;
                 }
                 else
                 {
+                    _detailsButton.MaxFill = progress.Max;
+                    _detailsButton.CurrentFill = progress.Current;
                     _detailsButton.ShowFillFraction = true;
                 }
             }
         }
 
+        if (ViewModel.Progress is null)
+        {
+            Image warning = new()
+            {
+                Parent = _detailsButton,
+                Size = new(32),
+                Texture = AsyncTexture2D.FromAssetId(1444522),
+                BasicTooltipText = ViewModel.MissingProgressWarning
+            };
+        }
+
         _chatLink = new()
         {
             Parent = _detailsButton,
-            Width = 230,
             Height = 35,
-            Left = 0,
             Text = viewModel.ChatLink
         };
 
