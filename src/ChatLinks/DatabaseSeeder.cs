@@ -68,6 +68,8 @@ public sealed class DatabaseSeeder : IDisposable
         {
             await Migrate(args.Language).ConfigureAwait(false);
             await Sync(args.Language, CancellationToken.None).ConfigureAwait(false);
+            await Vacuum(args.Language, CancellationToken.None).ConfigureAwait(false);
+            await Optimize(args.Language, CancellationToken.None).ConfigureAwait(false);
         }).ConfigureAwait(false);
     }
 
@@ -77,6 +79,8 @@ public sealed class DatabaseSeeder : IDisposable
         {
             await Migrate(_locale.Current).ConfigureAwait(false);
             await Sync(_locale.Current, CancellationToken.None).ConfigureAwait(false);
+            await Vacuum(_locale.Current, CancellationToken.None).ConfigureAwait(false);
+            await Optimize(_locale.Current, CancellationToken.None).ConfigureAwait(false);
         }).ConfigureAwait(false);
     }
 
@@ -179,6 +183,26 @@ public sealed class DatabaseSeeder : IDisposable
             Name = seedDatabase.Name,
             SchemaVersion = seedDatabase.SchemaVersion
         };
+    }
+
+    public async Task Optimize(Language language, CancellationToken cancellationToken)
+    {
+        ChatLinksContext context = _contextFactory.CreateDbContext(language);
+        await using (context.ConfigureAwait(false))
+        {
+            _ = await context.Database.ExecuteSqlRawAsync("PRAGMA optimize;", cancellationToken)
+                    .ConfigureAwait(false);
+        }
+    }
+
+    public async Task Vacuum(Language language, CancellationToken cancellationToken)
+    {
+        ChatLinksContext context = _contextFactory.CreateDbContext(language);
+        await using (context.ConfigureAwait(false))
+        {
+            _ = await context.Database.ExecuteSqlRawAsync("VACUUM;", cancellationToken)
+                    .ConfigureAwait(false);
+        }
     }
 
     public bool IsSynchronizing => _currentSync is { IsCompleted: false };

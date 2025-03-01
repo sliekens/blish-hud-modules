@@ -171,6 +171,7 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
         try
         {
             await seeder.Sync(locale.Current, CancellationToken.None).ConfigureAwait(false);
+            await seeder.Optimize(locale.Current, CancellationToken.None).ConfigureAwait(false);
         }
         catch (Exception reason)
         {

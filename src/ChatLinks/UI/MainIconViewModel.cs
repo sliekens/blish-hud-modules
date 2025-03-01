@@ -124,6 +124,8 @@ public sealed class MainIconViewModel(
                 await Task.Run(async () =>
                 {
                     await seeder.Sync(locale.Current, CancellationToken.None).ConfigureAwait(false);
+                    await seeder.Vacuum(locale.Current, CancellationToken.None).ConfigureAwait(false);
+                    await seeder.Optimize(locale.Current, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
 
                 ScreenNotification.ShowNotification(localizer["Chat Links database is up-to-date"], ScreenNotification.NotificationType.Green);
