@@ -198,6 +198,12 @@ public sealed class AchievementsTabViewModel(
                 .ToListAsync()
                 .ConfigureAwait(false);
 
+            // Client side ordering, impractical to do in sql
+            achievements = [.. achievements
+                .OrderBy(achievement => achievement.Flags.CategoryDisplay ? 0 : 1)
+                .ThenBy(achievement => achievement.Flags.MoveToTop ? 0 : 1)
+            ];
+
             HeaderText = !string.IsNullOrEmpty(category.Name) ? category.Name : null;
             HeaderIcon = !string.IsNullOrEmpty(category.IconHref) ? GameService.Content.GetRenderServiceTexture(category.IconHref) : null;
             Achievements = [.. achievements.Select(achievement => achievementTileViewModelFactory.Create(achievement, category))];
