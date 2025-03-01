@@ -157,20 +157,28 @@ public sealed class AchievementsTabViewModel(
             ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
             await using (context.ConfigureAwait(false))
             {
-                IQueryable<Achievement> search = context.Achievements
-                    .Where(achievement => EF.Functions.Like(achievement.Name, $"%{query}%"));
+                List<Achievement> achievements = await context.Achievements
+                    .Where(achievement => EF.Functions.Like(achievement.Name, $"%{query}%"))
+                    .OrderBy(achievement => achievement.Name)
+                    .ToListAsync()
+                    .ConfigureAwait(false);
 
-                if (await search.AnyAsync().ConfigureAwait(false))
+                // Client side ordering, impractical to do in sql
+                achievements = [.. achievements
+                    .OrderBy(achievement => achievement.Flags.CategoryDisplay ? 0 : 1)
+                    .ThenBy(achievement => achievement.Flags.MoveToTop ? 0 : 1)
+                ];
+
+                if (achievements.Count > 0)
                 {
                     List<AchievementCategory> categories = await context.AchievementCategories
-                        .OrderBy(category => category.Order)
                         .ToListAsync()
                         .ConfigureAwait(false);
 
-                    await foreach (Achievement achievement in search.AsAsyncEnumerable().ConfigureAwait(false))
+                    foreach (Achievement achievement in achievements)
                     {
                         AchievementCategory? category = categories
-                            .FirstOrDefault(category => category.Achievements.Concat(category.Tomorrow ?? []).Any(reference => reference.Id == achievement.Id));
+                            .FirstOrDefault(category => category.IsParentOf(achievement.Id) == true);
 
                         results.Add(achievementTileViewModelFactory.Create(achievement, category));
                     }
