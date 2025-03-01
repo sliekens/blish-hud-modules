@@ -47,7 +47,7 @@ public sealed class AchievementTile : Container
             {
                 _detailsButton.MaxFill = progress.Max;
                 _detailsButton.CurrentFill = progress.Current;
-                if (progress.Done)
+                if (!viewModel.Achievement.Flags.Repeatable && progress.Done)
                 {
                     _ = Binder.Bind(viewModel, vm => vm.CompletedLabel, _detailsButton, ctl => ctl.IconDetails);
                 }
