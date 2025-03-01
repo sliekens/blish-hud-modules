@@ -134,7 +134,7 @@ public sealed class DatabaseSeeder : IDisposable
         };
 
         bool shouldDownload = !currentDataManifest.Databases.TryGetValue(language.Alpha2Code, out Database? currentDatabase)
-            || currentDatabase.SchemaVersion > ChatLinksContext.SchemaVersion
+            || currentDatabase.SchemaVersion != ChatLinksContext.SchemaVersion
             || IsEmpty(currentDatabase);
 
         if (shouldDownload)
