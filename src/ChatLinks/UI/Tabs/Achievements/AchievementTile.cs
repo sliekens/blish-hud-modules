@@ -1,6 +1,7 @@
 ﻿using Blish_HUD;
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
+using Blish_HUD.Input;
 
 using GuildWars2.Hero.Achievements;
 
@@ -34,6 +35,14 @@ public sealed class AchievementTile : Container
             Text = viewModel.Name
         };
 
+        FlowPanel toolbar = new()
+        {
+            Parent = _detailsButton,
+            WidthSizingMode = SizingMode.Fill,
+            HeightSizingMode = SizingMode.Fill,
+            FlowDirection = ControlFlowDirection.SingleLeftToRight
+        };
+
         if (viewModel.Locked)
         {
             _detailsButton.Icon = AsyncTexture2D.FromAssetId(240704);
@@ -62,21 +71,38 @@ public sealed class AchievementTile : Container
         {
             Image warning = new()
             {
-                Parent = _detailsButton,
+                Parent = toolbar,
                 Size = new(32),
-                Texture = AsyncTexture2D.FromAssetId(1444522),
+                Texture = AsyncTexture2D.FromAssetId(1508665),
                 BasicTooltipText = ViewModel.MissingProgressWarning
             };
         }
 
         _chatLink = new()
         {
-            Parent = _detailsButton,
+            Parent = toolbar,
             Height = 35,
-            Text = viewModel.ChatLink
+            Width = 170,
+            Text = viewModel.ChatLink,
+            HideBackground = true
         };
 
+        if (ViewModel.Progress is null)
+        {
+            _chatLink.Width -= 32;
+        }
+
         _chatLink.InputFocusChanged += ChatLinkFocusChanged;
+
+        GlowButton copyButton = new()
+        {
+            Parent = toolbar,
+            Icon = AsyncTexture2D.FromAssetId(2208345),
+            ActiveIcon = AsyncTexture2D.FromAssetId(2208347)
+        };
+
+        copyButton.Click += OnCopyClicked;
+
         Menu = new ContextMenuStrip(() =>
         [
             ViewModel.CopyNameCommand.ToMenuItem(() => ViewModel.CopyNameLabel),
@@ -84,6 +110,12 @@ public sealed class AchievementTile : Container
             ViewModel.OpenWikiCommand.ToMenuItem(() => viewModel.OpenWikiLabel),
             ViewModel.OpenApiCommand.ToMenuItem(() => viewModel.OpenApiLabel)
         ]);
+    }
+
+    private void OnCopyClicked(object sender, MouseEventArgs e)
+    {
+        _ = Soundboard.Click.Play();
+        ViewModel.CopyChatLinkCommand.Execute();
     }
 
     private void ChatLinkFocusChanged(object sender, ValueEventArgs<bool> args)
