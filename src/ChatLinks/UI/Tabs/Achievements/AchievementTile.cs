@@ -45,9 +45,15 @@ public sealed class AchievementTile : Container
             AccountAchievement? progress = viewModel.Progress;
             if (progress is not null)
             {
+                _detailsButton.MaxFill = progress.Max;
+                _detailsButton.CurrentFill = progress.Current;
                 if (progress.Done)
                 {
                     _ = Binder.Bind(viewModel, vm => vm.CompletedLabel, _detailsButton, ctl => ctl.IconDetails);
+                }
+                else
+                {
+                    _detailsButton.ShowFillFraction = true;
                 }
             }
         }
