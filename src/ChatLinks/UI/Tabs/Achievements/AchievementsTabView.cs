@@ -56,25 +56,9 @@ public sealed class AchievementsTabView : View, IDisposable
         {
             CanScroll = true
         };
-    }
 
-    protected override Task<bool> Load(IProgress<string> progress)
-    {
-        return ViewModel.Load();
-    }
 
-    protected override void Build(Container buildPanel)
-    {
-        _searchBox.Parent = buildPanel;
-        _categoriesPanel.Parent = buildPanel;
-        AddAchievementCategories();
-
-        _selectedCategoryView.Parent = buildPanel;
-        _selectedCategoryView.Left = _categoriesPanel.Right + 9;
-        _selectedCategoryView.Width = 650;
-        _selectedCategoryView.HeightSizingMode = SizingMode.Fill;
-
-        ViewModel.PropertyChanged += (sender, args) =>
+        viewModel.PropertyChanged += (sender, args) =>
         {
             switch (args.PropertyName)
             {
@@ -94,6 +78,23 @@ public sealed class AchievementsTabView : View, IDisposable
                     break;
             }
         };
+    }
+
+    protected override Task<bool> Load(IProgress<string> progress)
+    {
+        return ViewModel.Load();
+    }
+
+    protected override void Build(Container buildPanel)
+    {
+        _searchBox.Parent = buildPanel;
+        _categoriesPanel.Parent = buildPanel;
+        AddAchievementCategories();
+
+        _selectedCategoryView.Parent = buildPanel;
+        _selectedCategoryView.Left = _categoriesPanel.Right + 9;
+        _selectedCategoryView.Width = 650;
+        _selectedCategoryView.HeightSizingMode = SizingMode.Fill;
 
         _ = Binder.Bind(ViewModel, vm => vm.SearchText, _searchBox);
         _searchBox.TextChanged += SearchTextChanged;
