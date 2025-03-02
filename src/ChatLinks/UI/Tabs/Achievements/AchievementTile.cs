@@ -50,6 +50,10 @@ public sealed class AchievementTile : Container
         {
             _detailsButton.Icon = GameService.Content.GetRenderServiceTexture(viewModel.IconHref);
         }
+        else
+        {
+            _detailsButton.Icon = AsyncTexture2D.FromAssetId(155865);
+        }
 
         if (viewModel.Progression is null)
         {

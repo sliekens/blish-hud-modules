@@ -57,7 +57,6 @@ public sealed class AchievementsTabView : View, IDisposable
             CanScroll = true
         };
 
-
         viewModel.PropertyChanged += (sender, args) =>
         {
             switch (args.PropertyName)
