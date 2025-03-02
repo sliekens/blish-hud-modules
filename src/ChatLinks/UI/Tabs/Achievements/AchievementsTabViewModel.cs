@@ -165,21 +165,33 @@ public sealed class AchievementsTabViewModel(
                         .ToListAsync()
                         .ConfigureAwait(false);
 
-                    IReadOnlyList<AccountAchievement>? progression = null;
+                    List<AchievementGroup> groups = await context.AchievementGroups
+                        .ToListAsync()
+                        .ConfigureAwait(false);
+
+                    List<AccountAchievement>? progression = null;
                     if (unlocks.HasPermission(Permission.Progression))
                     {
-                        progression = await unlocks.GetAccountAchievements(CancellationToken.None)
-                            .ConfigureAwait(false);
+                        progression = [
+                            .. await unlocks.GetAccountAchievements(CancellationToken.None)
+                                .ConfigureAwait(false)
+                        ];
                     }
 
-                    achievements = SortAchievements(achievements, progression);
+                    achievements = SortAchievements(achievements, categories, groups, progression);
                     foreach (Achievement achievement in achievements)
                     {
                         AchievementCategory? category = categories
                             .FirstOrDefault(category => category.IsParentOf(achievement.Id) == true);
 
+                        AchievementGroup? group = null;
+                        if (category is not null)
+                        {
+                            group = groups.FirstOrDefault(group => group.Categories.Contains(category.Id));
+                        }
+
                         AchievementTileViewModel achievementTileViewModel = achievementTileViewModelFactory
-                            .Create(achievement, category, progression);
+                            .Create(achievement, category, group, progression);
 
                         results.Add(achievementTileViewModel);
                     }
@@ -200,21 +212,31 @@ public sealed class AchievementsTabViewModel(
         ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
         await using (context.ConfigureAwait(false))
         {
-            IEnumerable<int> ids = category.Achievements.Select(r => r.Id);
+            List<AchievementGroup> groups = await context.AchievementGroups
+                .ToListAsync()
+                .ConfigureAwait(false);
+
+            // Switch to client-side evaluation for json array filtering
+            AchievementGroup group = groups
+                .FirstOrDefault(group => group.Categories.Contains(category.Id));
+
+            IEnumerable<int> ids = category.Achievements.Select(achievement => achievement.Id);
             List<Achievement> achievements = await context.Achievements
                 .Where(achievement => ids.Contains(achievement.Id))
                 .OrderBy(achievement => achievement.Name)
                 .ToListAsync()
                 .ConfigureAwait(false);
 
-            IReadOnlyList<AccountAchievement>? progression = null;
+            List<AccountAchievement>? progression = null;
             if (unlocks.HasPermission(Permission.Progression))
             {
-                progression = await unlocks.GetAccountAchievements(CancellationToken.None)
-                    .ConfigureAwait(false);
+                progression = [..
+                    await unlocks.GetAccountAchievements(CancellationToken.None)
+                        .ConfigureAwait(false)
+                ];
             }
 
-            achievements = SortAchievements(achievements, progression);
+            achievements = SortAchievements(achievements, [category], [group], progression);
             HeaderText = !string.IsNullOrEmpty(category.Name) ? category.Name : null;
             HeaderIcon = !string.IsNullOrEmpty(category.IconHref) ? GameService.Content.GetRenderServiceTexture(category.IconHref) : null;
             Achievements = [
@@ -222,6 +244,7 @@ public sealed class AchievementsTabViewModel(
                     .Create(
                         achievement,
                         category,
+                        group,
                         progression
                     )
                 )
@@ -229,14 +252,22 @@ public sealed class AchievementsTabViewModel(
         }
     }
 
-    private static List<Achievement> SortAchievements(List<Achievement> achievements, IReadOnlyList<AccountAchievement>? progression)
+    private static List<Achievement> SortAchievements(
+        List<Achievement> achievements,
+        List<AchievementCategory> categories,
+        List<AchievementGroup> groups,
+        List<AccountAchievement>? progression)
     {
-        // Client side ordering, impractical to do in sql
-        return [
-            .. achievements
-                .OrderBy(achievement => achievement.IsLocked(progression))
-                .ThenByDescending(achievement => achievement.Flags.CategoryDisplay)
-                .ThenByDescending(achievement => achievement.Flags.MoveToTop)
+        return [.. from achievement in achievements
+            let category = categories.FirstOrDefault(category => category.IsParentOf(achievement.Id) == true)
+            let @group = groups.FirstOrDefault(x => x.Categories.Contains(category.Id))
+            let locked = achievement.IsLocked(@group, progression)
+            orderby locked,
+                @group?.Order ?? int.MaxValue,
+                category?.Order ?? int.MaxValue,
+                achievement.Flags.CategoryDisplay descending,
+                achievement.Flags.MoveToTop descending
+            select achievement
         ];
     }
 

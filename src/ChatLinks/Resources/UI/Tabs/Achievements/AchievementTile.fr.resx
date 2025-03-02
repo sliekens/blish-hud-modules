@@ -135,16 +135,19 @@
   <data name="Open API" xml:space="preserve">
     <value>Ouvrir l'API</value>
   </data>
-  <data name="Stack Size" xml:space="preserve">
-    <value>Taille de la pile</value>
-  </data>
-  <data name="Reset" xml:space="preserve">
-    <value>Réinitialiser</value>
-  </data>
   <data name="Completed" xml:space="preserve">
     <value>Terminé</value>
   </data>
-  <data name="Account progress unavailable" xml:space="preserve">
-    <value>Progression du compte indisponible</value>
+  <data name="Achievement progress unavailable" xml:space="preserve">
+    <value>La progression des succès n'est pas disponible ; configurez une clé API avec la portée « progression » et activez les autorisations API dans les paramètres du module.</value>
+  </data>
+  <data name="Daily achievement progress unavailable" xml:space="preserve">
+    <value>La progression des succès quotidiens n'est pas disponible</value>
+  </data>
+  <data name="Per-character achievement progress unavailable" xml:space="preserve">
+    <value>La progression des succès par personnage n'est pas disponible</value>
+  </data>
+  <data name="Weekly achievement progress unavailable" xml:space="preserve">
+    <value>Progression des succès hebdomadaires indisponible</value>
   </data>
 </root>

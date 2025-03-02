@@ -3,6 +3,7 @@ using System.Net;
 
 using GuildWars2.Hero.Achievements;
 using GuildWars2.Hero.Achievements.Categories;
+using GuildWars2.Hero.Achievements.Groups;
 
 using Microsoft.Extensions.Localization;
 
@@ -31,6 +32,7 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
     private AccountAchievement? _progress;
 
     private IReadOnlyList<AccountAchievement>? _progression;
+    private AchievementGroup? _group;
 
     public AchievementTileViewModel(
         IEventAggregator eventAggregator,
@@ -120,6 +122,12 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
         set => SetField(ref _category, value);
     }
 
+    public AchievementGroup? Group
+    {
+        get => _group;
+        set => SetField(ref _group, value);
+    }
+
     public IReadOnlyList<AccountAchievement>? Progression
     {
         get => _progression;
@@ -138,9 +146,21 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
         set => SetField(ref _progress, value);
     }
 
-    public bool Locked => Achievement.IsLocked(Progression);
+    public bool Locked => Achievement.IsLocked(Group, Progression);
 
-    public string MissingProgressWarning => _localizer["Account progress unavailable"];
+    public string AchievementProgressUnavailable => _localizer["Achievement progress unavailable"];
+
+    public string DailyAchievementProgressUnavailable => _localizer["Daily achievement progress unavailable"];
+
+    public string WeeklyAchievementProgressUnavailable => _localizer["Weekly achievement progress unavailable"];
+
+    public string PerCharacterAchievementProgressUnavailable => _localizer["Per-character achievement progress unavailable"];
+
+    public bool IsPerCharacter => Group?.IsPerCharacter() ?? false;
+
+    public bool IsDaily => Achievement.Flags.Daily;
+
+    public bool IsWeekly => Achievement.Flags.Weekly;
 
     public AchievementTooltipViewModel CreateAchievementTooltipViewModel()
     {

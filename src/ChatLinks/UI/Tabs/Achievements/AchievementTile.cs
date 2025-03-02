@@ -3,8 +3,6 @@ using Blish_HUD.Content;
 using Blish_HUD.Controls;
 using Blish_HUD.Input;
 
-using GuildWars2.Hero.Achievements;
-
 using Microsoft.Xna.Framework;
 
 using SL.ChatLinks.UI.Tabs.Achievements.Tooltips;
@@ -43,6 +41,7 @@ public sealed class AchievementTile : Container
             FlowDirection = ControlFlowDirection.SingleLeftToRight
         };
 
+        int chatLinkWidth = 170;
         if (viewModel.Locked)
         {
             _detailsButton.Icon = AsyncTexture2D.FromAssetId(240704);
@@ -50,47 +49,94 @@ public sealed class AchievementTile : Container
         else if (!string.IsNullOrEmpty(viewModel.IconHref))
         {
             _detailsButton.Icon = GameService.Content.GetRenderServiceTexture(viewModel.IconHref);
-            AccountAchievement? progress = viewModel.Progress;
-            if (progress is not null)
-            {
-                if (!viewModel.Achievement.Flags.Repeatable && progress.Done)
-                {
-                    _detailsButton.ShowVignette = false;
-                    _detailsButton.IconDetails = viewModel.CompletedLabel;
-                }
-                else
-                {
-                    _detailsButton.MaxFill = progress.Max;
-                    _detailsButton.CurrentFill = progress.Current;
-                    _detailsButton.ShowFillFraction = true;
-                }
-            }
         }
 
-        if (ViewModel.Progress is null)
+        if (viewModel.Progression is null)
         {
-            Image warning = new()
+            // Show all achievements as if they are not even started
+
+            Image info = new()
             {
                 Parent = toolbar,
                 Size = new(32),
                 Texture = AsyncTexture2D.FromAssetId(1508665),
-                BasicTooltipText = ViewModel.MissingProgressWarning
+                BasicTooltipText = ViewModel.AchievementProgressUnavailable
             };
+
+            chatLinkWidth -= info.Width;
+
+            if (!viewModel.Locked)
+            {
+                _detailsButton.MaxFill = viewModel.Achievement.Tiers[0].Count;
+                _detailsButton.ShowFillFraction = true;
+            }
+        }
+        else if (viewModel.Progress is null)
+        {
+            // Progress is always unavailable for daily, weekly and per-character achievements
+            if (ViewModel.IsDaily)
+            {
+                Image info = new()
+                {
+                    Parent = toolbar,
+                    Size = new(32),
+                    Texture = AsyncTexture2D.FromAssetId(1508665),
+                    BasicTooltipText = ViewModel.DailyAchievementProgressUnavailable
+                };
+
+                chatLinkWidth -= info.Width;
+            }
+            else if (viewModel.IsWeekly)
+            {
+                Image info = new()
+                {
+                    Parent = toolbar,
+                    Size = new(32),
+                    Texture = AsyncTexture2D.FromAssetId(1508665),
+                    BasicTooltipText = ViewModel.WeeklyAchievementProgressUnavailable
+                };
+
+                chatLinkWidth -= info.Width;
+            }
+            else if (viewModel.IsPerCharacter)
+            {
+                Image info = new()
+                {
+                    Parent = toolbar,
+                    Size = new(32),
+                    Texture = AsyncTexture2D.FromAssetId(1508665),
+                    BasicTooltipText = ViewModel.PerCharacterAchievementProgressUnavailable
+                };
+
+                chatLinkWidth -= info.Width;
+            }
+            else if (!viewModel.Locked)
+            {
+                // Still no progress probably just means the achievement is not started
+                _detailsButton.MaxFill = viewModel.Achievement.Tiers[0].Count;
+                _detailsButton.ShowFillFraction = true;
+            }
+        }
+        else if (!viewModel.Progress.Done || viewModel.Achievement.Flags.Repeatable)
+        {
+            _detailsButton.MaxFill = viewModel.Progress.Max;
+            _detailsButton.CurrentFill = viewModel.Progress.Current;
+            _detailsButton.ShowFillFraction = true;
+        }
+        else
+        {
+            _detailsButton.ShowVignette = false;
+            _detailsButton.IconDetails = viewModel.CompletedLabel;
         }
 
         _chatLink = new()
         {
             Parent = toolbar,
             Height = 35,
-            Width = 170,
+            Width = chatLinkWidth,
             Text = viewModel.ChatLink,
             HideBackground = true
         };
-
-        if (ViewModel.Progress is null)
-        {
-            _chatLink.Width -= 32;
-        }
 
         _chatLink.InputFocusChanged += ChatLinkFocusChanged;
 
