@@ -150,4 +150,7 @@
   <data name="Weekly achievement progress unavailable" xml:space="preserve">
     <value>Wöchentlicher Fortschritt der Erfolge nicht verfügbar</value>
   </data>
+  <data name="Hidden achievement" xml:space="preserve">
+    <value>Versteckte Erfolge</value>
+  </data>
 </root>

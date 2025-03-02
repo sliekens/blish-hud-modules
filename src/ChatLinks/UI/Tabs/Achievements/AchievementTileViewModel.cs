@@ -162,6 +162,8 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
 
     public bool IsWeekly => Achievement.Flags.Weekly;
 
+    public string HiddenLabel => _localizer["Hidden achievement"];
+
     public AchievementTooltipViewModel CreateAchievementTooltipViewModel()
     {
         return _achievementTooltipViewModelFactory.Create(Achievement);

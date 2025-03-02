@@ -129,6 +129,25 @@ public sealed class AchievementTile : Container
             _detailsButton.IconDetails = viewModel.CompletedLabel;
         }
 
+        if (ViewModel.Achievement.Flags.Hidden)
+        {
+            StackedImage eye = new()
+            {
+                Parent = toolbar,
+                Size = new(32),
+                BasicTooltipText = viewModel.HiddenLabel
+            };
+
+            eye.Textures.Add((AsyncTexture2D.FromAssetId(528726), Color.White));
+
+            if (viewModel.Progress is null)
+            {
+                eye.Textures.Add((AsyncTexture2D.FromAssetId(154983), Color.OrangeRed));
+            }
+
+            chatLinkWidth -= eye.Width;
+        }
+
         _chatLink = new()
         {
             Parent = toolbar,

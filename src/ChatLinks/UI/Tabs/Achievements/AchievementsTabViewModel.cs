@@ -260,9 +260,11 @@ public sealed class AchievementsTabViewModel(
     {
         return [.. from achievement in achievements
             let category = categories.FirstOrDefault(category => category.IsParentOf(achievement.Id) == true)
-            let @group = groups.FirstOrDefault(x => x.Categories.Contains(category.Id))
+            let @group = groups.FirstOrDefault(x => category is not null && x.Categories.Contains(category.Id))
             let locked = achievement.IsLocked(@group, progression)
-            orderby locked,
+            let hidden = achievement.IsHidden(progression)
+            orderby hidden,
+                locked,
                 @group?.Order ?? int.MaxValue,
                 category?.Order ?? int.MaxValue,
                 achievement.Flags.CategoryDisplay descending,

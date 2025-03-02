@@ -37,4 +37,18 @@ internal static class AchievementExtensions
 
         return false;
     }
+
+    public static bool IsHidden(
+        this Achievement achievement,
+        IReadOnlyList<AccountAchievement>? progression)
+    {
+
+        if (achievement.Flags.Hidden)
+        {
+            bool? hasProgress = progression?.Any(progress => progress.Id == achievement.Id);
+            return !(hasProgress ?? false);
+        }
+
+        return false;
+    }
 }
