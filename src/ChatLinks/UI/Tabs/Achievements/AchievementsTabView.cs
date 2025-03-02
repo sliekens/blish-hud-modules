@@ -119,8 +119,10 @@ public sealed class AchievementsTabView : View, IDisposable
 
             foreach (AchievementCategory category in menuItem.Categories)
             {
-                AsyncTexture2D icon = GameService.Content.GetRenderServiceTexture(category.IconHref)
-                    .Duplicate();
+                AsyncTexture2D icon = !string.IsNullOrEmpty(category.IconHref)
+                    ? GameService.Content.GetRenderServiceTexture(category.IconHref).Duplicate()
+                    : AsyncTexture2D.FromAssetId(155865).Duplicate();
+
                 MenuItem categoryItem = new(category.Name, icon)
                 {
                     Parent = groupMenuItem,

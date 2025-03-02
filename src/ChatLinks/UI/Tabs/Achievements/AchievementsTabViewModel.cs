@@ -109,6 +109,53 @@ public sealed class AchievementsTabViewModel(
                 .ToListAsync()
                 .ConfigureAwait(false);
 
+            List<int> categorizedIds = [
+                .. categories.SelectMany(c => (List<int>)[.. c.Achievements.Select(a => a.Id), .. c.Tomorrow?.Select(a => a.Id) ?? []])
+            ];
+
+            var achievements = await context.Achievements
+                .Select(a => new { a.Id, a.Flags })
+                .ToListAsync()
+                .ConfigureAwait(false);
+
+            categories.Add(new()
+            {
+                Id = -1,
+                Name = localizer["Uncategorized"],
+                Description = "",
+                IconHref = "",
+                Order = int.MaxValue,
+                Achievements = [.. achievements
+                    .Where(a => !a.Flags.Daily)
+                    .Where(a => !a.Flags.Weekly)
+                    .Where(a => !categorizedIds.Contains(a.Id))
+                    .Select(a => new AchievementRef()
+                    {
+                        Id = a.Id,
+                        Level = new()
+                        {
+                            Min = 0,
+                            Max = 0
+                        },
+                        Flags = new()
+                        {
+                            PvE = !a.Flags.Pvp,
+                            SpecialEvent = false,
+                            Other = []
+                        }
+                    })],
+                Tomorrow = []
+            });
+
+            groups.Add(new AchievementGroup
+            {
+                Id = "",
+                Name = localizer["Uncategorized"],
+                Description = "",
+                Order = int.MaxValue,
+                Categories = [-1]
+            });
+
             MenuItems = [.. groups.Select(group => new AchievementGroupMenuItem
                 {
                     Group = group,
@@ -217,8 +264,7 @@ public sealed class AchievementsTabViewModel(
                 .ConfigureAwait(false);
 
             // Switch to client-side evaluation for json array filtering
-            AchievementGroup group = groups
-                .FirstOrDefault(group => group.Categories.Contains(category.Id));
+            groups = [.. groups.Where(group => group.Categories.Contains(category.Id))];
 
             IEnumerable<int> ids = category.Achievements.Select(achievement => achievement.Id);
             List<Achievement> achievements = await context.Achievements
@@ -236,7 +282,7 @@ public sealed class AchievementsTabViewModel(
                 ];
             }
 
-            achievements = SortAchievements(achievements, [category], [group], progression);
+            achievements = SortAchievements(achievements, [category], groups, progression);
             HeaderText = !string.IsNullOrEmpty(category.Name) ? category.Name : null;
             HeaderIcon = !string.IsNullOrEmpty(category.IconHref) ? GameService.Content.GetRenderServiceTexture(category.IconHref) : null;
             Achievements = [
@@ -244,7 +290,7 @@ public sealed class AchievementsTabViewModel(
                     .Create(
                         achievement,
                         category,
-                        group,
+                        groups.FirstOrDefault(),
                         progression
                     )
                 )

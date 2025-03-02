@@ -123,4 +123,7 @@
   <data name="Search" xml:space="preserve">
     <value>Search...</value>
   </data>
+  <data name="Uncategorized" xml:space="preserve">
+    <value>Uncategorized</value>
+  </data>
 </root>
