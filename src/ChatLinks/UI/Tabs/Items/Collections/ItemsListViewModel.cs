@@ -23,7 +23,7 @@ public sealed class ItemsListViewModel : ViewModel, IDisposable
 
     private readonly IClipBoard _clipboard;
 
-    private readonly ItemIcons _icons;
+    private readonly IconsService _icons;
 
     private readonly Customizer _customizer;
 
@@ -35,7 +35,7 @@ public sealed class ItemsListViewModel : ViewModel, IDisposable
         IStringLocalizer<ItemsList> localizer,
         IEventAggregator eventAggregator,
         IClipBoard clipboard,
-        ItemIcons icons,
+        IconsService icons,
         Customizer customizer,
         Item item,
         ItemTooltipViewModelFactory tooltipViewModelFactory,
@@ -99,7 +99,7 @@ public sealed class ItemsListViewModel : ViewModel, IDisposable
 
     public AsyncTexture2D? GetIcon()
     {
-        return _icons.GetIcon(Item);
+        return _icons.GetIcon(Item.IconHref);
     }
 
     public ItemTooltipViewModel CreateTooltipViewModel()

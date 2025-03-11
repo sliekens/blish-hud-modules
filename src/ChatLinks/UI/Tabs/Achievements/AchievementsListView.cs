@@ -9,11 +9,6 @@ public sealed class AchievementsListView(ObservableCollection<AchievementTileVie
 {
     private readonly FlowPanel _achievementsPanel = new();
 
-    protected override Task<bool> Load(IProgress<string> progress)
-    {
-        return base.Load(progress);
-    }
-
     protected override void Build(Container buildPanel)
     {
         _achievementsPanel.Parent = buildPanel;

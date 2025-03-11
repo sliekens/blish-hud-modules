@@ -1,5 +1,4 @@
-﻿using Blish_HUD;
-using Blish_HUD.Content;
+﻿using Blish_HUD.Content;
 using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
 
@@ -119,9 +118,7 @@ public sealed class AchievementsTabView : View, IDisposable
 
             foreach (AchievementCategory category in menuItem.Categories)
             {
-                AsyncTexture2D icon = !string.IsNullOrEmpty(category.IconHref)
-                    ? GameService.Content.GetRenderServiceTexture(category.IconHref).Duplicate()
-                    : AsyncTexture2D.FromAssetId(155865).Duplicate();
+                AsyncTexture2D icon = ViewModel.GetIcon(category.IconHref);
 
                 MenuItem categoryItem = new(category.Name, icon)
                 {

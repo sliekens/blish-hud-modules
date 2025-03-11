@@ -46,7 +46,7 @@ public sealed class ChatLinkEditorViewModel : ViewModel, IDisposable
 
     private readonly UpgradeEditorViewModelFactory _upgradeEditorViewModelFactory;
 
-    private readonly ItemIcons _icons;
+    private readonly IconsService _icons;
 
     private readonly Customizer _customizer;
 
@@ -63,7 +63,7 @@ public sealed class ChatLinkEditorViewModel : ViewModel, IDisposable
         IDbContextFactory contextFactory,
         ItemTooltipViewModelFactory tooltipViewModelFactory,
         UpgradeEditorViewModelFactory upgradeEditorViewModelFactory,
-        ItemIcons icons,
+        IconsService icons,
         Customizer customizer,
         IClipBoard clipboard,
         Item item)
@@ -333,7 +333,7 @@ public sealed class ChatLinkEditorViewModel : ViewModel, IDisposable
 
     public AsyncTexture2D? GetIcon()
     {
-        return _icons.GetIcon(Item);
+        return _icons.GetIcon(Item.IconHref);
     }
 
     private IEnumerable<UpgradeEditorViewModel> CreateUpgradeEditorViewModels()

@@ -1,29 +1,23 @@
-﻿using System.Collections.Concurrent;
-using System.Net.Http;
+﻿using System.Net.Http;
 
 using Blish_HUD;
 using Blish_HUD.Content;
 
-using GuildWars2.Items;
-
 using Microsoft.Xna.Framework.Graphics;
 
-namespace SL.ChatLinks.UI.Tabs.Items;
+namespace SL.ChatLinks.UI;
 
-public class ItemIcons(HttpClient httpClient)
+public sealed class IconsService(HttpClient httpClient, IconsCache cache)
 {
-    private static readonly ConcurrentDictionary<string, AsyncTexture2D> WebCache = [];
-
-    public AsyncTexture2D? GetIcon(Item item)
+    public AsyncTexture2D? GetIcon(string? iconUrl)
     {
-        ThrowHelper.ThrowIfNull(item);
-        if (item.IconHref is null)
+        if (string.IsNullOrWhiteSpace(iconUrl))
         {
             return null;
         }
 
-        AsyncTexture2D? cached = GameService.Content.GetRenderServiceTexture(item.IconHref)
-            ?? WebCache.GetOrAdd(item.IconHref, url =>
+        AsyncTexture2D cached = GameService.Content.GetRenderServiceTexture(iconUrl)
+            ?? cache.GetOrAdd(iconUrl!, url =>
             {
                 AsyncTexture2D newTexture = new();
                 _ = httpClient.GetStreamAsync(new Uri(url)).ContinueWith(task =>

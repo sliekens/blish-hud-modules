@@ -11,7 +11,7 @@ public sealed class UpgradeEditorViewModelFactory(
     IStringLocalizer<UpgradeSlot> localizer2,
     IEventAggregator eventAggregator,
     IClipBoard clipboard,
-    ItemIcons icons,
+    IconsService icons,
     Customizer customizer,
     UpgradeSelectorViewModelFactory upgradeComponentListViewModelFactory,
     ItemTooltipViewModelFactory itemTooltipViewModelFactory)

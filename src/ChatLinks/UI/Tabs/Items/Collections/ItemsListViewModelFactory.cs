@@ -10,7 +10,7 @@ public sealed class ItemsListViewModelFactory(
     IStringLocalizer<ItemsList> localizer,
     IEventAggregator eventAggregator,
     IClipBoard clipboard,
-    ItemIcons icons,
+    IconsService icons,
     Customizer customizer,
     ItemTooltipViewModelFactory tooltipViewModelFactory
 )

@@ -24,7 +24,8 @@ public sealed class AchievementsTabViewModel(
     IStringLocalizer<AchievementsTabView> localizer,
     ILocale locale,
     AchievementTileViewModelFactory achievementTileViewModelFactory,
-    AccountUnlocks unlocks
+    AccountUnlocks unlocks,
+    IconsService icons
 ) : ViewModel, IDisposable
 {
     private ObservableCollection<AchievementGroupMenuItem> _groups = [];
@@ -317,6 +318,12 @@ public sealed class AchievementsTabViewModel(
                 achievement.Flags.MoveToTop descending
             select achievement
         ];
+    }
+
+    public AsyncTexture2D GetIcon(string iconUrl)
+    {
+        return icons.GetIcon(iconUrl)
+               ?? AsyncTexture2D.FromAssetId(155865).Duplicate();
     }
 
     public void Dispose()

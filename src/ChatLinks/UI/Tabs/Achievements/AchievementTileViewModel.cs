@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Net;
 
+using Blish_HUD.Content;
+
 using GuildWars2.Hero.Achievements;
 using GuildWars2.Hero.Achievements.Categories;
 using GuildWars2.Hero.Achievements.Groups;
@@ -23,6 +25,8 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
 
     private readonly IDbContextFactory _contextFactory;
 
+    private readonly IconsService _icons;
+
     private readonly AchievementTooltipViewModelFactory _achievementTooltipViewModelFactory;
 
     private Achievement _achievement;
@@ -32,6 +36,7 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
     private AccountAchievement? _progress;
 
     private IReadOnlyList<AccountAchievement>? _progression;
+
     private AchievementGroup? _group;
 
     public AchievementTileViewModel(
@@ -39,6 +44,7 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
         IStringLocalizer<AchievementTile> localizer,
         IClipBoard clipboard,
         IDbContextFactory contextFactory,
+        IconsService icons,
         AchievementTooltipViewModelFactory achievementTooltipViewModelFactory,
         Achievement achievement
 )
@@ -48,6 +54,7 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
         _localizer = localizer;
         _clipboard = clipboard;
         _contextFactory = contextFactory;
+        _icons = icons;
         _achievementTooltipViewModelFactory = achievementTooltipViewModelFactory;
         _achievement = achievement;
         eventAggregator.Subscribe<LocaleChanged>(OnLocaleChanged);
@@ -69,24 +76,19 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
 
     public string Name => Achievement.Name;
 
-    public string Description => Achievement.Description;
-
-    public string IconHref
+    public AsyncTexture2D? GetIcon()
     {
-        get
+        if (!string.IsNullOrEmpty(Achievement.IconHref))
         {
-            if (!string.IsNullOrEmpty(Achievement.IconHref))
-            {
-                return Achievement.IconHref;
-            }
-
-            if (!string.IsNullOrEmpty(_category?.IconHref))
-            {
-                return _category!.IconHref;
-            }
-
-            return string.Empty;
+            return _icons.GetIcon(Achievement.IconHref);
         }
+
+        if (!string.IsNullOrEmpty(_category?.IconHref))
+        {
+            return _icons.GetIcon(_category!.IconHref);
+        }
+
+        return null;
     }
 
     public string CompletedLabel => _localizer["Completed"];

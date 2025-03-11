@@ -16,7 +16,7 @@ public sealed class UpgradeSlotViewModel : ViewModel, IDisposable
 
     private UpgradeComponent? _defaultUpgradeComponent;
 
-    private readonly ItemIcons _icons;
+    private readonly IconsService _icons;
 
     private readonly IStringLocalizer<UpgradeSlot> _localizer;
 
@@ -27,7 +27,7 @@ public sealed class UpgradeSlotViewModel : ViewModel, IDisposable
 
     public UpgradeSlotViewModel(
         UpgradeSlotType type,
-        ItemIcons icons,
+        IconsService icons,
         IStringLocalizer<UpgradeSlot> localizer,
         ItemTooltipViewModelFactory itemTooltipViewModelFactory,
         IEventAggregator eventAggregator,
@@ -93,7 +93,7 @@ public sealed class UpgradeSlotViewModel : ViewModel, IDisposable
 
     public AsyncTexture2D? GetIcon(UpgradeComponent item)
     {
-        return _icons.GetIcon(item);
+        return _icons.GetIcon(item.IconHref);
     }
 
     public ItemTooltipViewModel CreateTooltipViewModel(UpgradeComponent item)

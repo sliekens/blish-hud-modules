@@ -29,7 +29,7 @@ public sealed class ItemTooltipViewModel(
     ILogger<ItemTooltipViewModel> logger,
     IDbContextFactory contextFactory,
     ILocale locale,
-    ItemIcons icons,
+    IconsService icons,
     Customizer customizer,
     AccountUnlocks unlocks,
     Item item,
@@ -134,7 +134,7 @@ public sealed class ItemTooltipViewModel(
 
     public AsyncTexture2D? GetIcon(Item item)
     {
-        return icons.GetIcon(item);
+        return icons.GetIcon(item.IconHref);
     }
 
     public async Task Load(IProgress<string> progress)

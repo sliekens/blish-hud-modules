@@ -91,6 +91,9 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
 
         _ = services.AddSingleton<IEventAggregator, DefaultEventAggregator>();
         _ = services.AddTransient<IClipBoard, WpfClipboard>();
+        _ = services.AddSingleton<AccountUnlocks>();
+        _ = services.AddHttpClient<IconsService>();
+        _ = services.AddSingleton<IconsCache>();
 
         #endregion Supportive services
 
@@ -135,8 +138,6 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
         _ = services.AddTransient<UpgradeSelectorViewModelFactory>();
         _ = services.AddTransient<ItemSearch>();
         _ = services.AddSingleton<Customizer>();
-        _ = services.AddSingleton<AccountUnlocks>();
-        _ = services.AddHttpClient<ItemIcons>();
 
         // Achievements tab
         _ = services.AddTransient<AchievementsTabViewModelFactory>();

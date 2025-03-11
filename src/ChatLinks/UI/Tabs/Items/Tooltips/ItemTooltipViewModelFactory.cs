@@ -11,7 +11,7 @@ public sealed class ItemTooltipViewModelFactory(
     ILoggerFactory loggerFactory,
     IDbContextFactory contextFactory,
     ILocale locale,
-    ItemIcons icons,
+    IconsService icons,
     Customizer customizer,
     AccountUnlocks hero,
     IStringLocalizer<ItemTooltipView> localizer)

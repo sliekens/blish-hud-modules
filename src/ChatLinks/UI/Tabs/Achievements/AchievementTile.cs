@@ -46,9 +46,9 @@ public sealed class AchievementTile : Container
         {
             _detailsButton.Icon = AsyncTexture2D.FromAssetId(240704);
         }
-        else if (!string.IsNullOrEmpty(viewModel.IconHref))
+        else if (viewModel.GetIcon() is { } icon)
         {
-            _detailsButton.Icon = GameService.Content.GetRenderServiceTexture(viewModel.IconHref);
+            _detailsButton.Icon = icon;
         }
         else
         {

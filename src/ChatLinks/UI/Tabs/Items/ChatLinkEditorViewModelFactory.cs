@@ -14,7 +14,7 @@ public sealed class ChatLinkEditorViewModelFactory(
     UpgradeEditorViewModelFactory upgradeEditorViewModelFactory,
     IOptionsMonitor<ChatLinkOptions> options,
     IStringLocalizer<ChatLinkEditor> localizer,
-    ItemIcons icons,
+    IconsService icons,
     Customizer customizer,
     IClipBoard clipboard,
     IEventAggregator eventAggregator,
