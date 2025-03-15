@@ -23,11 +23,13 @@ public sealed class AchievementsTabViewModel(
     IDbContextFactory contextFactory,
     IStringLocalizer<AchievementsTabView> localizer,
     ILocale locale,
-    AchievementTileViewModelFactory achievementTileViewModelFactory,
+    AchievementTileViewModel.Factory achievementTileViewModelFactory,
     AccountUnlocks unlocks,
     IconsService icons
 ) : ViewModel, IDisposable
 {
+    public delegate AchievementsTabViewModel Factory();
+
     private ObservableCollection<AchievementGroupMenuItem> _groups = [];
 
     private ObservableCollection<AchievementTileViewModel> _achievements = [];
@@ -238,8 +240,12 @@ public sealed class AchievementsTabViewModel(
                             group = groups.FirstOrDefault(group => group.Categories.Contains(category.Id));
                         }
 
-                        AchievementTileViewModel achievementTileViewModel = achievementTileViewModelFactory
-                            .Create(achievement, category, group, progression);
+                        AchievementTileViewModel achievementTileViewModel = achievementTileViewModelFactory(
+                            achievement,
+                            category,
+                            group,
+                            progression
+                        );
 
                         results.Add(achievementTileViewModel);
                     }
@@ -287,8 +293,7 @@ public sealed class AchievementsTabViewModel(
             HeaderText = !string.IsNullOrEmpty(category.Name) ? category.Name : null;
             HeaderIcon = !string.IsNullOrEmpty(category.IconHref) ? GameService.Content.GetRenderServiceTexture(category.IconHref) : null;
             Achievements = [
-                .. achievements.Select(achievement => achievementTileViewModelFactory
-                    .Create(
+                .. achievements.Select(achievement => achievementTileViewModelFactory(
                         achievement,
                         category,
                         groups.FirstOrDefault(),

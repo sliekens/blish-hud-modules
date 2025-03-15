@@ -16,6 +16,8 @@ public sealed class AchievementTooltipViewModel(
     Achievement achievement
 ) : ViewModel
 {
+    public delegate AchievementTooltipViewModel Factory(Achievement achievement);
+
     public IStringLocalizer<AchievementTooltipView> Localizer { get; } = localizer;
 
     public string Name => achievement.Name;

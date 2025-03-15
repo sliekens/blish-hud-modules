@@ -130,19 +130,20 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
         _ = services.AddTransient<MainWindowViewModel>();
 
         // Items tab
-        _ = services.AddTransient<ItemsTabViewModelFactory>();
-        _ = services.AddTransient<ItemsListViewModelFactory>();
-        _ = services.AddTransient<ItemTooltipViewModelFactory>();
-        _ = services.AddTransient<ChatLinkEditorViewModelFactory>();
-        _ = services.AddTransient<UpgradeEditorViewModelFactory>();
-        _ = services.AddTransient<UpgradeSelectorViewModelFactory>();
+        _ = services.AddFactoryDelegate<ItemsTabViewModel.Factory>();
+        _ = services.AddFactoryDelegate<ItemsListViewModel.Factory>();
+        _ = services.AddFactoryDelegate<ItemTooltipViewModel.Factory>();
+        _ = services.AddFactoryDelegate<ChatLinkEditorViewModel.Factory>();
+        _ = services.AddFactoryDelegate<UpgradeEditorViewModel.Factory>();
+        _ = services.AddFactoryDelegate<UpgradeSelectorViewModel.Factory>();
+        _ = services.AddFactoryDelegate<UpgradeSlotViewModel.Factory>();
         _ = services.AddTransient<ItemSearch>();
         _ = services.AddSingleton<Customizer>();
 
         // Achievements tab
-        _ = services.AddTransient<AchievementsTabViewModelFactory>();
-        _ = services.AddTransient<AchievementTileViewModelFactory>();
-        _ = services.AddTransient<AchievementTooltipViewModelFactory>();
+        _ = services.AddFactoryDelegate<AchievementsTabViewModel.Factory>();
+        _ = services.AddFactoryDelegate<AchievementTileViewModel.Factory>();
+        _ = services.AddFactoryDelegate<AchievementTooltipViewModel.Factory>();
 
         #endregion
 

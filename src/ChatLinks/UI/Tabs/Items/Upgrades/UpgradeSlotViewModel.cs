@@ -10,6 +10,8 @@ namespace SL.ChatLinks.UI.Tabs.Items.Upgrades;
 
 public sealed class UpgradeSlotViewModel : ViewModel, IDisposable
 {
+    public delegate UpgradeSlotViewModel Factory(UpgradeSlotType type, UpgradeComponent? defaultUpgradeComponent);
+
     private UpgradeSlotType _type;
 
     private UpgradeComponent? _selectedUpgradeComponent;
@@ -20,18 +22,20 @@ public sealed class UpgradeSlotViewModel : ViewModel, IDisposable
 
     private readonly IStringLocalizer<UpgradeSlot> _localizer;
 
-    private readonly ItemTooltipViewModelFactory _itemTooltipViewModelFactory;
+    private readonly ItemTooltipViewModel.Factory _itemTooltipViewModelFactory;
 
     private readonly IEventAggregator _eventAggregator;
+
     private readonly Customizer _customizer;
 
     public UpgradeSlotViewModel(
-        UpgradeSlotType type,
         IconsService icons,
         IStringLocalizer<UpgradeSlot> localizer,
-        ItemTooltipViewModelFactory itemTooltipViewModelFactory,
+        ItemTooltipViewModel.Factory itemTooltipViewModelFactory,
         IEventAggregator eventAggregator,
-        Customizer customizer
+        Customizer customizer,
+        UpgradeSlotType type,
+        UpgradeComponent? defaultUpgradeComponent
 )
     {
         ThrowHelper.ThrowIfNull(eventAggregator);
@@ -41,6 +45,7 @@ public sealed class UpgradeSlotViewModel : ViewModel, IDisposable
         _eventAggregator = eventAggregator;
         _customizer = customizer;
         _type = type;
+        _defaultUpgradeComponent = defaultUpgradeComponent;
 
         eventAggregator.Subscribe<LocaleChanged>(OnLocaleChanged);
     }
@@ -98,7 +103,7 @@ public sealed class UpgradeSlotViewModel : ViewModel, IDisposable
 
     public ItemTooltipViewModel CreateTooltipViewModel(UpgradeComponent item)
     {
-        return _itemTooltipViewModelFactory.Create(item, 1, []);
+        return _itemTooltipViewModelFactory(item, 1, []);
     }
 
     public void Dispose()

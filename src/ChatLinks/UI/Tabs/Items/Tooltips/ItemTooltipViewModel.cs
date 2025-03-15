@@ -38,6 +38,8 @@ public sealed class ItemTooltipViewModel(
     IStringLocalizer<ItemTooltipView> localizer
 ) : ViewModel
 {
+    public delegate ItemTooltipViewModel Factory(Item item, int quantity, IEnumerable<UpgradeSlot> upgrades);
+
     private bool? _unlocked;
 
     private bool _locked;

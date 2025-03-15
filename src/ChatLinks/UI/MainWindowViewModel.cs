@@ -11,8 +11,8 @@ namespace SL.ChatLinks.UI;
 
 public sealed class MainWindowViewModel(
     IEventAggregator eventAggregator,
-    ItemsTabViewModelFactory itemsTabViewModelFactory,
-    AchievementsTabViewModelFactory achievementsTabViewModelFactory,
+    ItemsTabViewModel.Factory itemsTabViewModelFactory,
+    AchievementsTabViewModel.Factory achievementsTabViewModelFactory,
     IStringLocalizer<MainWindow> localizer) : ViewModel
 {
     private bool _visible;
@@ -60,12 +60,12 @@ public sealed class MainWindowViewModel(
 
     public ItemsTabViewModel CreateItemsTabViewModel()
     {
-        return itemsTabViewModelFactory.Create();
+        return itemsTabViewModelFactory();
     }
 
     public AchievementsTabViewModel CreateAchievementsTabViewModel()
     {
-        return achievementsTabViewModelFactory.Create();
+        return achievementsTabViewModelFactory();
     }
 
     private void ModuleUnloading(ModuleUnloading obj)

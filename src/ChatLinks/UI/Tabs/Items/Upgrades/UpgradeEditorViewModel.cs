@@ -11,32 +11,40 @@ namespace SL.ChatLinks.UI.Tabs.Items.Upgrades;
 
 public sealed class UpgradeEditorViewModel : ViewModel, IDisposable
 {
+    public delegate UpgradeEditorViewModel Factory(
+        Item targetItem,
+        UpgradeSlotType slotType,
+        UpgradeComponent? defaultUpgradeComponent
+    );
+
     private bool _customizing;
     private readonly IStringLocalizer<UpgradeEditor> _localizer;
     private readonly IEventAggregator _eventAggregator;
     private readonly IClipBoard _clipboard;
-    private readonly UpgradeSelectorViewModelFactory _upgradeComponentListViewModelFactory;
+    private readonly UpgradeSelectorViewModel.Factory _upgradeComponentListViewModelFactory;
 
     public UpgradeEditorViewModel(
         IStringLocalizer<UpgradeEditor> localizer,
         IEventAggregator eventAggregator,
         IClipBoard clipboard,
-        UpgradeSlotViewModel upgradeSlotViewModel,
-        UpgradeSelectorViewModelFactory upgradeComponentListViewModelFactory,
-        Item target)
+        UpgradeSlotViewModel.Factory upgradeSlotViewModelFactory,
+        UpgradeSelectorViewModel.Factory upgradeComponentListViewModelFactory,
+        Item targetItem,
+        UpgradeSlotType slotType,
+        UpgradeComponent? defaultUpgradeComponent)
     {
         ThrowHelper.ThrowIfNull(eventAggregator);
-        ThrowHelper.ThrowIfNull(upgradeSlotViewModel);
+        ThrowHelper.ThrowIfNull(upgradeSlotViewModelFactory);
         _localizer = localizer;
         _eventAggregator = eventAggregator;
         _clipboard = clipboard;
         _upgradeComponentListViewModelFactory = upgradeComponentListViewModelFactory;
-        UpgradeSlotViewModel = upgradeSlotViewModel;
-        TargetItem = target;
+        UpgradeSlotViewModel = upgradeSlotViewModelFactory(slotType, defaultUpgradeComponent);
+        TargetItem = targetItem;
 
         eventAggregator.Subscribe<LocaleChanged>(OnLocaleChanged);
 
-        upgradeSlotViewModel.PropertyChanged += (sender, args) =>
+        UpgradeSlotViewModel.PropertyChanged += (sender, args) =>
         {
             switch (args.PropertyName)
             {
@@ -157,7 +165,7 @@ public sealed class UpgradeEditorViewModel : ViewModel, IDisposable
 
     public UpgradeSelectorViewModel CreateUpgradeComponentListViewModel()
     {
-        UpgradeSelectorViewModel upgradeComponentListViewModel = _upgradeComponentListViewModelFactory.Create(
+        UpgradeSelectorViewModel upgradeComponentListViewModel = _upgradeComponentListViewModelFactory(
             TargetItem,
             UpgradeSlotViewModel.Type,
             UpgradeSlotViewModel.SelectedUpgradeComponent

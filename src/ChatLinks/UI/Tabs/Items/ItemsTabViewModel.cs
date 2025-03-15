@@ -19,10 +19,12 @@ public sealed class ItemsTabViewModel(
     IOptionsMonitor<ChatLinkOptions> options,
     IEventAggregator eventAggregator,
     ItemSearch search,
-    ItemsListViewModelFactory itemsListViewModelFactory,
-    ChatLinkEditorViewModelFactory chatLinkEditorViewModelFactory)
+    ItemsListViewModel.Factory itemsListViewModelFactory,
+    ChatLinkEditorViewModel.Factory chatLinkEditorViewModelFactory)
     : ViewModel, IDisposable
 {
+    public delegate ItemsTabViewModel Factory();
+
     private string _searchText = "";
 
     private bool _searching;
@@ -109,7 +111,7 @@ public sealed class ItemsTabViewModel(
 
     public ChatLinkEditorViewModel CreateChatLinkEditorViewModel(Item item)
     {
-        return chatLinkEditorViewModelFactory.Create(item);
+        return chatLinkEditorViewModelFactory(item);
     }
 
     public void CancelPendingSearches()
@@ -193,7 +195,7 @@ public sealed class ItemsTabViewModel(
                     break;
                 }
 
-                ItemsListViewModel viewModel = itemsListViewModelFactory.Create(item, item.Id == SelectedItem?.Id);
+                ItemsListViewModel viewModel = itemsListViewModelFactory(item, item.Id == SelectedItem?.Id);
                 SearchResults.Add(viewModel);
             }
 
@@ -223,7 +225,7 @@ public sealed class ItemsTabViewModel(
                     break;
                 }
 
-                ItemsListViewModel viewModel = itemsListViewModelFactory.Create(item, item.Id == SelectedItem?.Id);
+                ItemsListViewModel viewModel = itemsListViewModelFactory(item, item.Id == SelectedItem?.Id);
                 SearchResults.Add(viewModel);
             }
 

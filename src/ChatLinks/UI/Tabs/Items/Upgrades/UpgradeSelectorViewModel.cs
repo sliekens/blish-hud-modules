@@ -11,13 +11,19 @@ namespace SL.ChatLinks.UI.Tabs.Items.Upgrades;
 
 public sealed class UpgradeSelectorViewModel : ViewModel, IDisposable
 {
+    public delegate UpgradeSelectorViewModel Factory(
+        Item target,
+        UpgradeSlotType slotType,
+        UpgradeComponent? selectedUpgradeComponent
+    );
+
     private ObservableCollection<IGrouping<string, ItemsListViewModel>>? _options;
 
     private readonly IStringLocalizer<UpgradeSelector> _localizer;
 
     private readonly Customizer _customizer;
 
-    private readonly ItemsListViewModelFactory _itemsListViewModelFactory;
+    private readonly ItemsListViewModel.Factory _itemsListViewModelFactory;
 
     private readonly Item _target;
 
@@ -30,7 +36,7 @@ public sealed class UpgradeSelectorViewModel : ViewModel, IDisposable
     public UpgradeSelectorViewModel(
         IStringLocalizer<UpgradeSelector> localizer,
         Customizer customizer,
-        ItemsListViewModelFactory itemsListViewModelFactory,
+        ItemsListViewModel.Factory itemsListViewModelFactory,
         Item target,
         UpgradeSlotType slotType,
         UpgradeComponent? selectedUpgradeComponent,
@@ -131,7 +137,7 @@ public sealed class UpgradeSelectorViewModel : ViewModel, IDisposable
                     _ => 99
                 }
                 : 99
-            let vm = _itemsListViewModelFactory.Create(upgrade, upgrade.Id == _selectedUpgradeComponent?.Id)
+            let vm = _itemsListViewModelFactory(upgrade, upgrade.Id == _selectedUpgradeComponent?.Id)
             orderby rank, upgrade.Level, upgrade.Name
             group vm by (string)(upgrade switch
             {

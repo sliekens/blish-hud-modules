@@ -17,6 +17,8 @@ namespace SL.ChatLinks.UI.Tabs.Items.Collections;
 
 public sealed class ItemsListViewModel : ViewModel, IDisposable
 {
+    public delegate ItemsListViewModel Factory(Item item, bool isSelected);
+
     private readonly IStringLocalizer<ItemsList> _localizer;
 
     private readonly IEventAggregator _eventAggregator;
@@ -27,7 +29,7 @@ public sealed class ItemsListViewModel : ViewModel, IDisposable
 
     private readonly Customizer _customizer;
 
-    private readonly ItemTooltipViewModelFactory _tooltipViewModelFactory;
+    private readonly ItemTooltipViewModel.Factory _tooltipViewModelFactory;
 
     private bool _isSelected;
 
@@ -38,7 +40,7 @@ public sealed class ItemsListViewModel : ViewModel, IDisposable
         IconsService icons,
         Customizer customizer,
         Item item,
-        ItemTooltipViewModelFactory tooltipViewModelFactory,
+        ItemTooltipViewModel.Factory tooltipViewModelFactory,
         bool isSelected
     )
     {
@@ -111,7 +113,7 @@ public sealed class ItemsListViewModel : ViewModel, IDisposable
             upgrades.AddRange(InfusionSlots(upgradable));
         }
 
-        return _tooltipViewModelFactory.Create(Item, 1, upgrades);
+        return _tooltipViewModelFactory(Item, 1, upgrades);
     }
 
     private IEnumerable<UpgradeSlot> UpgradeSlots(IUpgradable upgradable)

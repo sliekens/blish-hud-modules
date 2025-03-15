@@ -17,6 +17,13 @@ namespace SL.ChatLinks.UI.Tabs.Achievements;
 
 public sealed class AchievementTileViewModel : ViewModel, IDisposable
 {
+    public delegate AchievementTileViewModel Factory(
+        Achievement achievement,
+        AchievementCategory? category,
+        AchievementGroup? group,
+        IReadOnlyList<AccountAchievement>? progression
+    );
+
     private readonly IEventAggregator _eventAggregator;
 
     private readonly IStringLocalizer<AchievementTile> _localizer;
@@ -27,7 +34,7 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
 
     private readonly IconsService _icons;
 
-    private readonly AchievementTooltipViewModelFactory _achievementTooltipViewModelFactory;
+    private readonly AchievementTooltipViewModel.Factory _achievementTooltipViewModelFactory;
 
     private Achievement _achievement;
 
@@ -45,8 +52,11 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
         IClipBoard clipboard,
         IDbContextFactory contextFactory,
         IconsService icons,
-        AchievementTooltipViewModelFactory achievementTooltipViewModelFactory,
-        Achievement achievement
+        AchievementTooltipViewModel.Factory achievementTooltipViewModelFactory,
+        Achievement achievement,
+        AchievementCategory? category,
+        AchievementGroup? group,
+        IReadOnlyList<AccountAchievement>? progression
 )
     {
         ThrowHelper.ThrowIfNull(eventAggregator);
@@ -57,6 +67,9 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
         _icons = icons;
         _achievementTooltipViewModelFactory = achievementTooltipViewModelFactory;
         _achievement = achievement;
+        _category = category;
+        _group = group;
+        _progression = progression;
         eventAggregator.Subscribe<LocaleChanged>(OnLocaleChanged);
     }
 
@@ -168,7 +181,7 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
 
     public AchievementTooltipViewModel CreateAchievementTooltipViewModel()
     {
-        return _achievementTooltipViewModelFactory.Create(Achievement);
+        return _achievementTooltipViewModelFactory(Achievement);
     }
 
     public void Dispose()

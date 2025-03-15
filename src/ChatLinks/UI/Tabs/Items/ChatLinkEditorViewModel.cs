@@ -42,9 +42,9 @@ public sealed class ChatLinkEditorViewModel : ViewModel, IDisposable
 
     private readonly List<UpgradeEditorViewModel> _upgradeEditorViewModels;
 
-    private readonly ItemTooltipViewModelFactory _tooltipViewModelFactory;
+    private readonly ItemTooltipViewModel.Factory _tooltipViewModelFactory;
 
-    private readonly UpgradeEditorViewModelFactory _upgradeEditorViewModelFactory;
+    private readonly UpgradeEditorViewModel.Factory _upgradeEditorViewModelFactory;
 
     private readonly IconsService _icons;
 
@@ -56,13 +56,15 @@ public sealed class ChatLinkEditorViewModel : ViewModel, IDisposable
 
     private int _maxStackSize;
 
+    public delegate ChatLinkEditorViewModel Factory(Item item);
+
     public ChatLinkEditorViewModel(
         IOptionsMonitor<ChatLinkOptions> options,
         IStringLocalizer<ChatLinkEditor> localizer,
         IEventAggregator eventAggregator,
         IDbContextFactory contextFactory,
-        ItemTooltipViewModelFactory tooltipViewModelFactory,
-        UpgradeEditorViewModelFactory upgradeEditorViewModelFactory,
+        ItemTooltipViewModel.Factory tooltipViewModelFactory,
+        UpgradeEditorViewModel.Factory upgradeEditorViewModelFactory,
         IconsService icons,
         Customizer customizer,
         IClipBoard clipboard,
@@ -328,7 +330,7 @@ public sealed class ChatLinkEditorViewModel : ViewModel, IDisposable
                 Type = vm.UpgradeSlotType,
                 UpgradeComponent = vm.EffectiveUpgradeComponent
             });
-        return _tooltipViewModelFactory.Create(Item, Quantity, upgrades);
+        return _tooltipViewModelFactory(Item, Quantity, upgrades);
     }
 
     public AsyncTexture2D? GetIcon()
@@ -342,7 +344,7 @@ public sealed class ChatLinkEditorViewModel : ViewModel, IDisposable
         {
             if (_options.CurrentValue.BananaMode)
             {
-                yield return _upgradeEditorViewModelFactory.Create(
+                yield return _upgradeEditorViewModelFactory(
                     Item,
                     UpgradeSlotType.Default,
                     null
@@ -353,7 +355,7 @@ public sealed class ChatLinkEditorViewModel : ViewModel, IDisposable
 
         foreach (int? defaultUpgradeComponentId in upgradable.UpgradeSlots)
         {
-            yield return _upgradeEditorViewModelFactory.Create(
+            yield return _upgradeEditorViewModelFactory(
                 Item,
                 UpgradeSlotType.Default,
                 _customizer.GetUpgradeComponent(defaultUpgradeComponentId)
@@ -362,7 +364,7 @@ public sealed class ChatLinkEditorViewModel : ViewModel, IDisposable
 
         foreach (InfusionSlot infusionSlot in upgradable.InfusionSlots)
         {
-            yield return _upgradeEditorViewModelFactory.Create(
+            yield return _upgradeEditorViewModelFactory(
                 Item,
                 infusionSlot.Flags switch
                 {
