@@ -124,6 +124,9 @@ public sealed class ChatLinkEditor : FlowPanel
             MinValue = 1
         };
 
+        _ = Binder.Bind(viewModel, vm => vm.Quantity, _quantity);
+        _ = Binder.Bind(viewModel, vm => vm.MaxStackSize, _quantity, ctl => ctl.MaxValue);
+
         Panel quantitySliderDiv = new()
         {
             Parent = quantityGroup,
@@ -138,9 +141,6 @@ public sealed class ChatLinkEditor : FlowPanel
             Top = 8,
             MinValue = 1
         };
-
-        _ = Binder.Bind(viewModel, vm => vm.Quantity, _quantity);
-        _ = Binder.Bind(viewModel, vm => vm.MaxStackSize, _quantity, ctl => ctl.MaxValue);
 
         _ = Binder.Bind(viewModel, vm => vm.Quantity, _quantitySlider, ctl => ctl.Value, BindingMode.Bidirectional);
         _ = Binder.Bind(viewModel, vm => vm.MaxStackSize, _quantitySlider, ctl => ctl.MaxValue);
@@ -206,6 +206,23 @@ public sealed class ChatLinkEditor : FlowPanel
         _ = Binder.Bind(viewModel, vm => vm.InfusionWarning, _infusionWarning);
 
         viewModel.PropertyChanged += PropertyChanged;
+
+        Input.Mouse.MouseWheelScrolled += OnGlobalMouseWheelScrolled;
+    }
+
+    private void OnGlobalMouseWheelScrolled(object sender, MouseEventArgs e)
+    {
+        if (_quantitySlider.MouseOver)
+        {
+            if (Input.Mouse.State.ScrollWheelValue > 0)
+            {
+                _quantitySlider.Value++;
+            }
+            else
+            {
+                _quantitySlider.Value--;
+            }
+        }
     }
 
     public ChatLinkEditorViewModel ViewModel { get; }
@@ -260,7 +277,8 @@ public sealed class ChatLinkEditor : FlowPanel
 
     protected override void DisposeControl()
     {
-        base.DisposeControl();
+        Input.Mouse.MouseWheelScrolled -= OnGlobalMouseWheelScrolled;
         ViewModel.Dispose();
+        base.DisposeControl();
     }
 }

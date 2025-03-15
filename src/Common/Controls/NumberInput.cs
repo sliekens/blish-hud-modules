@@ -64,6 +64,7 @@ public class NumberInput : TextInputBase
         InputFocusChanged += OnInputFocusChanged;
         Input.Mouse.MouseMoved += OnGlobalMouseMoved;
         Input.Mouse.LeftMouseButtonReleased += OnGlobalLeftMouseButtonReleased;
+        Input.Mouse.MouseWheelScrolled += OnGlobalMouseWheelScrolled;
     }
 
     public event EventHandler<EventArgs>? ValueChanged;
@@ -454,6 +455,7 @@ public class NumberInput : TextInputBase
         ValueChanged = null;
         Input.Mouse.MouseMoved -= OnGlobalMouseMoved;
         Input.Mouse.LeftMouseButtonReleased -= OnGlobalLeftMouseButtonReleased;
+        Input.Mouse.MouseWheelScrolled -= OnGlobalMouseWheelScrolled;
         base.DisposeControl();
     }
 
@@ -534,6 +536,23 @@ public class NumberInput : TextInputBase
             _action = NumberInputAction.None;
         }
     }
+
+
+    private void OnGlobalMouseWheelScrolled(object sender, MouseEventArgs e)
+    {
+        if (MouseOver)
+        {
+            if (Input.Mouse.State.ScrollWheelValue > 0)
+            {
+                Value++;
+            }
+            else
+            {
+                Value--;
+            }
+        }
+    }
+
 
     private void HideMousePosition()
     {
