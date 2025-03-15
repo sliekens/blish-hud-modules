@@ -68,7 +68,7 @@ public sealed class ChatLinkEditor : FlowPanel
         {
             Parent = header,
             TextColor = viewModel.ItemNameColor,
-            Width = 300,
+            Width = 400,
             Height = 50,
             VerticalAlignment = VerticalAlignment.Middle,
             Font = GameService.Content.DefaultFont18,

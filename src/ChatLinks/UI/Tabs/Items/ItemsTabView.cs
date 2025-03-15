@@ -91,7 +91,7 @@ public sealed class ItemsTabView : View, IDisposable
         _editor = new ViewContainer
         {
             Parent = _layout,
-            Width = 450,
+            WidthSizingMode = SizingMode.Fill,
             HeightSizingMode = SizingMode.Fill,
             FadeView = true
         };
