@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -20,7 +21,7 @@ public abstract class ViewModelBinding<TViewModel, TData> : IDisposable where TV
         ThrowHelper.ThrowIfNull(viewModel);
         ThrowHelper.ThrowIfNull(viewModelPropertySelector);
         ViewModel = viewModel;
-        ViewModelPropertyName = ((MemberExpression)viewModelPropertySelector.Body).Member.Name;
+        ViewModelPropertyName = ExtractMemberInfo(viewModelPropertySelector).Name;
         ViewModelRead = new Lazy<Func<TData>>(() =>
         {
             Func<TViewModel, TData> compiled = viewModelPropertySelector.Compile();
@@ -28,14 +29,36 @@ public abstract class ViewModelBinding<TViewModel, TData> : IDisposable where TV
         });
         ViewModelWrite = new Lazy<Action<TData>>(() =>
         {
-            PropertyInfo propertyInfo = (PropertyInfo)((MemberExpression)viewModelPropertySelector.Body).Member;
-            return value => propertyInfo.SetValue(viewModel, value);
+            PropertyInfo propertyInfo = (PropertyInfo)ExtractMemberInfo(viewModelPropertySelector);
+            return value =>
+            {
+                if (propertyInfo.PropertyType == typeof(TData))
+                {
+                    propertyInfo.SetValue(viewModel, value);
+                }
+                else
+                {
+                    propertyInfo.SetValue(viewModel, Convert.ChangeType(value, propertyInfo.PropertyType, CultureInfo.CurrentCulture));
+                }
+            };
         });
 
         if (bindingMode is BindingMode.ToView or BindingMode.Bidirectional)
         {
             ViewModel.PropertyChanged += ViewModelOnPropertyChanged;
         }
+    }
+
+    protected static MemberInfo ExtractMemberInfo<T, TReturn>(Expression<Func<T, TReturn>> propertySelector)
+    {
+        ThrowHelper.ThrowIfNull(propertySelector);
+        Expression expr = propertySelector.Body;
+        while (expr is UnaryExpression unary)
+        {
+            expr = unary.Operand;
+        }
+
+        return ((MemberExpression)expr).Member;
     }
 
     private void ViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs args)

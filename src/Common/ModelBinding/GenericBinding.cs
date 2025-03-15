@@ -27,7 +27,7 @@ public sealed class GenericBinding<TViewModel, TControl, TData> : ViewModelBindi
         ThrowHelper.ThrowIfNull(control);
         ThrowHelper.ThrowIfNull(controlPropertySelector);
         Control = control;
-        ControlPropertyName = ((MemberExpression)controlPropertySelector.Body).Member.Name;
+        ControlPropertyName = ExtractMemberInfo(controlPropertySelector).Name;
         ControlRead = new Lazy<Func<TData>>(() =>
         {
             Func<TControl, TData> compiled = controlPropertySelector.Compile();
@@ -35,7 +35,7 @@ public sealed class GenericBinding<TViewModel, TControl, TData> : ViewModelBindi
         });
         ControlWrite = new Lazy<Action<TData>>(() =>
         {
-            PropertyInfo propertyInfo = (PropertyInfo)((MemberExpression)controlPropertySelector.Body).Member;
+            PropertyInfo propertyInfo = (PropertyInfo)ExtractMemberInfo(controlPropertySelector);
             return value => propertyInfo.SetValue(control, value);
         });
 
