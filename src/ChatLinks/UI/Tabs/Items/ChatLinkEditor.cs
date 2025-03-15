@@ -22,6 +22,8 @@ public sealed class ChatLinkEditor : FlowPanel
 
     private readonly NumberInput _quantity;
 
+    private readonly TrackBar _quantitySlider;
+
     private readonly TextBox _chatLink;
 
     private readonly Label _infusionWarning;
@@ -119,24 +121,29 @@ public sealed class ChatLinkEditor : FlowPanel
         {
             Parent = quantityGroup,
             Width = 80,
-            Value = 1,
-            MinValue = 1,
-            MaxValue = ViewModel.MaxStackSize
+            MinValue = 1
         };
 
-        ViewModel.PropertyChanged += (_, args) =>
+        Panel quantitySliderDiv = new()
         {
-            switch (args.PropertyName)
-            {
-                case nameof(ViewModel.MaxStackSize):
-                    _quantity.MaxValue = ViewModel.MaxStackSize;
-                    break;
-                default:
-                    break;
-            }
+            Parent = quantityGroup,
+            Width = 80,
+            Height = 32
+        };
+
+        _quantitySlider = new TrackBar
+        {
+            Parent = quantitySliderDiv,
+            Width = 80,
+            Top = 8,
+            MinValue = 1
         };
 
         _ = Binder.Bind(viewModel, vm => vm.Quantity, _quantity);
+        _ = Binder.Bind(viewModel, vm => vm.MaxStackSize, _quantity, ctl => ctl.MaxValue);
+
+        _ = Binder.Bind(viewModel, vm => vm.Quantity, _quantitySlider, ctl => ctl.Value, BindingMode.Bidirectional);
+        _ = Binder.Bind(viewModel, vm => vm.MaxStackSize, _quantitySlider, ctl => ctl.MaxValue);
 
         StandardButton maxQuantity = new()
         {
