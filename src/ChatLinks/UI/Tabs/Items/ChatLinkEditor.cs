@@ -108,6 +108,15 @@ public sealed class ChatLinkEditor : FlowPanel
             ControlPadding = new Vector2(5f)
         };
 
+        FlowPanel chatLinkGroup = new()
+        {
+            Parent = this,
+            FlowDirection = ControlFlowDirection.LeftToRight,
+            WidthSizingMode = SizingMode.Fill,
+            HeightSizingMode = SizingMode.AutoSize,
+            ControlPadding = new Vector2(5f)
+        };
+
         Label stackSizeLabel = new()
         {
             Parent = quantityGroup,
@@ -181,8 +190,9 @@ public sealed class ChatLinkEditor : FlowPanel
 
         _chatLink = new TextBox
         {
-            Parent = this,
-            Width = 350
+            Parent = chatLinkGroup,
+            Width = 350,
+            Height = 32
         };
 
         _ = Binder.Bind(ViewModel, vm => vm.ChatLink, _chatLink, BindingMode.ToView);
@@ -192,6 +202,15 @@ public sealed class ChatLinkEditor : FlowPanel
         [
             viewModel.CopyChatLinkCommand.ToMenuItem(() => viewModel.CopyChatLinkLabel)
         ]);
+
+        GlowButton copyButton = new()
+        {
+            Parent = chatLinkGroup,
+            Icon = AsyncTexture2D.FromAssetId(2208345),
+            ActiveIcon = AsyncTexture2D.FromAssetId(2208347)
+        };
+
+        copyButton.Click += OnCopyClicked;
 
         _infusionWarning = new Label
         {
@@ -208,6 +227,12 @@ public sealed class ChatLinkEditor : FlowPanel
         viewModel.PropertyChanged += PropertyChanged;
 
         Input.Mouse.MouseWheelScrolled += OnGlobalMouseWheelScrolled;
+    }
+
+    private void OnCopyClicked(object sender, MouseEventArgs e)
+    {
+        _ = Soundboard.Click.Play();
+        ViewModel.CopyChatLinkCommand.Execute();
     }
 
     private void OnGlobalMouseWheelScrolled(object sender, MouseEventArgs e)
