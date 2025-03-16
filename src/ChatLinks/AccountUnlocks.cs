@@ -35,6 +35,7 @@ public sealed partial class AccountUnlocks : IDisposable
         _eventAggregator = eventAggregator;
         _memoryCache = memoryCache;
         eventAggregator.Subscribe<AuthorizationInvalidated>(OnAuthorizationInvalidated);
+        eventAggregator.Subscribe<MapChanged>(OnMapChanged);
     }
 
     public bool IsAuthorized => _tokenProvider.IsAuthorized;
@@ -433,6 +434,11 @@ public sealed partial class AccountUnlocks : IDisposable
         ClearCache();
     }
 
+    private void OnMapChanged(MapChanged _)
+    {
+        ClearCache();
+    }
+
     private void ClearCache()
     {
         _memoryCache.Remove("achievements_progress");
@@ -452,6 +458,7 @@ public sealed partial class AccountUnlocks : IDisposable
     public void Dispose()
     {
         _eventAggregator.Unsubscribe<AuthorizationInvalidated>(OnAuthorizationInvalidated);
+        _eventAggregator.Unsubscribe<MapChanged>(OnMapChanged);
         ClearCache();
     }
 }

@@ -4,6 +4,8 @@ using Blish_HUD;
 using Blish_HUD.Modules;
 using Blish_HUD.Settings;
 
+using GuildWars2;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -32,6 +34,8 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
     private ServiceProvider? _serviceProvider;
 
     private ModuleSettings? _moduleSettings;
+
+    private MumbleListener? _listener;
 
     private readonly Clock _clock = new();
 
@@ -95,6 +99,9 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
         _ = services.AddHttpClient<IconsService>();
         _ = services.AddSingleton<IconsCache>();
         _ = services.AddMemoryCache();
+
+        _ = services.AddTransient(_ => GameLink.Open(name: GameService.Gw2Mumble.CurrentMumbleMapName));
+        _ = services.AddTransient<MumbleListener>();
 
         #endregion Supportive services
 
@@ -182,6 +189,9 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
         }
 
         _clock.HourStarted += OnHourStarted;
+
+        _listener = _serviceProvider.GetRequiredService<MumbleListener>();
+        _listener.Start();
     }
 
     private void OnHourStarted(object sender, EventArgs e)
@@ -207,6 +217,7 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
             _clock.Dispose();
             _serviceProvider?.Dispose();
             _moduleSettings?.Dispose();
+            _listener?.Dispose();
         }
 
         base.Dispose(disposing);
