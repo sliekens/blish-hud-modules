@@ -150,16 +150,13 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
         {
             if (SetField(ref _progression, value))
             {
-                Progress = value?.SingleOrDefault(accountAchievement => accountAchievement.Id == Achievement.Id);
+                OnPropertyChanged(nameof(Progress));
             }
         }
     }
 
-    public AccountAchievement? Progress
-    {
-        get => _progress;
-        set => SetField(ref _progress, value);
-    }
+    public AccountAchievement? Progress => Progression
+        .SingleOrDefault(accountAchievement => accountAchievement.Id == Achievement.Id);
 
     public bool Locked => Achievement.IsLocked(Group, Progression);
 
