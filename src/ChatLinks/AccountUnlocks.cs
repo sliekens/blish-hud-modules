@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace SL.ChatLinks;
 
-public sealed partial class AccountUnlocks : IDisposable
+public sealed class AccountUnlocks : IDisposable
 {
     private readonly ILogger<AccountUnlocks> _logger;
 
