@@ -94,6 +94,7 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
         _ = services.AddSingleton<AccountUnlocks>();
         _ = services.AddHttpClient<IconsService>();
         _ = services.AddSingleton<IconsCache>();
+        _ = services.AddMemoryCache();
 
         #endregion Supportive services
 

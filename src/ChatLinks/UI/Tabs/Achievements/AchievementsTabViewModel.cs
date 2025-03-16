@@ -223,7 +223,7 @@ public sealed class AchievementsTabViewModel(
                     if (unlocks.HasPermission(Permission.Progression))
                     {
                         progression = [
-                            .. await unlocks.GetAccountAchievements(CancellationToken.None)
+                            .. await unlocks.GetAchievementProgress(CancellationToken.None)
                                 .ConfigureAwait(false)
                         ];
                     }
@@ -284,7 +284,7 @@ public sealed class AchievementsTabViewModel(
             if (unlocks.HasPermission(Permission.Progression))
             {
                 progression = [..
-                    await unlocks.GetAccountAchievements(CancellationToken.None)
+                    await unlocks.GetAchievementProgress(CancellationToken.None)
                         .ConfigureAwait(false)
                 ];
             }
