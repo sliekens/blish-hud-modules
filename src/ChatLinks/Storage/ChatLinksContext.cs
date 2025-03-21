@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Reflection;
+using System.Text.Json;
 
 using GuildWars2;
 using GuildWars2.Hero;
@@ -223,5 +224,16 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
         _ = modelBuilder.ApplyConfiguration(new AchievementCategoryEntityTypeConfiguration());
 
         _ = modelBuilder.ApplyConfiguration(new AchievementGroupEntityTypeConfiguration());
+
+        MethodInfo levenshteinMethod = typeof(Levenshtein).GetMethod(
+            nameof(Levenshtein.LevenshteinDistance)
+        )!;
+
+        modelBuilder.HasDbFunction(levenshteinMethod, b =>
+        {
+            b.HasName(nameof(Levenshtein.LevenshteinDistance));
+            b.HasParameter("a");
+            b.HasParameter("b");
+        });
     }
 }

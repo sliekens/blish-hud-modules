@@ -117,13 +117,310 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Accessories" xml:space="preserve">
+    <value>Accesorios</value>
+  </data>
+  <data name="All Armor" xml:space="preserve">
+    <value>Todas las armaduras</value>
+  </data>
+  <data name="All Consumables" xml:space="preserve">
+    <value>Todos los consumibles</value>
+  </data>
+  <data name="All Containers" xml:space="preserve">
+    <value>Todos los contenedores</value>
+  </data>
+  <data name="All Gathering Tools" xml:space="preserve">
+    <value>Todas las herramientas de recolección</value>
+  </data>
+  <data name="All Trinkets" xml:space="preserve">
+    <value>Todos los amuletos</value>
+  </data>
+  <data name="All Upgrade Components" xml:space="preserve">
+    <value>Todos los componentes de mejora</value>
+  </data>
+  <data name="All Weapons" xml:space="preserve">
+    <value>Todas las armas</value>
+  </data>
+  <data name="Amulets" xml:space="preserve">
+    <value>Amuletos</value>
+  </data>
+  <data name="Appearance Changers" xml:space="preserve">
+    <value>Cambiadores de apariencia</value>
+  </data>
+  <data name="Aquatic Headgear" xml:space="preserve">
+    <value>Casco acuático</value>
+  </data>
+  <data name="Armor" xml:space="preserve">
+    <value>Armadura</value>
+  </data>
+  <data name="Axes" xml:space="preserve">
+    <value>Hachas</value>
+  </data>
+  <data name="Back Items" xml:space="preserve">
+    <value>Objetos traseros</value>
+  </data>
+  <data name="Bag Slot Expansions" xml:space="preserve">
+    <value>Expansiones de ranura de bolsa</value>
+  </data>
+  <data name="Bait" xml:space="preserve">
+    <value>Cebo</value>
+  </data>
+  <data name="Bank Tab Expansions" xml:space="preserve">
+    <value>Expansiones de pestaña de banco</value>
+  </data>
+  <data name="Black Lion Chests" xml:space="preserve">
+    <value>Cofres del León Negro</value>
+  </data>
+  <data name="Booze" xml:space="preserve">
+    <value>Bebidas alcohólicas</value>
+  </data>
+  <data name="Boots" xml:space="preserve">
+    <value>Botas</value>
+  </data>
+  <data name="Build Storage Expansions" xml:space="preserve">
+    <value>Expansiones de almacenamiento de construcción</value>
+  </data>
+  <data name="Build Template Expansions" xml:space="preserve">
+    <value>Expansiones de plantilla de construcción</value>
+  </data>
+  <data name="Chest" xml:space="preserve">
+    <value>Pechera</value>
+  </data>
+  <data name="Content Unlockers" xml:space="preserve">
+    <value>Desbloqueadores de contenido</value>
+  </data>
+  <data name="Contract NPCs" xml:space="preserve">
+    <value>NPCs de contrato</value>
+  </data>
+  <data name="Containers" xml:space="preserve">
+    <value>Contenedores</value>
+  </data>
+  <data name="Crafting Materials" xml:space="preserve">
+    <value>Materiales de artesanía</value>
+  </data>
+  <data name="Currencies" xml:space="preserve">
+    <value>Monedas</value>
+  </data>
+  <data name="Daggers" xml:space="preserve">
+    <value>Dagas</value>
+  </data>
+  <data name="Dyes" xml:space="preserve">
+    <value>Tintes</value>
+  </data>
+  <data name="Equipment Template Expansions" xml:space="preserve">
+    <value>Expansiones de plantilla de equipo</value>
+  </data>
+  <data name="Foci" xml:space="preserve">
+    <value>Enfoques</value>
+  </data>
+  <data name="Food" xml:space="preserve">
+    <value>Comida</value>
+  </data>
+  <data name="Gathering Tools" xml:space="preserve">
+    <value>Herramientas de recolección</value>
+  </data>
+  <data name="Generic Consumables" xml:space="preserve">
+    <value>Consumibles genéricos</value>
+  </data>
+  <data name="Gift Boxes" xml:space="preserve">
+    <value>Cajas de regalo</value>
+  </data>
+  <data name="Gizmos" xml:space="preserve">
+    <value>Dispositivos</value>
+  </data>
+  <data name="Glider Skin Unlockers" xml:space="preserve">
+    <value>Desbloqueadores de skin de planeador</value>
+  </data>
+  <data name="Gloves" xml:space="preserve">
+    <value>Guantes</value>
+  </data>
+  <data name="Greatswords" xml:space="preserve">
+    <value>Mandobles</value>
+  </data>
+  <data name="Halloween Consumables" xml:space="preserve">
+    <value>Consumibles de Halloween</value>
+  </data>
+  <data name="Hammers" xml:space="preserve">
+    <value>Martillos</value>
+  </data>
+  <data name="Harpoon Guns" xml:space="preserve">
+    <value>Arpones</value>
+  </data>
+  <data name="Harvesting Sickles" xml:space="preserve">
+    <value>Hozs de cosecha</value>
+  </data>
+  <data name="Headgear" xml:space="preserve">
+    <value>Casco</value>
+  </data>
+  <data name="Immediate Containers" xml:space="preserve">
+    <value>Contenedores inmediatos</value>
+  </data>
+  <data name="Jade Bot Skin Unlockers" xml:space="preserve">
+    <value>Desbloqueadores de skin de bot de jade</value>
+  </data>
+  <data name="Jade Tech Modules" xml:space="preserve">
+    <value>Módulos de tecnología de jade</value>
+  </data>
+  <data name="Large Bundles" xml:space="preserve">
+    <value>Grandes paquetes</value>
+  </data>
+  <data name="Leggings" xml:space="preserve">
+    <value>Grebas</value>
+  </data>
+  <data name="Logging Axes" xml:space="preserve">
+    <value>Hachas de tala</value>
+  </data>
+  <data name="Longbows" xml:space="preserve">
+    <value>Arcos largos</value>
+  </data>
+  <data name="Lures" xml:space="preserve">
+    <value>Señuelos</value>
+  </data>
+  <data name="Maces" xml:space="preserve">
+    <value>Mazas</value>
+  </data>
+  <data name="Miniature Unlockers" xml:space="preserve">
+    <value>Desbloqueadores de miniaturas</value>
+  </data>
+  <data name="Miniatures" xml:space="preserve">
+    <value>Miniaturas</value>
+  </data>
+  <data name="Mining Picks" xml:space="preserve">
+    <value>Picos de minería</value>
+  </data>
+  <data name="Mist Champion Skin Unlockers" xml:space="preserve">
+    <value>Desbloqueadores de skin de campeón de la Niebla</value>
+  </data>
+  <data name="Mount Licenses" xml:space="preserve">
+    <value>Licencias de montura</value>
+  </data>
+  <data name="Mount Skin Unlockers" xml:space="preserve">
+    <value>Desbloqueadores de skin de montura</value>
+  </data>
+  <data name="Outfit Unlockers" xml:space="preserve">
+    <value>Desbloqueadores de atuendo</value>
+  </data>
   <data name="Partial results" xml:space="preserve">
     <value>{0:N0} de {1:N0} resultados mostrados</value>
   </data>
+  <data name="Pistols" xml:space="preserve">
+    <value>Pistolas</value>
+  </data>
+  <data name="Power Cores" xml:space="preserve">
+    <value>Núcleos de poder</value>
+  </data>
+  <data name="Random Unlocker" xml:space="preserve">
+    <value>Desbloqueador aleatorio</value>
+  </data>
+  <data name="Recently Added" xml:space="preserve">
+    <value>Recientemente añadido</value>
+  </data>
+  <data name="Recipe Sheets" xml:space="preserve">
+    <value>Hojas de recetas</value>
+  </data>
+  <data name="Relics" xml:space="preserve">
+    <value>Reliquias</value>
+  </data>
+  <data name="Rifles" xml:space="preserve">
+    <value>Rifles</value>
+  </data>
+  <data name="Rings" xml:space="preserve">
+    <value>Anillos</value>
+  </data>
+  <data name="Runes" xml:space="preserve">
+    <value>Runas</value>
+  </data>
+  <data name="Salvage Tools" xml:space="preserve">
+    <value>Herramientas de salvamento</value>
+  </data>
+  <data name="Scepters" xml:space="preserve">
+    <value>Cetros</value>
+  </data>
   <data name="Search placeholder" xml:space="preserve">
-    <value>Introduzca el nombre del objeto o el enlace de chat...</value>
+    <value>Buscar:</value>
+  </data>
+  <data name="Services" xml:space="preserve">
+    <value>Servicios</value>
+  </data>
+  <data name="Shared Inventory Slots" xml:space="preserve">
+    <value>Ranuras de inventario compartidas</value>
+  </data>
+  <data name="Shields" xml:space="preserve">
+    <value>Escudos</value>
+  </data>
+  <data name="Short Bows" xml:space="preserve">
+    <value>Arcos cortos</value>
+  </data>
+  <data name="Shoulders" xml:space="preserve">
+    <value>Hombreras</value>
+  </data>
+  <data name="Sigils" xml:space="preserve">
+    <value>Símbolos</value>
+  </data>
+  <data name="Small Bundles" xml:space="preserve">
+    <value>Pequeños paquetes</value>
+  </data>
+  <data name="Spears" xml:space="preserve">
+    <value>Lanzas</value>
+  </data>
+  <data name="Staffs" xml:space="preserve">
+    <value>Bastones</value>
+  </data>
+  <data name="Storage Expanders" xml:space="preserve">
+    <value>Expansores de almacenamiento</value>
+  </data>
+  <data name="Swords" xml:space="preserve">
+    <value>Espadas</value>
+  </data>
+  <data name="Teleport to Friend" xml:space="preserve">
+    <value>Teletransporte a amigo</value>
+  </data>
+  <data name="Torches" xml:space="preserve">
+    <value>Antorchas</value>
   </data>
   <data name="Total results" xml:space="preserve">
     <value>{0:N0} resultados</value>
+  </data>
+  <data name="Toys" xml:space="preserve">
+    <value>Juguetes</value>
+  </data>
+  <data name="Toys (Two-Handed)" xml:space="preserve">
+    <value>Juguetes (dos manos)</value>
+  </data>
+  <data name="Transmutations" xml:space="preserve">
+    <value>Transmutaciones</value>
+  </data>
+  <data name="Tridents" xml:space="preserve">
+    <value>Tridentes</value>
+  </data>
+  <data name="Trinkets" xml:space="preserve">
+    <value>Amuletos</value>
+  </data>
+  <data name="Trophies" xml:space="preserve">
+    <value>Trofeos</value>
+  </data>
+  <data name="Universal Upgrades" xml:space="preserve">
+    <value>Mejoras universales</value>
+  </data>
+  <data name="Unlockers" xml:space="preserve">
+    <value>Desbloqueadores</value>
+  </data>
+  <data name="Upgrade Components" xml:space="preserve">
+    <value>Componentes de mejora</value>
+  </data>
+  <data name="Upgrade Extractors" xml:space="preserve">
+    <value>Extractores de mejoras</value>
+  </data>
+  <data name="Utilities" xml:space="preserve">
+    <value>Utilidades</value>
+  </data>
+  <data name="Warhorns" xml:space="preserve">
+    <value>Cuernos de guerra</value>
+  </data>
+  <data name="Weapons" xml:space="preserve">
+    <value>Armas</value>
+  </data>
+  <data name="Consumables" xml:space="preserve">
+    <value>Consumibles</value>
   </data>
 </root>

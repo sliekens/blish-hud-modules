@@ -1,7 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
 
-using GuildWars2.Chat;
 using GuildWars2.Items;
 
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +8,15 @@ using SL.ChatLinks.Storage;
 
 namespace SL.ChatLinks.UI.Tabs.Items;
 
+public sealed class ItemsFilter
+{
+    public string? Label { get; set; }
+
+    public string? Category { get; set; }
+
+    public string? Text { get; set; }
+}
+
 public sealed record ResultContext
 {
     public int ResultTotal { get; set; }
@@ -17,8 +24,6 @@ public sealed record ResultContext
 
 public sealed class ItemSearch(IDbContextFactory contextFactory, ILocale locale)
 {
-    private static readonly Regex ChatLinkPattern = new(@"^\[&[A-Za-z0-9+/=]+\]$", RegexOptions.Compiled);
-
     public async ValueTask<int> CountItems()
     {
         ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
@@ -34,182 +39,139 @@ public sealed class ItemSearch(IDbContextFactory contextFactory, ILocale locale)
         await using (context.ConfigureAwait(false))
         {
             await foreach (Item? item in context.Items
-               .OrderByDescending(item => item.Id)
-               .Take(limit)
-               .AsAsyncEnumerable().ConfigureAwait(false))
+                               .OrderByDescending(item => item.Id)
+                               .Take(limit)
+                               .AsAsyncEnumerable().ConfigureAwait(false))
             {
                 yield return item;
             }
         }
     }
 
-    public async IAsyncEnumerable<Item> Search(
-        string searchText,
+    public async IAsyncEnumerable<Item> FilterItems(
+        ItemsFilter filter,
         int limit,
         ResultContext resultContext,
-        [EnumeratorCancellation] CancellationToken cancellationToken)
+        [EnumeratorCancellation] CancellationToken cancellationToken
+    )
     {
+        ThrowHelper.ThrowIfNull(filter);
         ThrowHelper.ThrowIfNull(resultContext);
-        if (ChatLinkPattern.IsMatch(searchText))
-        {
-            ItemLink chatLink = ItemLink.Parse(searchText);
-            await foreach (Item item in SearchByChatLink(chatLink, resultContext, cancellationToken).ConfigureAwait(false))
-            {
-                yield return item;
-            }
-        }
-        else
-        {
-            ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
-            await using (context.ConfigureAwait(false))
-            {
-                IQueryable<Item> query = context.Items.FromSqlInterpolated(
-                    $"""
-                 SELECT * FROM Items
-                 WHERE Name LIKE '%' || {searchText} || '%'
-                 ORDER BY LevenshteinDistance({searchText}, Name)
-                 """);
-
-                resultContext.ResultTotal = await query.CountAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
-
-                await foreach (Item? item in query
-                   .Take(limit)
-                   .AsAsyncEnumerable()
-                   .WithCancellation(cancellationToken))
-                {
-                    yield return item;
-                }
-            }
-        }
-    }
-
-    private async IAsyncEnumerable<Item> SearchByChatLink(
-        ItemLink link,
-        ResultContext resultContext,
-        [EnumeratorCancellation] CancellationToken cancellationToken)
-    {
         ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
         await using (context.ConfigureAwait(false))
         {
-            Item item = await context.Items
-                .SingleOrDefaultAsync(row => row.Id == link.ItemId, cancellationToken).ConfigureAwait(false);
-            if (item is null)
+            IQueryable<Item> query = filter.Category switch
             {
-                yield break;
+                "armor" => context.Items.OfType<Armor>(),
+                "chest" => context.Items.OfType<Coat>(),
+                "leggings" => context.Items.OfType<Leggings>(),
+                "gloves" => context.Items.OfType<Gloves>(),
+                "helm" => context.Items.OfType<Helm>(),
+                "helm_aquatic" => context.Items.OfType<HelmAquatic>(),
+                "boots" => context.Items.OfType<Boots>(),
+                "shoulders" => context.Items.OfType<Shoulders>(),
+                "back" => context.Items.OfType<Backpack>(),
+                "trinket" => context.Items.OfType<Trinket>(),
+                "accessory" => context.Items.OfType<Accessory>(),
+                "amulet" => context.Items.OfType<Amulet>(),
+                "ring" => context.Items.OfType<Ring>(),
+                "weapon" => context.Items.OfType<Weapon>(),
+                "axe" => context.Items.OfType<Axe>(),
+                "dagger" => context.Items.OfType<Dagger>(),
+                "focus" => context.Items.OfType<Focus>(),
+                "greatsword" => context.Items.OfType<Greatsword>(),
+                "hammer" => context.Items.OfType<Hammer>(),
+                "harpoon_gun" => context.Items.OfType<HarpoonGun>(),
+                "large_bundle" => context.Items.OfType<LargeBundle>(),
+                "longbow" => context.Items.OfType<Longbow>(),
+                "mace" => context.Items.OfType<Mace>(),
+                "pistol" => context.Items.OfType<Pistol>(),
+                "rifle" => context.Items.OfType<Rifle>(),
+                "scepter" => context.Items.OfType<Scepter>(),
+                "shield" => context.Items.OfType<Shield>(),
+                "shortbow" => context.Items.OfType<Shortbow>(),
+                "small_bundle" => context.Items.OfType<SmallBundle>(),
+                "spear" => context.Items.OfType<Spear>(),
+                "staff" => context.Items.OfType<Staff>(),
+                "sword" => context.Items.OfType<Sword>(),
+                "torch" => context.Items.OfType<Torch>(),
+                "toy" => context.Items.OfType<Toy>(),
+                "toy_two_handed" => context.Items.OfType<ToyTwoHanded>(),
+                "trident" => context.Items.OfType<Trident>(),
+                "warhorn" => context.Items.OfType<Warhorn>(),
+                "consumable" => context.Items.OfType<Consumable>(),
+                "appearance_changer" => context.Items.OfType<AppearanceChanger>(),
+                "booze" => context.Items.OfType<Booze>(),
+                "contract_npc" => context.Items.OfType<ContractNpc>(),
+                "currency" => context.Items.OfType<Currency>(),
+                "food" => context.Items.OfType<Food>(),
+                "generic_consumable" => context.Items.OfType<GenericConsumable>(),
+                "halloween_consumable" => context.Items.OfType<HalloweenConsumable>(),
+                "mount_license" => context.Items.OfType<MountLicense>(),
+                "random_unlocker" => context.Items.OfType<RandomUnlocker>(),
+                "service" => context.Items.OfType<Service>(),
+                "teleport_to_friend" => context.Items.OfType<TeleportToFriend>(),
+                "transmutation" => context.Items.OfType<Transmutation>(),
+                "unlocker" => context.Items.OfType<Unlocker>(),
+                "bag_slot_expansion" => context.Items.OfType<BagSlotExpansion>(),
+                "bank_tab_expansion" => context.Items.OfType<BankTabExpansion>(),
+                "build_storage_expansion" => context.Items.OfType<BuildStorageExpansion>(),
+                "build_template_expansion" => context.Items.OfType<BuildTemplateExpansion>(),
+                "content_unlocker" => context.Items.OfType<ContentUnlocker>(),
+                "dye" => context.Items.OfType<Dye>(),
+                "equipment_template_expansion" => context.Items.OfType<EquipmentTemplateExpansion>(),
+                "glider_skin_unlocker" => context.Items.OfType<GliderSkinUnlocker>(),
+                "jade_bot_skin_unlocker" => context.Items.OfType<JadeBotSkinUnlocker>(),
+                "miniature_unlocker" => context.Items.OfType<MiniatureUnlocker>(),
+                "mist_champion_skin_unlocker" => context.Items.OfType<MistChampionSkinUnlocker>(),
+                "mount_skin_unlocker" => context.Items.OfType<MountSkinUnlocker>(),
+                "outfit_unlocker" => context.Items.OfType<OutfitUnlocker>(),
+                "recipe_sheet" => context.Items.OfType<RecipeSheet>(),
+                "shared_inventory_slot" => context.Items.OfType<SharedInventorySlot>(),
+                "storage_expander" => context.Items.OfType<StorageExpander>(),
+                "upgrade_extractor" => context.Items.OfType<UpgradeExtractor>(),
+                "utility" => context.Items.OfType<Utility>(),
+                "container" => context.Items.OfType<Container>(),
+                "black_lion_chest" => context.Items.OfType<BlackLionChest>(),
+                "gift_box" => context.Items.OfType<GiftBox>(),
+                "immediate_container" => context.Items.OfType<ImmediateContainer>(),
+                "crafting_material" => context.Items.OfType<CraftingMaterial>(),
+                "gathering_tool" => context.Items.OfType<GatheringTool>(),
+                "bait" => context.Items.OfType<Bait>(),
+                "harvesting_sickle" => context.Items.OfType<HarvestingSickle>(),
+                "logging_axe" => context.Items.OfType<LoggingAxe>(),
+                "lure" => context.Items.OfType<Lure>(),
+                "mining_pick" => context.Items.OfType<MiningPick>(),
+                "gizmo" => context.Items.OfType<Gizmo>(),
+                "jade_tech_module" => context.Items.OfType<JadeTechModule>(),
+                "miniature" => context.Items.OfType<Miniature>(),
+                "power_core" => context.Items.OfType<PowerCore>(),
+                "relic" => context.Items.OfType<Relic>(),
+                "salvage_tool" => context.Items.OfType<SalvageTool>(),
+                "trophy" => context.Items.OfType<Trophy>(),
+                "upgrade_component" => context.Items.OfType<UpgradeComponent>(),
+                "universal_upgrade" => context.Items.OfType<Gem>(),
+                "rune" => context.Items.OfType<Rune>(),
+                "sigil" => context.Items.OfType<Sigil>(),
+                _ => context.Items
+            };
+
+            if (!string.IsNullOrWhiteSpace(filter.Text))
+            {
+                query = query.Where(item => EF.Functions.Like(item.Name, $"%{filter.Text}%"))
+                    .OrderBy(item => Levenshtein.LevenshteinDistance(filter.Text!, item.Name));
             }
 
-            resultContext.ResultTotal++;
-            yield return item;
+            resultContext.ResultTotal = await query.CountAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
-            HashSet<int> relatedItems = [];
-            if (link.SuffixItemId.HasValue)
+            await foreach (Item? item in query
+               .OrderByDescending(item => item.Id)
+               .Take(limit)
+               .AsAsyncEnumerable()
+               .WithCancellation(cancellationToken)
+               .ConfigureAwait(false))
             {
-                _ = relatedItems.Add(link.SuffixItemId.Value);
-            }
-
-            if (link.SecondarySuffixItemId.HasValue)
-            {
-                _ = relatedItems.Add(link.SecondarySuffixItemId.Value);
-            }
-
-            switch (item)
-            {
-                case Weapon weapon:
-                    if (weapon.SuffixItemId.HasValue)
-                    {
-                        _ = relatedItems.Add(weapon.SuffixItemId.Value);
-                    }
-
-                    if (weapon.SecondarySuffixItemId.HasValue)
-                    {
-                        _ = relatedItems.Add(weapon.SecondarySuffixItemId.Value);
-                    }
-
-                    foreach (InfusionSlot? slot in weapon.InfusionSlots)
-                    {
-                        if (slot.ItemId.HasValue)
-                        {
-                            _ = relatedItems.Add(slot.ItemId.Value);
-                        }
-                    }
-
-                    break;
-
-                case Armor armor:
-                    if (armor.SuffixItemId.HasValue)
-                    {
-                        _ = relatedItems.Add(armor.SuffixItemId.Value);
-                    }
-
-                    foreach (InfusionSlot? slot in armor.InfusionSlots)
-                    {
-                        if (slot.ItemId.HasValue)
-                        {
-                            _ = relatedItems.Add(slot.ItemId.Value);
-                        }
-                    }
-
-                    break;
-                case Backpack back:
-                    if (back.SuffixItemId.HasValue)
-                    {
-                        _ = relatedItems.Add(back.SuffixItemId.Value);
-                    }
-
-                    foreach (InfusionSlot? slot in back.InfusionSlots)
-                    {
-                        if (slot.ItemId.HasValue)
-                        {
-                            _ = relatedItems.Add(slot.ItemId.Value);
-                        }
-                    }
-
-                    foreach (InfusionSlotUpgradeSource? source in back.UpgradesFrom)
-                    {
-                        _ = relatedItems.Add(source.ItemId);
-                    }
-
-                    foreach (InfusionSlotUpgradePath? upgrade in back.UpgradesInto)
-                    {
-                        _ = relatedItems.Add(upgrade.ItemId);
-                    }
-
-                    break;
-
-                case Trinket trinket:
-                    if (trinket.SuffixItemId.HasValue)
-                    {
-                        _ = relatedItems.Add(trinket.SuffixItemId.Value);
-                    }
-
-                    foreach (InfusionSlot? slot in trinket.InfusionSlots)
-                    {
-                        if (slot.ItemId.HasValue)
-                        {
-                            _ = relatedItems.Add(slot.ItemId.Value);
-                        }
-                    }
-
-                    break;
-                case CraftingMaterial material:
-
-                    foreach (InfusionSlotUpgradePath? upgrade in material.UpgradesInto)
-                    {
-                        _ = relatedItems.Add(upgrade.ItemId);
-                    }
-
-                    break;
-                default:
-                    break;
-            }
-
-            resultContext.ResultTotal += relatedItems.Count;
-            await foreach (Item? relatedItem in context.Items
-                               .Where(i => relatedItems.Contains(i.Id))
-                               .AsAsyncEnumerable()
-                               .WithCancellation(cancellationToken))
-            {
-                yield return relatedItem;
+                yield return item;
             }
         }
     }

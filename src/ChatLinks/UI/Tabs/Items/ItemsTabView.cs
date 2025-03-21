@@ -1,61 +1,73 @@
-﻿using Blish_HUD.Controls;
+﻿using System.Diagnostics;
+
+using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
+
+using GuildWars2.Items;
 
 using Microsoft.Xna.Framework;
 
 using SL.ChatLinks.UI.Tabs.Items.Collections;
-using SL.Common.Controls;
 using SL.Common.ModelBinding;
 
 using Container = Blish_HUD.Controls.Container;
 
 namespace SL.ChatLinks.UI.Tabs.Items;
 
-public sealed class ItemsTabView : View, IDisposable
+public sealed class ItemsTabView(
+    ItemsTabViewModel viewModel
+) : View, IDisposable
 {
-    public ItemsTabViewModel ViewModel { get; }
+    private Panel? _sidePanel;
 
-    private readonly FlowPanel _layout;
+    private Menu? _sidebar;
 
-    private readonly ViewContainer _editor;
+    private Container? _layout;
 
-    public ItemsTabView(ItemsTabViewModel viewModel)
+    private Panel? _contentPanel;
+
+    private ItemsList? _searchResults;
+
+    private Container? _selection;
+
+    protected override async Task<bool> Load(IProgress<string> progress)
     {
-        ThrowHelper.ThrowIfNull(viewModel);
-        ViewModel = viewModel;
-        ViewModel.Initialize();
+        await viewModel.Load().ConfigureAwait(false);
+        return true;
+    }
 
-        _layout = new FlowPanel
-        {
-            FlowDirection = ControlFlowDirection.SingleLeftToRight,
-            WidthSizingMode = SizingMode.Fill,
-            HeightSizingMode = SizingMode.Fill
-        };
-
-        FlowPanel searchLayout = new()
-        {
-            Parent = _layout,
-            FlowDirection = ControlFlowDirection.SingleTopToBottom,
-            Width = 400,
-            HeightSizingMode = SizingMode.Fill
-        };
+    protected override void Build(Container buildPanel)
+    {
+        _layout = buildPanel;
 
         Panel searchBoxPanel = new()
         {
-            Parent = searchLayout,
-            WidthSizingMode = SizingMode.Fill,
+            Parent = _layout,
+            Left = 4,
+            WidthSizingMode = SizingMode.AutoSize,
             HeightSizingMode = SizingMode.AutoSize,
         };
 
         TextBox searchBox = new()
         {
             Parent = searchBoxPanel,
-            Width = 400,
-            PlaceholderText = viewModel.SearchPlaceholderText
+            Width = Panel.MenuStandard.Size.X,
+            PlaceholderText = viewModel.SearchPlaceholder
         };
 
-        searchBox.TextChanged += SearchTextChanged;
-        searchBox.EnterPressed += SearchEnterPressed;
+        _ = Binder.Bind(viewModel, vm => vm.SearchPlaceholder, searchBox, ctl => ctl.PlaceholderText);
+        _ = Binder.Bind(viewModel, vm => vm.SearchText, searchBox);
+
+        searchBox.TextChanged += (sender, args) =>
+        {
+            viewModel.SearchCommand.Execute();
+        };
+
+        searchBox.EnterPressed += (sender, args) =>
+        {
+            viewModel.SearchCommand.Execute();
+        };
+
         searchBox.InputFocusChanged += (sender, args) =>
         {
             if (args.Value)
@@ -76,71 +88,185 @@ public sealed class ItemsTabView : View, IDisposable
             Right = searchBox.Right
         };
 
-        ItemsList searchResults = new()
+        _ = Binder.Bind(viewModel, vm => vm.Searching, loadingSpinner);
+
+        _sidePanel = new Panel
         {
-            Parent = searchLayout,
-            WidthSizingMode = SizingMode.Standard,
-            Width = 400,
+            Parent = buildPanel,
+            Top = searchBox.Height + 9,
+            Width = Panel.MenuStandard.Size.X,
+            HeightSizingMode = SizingMode.Fill,
+            CanScroll = true
+        };
+
+        _sidebar = new Menu
+        {
+            Parent = _sidePanel,
+            Size = Panel.MenuStandard.Size,
+            CanSelect = true
+        };
+
+        WireUp(_sidebar, viewModel.MenuItems);
+
+        _contentPanel = new Panel
+        {
+            Parent = _layout,
+            Left = _sidePanel.Right + Control.ControlStandard.ControlOffset.X,
+            WidthSizingMode = SizingMode.Fill,
             HeightSizingMode = SizingMode.Fill
         };
 
-        searchResults.SetEntries(ViewModel.SearchResults);
+        Binder.Bind(viewModel, vm => vm.ContentTitle, _contentPanel, ctl => ctl.Title);
+        Binder.Bind(viewModel, vm => vm.ContentIcon, _contentPanel, ctl => ctl.Icon);
 
-        searchResults.SelectionChanged += SelectionChanged;
-
-        _editor = new ViewContainer
+        _contentPanel.Click += (sender, args) =>
         {
-            Parent = _layout,
-            WidthSizingMode = SizingMode.Fill,
-            HeightSizingMode = SizingMode.Fill,
-            FadeView = true
+            // Check if title bar is clicked
+            if (args.MousePosition.Y - _contentPanel.AbsoluteBounds.Y <= 40)
+            {
+                viewModel.BackCommand.Execute();
+            }
         };
 
-        _ = Binder.Bind(ViewModel, vm => vm.SearchText, searchBox);
-        _ = Binder.Bind(ViewModel, vm => vm.Searching, loadingSpinner);
-        _ = Binder.Bind(ViewModel, vm => vm.ResultText, searchLayout.Children.OfType<Scrollbar>().Single(), ctl => ctl.BasicTooltipText);
+        _searchResults = new ItemsList
+        {
+            Parent = _contentPanel,
+            WidthSizingMode = SizingMode.Fill,
+            HeightSizingMode = SizingMode.Fill
+        };
+
+        _searchResults.SetEntries(viewModel.SearchResults);
+        _searchResults.SelectionChanged += (sender, args) =>
+        {
+            if (args.AddedItems.Count == 1)
+            {
+                // TODO: fix weird view model usage
+                ItemsListViewModel selected = args.AddedItems[0].Data;
+                viewModel.SelectItemCommand.Execute(selected.Item);
+            }
+        };
+
+        _ = Binder.Bind(viewModel, vm => vm.ResultText, _contentPanel.Children.OfType<Scrollbar>().Single(), ctl => ctl.BasicTooltipText);
 
         viewModel.PropertyChanged += (_, args) =>
         {
             switch (args.PropertyName)
             {
-                case nameof(ViewModel.SearchPlaceholderText):
-                    searchBox.PlaceholderText = ViewModel.SearchPlaceholderText;
+                case nameof(viewModel.MenuItems):
+                    ReloadMenuItems();
                     break;
 
-                case nameof(ViewModel.SearchResults):
-                    searchResults.SetEntries(ViewModel.SearchResults);
+                case nameof(viewModel.SearchResults):
+                    ShowSearchResults();
                     break;
+                case nameof(viewModel.SelectedItem):
+                    ShowItem(viewModel.SelectedItem);
+                    break;
+
+                case nameof(viewModel.ContentIcon):
+                    _contentPanel.Invalidate();
+                    break;
+
                 default:
                     break;
             }
         };
     }
 
-    private void SelectionChanged(object sender, ListBoxSelectionChangedEventArgs<ItemsListViewModel> args)
+    private void ReloadMenuItems()
     {
-        if (args.AddedItems is [{ Data: { } listItem }])
+        if (_sidebar is null) return;
+        while (_sidebar.Children.Count > 0)
         {
-            ViewModel.SelectedItem = listItem.Item;
-            ChatLinkEditorView view = new(ViewModel.CreateChatLinkEditorViewModel(listItem.Item));
-            _editor.Show(view);
+            _sidebar.Children[0].Dispose();
+        }
+
+        WireUp(_sidebar, viewModel.MenuItems);
+    }
+
+    private void WireUp(Container parent, IList<ItemCategoryMenuItem> categories)
+    {
+        foreach (ItemCategoryMenuItem category in categories)
+        {
+            MenuItem menuItem = new()
+            {
+                Parent = parent,
+                Text = category.Label
+            };
+
+            if (category.CanSelect)
+            {
+                menuItem.ItemSelected += (sender, args) =>
+                {
+                    if (category.Id == "recently_added")
+                    {
+                        viewModel.ShowRecentCommand.Execute();
+                    }
+                    else
+                    {
+                        viewModel.ShowCategoryCommand.Execute(new ItemsFilter
+                        {
+                            Category = category.Id,
+                            Label = category.Label
+                        });
+                    }
+                };
+            }
+
+            WireUp(menuItem, category.Subcategories);
+
+            if (category.Id == viewModel.SelectedCategory)
+            {
+                menuItem.Select();
+            }
+
+            viewModel.PropertyChanged += (sender, args) =>
+            {
+                switch (args.PropertyName)
+                {
+                    case nameof(viewModel.SelectedCategory):
+                        if (viewModel.SelectedCategory == category.Id)
+                        {
+                            menuItem.Select();
+                        }
+
+                        break;
+                }
+            };
+        }
+    }
+
+    private void ShowSearchResults()
+    {
+        Debug.Assert(_searchResults is not null);
+        _selection?.Dispose();
+        _selection = null;
+        _searchResults!.SetEntries(viewModel.SearchResults);
+        _searchResults.Parent = _contentPanel;
+    }
+
+    private void ShowItem(Item? item)
+    {
+        Debug.Assert(_searchResults is not null);
+        if (item is null)
+        {
+            ShowSearchResults();
         }
         else
         {
-            ViewModel.SelectedItem = null;
-            _editor.Clear();
+            _searchResults!.Parent = null;
+
+            ChatLinkEditor editor = new(viewModel.CreateChatLinkEditorViewModel(item))
+            {
+                Parent = _contentPanel,
+                WidthSizingMode = SizingMode.Fill,
+                HeightSizingMode = SizingMode.Fill
+
+            };
+
+            _selection?.Dispose();
+            _selection = editor;
         }
-    }
-
-    protected override async Task<bool> Load(IProgress<string> progress)
-    {
-        await ViewModel.LoadAsync().ConfigureAwait(false);
-        return true;
-    }
-
-    protected override void Build(Container buildPanel)
-    {
-        _layout.Parent = buildPanel;
     }
 
     protected override void Unload()
@@ -148,20 +274,13 @@ public sealed class ItemsTabView : View, IDisposable
         Dispose();
     }
 
-    private void SearchTextChanged(object sender, EventArgs e)
-    {
-        ViewModel.SearchCommand.Execute(null);
-    }
-
-    private void SearchEnterPressed(object sender, EventArgs e)
-    {
-        ViewModel.SearchCommand.Execute(null);
-    }
-
     public void Dispose()
     {
-        _layout.Dispose();
-        _editor.Dispose();
-        ViewModel.Dispose();
+        _sidePanel?.Dispose();
+        _sidebar?.Dispose();
+        _contentPanel?.Dispose();
+        _searchResults?.Dispose();
+        _selection?.Dispose();
+        viewModel.Dispose();
     }
 }

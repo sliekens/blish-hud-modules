@@ -13,7 +13,7 @@ public static class Levenshtein
         );
     }
 
-    private static int LevenshteinDistance(string a, string b)
+    public static int LevenshteinDistance(string a, string b)
     {
         if (string.IsNullOrEmpty(a))
         {

@@ -139,6 +139,7 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
 
         // Items tab
         _ = services.AddFactoryDelegate<ItemsTabViewModel.Factory>();
+        _ = services.AddFactoryDelegate<ItemsTabViewModel.Factory>();
         _ = services.AddFactoryDelegate<ItemsListViewModel.Factory>();
         _ = services.AddFactoryDelegate<ItemTooltipViewModel.Factory>();
         _ = services.AddFactoryDelegate<ChatLinkEditorViewModel.Factory>();

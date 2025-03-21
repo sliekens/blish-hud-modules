@@ -117,13 +117,310 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Accessories" xml:space="preserve">
+    <value>Accessoires</value>
+  </data>
+  <data name="All Armor" xml:space="preserve">
+    <value>Alle Rüstungen</value>
+  </data>
+  <data name="All Consumables" xml:space="preserve">
+    <value>Alle Verbrauchsgegenstände</value>
+  </data>
+  <data name="All Containers" xml:space="preserve">
+    <value>Alle Behälter</value>
+  </data>
+  <data name="All Gathering Tools" xml:space="preserve">
+    <value>Alle Sammelwerkzeuge</value>
+  </data>
+  <data name="All Trinkets" xml:space="preserve">
+    <value>Alle Schmuckstücke</value>
+  </data>
+  <data name="All Upgrade Components" xml:space="preserve">
+    <value>Alle Verbesserungen</value>
+  </data>
+  <data name="All Weapons" xml:space="preserve">
+    <value>Alle Waffen</value>
+  </data>
+  <data name="Amulets" xml:space="preserve">
+    <value>Amulette</value>
+  </data>
+  <data name="Appearance Changers" xml:space="preserve">
+    <value>Aussehensveränderer</value>
+  </data>
+  <data name="Aquatic Headgear" xml:space="preserve">
+    <value>Wasser-Kopfschutz</value>
+  </data>
+  <data name="Armor" xml:space="preserve">
+    <value>Rüstung</value>
+  </data>
+  <data name="Axes" xml:space="preserve">
+    <value>Äxte</value>
+  </data>
+  <data name="Back Items" xml:space="preserve">
+    <value>Rücken-Gegenstände</value>
+  </data>
+  <data name="Bag Slot Expansions" xml:space="preserve">
+    <value>Taschenplatz-Erweiterungen</value>
+  </data>
+  <data name="Bait" xml:space="preserve">
+    <value>Köder</value>
+  </data>
+  <data name="Bank Tab Expansions" xml:space="preserve">
+    <value>Bankfach-Erweiterungen</value>
+  </data>
+  <data name="Black Lion Chests" xml:space="preserve">
+    <value>Schwarzlöwen-Truhen</value>
+  </data>
+  <data name="Booze" xml:space="preserve">
+    <value>Alkohol</value>
+  </data>
+  <data name="Boots" xml:space="preserve">
+    <value>Stiefel</value>
+  </data>
+  <data name="Build Storage Expansions" xml:space="preserve">
+    <value>Bauplanlager-Erweiterungen</value>
+  </data>
+  <data name="Build Template Expansions" xml:space="preserve">
+    <value>Bauplanvorlagen-Erweiterungen</value>
+  </data>
+  <data name="Chest" xml:space="preserve">
+    <value>Brustschutz</value>
+  </data>
+  <data name="Content Unlockers" xml:space="preserve">
+    <value>Inhaltsfreischalter</value>
+  </data>
+  <data name="Contract NPCs" xml:space="preserve">
+    <value>Vertrags-NPCs</value>
+  </data>
+  <data name="Containers" xml:space="preserve">
+    <value>Behälter</value>
+  </data>
+  <data name="Crafting Materials" xml:space="preserve">
+    <value>Handwerksmaterialien</value>
+  </data>
+  <data name="Currencies" xml:space="preserve">
+    <value>Währungen</value>
+  </data>
+  <data name="Daggers" xml:space="preserve">
+    <value>Dolche</value>
+  </data>
+  <data name="Dyes" xml:space="preserve">
+    <value>Farben</value>
+  </data>
+  <data name="Equipment Template Expansions" xml:space="preserve">
+    <value>Ausrüstungsvorlagen-Erweiterungen</value>
+  </data>
+  <data name="Foci" xml:space="preserve">
+    <value>Foki</value>
+  </data>
+  <data name="Food" xml:space="preserve">
+    <value>Essen</value>
+  </data>
+  <data name="Gathering Tools" xml:space="preserve">
+    <value>Sammelwerkzeuge</value>
+  </data>
+  <data name="Generic Consumables" xml:space="preserve">
+    <value>Allgemeine Verbrauchsgegenstände</value>
+  </data>
+  <data name="Gift Boxes" xml:space="preserve">
+    <value>Geschenkboxen</value>
+  </data>
+  <data name="Gizmos" xml:space="preserve">
+    <value>Geräte</value>
+  </data>
+  <data name="Glider Skin Unlockers" xml:space="preserve">
+    <value>Gleitschirm-Skin-Freischalter</value>
+  </data>
+  <data name="Gloves" xml:space="preserve">
+    <value>Handschuhe</value>
+  </data>
+  <data name="Greatswords" xml:space="preserve">
+    <value>Großschwerter</value>
+  </data>
+  <data name="Halloween Consumables" xml:space="preserve">
+    <value>Halloween-Verbrauchsgegenstände</value>
+  </data>
+  <data name="Hammers" xml:space="preserve">
+    <value>Hämmer</value>
+  </data>
+  <data name="Harpoon Guns" xml:space="preserve">
+    <value>Harpunenkanonen</value>
+  </data>
+  <data name="Harvesting Sickles" xml:space="preserve">
+    <value>Erntesicheln</value>
+  </data>
+  <data name="Headgear" xml:space="preserve">
+    <value>Kopfschutz</value>
+  </data>
+  <data name="Immediate Containers" xml:space="preserve">
+    <value>Sofortbehälter</value>
+  </data>
+  <data name="Jade Bot Skin Unlockers" xml:space="preserve">
+    <value>Jade-Bot-Skin-Freischalter</value>
+  </data>
+  <data name="Jade Tech Modules" xml:space="preserve">
+    <value>Jade-Technik-Module</value>
+  </data>
+  <data name="Large Bundles" xml:space="preserve">
+    <value>Große Bündel</value>
+  </data>
+  <data name="Leggings" xml:space="preserve">
+    <value>Beinschutz</value>
+  </data>
+  <data name="Logging Axes" xml:space="preserve">
+    <value>Holzfälleräxte</value>
+  </data>
+  <data name="Longbows" xml:space="preserve">
+    <value>Langbögen</value>
+  </data>
+  <data name="Lures" xml:space="preserve">
+    <value>Köder</value>
+  </data>
+  <data name="Maces" xml:space="preserve">
+    <value>Streitkolben</value>
+  </data>
+  <data name="Miniature Unlockers" xml:space="preserve">
+    <value>Miniaturen-Freischalter</value>
+  </data>
+  <data name="Miniatures" xml:space="preserve">
+    <value>Miniaturen</value>
+  </data>
+  <data name="Mining Picks" xml:space="preserve">
+    <value>Spitzhacken</value>
+  </data>
+  <data name="Mist Champion Skin Unlockers" xml:space="preserve">
+    <value>Nebel-Champion-Skin-Freischalter</value>
+  </data>
+  <data name="Mount Licenses" xml:space="preserve">
+    <value>Reittier-Lizenzen</value>
+  </data>
+  <data name="Mount Skin Unlockers" xml:space="preserve">
+    <value>Reittier-Skin-Freischalter</value>
+  </data>
+  <data name="Outfit Unlockers" xml:space="preserve">
+    <value>Outfit-Freischalter</value>
+  </data>
   <data name="Partial results" xml:space="preserve">
     <value>{0:N0} von {1:N0} Ergebnisse angezeigt</value>
   </data>
+  <data name="Pistols" xml:space="preserve">
+    <value>Pistolen</value>
+  </data>
+  <data name="Power Cores" xml:space="preserve">
+    <value>Energiekerne</value>
+  </data>
+  <data name="Random Unlocker" xml:space="preserve">
+    <value>Zufälliger Freischalter</value>
+  </data>
+  <data name="Recently Added" xml:space="preserve">
+    <value>Kürzlich hinzugefügt</value>
+  </data>
+  <data name="Recipe Sheets" xml:space="preserve">
+    <value>Rezeptblätter</value>
+  </data>
+  <data name="Relics" xml:space="preserve">
+    <value>Relikte</value>
+  </data>
+  <data name="Rifles" xml:space="preserve">
+    <value>Gewehre</value>
+  </data>
+  <data name="Rings" xml:space="preserve">
+    <value>Ringe</value>
+  </data>
+  <data name="Runes" xml:space="preserve">
+    <value>Runen</value>
+  </data>
+  <data name="Salvage Tools" xml:space="preserve">
+    <value>Bergungswerkzeuge</value>
+  </data>
+  <data name="Scepters" xml:space="preserve">
+    <value>Zepter</value>
+  </data>
   <data name="Search placeholder" xml:space="preserve">
-    <value>Einen Objektnamen oder einen Chat-Link eingeben...</value>
+    <value>Suchen ...</value>
+  </data>
+  <data name="Services" xml:space="preserve">
+    <value>Dienstleistungen</value>
+  </data>
+  <data name="Shared Inventory Slots" xml:space="preserve">
+    <value>Geteilte Inventarplätze</value>
+  </data>
+  <data name="Shields" xml:space="preserve">
+    <value>Schilde</value>
+  </data>
+  <data name="Short Bows" xml:space="preserve">
+    <value>Kurzbögen</value>
+  </data>
+  <data name="Shoulders" xml:space="preserve">
+    <value>Schulterschutz</value>
+  </data>
+  <data name="Sigils" xml:space="preserve">
+    <value>Sigille</value>
+  </data>
+  <data name="Small Bundles" xml:space="preserve">
+    <value>Kleine Bündel</value>
+  </data>
+  <data name="Spears" xml:space="preserve">
+    <value>Speere</value>
+  </data>
+  <data name="Staffs" xml:space="preserve">
+    <value>Stäbe</value>
+  </data>
+  <data name="Storage Expanders" xml:space="preserve">
+    <value>Lagererweiterungen</value>
+  </data>
+  <data name="Swords" xml:space="preserve">
+    <value>Schwerter</value>
+  </data>
+  <data name="Teleport to Friend" xml:space="preserve">
+    <value>Teleport zu Freund</value>
+  </data>
+  <data name="Torches" xml:space="preserve">
+    <value>Fackeln</value>
   </data>
   <data name="Total results" xml:space="preserve">
     <value>{0:N0} Ergebnisse</value>
+  </data>
+  <data name="Toys" xml:space="preserve">
+    <value>Spielzeuge</value>
+  </data>
+  <data name="Toys (Two-Handed)" xml:space="preserve">
+    <value>Spielzeuge (Zweihändig)</value>
+  </data>
+  <data name="Transmutations" xml:space="preserve">
+    <value>Transmutationen</value>
+  </data>
+  <data name="Tridents" xml:space="preserve">
+    <value>Dreizacke</value>
+  </data>
+  <data name="Trinkets" xml:space="preserve">
+    <value>Schmuckstücke</value>
+  </data>
+  <data name="Trophies" xml:space="preserve">
+    <value>Trophäen</value>
+  </data>
+  <data name="Universal Upgrades" xml:space="preserve">
+    <value>Universelle Verbesserungen</value>
+  </data>
+  <data name="Unlockers" xml:space="preserve">
+    <value>Freischalter</value>
+  </data>
+  <data name="Upgrade Components" xml:space="preserve">
+    <value>Verbesserungen</value>
+  </data>
+  <data name="Upgrade Extractors" xml:space="preserve">
+    <value>Upgrade-Extraktoren</value>
+  </data>
+  <data name="Utilities" xml:space="preserve">
+    <value>Hilfsmittel</value>
+  </data>
+  <data name="Warhorns" xml:space="preserve">
+    <value>Kriegshörner</value>
+  </data>
+  <data name="Weapons" xml:space="preserve">
+    <value>Waffen</value>
+  </data>
+  <data name="Consumables" xml:space="preserve">
+    <value>Verbrauchsgegenstände</value>
   </data>
 </root>
