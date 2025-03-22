@@ -183,7 +183,7 @@ public sealed class AchievementTile : Container
 
     private void OnCopyClicked(object sender, MouseEventArgs e)
     {
-        _ = Soundboard.Click.Play();
+        Soundboard.Click();
         ViewModel.CopyChatLinkCommand.Execute();
     }
 

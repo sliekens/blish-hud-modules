@@ -290,7 +290,7 @@ public class NumberInput : TextInputBase
         if (e.MousePosition.X > AbsoluteBounds.Right - SpinnerWidth)
         {
             UnsetFocus();
-            _ = Soundboard.Click.Play();
+            Soundboard.Click();
             _action = e.MousePosition.Y < AbsoluteBounds.Top + SpinnerButtonHeight
                 ? NumberInputAction.Increment
                 : NumberInputAction.Decrement;

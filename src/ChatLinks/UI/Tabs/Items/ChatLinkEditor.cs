@@ -231,7 +231,7 @@ public sealed class ChatLinkEditor : FlowPanel
 
     private void OnCopyClicked(object sender, MouseEventArgs e)
     {
-        _ = Soundboard.Click.Play();
+        Soundboard.Click();
         ViewModel.CopyChatLinkCommand.Execute();
     }
 
@@ -279,13 +279,13 @@ public sealed class ChatLinkEditor : FlowPanel
 
     private void MaxQuantityClicked(object sender, MouseEventArgs e)
     {
-        _ = Soundboard.Click.Play();
+        Soundboard.Click();
         ViewModel.MaxQuantityCommand.Execute();
     }
 
     private void ResetQuantityClicked(object sender, MouseEventArgs e)
     {
-        _ = Soundboard.Click.Play();
+        Soundboard.Click();
         ViewModel.MinQuantityCommand.Execute();
     }
 

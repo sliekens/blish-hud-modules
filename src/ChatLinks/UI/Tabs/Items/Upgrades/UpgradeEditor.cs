@@ -46,7 +46,7 @@ public sealed class UpgradeEditor : FlowPanel
 
     private void UpgradeSlotClicked(object sender, MouseEventArgs e)
     {
-        _ = Soundboard.Click.Play();
+        Soundboard.Click();
         ViewModel.CustomizeCommand.Execute();
     }
 
