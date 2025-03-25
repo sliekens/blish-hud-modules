@@ -9,7 +9,11 @@ public class ItemsList : ListBox<ItemsListViewModel>
 {
     protected override Control Template(ItemsListViewModel data)
     {
-        ItemsListEntry entry = new(data);
+        ItemsListEntry entry = new(data)
+        {
+            Width = ContentRegion.Width,
+            Height = 35
+        };
         return entry;
     }
 

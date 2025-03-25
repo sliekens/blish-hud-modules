@@ -45,9 +45,8 @@ public sealed class ItemsListEntry(ItemsListViewModel viewModel) : Control
         }
 
         Width = parent.ContentRegion.Width;
-        Height = 35;
 
-        _textBounds = new Rectangle(40, 0, Width - 40, 35);
+        _textBounds = new Rectangle(40, 0, Width - 40, Height);
     }
 
     protected override void Paint(SpriteBatch spriteBatch, Rectangle bounds)
