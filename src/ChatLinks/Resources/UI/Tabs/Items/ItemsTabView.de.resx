@@ -423,4 +423,7 @@
   <data name="Consumables" xml:space="preserve">
     <value>Verbrauchsgegenstände</value>
   </data>
+  <data name="Expansions" xml:space="preserve">
+    <value>Erweiterungen</value>
+  </data>
 </root>

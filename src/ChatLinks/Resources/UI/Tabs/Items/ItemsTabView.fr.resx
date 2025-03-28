@@ -423,4 +423,7 @@
   <data name="Consumables" xml:space="preserve">
     <value>Consommables</value>
   </data>
+  <data name="Expansions" xml:space="preserve">
+    <value>Extensions</value>
+  </data>
 </root>
