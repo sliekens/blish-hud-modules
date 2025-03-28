@@ -153,6 +153,15 @@ public sealed class ItemSearch(IDbContextFactory contextFactory, ILocale locale)
                 "universal_upgrade" => context.Items.OfType<Gem>(),
                 "rune" => context.Items.OfType<Rune>(),
                 "sigil" => context.Items.OfType<Sigil>(),
+                "expansions" => context.Items
+                    .Where(item => item is BagSlotExpansion
+                        || item is BankTabExpansion
+                        || item is StorageExpander
+                        || item is BuildStorageExpansion
+                        || item is BuildTemplateExpansion
+                        || item is EquipmentTemplateExpansion
+                        || item is SharedInventorySlot
+                    ),
                 _ => context.Items
             };
 

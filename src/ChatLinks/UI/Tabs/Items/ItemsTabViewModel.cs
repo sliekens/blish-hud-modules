@@ -406,25 +406,7 @@ public sealed class ItemsTabViewModel(
 
                     new ItemCategoryMenuItem { Id = "dye", Label = localizer["Dyes"] },
                     new ItemCategoryMenuItem { Id = "recipe_sheet", Label = localizer["Recipe Sheets"] },
-                    new ItemCategoryMenuItem { Id = "bank_tab_expansion", Label = localizer["Bank Tab Expansions"] },
-                    new ItemCategoryMenuItem { Id = "storage_expander", Label = localizer["Storage Expanders"] },
-                    new ItemCategoryMenuItem { Id = "bag_slot_expansion", Label = localizer["Bag Slot Expansions"] },
-                    new ItemCategoryMenuItem
-                    {
-                        Id = "shared_inventory_slot", Label = localizer["Shared Inventory Slots"]
-                    },
-                    new ItemCategoryMenuItem
-                    {
-                        Id = "equipment_template_expansion", Label = localizer["Equipment Template Expansions"]
-                    },
-                    new ItemCategoryMenuItem
-                    {
-                        Id = "build_template_expansion", Label = localizer["Build Template Expansions"]
-                    },
-                    new ItemCategoryMenuItem
-                    {
-                        Id = "build_storage_expansion", Label = localizer["Build Storage Expansions"]
-                    },
+                    new ItemCategoryMenuItem { Id = "expansions", Label = localizer["Expansions"] },
                     new ItemCategoryMenuItem { Id = "content_unlocker", Label = localizer["Content Unlockers"] },
                     new ItemCategoryMenuItem { Id = "random_unlocker", Label = localizer["Random Unlocker"] },
                     new ItemCategoryMenuItem { Id = "appearance_changer", Label = localizer["Appearance Changers"] },
