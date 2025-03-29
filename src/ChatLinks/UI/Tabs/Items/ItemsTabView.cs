@@ -30,6 +30,8 @@ public sealed class ItemsTabView(
 
     private Container? _selection;
 
+    private event EventHandler<EventArgs>? _menuItemExpanded;
+
     protected override async Task<bool> Load(IProgress<string> progress)
     {
         await viewModel.Load().ConfigureAwait(false);
@@ -176,6 +178,8 @@ public sealed class ItemsTabView(
     private void ReloadMenuItems()
     {
         if (_sidebar is null) return;
+
+        _menuItemExpanded = null;
         while (_sidebar.Children.Count > 0)
         {
             _sidebar.Children[0].Dispose();
@@ -212,8 +216,28 @@ public sealed class ItemsTabView(
                     }
                 };
             }
+            else
+            {
+                WireUp(menuItem, category.Subcategories);
 
-            WireUp(menuItem, category.Subcategories);
+                menuItem.PropertyChanged += (sender, args) =>
+                {
+                    switch (args.PropertyName)
+                    {
+                        case "Expand":
+                            _menuItemExpanded?.Invoke(sender, EventArgs.Empty);
+                            break;
+                    }
+                };
+
+                _menuItemExpanded += (sender, args) =>
+                {
+                    if (sender != menuItem)
+                    {
+                        menuItem.Collapse();
+                    }
+                };
+            }
 
             if (category.Id == viewModel.SelectedCategory)
             {
@@ -228,6 +252,10 @@ public sealed class ItemsTabView(
                         if (viewModel.SelectedCategory == category.Id)
                         {
                             menuItem.Select();
+                        }
+                        else if (!category.CanSelect)
+                        {
+                            menuItem.Collapse();
                         }
 
                         break;
@@ -276,6 +304,7 @@ public sealed class ItemsTabView(
 
     public void Dispose()
     {
+        _menuItemExpanded = null;
         _sidePanel?.Dispose();
         _sidebar?.Dispose();
         _contentPanel?.Dispose();

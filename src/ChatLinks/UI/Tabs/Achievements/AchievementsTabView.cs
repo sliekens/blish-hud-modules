@@ -14,11 +14,13 @@ public sealed class AchievementsTabView : View, IDisposable
 
     private readonly Panel _categoriesPanel;
 
-    private readonly Menu _menu;
+    private readonly Menu _sidebar;
 
     private readonly ViewContainer _selectedCategoryView;
 
     public AchievementsTabViewModel ViewModel { get; }
+
+    private event EventHandler<EventArgs>? _menuItemExpanded;
 
     public AchievementsTabView(AchievementsTabViewModel viewModel)
     {
@@ -44,7 +46,7 @@ public sealed class AchievementsTabView : View, IDisposable
 
         _ = Binder.Bind(viewModel, vm => vm.CategoriesTitle, _categoriesPanel, panel => panel.Title);
 
-        _menu = new()
+        _sidebar = new Menu
         {
             Parent = _categoriesPanel,
             Size = Panel.MenuStandard.Size,
@@ -101,9 +103,10 @@ public sealed class AchievementsTabView : View, IDisposable
 
     private void ReloadMenuItems()
     {
-        while (_menu.Children.Count > 0)
+        _menuItemExpanded = null;
+        while (_sidebar.Children.Count > 0)
         {
-            _menu.Children[0].Dispose();
+            _sidebar.Children[0].Dispose();
         }
 
         AddAchievementCategories();
@@ -113,7 +116,7 @@ public sealed class AchievementsTabView : View, IDisposable
     {
         foreach (AchievementGroupMenuItem menuItem in ViewModel.MenuItems)
         {
-            MenuItem groupMenuItem = _menu.AddMenuItem(menuItem.Group.Name);
+            MenuItem groupMenuItem = _sidebar.AddMenuItem(menuItem.Group.Name);
             groupMenuItem.BasicTooltipText = menuItem.Group.Description;
 
             foreach (AchievementCategory category in menuItem.Categories)
@@ -136,18 +139,36 @@ public sealed class AchievementsTabView : View, IDisposable
                     categoryItem.Select();
                 }
             }
+
+            groupMenuItem.PropertyChanged += (sender, args) =>
+            {
+                switch (args.PropertyName)
+                {
+                    case "Expand":
+                        _menuItemExpanded?.Invoke(sender, EventArgs.Empty);
+                        break;
+                }
+            };
+
+            _menuItemExpanded += (sender, args) =>
+            {
+                if (sender != groupMenuItem)
+                {
+                    groupMenuItem.Collapse();
+                }
+            };
         }
     }
 
     private void SearchTextChanged(object sender, EventArgs e)
     {
-        _menu.SelectedMenuItem?.Deselect();
+        _sidebar.SelectedMenuItem?.Deselect();
         ViewModel.SearchCommand.Execute(null);
     }
 
     private void SearchEnterPressed(object sender, EventArgs e)
     {
-        _menu.SelectedMenuItem?.Deselect();
+        _sidebar.SelectedMenuItem?.Deselect();
         ViewModel.SearchCommand.Execute(null);
     }
 
@@ -155,7 +176,7 @@ public sealed class AchievementsTabView : View, IDisposable
     {
         _searchBox.Dispose();
         _categoriesPanel.Dispose();
-        _menu.Dispose();
+        _sidebar.Dispose();
         _selectedCategoryView.Dispose();
         ViewModel.Dispose();
     }
