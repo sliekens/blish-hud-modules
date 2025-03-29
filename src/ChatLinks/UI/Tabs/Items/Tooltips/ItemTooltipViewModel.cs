@@ -125,7 +125,7 @@ public sealed class ItemTooltipViewModel(
     public string? SuffixName => UpgradesSlots
         .FirstOrDefault(u => u is
         {
-            Type: UpgradeSlotType.Default,
+            Type: UpgradeSlotType.Default or UpgradeSlotType.Banana,
             UpgradeComponent: not null
         })
         ?.UpgradeComponent?.SuffixName ?? DefaultSuffixName;

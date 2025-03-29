@@ -4,5 +4,6 @@ public enum UpgradeSlotType
 {
     Default,
     Infusion,
-    Enrichment
+    Enrichment,
+    Banana
 }

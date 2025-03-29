@@ -107,7 +107,7 @@ public sealed class ChatLinkEditorViewModel : ViewModel, IDisposable
             {
                 switch (args.PropertyName)
                 {
-                    case nameof(vm.UpgradeSlotViewModel.SelectedUpgradeComponent) when vm.UpgradeSlotViewModel.Type == UpgradeSlotType.Default:
+                    case nameof(vm.UpgradeSlotViewModel.SelectedUpgradeComponent) when vm.UpgradeSlotViewModel.Type is UpgradeSlotType.Default or UpgradeSlotType.Banana:
                         switch (slot)
                         {
                             case 1:
@@ -164,7 +164,7 @@ public sealed class ChatLinkEditorViewModel : ViewModel, IDisposable
 
     private void OnUpgradeSlotChanged(UpgradeSlotChanged obj)
     {
-        ShowInfusionWarning = UpgradeEditorViewModels.Where(editor => editor.UpgradeSlotType != UpgradeSlotType.Default)
+        ShowInfusionWarning = UpgradeEditorViewModels.Where(editor => editor.UpgradeSlotType is UpgradeSlotType.Infusion or UpgradeSlotType.Enrichment)
             .Any(editor => editor.UpgradeSlotViewModel.SelectedUpgradeComponent is not null);
     }
 
@@ -241,7 +241,7 @@ public sealed class ChatLinkEditorViewModel : ViewModel, IDisposable
         {
             UpgradeSlotViewModel:
             {
-                Type: UpgradeSlotType.Default,
+                Type: UpgradeSlotType.Default or UpgradeSlotType.Banana,
                 SelectedUpgradeComponent: not null
             }
         })?.UpgradeSlotViewModel.SelectedUpgradeComponent?.SuffixName;
@@ -346,7 +346,7 @@ public sealed class ChatLinkEditorViewModel : ViewModel, IDisposable
             {
                 yield return _upgradeEditorViewModelFactory(
                     Item,
-                    UpgradeSlotType.Default,
+                    UpgradeSlotType.Banana,
                     null
                 );
             }

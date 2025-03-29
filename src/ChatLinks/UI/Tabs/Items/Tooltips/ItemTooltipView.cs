@@ -968,15 +968,14 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                             _ = part.SetPrefixImageSize(new Point(16));
                             _ = part.SetFontSize(ContentService.FontSize.Size16);
                         }),
-                    UpgradeSlotType.Default => builder
-                        .CreatePart("\r\n", _ => { })
-                        .CreatePart(" " + ViewModel.Localizer["Unused upgrade slot"], part =>
-                        {
-                            _ = part.SetPrefixImage(EmbeddedResources.Texture("unused_upgrade_slot.png"));
-                            _ = part.SetPrefixImageSize(new Point(16));
-                            _ = part.SetFontSize(ContentService.FontSize.Size16);
-                        }),
-                    _ => builder,
+                    _ => builder
+                         .CreatePart("\r\n", _ => { })
+                         .CreatePart(" " + ViewModel.Localizer["Unused upgrade slot"], part =>
+                         {
+                             _ = part.SetPrefixImage(EmbeddedResources.Texture("unused_upgrade_slot.png"));
+                             _ = part.SetPrefixImageSize(new Point(16));
+                             _ = part.SetFontSize(ContentService.FontSize.Size16);
+                         })
                 };
             }
 

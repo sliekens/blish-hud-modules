@@ -51,6 +51,7 @@ public sealed class Customizer(
         using ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
         IQueryable<UpgradeComponent> upgrades = slotType switch
         {
+            UpgradeSlotType.Banana => context.Set<UpgradeComponent>(),
             UpgradeSlotType.Infusion => context.Set<UpgradeComponent>()
                 .FromSqlRaw(
                     """

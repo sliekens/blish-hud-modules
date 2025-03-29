@@ -98,38 +98,27 @@ public sealed class UpgradeSlot : Container
             .AutoSizeWidth()
             .AutoSizeHeight();
 
-        switch (ViewModel.Type)
+        builder = ViewModel.Type switch
         {
-            case UpgradeSlotType.Default:
-                _ = builder
-                    .CreatePart(" " + ViewModel.UnusedUpgradeSlotLabel, part =>
-                    {
-                        _ = part.SetPrefixImage(EmbeddedResources.Texture("unused_upgrade_slot.png"));
-                        _ = part.SetPrefixImageSize(new Point(16));
-                        _ = part.SetFontSize(ContentService.FontSize.Size16);
-                    });
-                break;
-            case UpgradeSlotType.Infusion:
-                _ = builder
-                    .CreatePart(" " + ViewModel.UnusedInfusionSlotLabel, part =>
-                    {
-                        _ = part.SetPrefixImage(EmbeddedResources.Texture("unused_infusion_slot.png"));
-                        _ = part.SetPrefixImageSize(new Point(16));
-                        _ = part.SetFontSize(ContentService.FontSize.Size16);
-                    });
-                break;
-            case UpgradeSlotType.Enrichment:
-                _ = builder
-                    .CreatePart(" " + ViewModel.UnusedEnrichmenSlotLabel, part =>
-                    {
-                        _ = part.SetPrefixImage(EmbeddedResources.Texture("unused_enrichment_slot.png"));
-                        _ = part.SetPrefixImageSize(new Point(16));
-                        _ = part.SetFontSize(ContentService.FontSize.Size16);
-                    });
-                break;
-            default:
-                break;
-        }
+            UpgradeSlotType.Infusion => builder.CreatePart(" " + ViewModel.UnusedInfusionSlotLabel, part =>
+            {
+                _ = part.SetPrefixImage(EmbeddedResources.Texture("unused_infusion_slot.png"));
+                _ = part.SetPrefixImageSize(new Point(16));
+                _ = part.SetFontSize(ContentService.FontSize.Size16);
+            }),
+            UpgradeSlotType.Enrichment => builder.CreatePart(" " + ViewModel.UnusedEnrichmenSlotLabel, part =>
+            {
+                _ = part.SetPrefixImage(EmbeddedResources.Texture("unused_enrichment_slot.png"));
+                _ = part.SetPrefixImageSize(new Point(16));
+                _ = part.SetFontSize(ContentService.FontSize.Size16);
+            }),
+            _ => builder.CreatePart(" " + ViewModel.UnusedUpgradeSlotLabel, part =>
+            {
+                _ = part.SetPrefixImage(EmbeddedResources.Texture("unused_upgrade_slot.png"));
+                _ = part.SetPrefixImageSize(new Point(16));
+                _ = part.SetFontSize(ContentService.FontSize.Size16);
+            })
+        };
 
         return builder.Build();
     }
