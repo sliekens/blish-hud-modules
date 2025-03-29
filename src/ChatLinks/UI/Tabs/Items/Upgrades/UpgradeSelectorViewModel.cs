@@ -112,13 +112,15 @@ public sealed class UpgradeSelectorViewModel : ViewModel, IDisposable
         Dictionary<string, int> groupOrder = new()
         {
             { _localizer["Runes"], 1 },
-            { _localizer["Sigils"], 1 },
-            { _localizer["Runes (PvP)"], 2 },
+            { _localizer["Runes (PvP)"], 1 },
+            { _localizer["Sigils"], 2 },
             { _localizer["Sigils (PvP)"], 2 },
             { _localizer["Infusions"], 3 },
             { _localizer["Enrichments"], 3 },
-            { _localizer["Universal Upgrades"], 4 },
-            { _localizer["Uncategorized"], 5 }
+            { _localizer["Glyphs"], 4 },
+            { _localizer["Jewels"], 5 },
+            { _localizer["Universal Upgrades"], 6 },
+            { _localizer["Uncategorized"], 7 }
         };
 
         IOrderedEnumerable<IGrouping<string, ItemsListViewModel>> groups =
@@ -150,6 +152,15 @@ public sealed class UpgradeSelectorViewModel : ViewModel, IDisposable
                 Sigil => _localizer["Sigils"],
                 _ when upgrade.InfusionUpgradeFlags.Infusion => _localizer["Infusions"],
                 _ when upgrade.InfusionUpgradeFlags.Enrichment => _localizer["Enrichments"],
+                _ when upgrade.UpgradeComponentFlags.Trinket => _localizer["Jewels"],
+                _ when upgrade.UpgradeComponentFlags is
+                {
+                    LightArmor: false,
+                    MediumArmor: false,
+                    HeavyArmor: false,
+                    Axe: false,
+                    Trinket: false
+                } => _localizer["Glyphs"],
                 _ => _localizer["Uncategorized"]
             })
                into grouped

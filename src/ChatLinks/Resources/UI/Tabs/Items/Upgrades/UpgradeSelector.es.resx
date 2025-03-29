@@ -141,4 +141,10 @@
   <data name="Universal Upgrades" xml:space="preserve">
     <value>Mejoras universales</value>
   </data>
+  <data name="Glyphs" xml:space="preserve">
+    <value>Glyphes</value>
+  </data>
+  <data name="Jewels" xml:space="preserve">
+    <value>Joyas</value>
+  </data>
 </root>

@@ -120,8 +120,14 @@
   <data name="Enrichments" xml:space="preserve">
     <value>Enrichments</value>
   </data>
+  <data name="Glyphs" xml:space="preserve">
+    <value>Glyphs</value>
+  </data>
   <data name="Infusions" xml:space="preserve">
     <value>Infusions</value>
+  </data>
+  <data name="Jewels" xml:space="preserve">
+    <value>Jewels</value>
   </data>
   <data name="Runes" xml:space="preserve">
     <value>Armor Runes</value>
