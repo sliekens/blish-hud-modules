@@ -132,6 +132,7 @@ public sealed class ItemSearch(IDbContextFactory contextFactory, ILocale locale)
                 "upgrade_extractor" => context.Items.OfType<UpgradeExtractor>(),
                 "utility" => context.Items.OfType<Utility>(),
                 "container" => context.Items.OfType<Container>(),
+                "default_container" => context.Items.Where(item => EF.Property<string>(item, "Type") == "container"),
                 "black_lion_chest" => context.Items.OfType<BlackLionChest>(),
                 "gift_box" => context.Items.OfType<GiftBox>(),
                 "immediate_container" => context.Items.OfType<ImmediateContainer>(),

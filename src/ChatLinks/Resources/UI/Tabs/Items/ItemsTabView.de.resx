@@ -223,7 +223,7 @@
     <value>Allgemeine Verbrauchsgegenstände</value>
   </data>
   <data name="Gift Boxes" xml:space="preserve">
-    <value>Geschenkboxen</value>
+    <value>Besondere Behälter</value>
   </data>
   <data name="Gizmos" xml:space="preserve">
     <value>Geräte</value>
@@ -425,5 +425,8 @@
   </data>
   <data name="Expansions" xml:space="preserve">
     <value>Erweiterungen</value>
+  </data>
+  <data name="Normal Containers" xml:space="preserve">
+    <value>Normale Behälter</value>
   </data>
 </root>

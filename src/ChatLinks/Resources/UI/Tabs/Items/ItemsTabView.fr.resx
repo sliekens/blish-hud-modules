@@ -223,7 +223,7 @@
     <value>Consommables génériques</value>
   </data>
   <data name="Gift Boxes" xml:space="preserve">
-    <value>Boîtes cadeaux</value>
+    <value>Conteneurs spéciaux</value>
   </data>
   <data name="Gizmos" xml:space="preserve">
     <value>Gadgets</value>
@@ -425,5 +425,8 @@
   </data>
   <data name="Expansions" xml:space="preserve">
     <value>Extensions</value>
+  </data>
+  <data name="Normal Containers" xml:space="preserve">
+    <value>Conteneurs normaux</value>
   </data>
 </root>

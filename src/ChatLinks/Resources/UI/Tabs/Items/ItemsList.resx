@@ -120,4 +120,7 @@
   <data name="Item API" xml:space="preserve">
     <value>https://api.guildwars2.com/v2/items/{0}?v=latest</value>
   </data>
+  <data name="Normal Containers" xml:space="preserve">
+    <value>Normal Containers</value>
+  </data>
 </root>

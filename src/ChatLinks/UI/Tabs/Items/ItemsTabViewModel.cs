@@ -428,9 +428,10 @@ public sealed class ItemsTabViewModel(
                 Subcategories =
                 [
                     new ItemCategoryMenuItem { Id = "container", Label = localizer["All Containers"] },
-                    new ItemCategoryMenuItem { Id = "black_lion_chest", Label = localizer["Black Lion Chests"] },
+                    new ItemCategoryMenuItem { Id = "default_container", Label = localizer["Normal Containers"] },
                     new ItemCategoryMenuItem { Id = "gift_box", Label = localizer["Gift Boxes"] },
-                    new ItemCategoryMenuItem { Id = "immediate_container", Label = localizer["Immediate Containers"] }
+                    new ItemCategoryMenuItem { Id = "immediate_container", Label = localizer["Immediate Containers"] },
+                    new ItemCategoryMenuItem { Id = "black_lion_chest", Label = localizer["Black Lion Chests"] }
                 ]
             },
             new ItemCategoryMenuItem { Id = "crafting_material", Label = localizer["Crafting Materials"] },
