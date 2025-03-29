@@ -328,7 +328,7 @@
     <value>Ringe</value>
   </data>
   <data name="Runes" xml:space="preserve">
-    <value>Runen</value>
+    <value>Rüstungs-Runen</value>
   </data>
   <data name="Salvage Tools" xml:space="preserve">
     <value>Bergungswerkzeuge</value>
@@ -355,7 +355,7 @@
     <value>Schulterschutz</value>
   </data>
   <data name="Sigils" xml:space="preserve">
-    <value>Sigille</value>
+    <value>Waffen-Sigille</value>
   </data>
   <data name="Small Bundles" xml:space="preserve">
     <value>Kleine Bündel</value>
@@ -428,5 +428,23 @@
   </data>
   <data name="Normal Containers" xml:space="preserve">
     <value>Normale Behälter</value>
+  </data>
+  <data name="Glyphs" xml:space="preserve">
+    <value>Glyphen</value>
+  </data>
+  <data name="Jewels" xml:space="preserve">
+    <value>Juwelen</value>
+  </data>
+  <data name="Runes (PvP)" xml:space="preserve">
+    <value>Rüstungs-Runen (PvP)</value>
+  </data>
+  <data name="Sigils (PvP)" xml:space="preserve">
+    <value>Waffen-Sigille (PvP)</value>
+  </data>
+  <data name="Infusions" xml:space="preserve">
+    <value>Infusionen</value>
+  </data>
+  <data name="Enrichments" xml:space="preserve">
+    <value>Anreicherungen</value>
   </data>
 </root>

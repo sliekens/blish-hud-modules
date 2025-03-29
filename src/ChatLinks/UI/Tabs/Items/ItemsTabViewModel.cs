@@ -333,11 +333,15 @@ public sealed class ItemsTabViewModel(
                 Subcategories =
                 [
                     new ItemCategoryMenuItem { Id = "upgrade_component", Label = localizer["All Upgrade Components"] },
-
-                    new ItemCategoryMenuItem { Id = "universal_upgrade", Label = localizer["Universal Upgrades"] },
-
+                    new ItemCategoryMenuItem { Id = "infusion", Label = localizer["Infusions"] },
+                    new ItemCategoryMenuItem { Id = "enrichment", Label = localizer["Enrichments"] },
+                    new ItemCategoryMenuItem { Id = "glyph", Label = localizer["Glyphs"] },
                     new ItemCategoryMenuItem { Id = "rune", Label = localizer["Runes"] },
-                    new ItemCategoryMenuItem { Id = "sigil", Label = localizer["Sigils"] }
+                    new ItemCategoryMenuItem { Id = "rune_pvp", Label = localizer["Runes (PvP)"] },
+                    new ItemCategoryMenuItem { Id = "sigil", Label = localizer["Sigils"] },
+                    new ItemCategoryMenuItem { Id = "sigil_pvp", Label = localizer["Sigils (PvP)"] },
+                    new ItemCategoryMenuItem { Id = "jewel", Label = localizer["Jewels"] },
+                    new ItemCategoryMenuItem { Id = "universal_upgrade", Label = localizer["Universal Upgrades"] }
                 ]
             },
 

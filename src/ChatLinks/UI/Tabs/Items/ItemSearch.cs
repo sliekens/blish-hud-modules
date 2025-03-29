@@ -152,8 +152,84 @@ public sealed class ItemSearch(IDbContextFactory contextFactory, ILocale locale)
                 "trophy" => context.Items.OfType<Trophy>(),
                 "upgrade_component" => context.Items.OfType<UpgradeComponent>(),
                 "universal_upgrade" => context.Items.OfType<Gem>(),
-                "rune" => context.Items.OfType<Rune>(),
-                "sigil" => context.Items.OfType<Sigil>(),
+                "rune" => context.Items.FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items item
+                    WHERE item.Type = 'rune'
+                    AND NOT EXISTS (
+                    	SELECT 1
+                    	FROM json_each(GameTypes)
+                    	WHERE json_each.value = 'Pvp'
+                    )
+                    """),
+                "rune_pvp" => context.Items.FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items item
+                    WHERE item.Type = 'rune'
+                    AND EXISTS (
+                    	SELECT 1
+                    	FROM json_each(GameTypes)
+                    	WHERE json_each.value = 'Pvp'
+                    )
+                    """),
+                "sigil" => context.Items.FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items item
+                    WHERE item.Type = 'sigil'
+                    AND NOT EXISTS (
+                    	SELECT 1
+                    	FROM json_each(GameTypes)
+                    	WHERE json_each.value = 'Pvp'
+                    )
+                    """),
+                "sigil_pvp" => context.Items.FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items item
+                    WHERE item.Type = 'sigil'
+                    AND EXISTS (
+                    	SELECT 1
+                    	FROM json_each(GameTypes)
+                    	WHERE json_each.value = 'Pvp'
+                    )
+                    """),
+                "infusion" => context.Items.FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type = 'upgrade_component'
+                    AND InfusionUpgradeFlags -> '$.infusion' = 'true'
+                    """),
+                "enrichment" => context.Items.FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type = 'upgrade_component'
+                    AND InfusionUpgradeFlags -> '$.enrichment' = 'true'
+                    """),
+                "jewel" => context.Items.FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type = 'upgrade_component'
+                    AND UpgradeComponentFlags -> '$.Trinket' = 'true'
+                    AND InfusionUpgradeFlags -> '$.infusion' = 'false'
+                    AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
+                    """),
+                "glyph" => context.Items.FromSqlRaw(
+                    """
+                    SELECT *
+                    FROM Items
+                    WHERE Type = 'upgrade_component'
+                    AND UpgradeComponentFlags -> '$.Axe' = 'false'
+                    AND UpgradeComponentFlags -> '$.Trinket' = 'false'
+                    AND UpgradeComponentFlags -> '$.MediumArmor' = 'false'
+                    AND InfusionUpgradeFlags -> '$.infusion' = 'false'
+                    AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
+                    """),
                 "expansions" => context.Items
                     .Where(item => item is BagSlotExpansion
                         || item is BankTabExpansion

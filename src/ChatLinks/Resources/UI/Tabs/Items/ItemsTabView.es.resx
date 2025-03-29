@@ -328,7 +328,7 @@
     <value>Anillos</value>
   </data>
   <data name="Runes" xml:space="preserve">
-    <value>Runas</value>
+    <value>Runas de armadura</value>
   </data>
   <data name="Salvage Tools" xml:space="preserve">
     <value>Herramientas de salvamento</value>
@@ -355,7 +355,7 @@
     <value>Hombreras</value>
   </data>
   <data name="Sigils" xml:space="preserve">
-    <value>Sellos</value>
+    <value>Sellos de armas</value>
   </data>
   <data name="Small Bundles" xml:space="preserve">
     <value>Pequeños paquetes</value>
@@ -428,5 +428,23 @@
   </data>
   <data name="Normal Containers" xml:space="preserve">
     <value>Contenedores normales</value>
+  </data>
+  <data name="Glyphs" xml:space="preserve">
+    <value>Glyphes</value>
+  </data>
+  <data name="Jewels" xml:space="preserve">
+    <value>Joyas</value>
+  </data>
+  <data name="Runes (PvP)" xml:space="preserve">
+    <value>Runas de armadura (PvP)</value>
+  </data>
+  <data name="Sigils (PvP)" xml:space="preserve">
+    <value>Sellos de armas (PvP)</value>
+  </data>
+  <data name="Infusions" xml:space="preserve">
+    <value>Infusiones</value>
+  </data>
+  <data name="Enrichments" xml:space="preserve">
+    <value>Enriquecimientos</value>
   </data>
 </root>

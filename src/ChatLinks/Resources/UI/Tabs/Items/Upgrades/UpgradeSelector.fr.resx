@@ -127,13 +127,13 @@
     <value>Runes d'armure</value>
   </data>
   <data name="Runes (PvP)" xml:space="preserve">
-    <value>Runes d'armure (PvP)</value>
+    <value>Runes d'armure (JcJ)</value>
   </data>
   <data name="Sigils" xml:space="preserve">
     <value>Cachets d'arme</value>
   </data>
   <data name="Sigils (PvP)" xml:space="preserve">
-    <value>Cachets d'arme (PvP)</value>
+    <value>Cachets d'arme (JcJ)</value>
   </data>
   <data name="Uncategorized" xml:space="preserve">
     <value>Non classé</value>
