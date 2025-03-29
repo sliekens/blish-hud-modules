@@ -247,11 +247,15 @@ public sealed class ItemSearch(IDbContextFactory contextFactory, ILocale locale)
                 query = query.Where(item => EF.Functions.Like(item.Name, $"%{filter.Text}%"))
                     .OrderBy(item => Levenshtein.LevenshteinDistance(filter.Text!, item.Name));
             }
+            else
+            {
+                query = query
+                    .OrderByDescending(item => item.Id);
+            }
 
             resultContext.ResultTotal = await query.CountAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
             await foreach (Item? item in query
-               .OrderByDescending(item => item.Id)
                .Take(limit)
                .AsAsyncEnumerable()
                .WithCancellation(cancellationToken)
