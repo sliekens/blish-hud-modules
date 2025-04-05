@@ -64,6 +64,11 @@ public sealed class UpgradeSlot : Container
                 _label.BasicTooltipText ??= ViewModel.EmptySlotTooltip;
             }
         }
+        else
+        {
+            _label.Tooltip?.Dispose();
+            _label.Tooltip = null;
+        }
     }
 
     private FormattedLabel FormatSlot()

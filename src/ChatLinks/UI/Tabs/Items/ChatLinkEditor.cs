@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-using Blish_HUD;
+﻿using Blish_HUD;
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
 using Blish_HUD.Input;
@@ -64,8 +62,6 @@ public sealed class ChatLinkEditor : FlowPanel
                 ])
         };
 
-        _itemIcon.MouseEntered += IconMouseEntered;
-
         _itemName = new Label
         {
             Parent = header,
@@ -84,18 +80,6 @@ public sealed class ChatLinkEditor : FlowPanel
             UpgradeEditor editor = new(upgradeEditorViewModel)
             {
                 Parent = this
-            };
-
-            upgradeEditorViewModel.PropertyChanged += (_, args) =>
-            {
-                switch (args.PropertyName)
-                {
-                    case nameof(upgradeEditorViewModel.EffectiveUpgradeComponent):
-                        _itemIcon.Tooltip = null;
-                        break;
-                    default:
-                        break;
-                }
             };
         }
 
@@ -224,8 +208,6 @@ public sealed class ChatLinkEditor : FlowPanel
 
         _ = Binder.Bind(viewModel, vm => vm.InfusionWarning, _infusionWarning);
 
-        viewModel.PropertyChanged += PropertyChanged;
-
         Input.Mouse.MouseWheelScrolled += OnGlobalMouseWheelScrolled;
     }
 
@@ -254,19 +236,17 @@ public sealed class ChatLinkEditor : FlowPanel
 
     public override void UpdateContainer(GameTime gameTime)
     {
-        _infusionWarning.Visible = ViewModel.ShowInfusionWarning;
-    }
-
-    private new void PropertyChanged(object sender, PropertyChangedEventArgs args)
-    {
-        switch (args.PropertyName)
+        if (_itemIcon.MouseOver)
         {
-            case nameof(ViewModel.Quantity):
-                _itemIcon.Tooltip = null;
-                break;
-            default:
-                break;
+            _itemIcon.Tooltip ??= new Tooltip(new ItemTooltipView(ViewModel.CreateTooltipViewModel()));
         }
+        else
+        {
+            _itemIcon.Tooltip?.Dispose();
+            _itemIcon.Tooltip = null;
+        }
+
+        _infusionWarning.Visible = ViewModel.ShowInfusionWarning;
     }
 
     protected override void OnMouseWheelScrolled(MouseEventArgs e)
@@ -287,11 +267,6 @@ public sealed class ChatLinkEditor : FlowPanel
     {
         Soundboard.Click();
         ViewModel.MinQuantityCommand.Execute();
-    }
-
-    private void IconMouseEntered(object sender, MouseEventArgs e)
-    {
-        _itemIcon.Tooltip ??= new Tooltip(new ItemTooltipView(ViewModel.CreateTooltipViewModel()));
     }
 
     private void ChatLinkClicked(object sender, MouseEventArgs e)

@@ -34,6 +34,11 @@ public sealed class ItemsListEntry(ItemsListViewModel viewModel) : Control
         {
             Tooltip ??= new Tooltip(new ItemTooltipView(viewModel.CreateTooltipViewModel()));
         }
+        else
+        {
+            Tooltip?.Dispose();
+            Tooltip = null;
+        }
     }
 
     public override void RecalculateLayout()
