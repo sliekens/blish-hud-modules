@@ -139,6 +139,16 @@ public sealed class ItemTooltipViewModel(
         return icons.GetIcon(item.IconHref);
     }
 
+    public AsyncTexture2D? GetIcon(string? iconUrl)
+    {
+        return icons.GetIcon(iconUrl);
+    }
+
+    public AsyncTexture2D? GetIcon(int assetId)
+    {
+        return AsyncTexture2D.FromAssetId(assetId).Duplicate();
+    }
+
     public async Task Load(IProgress<string> progress)
     {
         ThrowHelper.ThrowIfNull(progress);
