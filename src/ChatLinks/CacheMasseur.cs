@@ -4,65 +4,62 @@ namespace SL.ChatLinks;
 
 public sealed class CacheMasseur<TItem>(IMemoryCache cache, string cacheKey) : IDisposable
 {
-    private readonly ReaderWriterLockSlim _lock = new();
+    private readonly SemaphoreSlim _writeSemaphore = new(1, 1);
 
     public async ValueTask<TItem> GetOrCreate(Func<ICacheEntry, CancellationToken, ValueTask> factory,
         CancellationToken cancellationToken)
     {
-        _lock.EnterUpgradeableReadLock();
+        if (cache.TryGetValue(cacheKey, out TItem found))
+        {
+            return found;
+        }
+
+        await _writeSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            if (cache.TryGetValue(cacheKey, out TItem found))
+            if (cache.TryGetValue(cacheKey, out found))
             {
                 return found;
             }
 
-            return await CreateAsync(factory, cancellationToken).ConfigureAwait(true);
+            return await CreateWithWriteLockAsync(factory, cancellationToken).ConfigureAwait(false);
         }
         finally
         {
-            _lock.ExitUpgradeableReadLock();
+            _writeSemaphore.Release();
         }
     }
 
     public async Task<TItem> CreateAsync(Func<ICacheEntry, CancellationToken, ValueTask> factory,
         CancellationToken cancellationToken)
     {
-        _lock.EnterWriteLock();
-        try
-        {
-            using ICacheEntry? entry = cache.CreateEntry(cacheKey);
-            await factory(entry, cancellationToken).ConfigureAwait(true);
-            return (TItem)entry.Value;
-        }
-        finally
-        {
-            _lock.ExitWriteLock();
-        }
+        await _writeSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
+        return await CreateWithWriteLockAsync(factory, cancellationToken);
+    }
+
+    private async Task<TItem> CreateWithWriteLockAsync(Func<ICacheEntry, CancellationToken, ValueTask> factory, CancellationToken cancellationToken)
+    {
+        using ICacheEntry? entry = cache.CreateEntry(cacheKey);
+        await factory(entry, cancellationToken).ConfigureAwait(false);
+        return (TItem)entry.Value;
     }
 
     public void Dispose()
     {
-        try
-        {
-            Clear();
-        }
-        finally
-        {
-            _lock.Dispose();
-        }
+        Clear();
+        _writeSemaphore.Dispose();
     }
 
     public void Clear()
     {
-        _lock.EnterWriteLock();
+        _writeSemaphore.Wait();
         try
         {
             cache.Remove(cacheKey);
         }
         finally
         {
-            _lock.ExitWriteLock();
+            _writeSemaphore.Release();
         }
     }
 }
