@@ -19,7 +19,29 @@ public sealed class AccountUnlocks : IDisposable
 
     private readonly IEventAggregator _eventAggregator;
 
-    private readonly IMemoryCache _memoryCache;
+    private readonly CacheMasseur<IReadOnlyList<AccountAchievement>> _achievementsProgress;
+
+    private readonly CacheMasseur<IReadOnlyList<int>> _unlockedDyes;
+
+    private readonly CacheMasseur<IReadOnlyList<int>> _unlockedFinishers;
+
+    private readonly CacheMasseur<IReadOnlyList<int>> _unlockedGliderSkins;
+
+    private readonly CacheMasseur<IReadOnlyList<int>> _unlockedJadeBotSkins;
+
+    private readonly CacheMasseur<IReadOnlyList<int>> _unlockedMailCarriers;
+
+    private readonly CacheMasseur<IReadOnlyList<int>> _unlockedMiniatures;
+
+    private readonly CacheMasseur<IReadOnlyList<int>> _unlockedMistChampionSkins;
+
+    private readonly CacheMasseur<IReadOnlyList<int>> _unlockedNovelties;
+
+    private readonly CacheMasseur<IReadOnlyList<int>> _unlockedOutfits;
+
+    private readonly CacheMasseur<IReadOnlyList<int>> _unlockedRecipes;
+
+    private readonly CacheMasseur<IReadOnlyList<int>> _unlockedWardrobe;
 
     public AccountUnlocks(
         ILogger<AccountUnlocks> logger,
@@ -33,7 +55,19 @@ public sealed class AccountUnlocks : IDisposable
         _gw2Client = gw2Client;
         _tokenProvider = tokenProvider;
         _eventAggregator = eventAggregator;
-        _memoryCache = memoryCache;
+        _achievementsProgress =
+            new CacheMasseur<IReadOnlyList<AccountAchievement>>(memoryCache, "achievements_progress");
+        _unlockedDyes = new CacheMasseur<IReadOnlyList<int>>(memoryCache, "unlocked_dyes");
+        _unlockedFinishers = new CacheMasseur<IReadOnlyList<int>>(memoryCache, "unlocked_finishers");
+        _unlockedGliderSkins = new CacheMasseur<IReadOnlyList<int>>(memoryCache, "unlocked_glider_skins");
+        _unlockedJadeBotSkins = new CacheMasseur<IReadOnlyList<int>>(memoryCache, "unlocked_jade_bot_skins");
+        _unlockedMailCarriers = new CacheMasseur<IReadOnlyList<int>>(memoryCache, "unlocked_mail_carriers");
+        _unlockedMiniatures = new CacheMasseur<IReadOnlyList<int>>(memoryCache, "unlocked_miniatures");
+        _unlockedMistChampionSkins = new CacheMasseur<IReadOnlyList<int>>(memoryCache, "unlocked_mist_champion_skins");
+        _unlockedNovelties = new CacheMasseur<IReadOnlyList<int>>(memoryCache, "unlocked_novelties");
+        _unlockedOutfits = new CacheMasseur<IReadOnlyList<int>>(memoryCache, "unlocked_outfits");
+        _unlockedRecipes = new CacheMasseur<IReadOnlyList<int>>(memoryCache, "unlocked_recipes");
+        _unlockedWardrobe = new CacheMasseur<IReadOnlyList<int>>(memoryCache, "unlocked_wardrobe");
         eventAggregator.Subscribe<AuthorizationInvalidated>(OnAuthorizationInvalidated);
         eventAggregator.Subscribe<MapChanged>(OnMapChanged);
     }
@@ -50,25 +84,15 @@ public sealed class AccountUnlocks : IDisposable
         return IsAuthorized && permissions.All(permission => _tokenProvider.Grants.Contains(permission));
     }
 
-    public async ValueTask<IReadOnlyList<AccountAchievement>> GetAchievementProgress(CancellationToken cancellationToken)
+    public async ValueTask<IReadOnlyList<AccountAchievement>> GetAchievementProgress(
+        CancellationToken cancellationToken)
     {
         try
         {
             if (_tokenProvider.Grants.Contains(Permission.Progression))
             {
-                return await _memoryCache.GetOrCreateAsync(
-                    "achievements_progress",
-                    async entry =>
-                    {
-                        string? token = await _tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
-                        (HashSet<AccountAchievement> value, MessageContext context) = await _gw2Client.Hero.Achievements
-                            .GetAccountAchievements(token, cancellationToken: cancellationToken)
-                            .ConfigureAwait(false);
-
-                        entry.AbsoluteExpiration = context.Expires;
-                        return value.ToImmutableArray();
-                    }
-                ).ConfigureAwait(false);
+                return await _achievementsProgress.GetOrCreate(CacheAchievementProgress, cancellationToken)
+                    .ConfigureAwait(false);
             }
             else
             {
@@ -82,25 +106,24 @@ public sealed class AccountUnlocks : IDisposable
         }
     }
 
+    private async ValueTask CacheAchievementProgress(ICacheEntry entry, CancellationToken cancellationToken)
+    {
+        string? token = await _tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
+        (HashSet<AccountAchievement> value, MessageContext context) = await _gw2Client.Hero.Achievements
+            .GetAccountAchievements(token, cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        entry.AbsoluteExpiration = context.Expires;
+        entry.Value = value.ToImmutableArray();
+    }
+
     public async ValueTask<IReadOnlyList<int>> GetUnlockedDyes(CancellationToken cancellationToken)
     {
         try
         {
             if (_tokenProvider.Grants.Contains(Permission.Unlocks))
             {
-                return await _memoryCache.GetOrCreateAsync(
-                    "unlocked_dyes",
-                    async entry =>
-                    {
-                        string? token = await _tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
-                        (HashSet<int> values, MessageContext context) = await _gw2Client.Hero.Equipment.Dyes
-                            .GetUnlockedColors(token, cancellationToken: cancellationToken)
-                            .ConfigureAwait(false);
-
-                        entry.AbsoluteExpiration = context.Expires;
-                        return values.ToImmutableArray();
-                    }
-                ).ConfigureAwait(false);
+                return await _unlockedDyes.GetOrCreate(CacheUnlockedDyes, cancellationToken).ConfigureAwait(false);
             }
             else
             {
@@ -113,25 +136,25 @@ public sealed class AccountUnlocks : IDisposable
             return [];
         }
     }
+
+    private async ValueTask CacheUnlockedDyes(ICacheEntry entry, CancellationToken cancellationToken)
+    {
+        string? token = await _tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
+        (HashSet<int> values, MessageContext context) = await _gw2Client.Hero.Equipment.Dyes
+            .GetUnlockedColors(token, cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        entry.AbsoluteExpiration = context.Expires;
+        entry.Value = values.ToImmutableArray();
+    }
+
     public async ValueTask<IReadOnlyList<int>> GetUnlockedFinishers(CancellationToken cancellationToken)
     {
         try
         {
             if (_tokenProvider.Grants.Contains(Permission.Unlocks))
             {
-                return await _memoryCache.GetOrCreateAsync(
-                    "unlocked_finishers",
-                    async entry =>
-                    {
-                        string? token = await _tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
-                        (HashSet<GuildWars2.Hero.Equipment.Finishers.UnlockedFinisher> values, MessageContext context) = await _gw2Client.Hero.Equipment.Finishers
-                            .GetUnlockedFinishers(token, cancellationToken: cancellationToken)
-                            .ConfigureAwait(false);
-
-                        entry.AbsoluteExpiration = context.Expires;
-                        return values.Select(finisher => finisher.Id).ToImmutableArray();
-                    }
-                ).ConfigureAwait(false);
+                return await _unlockedFinishers.GetOrCreate(CacheUnlockedFinishers, cancellationToken).ConfigureAwait(false);
             }
             else
             {
@@ -145,25 +168,25 @@ public sealed class AccountUnlocks : IDisposable
         }
     }
 
+    private async ValueTask CacheUnlockedFinishers(ICacheEntry entry, CancellationToken cancellationToken)
+    {
+        string? token = await _tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
+        (HashSet<GuildWars2.Hero.Equipment.Finishers.UnlockedFinisher> values, MessageContext context) =
+            await _gw2Client.Hero.Equipment.Finishers
+                .GetUnlockedFinishers(token, cancellationToken: cancellationToken)
+                .ConfigureAwait(false);
+
+        entry.AbsoluteExpiration = context.Expires;
+        entry.Value = values.Select(finisher => finisher.Id).ToImmutableArray();
+    }
+
     public async ValueTask<IReadOnlyList<int>> GetUnlockedGliderSkins(CancellationToken cancellationToken)
     {
         try
         {
             if (_tokenProvider.Grants.Contains(Permission.Unlocks))
             {
-                return await _memoryCache.GetOrCreateAsync(
-                    "unlocked_glider_skins",
-                    async entry =>
-                    {
-                        string? token = await _tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
-                        (HashSet<int> values, MessageContext context) = await _gw2Client.Hero.Equipment.Gliders
-                            .GetUnlockedGliderSkins(token, cancellationToken: cancellationToken)
-                            .ConfigureAwait(false);
-
-                        entry.AbsoluteExpiration = context.Expires;
-                        return values.ToImmutableArray();
-                    }
-                ).ConfigureAwait(false);
+                return await _unlockedGliderSkins.GetOrCreate(CacheUnlockedGliderSkins, cancellationToken).ConfigureAwait(false);
             }
             else
             {
@@ -177,6 +200,17 @@ public sealed class AccountUnlocks : IDisposable
         }
     }
 
+    private async ValueTask CacheUnlockedGliderSkins(ICacheEntry entry, CancellationToken cancellationToken)
+    {
+        string? token = await _tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
+        (HashSet<int> values, MessageContext context) = await _gw2Client.Hero.Equipment.Gliders
+            .GetUnlockedGliderSkins(token, cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        entry.AbsoluteExpiration = context.Expires;
+        entry.Value = values.ToImmutableArray();
+    }
+
     public async ValueTask<IReadOnlyList<int>> GetUnlockedJadeBotSkins(CancellationToken cancellationToken)
     {
         try
@@ -184,19 +218,7 @@ public sealed class AccountUnlocks : IDisposable
             if (_tokenProvider.Grants.Contains(Permission.Unlocks)
                 && _tokenProvider.Grants.Contains(Permission.Inventories))
             {
-                return await _memoryCache.GetOrCreateAsync(
-                    "unlocked_jade_bot_skins",
-                    async entry =>
-                    {
-                        string? token = await _tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
-                        (HashSet<int> values, MessageContext context) = await _gw2Client.Hero.Equipment.JadeBots
-                            .GetUnlockedJadeBotSkins(token, cancellationToken: cancellationToken)
-                            .ConfigureAwait(false);
-
-                        entry.AbsoluteExpiration = context.Expires;
-                        return values.ToImmutableArray();
-                    }
-                ).ConfigureAwait(false);
+                return await _unlockedJadeBotSkins.GetOrCreate(CacheUnlockedJadeBotSkins, cancellationToken).ConfigureAwait(false);
             }
             else
             {
@@ -209,25 +231,25 @@ public sealed class AccountUnlocks : IDisposable
             return [];
         }
     }
+
+    private async ValueTask CacheUnlockedJadeBotSkins(ICacheEntry entry, CancellationToken cancellationToken)
+    {
+        string? token = await _tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
+        (HashSet<int> values, MessageContext context) = await _gw2Client.Hero.Equipment.JadeBots
+            .GetUnlockedJadeBotSkins(token, cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        entry.AbsoluteExpiration = context.Expires;
+        entry.Value = values.ToImmutableArray();
+    }
+
     public async ValueTask<IReadOnlyList<int>> GetUnlockedMailCarriers(CancellationToken cancellationToken)
     {
         try
         {
             if (_tokenProvider.Grants.Contains(Permission.Unlocks))
             {
-                return await _memoryCache.GetOrCreateAsync(
-                    "unlocked_mail_carriers",
-                    async entry =>
-                    {
-                        string? token = await _tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
-                        (HashSet<int> values, MessageContext context) = await _gw2Client.Hero.Equipment.MailCarriers
-                            .GetUnlockedMailCarriers(token, cancellationToken: cancellationToken)
-                            .ConfigureAwait(false);
-
-                        entry.AbsoluteExpiration = context.Expires;
-                        return values.ToImmutableArray();
-                    }
-                ).ConfigureAwait(false);
+                return await _unlockedMailCarriers.GetOrCreate(CacheUnlockedMailCarriers, cancellationToken).ConfigureAwait(false);
             }
             else
             {
@@ -240,25 +262,25 @@ public sealed class AccountUnlocks : IDisposable
             return [];
         }
     }
+
+    private async ValueTask CacheUnlockedMailCarriers(ICacheEntry entry, CancellationToken cancellationToken)
+    {
+        string? token = await _tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
+        (HashSet<int> values, MessageContext context) = await _gw2Client.Hero.Equipment.MailCarriers
+            .GetUnlockedMailCarriers(token, cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        entry.AbsoluteExpiration = context.Expires;
+        entry.Value = values.ToImmutableArray();
+    }
+
     public async ValueTask<IReadOnlyList<int>> GetUnlockedMiniatures(CancellationToken cancellationToken)
     {
         try
         {
             if (_tokenProvider.Grants.Contains(Permission.Unlocks))
             {
-                return await _memoryCache.GetOrCreateAsync(
-                    "unlocked_miniatures",
-                    async entry =>
-                    {
-                        string? token = await _tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
-                        (HashSet<int> values, MessageContext context) = await _gw2Client.Hero.Equipment.Miniatures
-                            .GetUnlockedMiniatures(token, cancellationToken: cancellationToken)
-                            .ConfigureAwait(false);
-
-                        entry.AbsoluteExpiration = context.Expires;
-                        return values.ToImmutableArray();
-                    }
-                ).ConfigureAwait(false);
+                return await _unlockedMiniatures.GetOrCreate(CacheUnlockedMiniatures, cancellationToken).ConfigureAwait(false);
             }
             else
             {
@@ -272,25 +294,24 @@ public sealed class AccountUnlocks : IDisposable
         }
     }
 
+    private async ValueTask CacheUnlockedMiniatures(ICacheEntry entry, CancellationToken cancellationToken)
+    {
+        string? token = await _tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
+        (HashSet<int> values, MessageContext context) = await _gw2Client.Hero.Equipment.Miniatures
+            .GetUnlockedMiniatures(token, cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        entry.AbsoluteExpiration = context.Expires;
+        entry.Value = values.ToImmutableArray();
+    }
+
     public async ValueTask<IReadOnlyList<int>> GetUnlockedMistChampionSkins(CancellationToken cancellationToken)
     {
         try
         {
             if (_tokenProvider.Grants.Contains(Permission.Unlocks))
             {
-                return await _memoryCache.GetOrCreateAsync(
-                    "unlocked_mist_champion_skins",
-                    async entry =>
-                    {
-                        string? token = await _tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
-                        (HashSet<int> values, MessageContext context) = await _gw2Client.Pvp
-                            .GetUnlockedMistChampions(token, cancellationToken: cancellationToken)
-                            .ConfigureAwait(false);
-
-                        entry.AbsoluteExpiration = context.Expires;
-                        return values.ToImmutableArray();
-                    }
-                ).ConfigureAwait(false);
+                return await _unlockedMistChampionSkins.GetOrCreate(CacheUnlockedMistChampionSkins, cancellationToken).ConfigureAwait(false);
             }
             else
             {
@@ -303,25 +324,25 @@ public sealed class AccountUnlocks : IDisposable
             return [];
         }
     }
+
+    private async ValueTask CacheUnlockedMistChampionSkins(ICacheEntry entry, CancellationToken cancellationToken)
+    {
+        string? token = await _tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
+        (HashSet<int> values, MessageContext context) = await _gw2Client.Pvp
+            .GetUnlockedMistChampions(token, cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        entry.AbsoluteExpiration = context.Expires;
+        entry.Value = values.ToImmutableArray();
+    }
+
     public async ValueTask<IReadOnlyList<int>> GetUnlockedNovelties(CancellationToken cancellationToken)
     {
         try
         {
             if (_tokenProvider.Grants.Contains(Permission.Unlocks))
             {
-                return await _memoryCache.GetOrCreateAsync(
-                    "unlocked_novelties",
-                    async entry =>
-                    {
-                        string? token = await _tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
-                        (HashSet<int> values, MessageContext context) = await _gw2Client.Hero.Equipment.Novelties
-                            .GetUnlockedNovelties(token, cancellationToken)
-                            .ConfigureAwait(false);
-
-                        entry.AbsoluteExpiration = context.Expires;
-                        return values.ToImmutableArray();
-                    }
-                ).ConfigureAwait(false);
+                return await _unlockedNovelties.GetOrCreate(CacheUnlockedNovelties, cancellationToken).ConfigureAwait(false);
             }
             else
             {
@@ -334,25 +355,25 @@ public sealed class AccountUnlocks : IDisposable
             return [];
         }
     }
+
+    private async ValueTask CacheUnlockedNovelties(ICacheEntry entry, CancellationToken cancellationToken)
+    {
+        string? token = await _tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
+        (HashSet<int> values, MessageContext context) = await _gw2Client.Hero.Equipment.Novelties
+            .GetUnlockedNovelties(token, cancellationToken)
+            .ConfigureAwait(false);
+
+        entry.AbsoluteExpiration = context.Expires;
+        entry.Value = values.ToImmutableArray();
+    }
+
     public async ValueTask<IReadOnlyList<int>> GetUnlockedOutfits(CancellationToken cancellationToken)
     {
         try
         {
             if (_tokenProvider.Grants.Contains(Permission.Unlocks))
             {
-                return await _memoryCache.GetOrCreateAsync(
-                    "unlocked_outfits",
-                    async entry =>
-                    {
-                        string? token = await _tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
-                        (HashSet<int> values, MessageContext context) = await _gw2Client.Hero.Equipment.Outfits
-                            .GetUnlockedOutfits(token, cancellationToken: cancellationToken)
-                            .ConfigureAwait(false);
-
-                        entry.AbsoluteExpiration = context.Expires;
-                        return values.ToImmutableArray();
-                    }
-                ).ConfigureAwait(false);
+                return await _unlockedOutfits.GetOrCreate(CacheUnlockedOutfits, cancellationToken).ConfigureAwait(false);
             }
             else
             {
@@ -366,25 +387,24 @@ public sealed class AccountUnlocks : IDisposable
         }
     }
 
+    private async ValueTask CacheUnlockedOutfits(ICacheEntry entry, CancellationToken cancellationToken)
+    {
+        string? token = await _tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
+        (HashSet<int> values, MessageContext context) = await _gw2Client.Hero.Equipment.Outfits
+            .GetUnlockedOutfits(token, cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        entry.AbsoluteExpiration = context.Expires;
+        entry.Value = values.ToImmutableArray();
+    }
+
     public async ValueTask<IReadOnlyList<int>> GetUnlockedRecipes(CancellationToken cancellationToken)
     {
         try
         {
             if (_tokenProvider.Grants.Contains(Permission.Unlocks))
             {
-                return await _memoryCache.GetOrCreateAsync(
-                    "unlocked_recipes",
-                    async entry =>
-                    {
-                        string? token = await _tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
-                        (HashSet<int> values, MessageContext context) = await _gw2Client.Hero.Crafting.Recipes
-                            .GetUnlockedRecipes(token, cancellationToken: cancellationToken)
-                            .ConfigureAwait(false);
-
-                        entry.AbsoluteExpiration = context.Expires;
-                        return values.ToImmutableArray();
-                    }
-                ).ConfigureAwait(false);
+                return await _unlockedRecipes.GetOrCreate(CacheUnlockedRecipes, cancellationToken).ConfigureAwait(false);
             }
             else
             {
@@ -397,25 +417,25 @@ public sealed class AccountUnlocks : IDisposable
             return [];
         }
     }
+
+    private async ValueTask CacheUnlockedRecipes(ICacheEntry entry, CancellationToken cancellationToken)
+    {
+        string? token = await _tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
+        (HashSet<int> values, MessageContext context) = await _gw2Client.Hero.Crafting.Recipes
+            .GetUnlockedRecipes(token, cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        entry.AbsoluteExpiration = context.Expires;
+        entry.Value = values.ToImmutableArray();
+    }
+
     public async ValueTask<IReadOnlyList<int>> GetUnlockedWardrobe(CancellationToken cancellationToken)
     {
         try
         {
             if (_tokenProvider.Grants.Contains(Permission.Unlocks))
             {
-                return await _memoryCache.GetOrCreateAsync(
-                    "unlocked_wardrobe",
-                    async entry =>
-                    {
-                        string? token = await _tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
-                        (HashSet<int> values, MessageContext context) = await _gw2Client.Hero.Equipment.Wardrobe
-                            .GetUnlockedSkins(token, cancellationToken)
-                            .ConfigureAwait(false);
-
-                        entry.AbsoluteExpiration = context.Expires;
-                        return values.ToImmutableArray();
-                    }
-                ).ConfigureAwait(false);
+                return await _unlockedWardrobe.GetOrCreate(CacheUnlockedWardrobe, cancellationToken).ConfigureAwait(false);
             }
             else
             {
@@ -427,6 +447,17 @@ public sealed class AccountUnlocks : IDisposable
             _logger.LogWarning(reason, "Failed to retrieve unlocked skins.");
             return [];
         }
+    }
+
+    private async ValueTask CacheUnlockedWardrobe(ICacheEntry entry, CancellationToken cancellationToken)
+    {
+        string? token = await _tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
+        (HashSet<int> values, MessageContext context) = await _gw2Client.Hero.Equipment.Wardrobe
+            .GetUnlockedSkins(token, cancellationToken)
+            .ConfigureAwait(false);
+
+        entry.AbsoluteExpiration = context.Expires;
+        entry.Value = values.ToImmutableArray();
     }
 
     private void OnAuthorizationInvalidated(AuthorizationInvalidated _)
@@ -441,24 +472,37 @@ public sealed class AccountUnlocks : IDisposable
 
     private void ClearCache()
     {
-        _memoryCache.Remove("achievements_progress");
-        _memoryCache.Remove("unlocked_dyes");
-        _memoryCache.Remove("unlocked_finishers");
-        _memoryCache.Remove("unlocked_glider_skins");
-        _memoryCache.Remove("unlocked_jade_bot_skins");
-        _memoryCache.Remove("unlocked_mail_carriers");
-        _memoryCache.Remove("unlocked_miniatures");
-        _memoryCache.Remove("unlocked_mist_champion_skins");
-        _memoryCache.Remove("unlocked_novelties");
-        _memoryCache.Remove("unlocked_outfits");
-        _memoryCache.Remove("unlocked_recipes");
-        _memoryCache.Remove("unlocked_wardrobe");
+        _achievementsProgress.Clear();
+        _unlockedDyes.Clear();
+        _unlockedFinishers.Clear();
+        _unlockedGliderSkins.Clear();
+        _unlockedJadeBotSkins.Clear();
+        _unlockedMailCarriers.Clear();
+        _unlockedMiniatures.Clear();
+        _unlockedMistChampionSkins.Clear();
+        _unlockedNovelties.Clear();
+        _unlockedOutfits.Clear();
+        _unlockedRecipes.Clear();
+        _unlockedWardrobe.Clear();
     }
 
     public void Dispose()
     {
         _eventAggregator.Unsubscribe<AuthorizationInvalidated>(OnAuthorizationInvalidated);
         _eventAggregator.Unsubscribe<MapChanged>(OnMapChanged);
+        _achievementsProgress.Dispose();
+        _unlockedDyes.Dispose();
+        _unlockedFinishers.Dispose();
+        _unlockedGliderSkins.Dispose();
+        _unlockedJadeBotSkins.Dispose();
+        _unlockedMailCarriers.Dispose();
+        _unlockedMiniatures.Dispose();
+        _unlockedMistChampionSkins.Dispose();
+        _unlockedNovelties.Dispose();
+        _unlockedOutfits.Dispose();
+        _unlockedRecipes.Dispose();
+        _unlockedWardrobe.Dispose();
+
         ClearCache();
     }
 }
