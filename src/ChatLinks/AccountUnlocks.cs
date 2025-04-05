@@ -502,7 +502,5 @@ public sealed class AccountUnlocks : IDisposable
         _unlockedOutfits.Dispose();
         _unlockedRecipes.Dispose();
         _unlockedWardrobe.Dispose();
-
-        ClearCache();
     }
 }
