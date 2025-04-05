@@ -11,8 +11,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 using SL.Adapters;
+using SL.Adapters.Logging;
 using SL.ChatLinks.Integrations;
-using SL.ChatLinks.Logging;
 using SL.ChatLinks.UI;
 using SL.ChatLinks.UI.Tabs.Achievements;
 using SL.ChatLinks.UI.Tabs.Achievements.Tooltips;

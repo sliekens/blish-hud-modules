@@ -204,27 +204,6 @@
         "resolved": "3.1.32",
         "contentHash": "jjYbWzxsD4sg8/oe3ZOzlueYRIvkPtlnHDys05Muh5AGRu5d8IM5q0QiPz0Abaa9yLxWn9N2s0fJl4CH8rXmhw=="
       },
-      "Microsoft.Extensions.Logging": {
-        "type": "Transitive",
-        "resolved": "3.1.32",
-        "contentHash": "5nx7SuLJnqINfv9zslFGig1Czt2AWAyKLiSEZj8eHxYJucuHcoenvD8p75FafYANsMMOach6ZiNZ1MdlPFS/MQ==",
-        "dependencies": {
-          "Microsoft.Extensions.Configuration.Binder": "3.1.32",
-          "Microsoft.Extensions.DependencyInjection": "3.1.32",
-          "Microsoft.Extensions.Logging.Abstractions": "3.1.32",
-          "Microsoft.Extensions.Options": "3.1.32"
-        }
-      },
-      "Microsoft.Extensions.Options": {
-        "type": "Transitive",
-        "resolved": "3.1.32",
-        "contentHash": "JRX2+OxOC/jqWrkyjJZstpe0NdY/HfOJNPOzVkMxqCxTirecIYfaKXAms4HDsEKl3i6CD8jDkwHyv3fyWZO6hQ==",
-        "dependencies": {
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "3.1.32",
-          "Microsoft.Extensions.Primitives": "3.1.32",
-          "System.ComponentModel.Annotations": "4.7.0"
-        }
-      },
       "Microsoft.Extensions.Primitives": {
         "type": "Transitive",
         "resolved": "3.1.32",
@@ -391,6 +370,8 @@
         "dependencies": {
           "GW2SDK": "[2.3.0, )",
           "Gw2Sharp": "[1.7.4, )",
+          "Microsoft.Extensions.Logging": "[3.1.32, )",
+          "Microsoft.Extensions.Options": "[3.1.32, )",
           "SL.Common": "[1.0.0, )",
           "System.Collections.Immutable": "[1.7.1, 1.7.1]",
           "System.Text.Json": "[9.0.2, )"
@@ -420,7 +401,7 @@
           "GW2SDK": "[2.3.0, )",
           "Gw2Sharp": "[1.7.4, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[3.1.32, 3.1.32]",
-          "Microsoft.Extensions.Logging.Abstractions": "[3.1.32, 3.1.32]",
+          "Microsoft.Extensions.Logging.Abstractions": "[3.1.32, )",
           "System.ComponentModel.Composition": "[6.0.0, 6.0.0]",
           "System.Text.Json": "[9.0.2, )"
         }
@@ -475,11 +456,34 @@
           "Microsoft.Extensions.Options": "3.1.32"
         }
       },
+      "Microsoft.Extensions.Logging": {
+        "type": "CentralTransitive",
+        "requested": "[3.1.32, )",
+        "resolved": "3.1.32",
+        "contentHash": "5nx7SuLJnqINfv9zslFGig1Czt2AWAyKLiSEZj8eHxYJucuHcoenvD8p75FafYANsMMOach6ZiNZ1MdlPFS/MQ==",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Binder": "3.1.32",
+          "Microsoft.Extensions.DependencyInjection": "3.1.32",
+          "Microsoft.Extensions.Logging.Abstractions": "3.1.32",
+          "Microsoft.Extensions.Options": "3.1.32"
+        }
+      },
       "Microsoft.Extensions.Logging.Abstractions": {
         "type": "CentralTransitive",
-        "requested": "[3.1.32, 3.1.32]",
+        "requested": "[3.1.32, )",
         "resolved": "3.1.32",
         "contentHash": "BShtU4APsEGa72vaj42rHc8CW40xpFp1dousoNeziHwOUFJLNOJP2wxKX2jyfer0nFaLSkIMtgKn+qeJtS3Pcw=="
+      },
+      "Microsoft.Extensions.Options": {
+        "type": "CentralTransitive",
+        "requested": "[3.1.32, )",
+        "resolved": "3.1.32",
+        "contentHash": "JRX2+OxOC/jqWrkyjJZstpe0NdY/HfOJNPOzVkMxqCxTirecIYfaKXAms4HDsEKl3i6CD8jDkwHyv3fyWZO6hQ==",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "3.1.32",
+          "Microsoft.Extensions.Primitives": "3.1.32",
+          "System.ComponentModel.Annotations": "4.7.0"
+        }
       },
       "Polly": {
         "type": "CentralTransitive",

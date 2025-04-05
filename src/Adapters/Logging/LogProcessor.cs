@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 
-namespace SL.ChatLinks.Logging;
+namespace SL.Adapters.Logging;
 
 public static class LogProcessor
 {

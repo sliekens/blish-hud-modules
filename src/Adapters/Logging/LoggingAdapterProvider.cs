@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace SL.ChatLinks.Logging;
+namespace SL.Adapters.Logging;
 
 public sealed class LoggingAdapterProvider<T>(IOptionsMonitor<LoggerFilterOptions> options) : ILoggerProvider
 {
