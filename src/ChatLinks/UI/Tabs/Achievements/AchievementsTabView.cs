@@ -38,7 +38,7 @@ public sealed class AchievementsTabView : View, IDisposable
         _categoriesPanel = new()
         {
             Top = _searchBox.Height + 9,
-            WidthSizingMode = SizingMode.AutoSize,
+            Width = Panel.MenuStandard.Size.X,
             HeightSizingMode = SizingMode.Fill,
             CanScroll = true,
             ShowBorder = true
@@ -89,7 +89,6 @@ public sealed class AchievementsTabView : View, IDisposable
     {
         _searchBox.Parent = buildPanel;
         _categoriesPanel.Parent = buildPanel;
-        AddAchievementCategories();
 
         _selectedCategoryView.Parent = buildPanel;
         _selectedCategoryView.Left = _categoriesPanel.Right + 9;
