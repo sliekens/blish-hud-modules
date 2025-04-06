@@ -165,6 +165,15 @@ public sealed class AchievementsTabViewModel(
                     Group = group,
                     Categories = categories.Where(category => group.Categories.Contains(category.Id))
                 })];
+
+            var newestAchievement = achievements
+                .Where(a => a.Flags is { Daily: false, Weekly: false })
+                .Aggregate((left, right) => left.Id >= right.Id ? left : right);
+
+            AchievementCategory newestCategory = categories
+                .Single(c => c.Achievements.Any(aref => aref.Id == newestAchievement.Id));
+
+            await SelectCategory(newestCategory).ConfigureAwait(false);
         }
     }
 
