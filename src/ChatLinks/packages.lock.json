@@ -236,14 +236,6 @@
           "Microsoft.EntityFrameworkCore": "3.1.32"
         }
       },
-      "Microsoft.Extensions.Caching.Abstractions": {
-        "type": "Transitive",
-        "resolved": "3.1.32",
-        "contentHash": "cZdm91JlYwshLdYtg01a/FIuAiKQf/K/pg8q3+qLBnSEwy5dbPQYnS+/1W8aQb5JVTpb/+ZH3BvKab6V0M9Y/w==",
-        "dependencies": {
-          "Microsoft.Extensions.Primitives": "3.1.32"
-        }
-      },
       "Microsoft.Extensions.Caching.Memory": {
         "type": "Transitive",
         "resolved": "3.1.32",
@@ -555,7 +547,7 @@
           "Microsoft.Extensions.Logging": "[3.1.32, )",
           "Microsoft.Extensions.Options": "[3.1.32, )",
           "SL.Common": "[1.0.0, )",
-          "System.Collections.Immutable": "[1.7.1, 1.7.1]",
+          "System.Collections.Immutable": "[1.7.1, )",
           "System.Text.Json": "[9.0.2, )"
         }
       },
@@ -564,10 +556,21 @@
         "dependencies": {
           "GW2SDK": "[2.3.0, )",
           "Gw2Sharp": "[1.7.4, )",
+          "Microsoft.Extensions.Caching.Abstractions": "[3.1.32, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[3.1.32, 3.1.32]",
           "Microsoft.Extensions.Logging.Abstractions": "[3.1.32, )",
+          "System.Collections.Immutable": "[1.7.1, )",
           "System.ComponentModel.Composition": "[6.0.0, 6.0.0]",
           "System.Text.Json": "[9.0.2, )"
+        }
+      },
+      "Microsoft.Extensions.Caching.Abstractions": {
+        "type": "CentralTransitive",
+        "requested": "[3.1.32, )",
+        "resolved": "3.1.32",
+        "contentHash": "cZdm91JlYwshLdYtg01a/FIuAiKQf/K/pg8q3+qLBnSEwy5dbPQYnS+/1W8aQb5JVTpb/+ZH3BvKab6V0M9Y/w==",
+        "dependencies": {
+          "Microsoft.Extensions.Primitives": "3.1.32"
         }
       },
       "Microsoft.Extensions.DependencyInjection.Abstractions": {
@@ -607,7 +610,7 @@
       },
       "System.Collections.Immutable": {
         "type": "CentralTransitive",
-        "requested": "[1.7.1, 1.7.1]",
+        "requested": "[1.7.1, )",
         "resolved": "1.7.1",
         "contentHash": "B43Zsz5EfMwyEbnObwRxW5u85fzJma3lrDeGcSAV1qkhSRTNY5uXAByTn9h9ddNdhM+4/YoLc/CI43umjwIl9Q==",
         "dependencies": {

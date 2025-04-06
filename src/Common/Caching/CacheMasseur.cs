@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 
-namespace SL.ChatLinks;
+namespace SL.Common.Caching;
 
 public sealed class CacheMasseur<TItem>(IMemoryCache cache, string cacheKey) : IDisposable
 {

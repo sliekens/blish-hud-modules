@@ -19,12 +19,14 @@
       <ExcludeAssets>all</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="GW2SDK" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     <PackageReference Include="PolySharp">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="System.Collections.Immutable" />
     <PackageReference Include="System.ComponentModel.Composition" />
     <PackageReference Include="System.Text.Json" />
   </ItemGroup>

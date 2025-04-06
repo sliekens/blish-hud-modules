@@ -3,6 +3,8 @@
 using GuildWars2;
 using GuildWars2.Mumble;
 
+using SL.Common.Exploration;
+
 namespace SL.ChatLinks;
 
 public sealed class MumbleListener(GameLink link, IEventAggregator eventAggregator) : IObserver<GameTick>, IDisposable

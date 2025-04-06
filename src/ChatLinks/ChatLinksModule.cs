@@ -20,6 +20,7 @@ using SL.ChatLinks.UI.Tabs.Items;
 using SL.ChatLinks.UI.Tabs.Items.Collections;
 using SL.ChatLinks.UI.Tabs.Items.Tooltips;
 using SL.ChatLinks.UI.Tabs.Items.Upgrades;
+using SL.Common.Progression;
 
 using SQLitePCL;
 
@@ -95,7 +96,19 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
 
         _ = services.AddSingleton<IEventAggregator, DefaultEventAggregator>();
         _ = services.AddTransient<IClipBoard, WpfClipboard>();
-        _ = services.AddSingleton<AccountUnlocks>();
+        _ = services.AddSingleton<CurrentAccount>();
+        _ = services.AddSingleton<AchievementsProgress>();
+        _ = services.AddSingleton<UnlockedDyes>();
+        _ = services.AddSingleton<UnlockedFinishers>();
+        _ = services.AddSingleton<UnlockedGliderSkins>();
+        _ = services.AddSingleton<UnlockedJadeBotSkins>();
+        _ = services.AddSingleton<UnlockedMailCarriers>();
+        _ = services.AddSingleton<UnlockedMiniatures>();
+        _ = services.AddSingleton<UnlockedMistChampionSkins>();
+        _ = services.AddSingleton<UnlockedNovelties>();
+        _ = services.AddSingleton<UnlockedOutfits>();
+        _ = services.AddSingleton<UnlockedRecipes>();
+        _ = services.AddSingleton<UnlockedWardrobe>();
         _ = services.AddHttpClient<IconsService>();
         _ = services.AddSingleton<IconsCache>();
         _ = services.AddMemoryCache();

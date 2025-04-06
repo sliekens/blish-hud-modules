@@ -15,6 +15,7 @@ using Microsoft.Extensions.Localization;
 
 using SL.ChatLinks.Storage;
 using SL.Common.ModelBinding;
+using SL.Common.Progression;
 
 namespace SL.ChatLinks.UI.Tabs.Achievements;
 
@@ -24,7 +25,7 @@ public sealed class AchievementsTabViewModel(
     IStringLocalizer<AchievementsTabView> localizer,
     ILocale locale,
     AchievementTileViewModel.Factory achievementTileViewModelFactory,
-    AccountUnlocks unlocks,
+    CurrentAccount account,
     IconsService icons
 ) : ViewModel, IDisposable
 {
@@ -220,10 +221,10 @@ public sealed class AchievementsTabViewModel(
                         .ConfigureAwait(false);
 
                     List<AccountAchievement>? progression = null;
-                    if (unlocks.HasPermission(Permission.Progression))
+                    if (account.HasPermission(Permission.Progression))
                     {
                         progression = [
-                            .. await unlocks.GetAchievementProgress(CancellationToken.None)
+                            .. await account.GetAchievementProgress(CancellationToken.None)
                                 .ConfigureAwait(false)
                         ];
                     }
@@ -281,10 +282,10 @@ public sealed class AchievementsTabViewModel(
                 .ConfigureAwait(false);
 
             List<AccountAchievement>? progression = null;
-            if (unlocks.HasPermission(Permission.Progression))
+            if (account.HasPermission(Permission.Progression))
             {
                 progression = [..
-                    await unlocks.GetAchievementProgress(CancellationToken.None)
+                    await account.GetAchievementProgress(CancellationToken.None)
                         .ConfigureAwait(false)
                 ];
             }
