@@ -35,7 +35,14 @@ public sealed class CacheMasseur<TItem>(IMemoryCache cache, string cacheKey) : I
     {
         ThrowHelper.ThrowIfNull(factory);
         await _writeSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
-        return await CreateWithWriteLockAsync(factory, cancellationToken).ConfigureAwait(false);
+        try
+        {
+            return await CreateWithWriteLockAsync(factory, cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            _ = _writeSemaphore.Release();
+        }
     }
 
     private async Task<TItem> CreateWithWriteLockAsync(Func<ICacheEntry, CancellationToken, ValueTask> factory, CancellationToken cancellationToken)
