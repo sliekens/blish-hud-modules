@@ -98,6 +98,8 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
         _ = services.AddTransient<IClipBoard, WpfClipboard>();
         _ = services.AddSingleton<CurrentAccount>();
         _ = services.AddSingleton<AchievementsProgress>();
+        _ = services.AddSingleton<AccountBank>();
+        _ = services.AddSingleton<AccountMaterialStorage>();
         _ = services.AddSingleton<UnlockedDyes>();
         _ = services.AddSingleton<UnlockedFinishers>();
         _ = services.AddSingleton<UnlockedGliderSkins>();

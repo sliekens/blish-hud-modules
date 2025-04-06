@@ -397,4 +397,10 @@
   <data name="Heavy" xml:space="preserve">
     <value>Lourd</value>
   </data>
+  <data name="Count in bank" xml:space="preserve">
+    <value>{0:N0} dans la banque</value>
+  </data>
+  <data name="Count in material storage" xml:space="preserve">
+    <value>{0:N0} dans le stockage de matériau</value>
+  </data>
 </root>

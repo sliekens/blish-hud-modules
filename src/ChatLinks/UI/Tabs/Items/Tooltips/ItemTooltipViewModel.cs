@@ -2,6 +2,7 @@
 
 using GuildWars2;
 using GuildWars2.Authorization;
+using GuildWars2.Hero.Banking;
 using GuildWars2.Hero.Equipment.Dyes;
 using GuildWars2.Hero.Equipment.Finishers;
 using GuildWars2.Hero.Equipment.Gliders;
@@ -10,6 +11,7 @@ using GuildWars2.Hero.Equipment.MailCarriers;
 using GuildWars2.Hero.Equipment.Novelties;
 using GuildWars2.Hero.Equipment.Outfits;
 using GuildWars2.Hero.Equipment.Wardrobe;
+using GuildWars2.Hero.Inventories;
 using GuildWars2.Items;
 using GuildWars2.Pvp.MistChampions;
 
@@ -51,6 +53,10 @@ public sealed class ItemTooltipViewModel(
 
     private EquipmentSkin? _skin;
 
+    private int _inBank;
+
+    private int _inMaterialStorage;
+
     public IReadOnlyList<UpgradeSlot> UpgradesSlots { get; } = [.. upgrades];
 
     public Item Item { get; } = item;
@@ -86,6 +92,18 @@ public sealed class ItemTooltipViewModel(
     }
 
     public int Quantity { get; } = quantity;
+
+    public int InBank
+    {
+        get => _inBank;
+        set => SetField(ref _inBank, value);
+    }
+
+    public int InMaterialStorage
+    {
+        get => _inMaterialStorage;
+        set => SetField(ref _inMaterialStorage, value);
+    }
 
     public IStringLocalizer<ItemTooltipView> Localizer { get; } = localizer;
 
@@ -520,6 +538,14 @@ public sealed class ItemTooltipViewModel(
                 break;
             default:
                 break;
+        }
+
+        if (account.HasPermission(Permission.Inventories))
+        {
+            IReadOnlyList<ItemSlot?> bank = await account.GetBank(CancellationToken.None).ConfigureAwait(false);
+            IReadOnlyList<MaterialSlot> materials = await account.GetMaterialStorage(CancellationToken.None).ConfigureAwait(false);
+            InBank = bank.Sum(slot => slot?.Id == Item.Id ? slot.Count : 0);
+            InMaterialStorage = materials.Sum(slot => slot.ItemId == Item.Id ? slot.Count : 0);
         }
     }
 

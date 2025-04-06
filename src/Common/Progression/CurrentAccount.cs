@@ -1,5 +1,7 @@
 ﻿using GuildWars2.Authorization;
 using GuildWars2.Hero.Achievements;
+using GuildWars2.Hero.Banking;
+using GuildWars2.Hero.Inventories;
 
 using SL.Common.Exploration;
 
@@ -11,6 +13,8 @@ public sealed class CurrentAccount : IDisposable
     private readonly IEventAggregator _eventAggregator;
 
     private readonly AchievementsProgress _achievementsProgress;
+    private readonly AccountBank _bank;
+    private readonly AccountMaterialStorage _materialStorage;
     private readonly UnlockedDyes _unlockedDyes;
     private readonly UnlockedFinishers _unlockedFinishers;
     private readonly UnlockedGliderSkins _unlockedGliderSkins;
@@ -27,6 +31,8 @@ public sealed class CurrentAccount : IDisposable
         ITokenProvider tokenProvider,
         IEventAggregator eventAggregator,
         AchievementsProgress achievementsProgress,
+        AccountBank bank,
+        AccountMaterialStorage materialStorage,
         UnlockedDyes unlockedDyes,
         UnlockedFinishers unlockedFinishers,
         UnlockedGliderSkins unlockedGliderSkins,
@@ -44,6 +50,8 @@ public sealed class CurrentAccount : IDisposable
         _eventAggregator = eventAggregator;
 
         _achievementsProgress = achievementsProgress;
+        _bank = bank;
+        _materialStorage = materialStorage;
         _unlockedDyes = unlockedDyes;
         _unlockedFinishers = unlockedFinishers;
         _unlockedGliderSkins = unlockedGliderSkins;
@@ -132,6 +140,17 @@ public sealed class CurrentAccount : IDisposable
         return await _unlockedWardrobe.GetUnlockedWardrobe(cancellationToken);
     }
 
+    public async ValueTask<IReadOnlyList<ItemSlot?>> GetBank(CancellationToken cancellationToken)
+    {
+        return await _bank.GetBank(cancellationToken);
+    }
+
+
+    public async ValueTask<IReadOnlyList<MaterialSlot>> GetMaterialStorage(CancellationToken cancellationToken)
+    {
+        return await _materialStorage.GetMaterialStorage(cancellationToken);
+    }
+
     private void OnAuthorizationInvalidated(AuthorizationInvalidated _)
     {
         ClearCache();
@@ -145,6 +164,8 @@ public sealed class CurrentAccount : IDisposable
     private void ClearCache()
     {
         _achievementsProgress.ClearCache();
+        _bank.ClearCache();
+        _materialStorage.ClearCache();
         _unlockedDyes.ClearCache();
         _unlockedFinishers.ClearCache();
         _unlockedGliderSkins.ClearCache();
@@ -163,6 +184,8 @@ public sealed class CurrentAccount : IDisposable
         _eventAggregator.Unsubscribe<AuthorizationInvalidated>(OnAuthorizationInvalidated);
         _eventAggregator.Unsubscribe<MapChanged>(OnMapChanged);
         _achievementsProgress.Dispose();
+        _bank.Dispose();
+        _materialStorage.Dispose();
         _unlockedDyes.Dispose();
         _unlockedFinishers.Dispose();
         _unlockedGliderSkins.Dispose();

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text;
 
 using Blish_HUD;
@@ -1100,10 +1099,25 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         label.Parent = container;
     }
 
-    [SuppressMessage("Performance", "CA1822:Mark members as static")]
     private void PrintInBank()
     {
-        // TODO: bank count
+        if (ViewModel is { InBank: 0, InMaterialStorage: 0 })
+        {
+            return;
+        }
+
+        StringBuilder text = new("\r\n");
+        if (ViewModel.InBank > 0)
+        {
+            text.AppendLine(ViewModel.Localizer["Count in bank", ViewModel.InBank]);
+        }
+
+        if (ViewModel.InMaterialStorage > 0)
+        {
+            text.AppendLine(ViewModel.Localizer["Count in material storage", ViewModel.InMaterialStorage]);
+        }
+
+        PrintPlainText(text.ToString(), Gray);
     }
 
     private void PrintItemBinding(Item item)
