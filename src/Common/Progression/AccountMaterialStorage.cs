@@ -33,6 +33,22 @@ public sealed class AccountMaterialStorage(
         }
     }
 
+    public async Task Validate(bool force, CancellationToken cancellationToken)
+    {
+        if (tokenProvider.Grants.Contains(Permission.Inventories))
+        {
+            if (force || !_materialStorage.TryGetValue(out _))
+            {
+                await _materialStorage.CreateAsync(CacheMaterialStorage, cancellationToken)
+                    .ConfigureAwait(false);
+            }
+        }
+        else if (force)
+        {
+            ClearCache();
+        }
+    }
+
     private async ValueTask CacheMaterialStorage(ICacheEntry entry, CancellationToken cancellationToken)
     {
         string? token = await tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);

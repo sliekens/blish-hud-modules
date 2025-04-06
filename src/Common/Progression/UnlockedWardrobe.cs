@@ -45,6 +45,22 @@ public sealed class UnlockedWardrobe(
         entry.Value = values.ToImmutableArray();
     }
 
+    public async Task Validate(bool force, CancellationToken cancellationToken)
+    {
+        if (tokenProvider.Grants.Contains(Permission.Unlocks))
+        {
+            if (force || !_unlockedWardrobe.TryGetValue(out _))
+            {
+                await _unlockedWardrobe.CreateAsync(CacheUnlockedWardrobe, cancellationToken)
+                    .ConfigureAwait(false);
+            }
+        }
+        else if (force)
+        {
+            ClearCache();
+        }
+    }
+
     public void ClearCache()
     {
         _unlockedWardrobe.Clear();

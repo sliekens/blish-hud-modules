@@ -45,6 +45,22 @@ public sealed class UnlockedJadeBotSkins(
         entry.Value = values.ToImmutableArray();
     }
 
+    public async Task Validate(bool force, CancellationToken cancellationToken)
+    {
+        if (tokenProvider.Grants.Contains(Permission.Unlocks) && tokenProvider.Grants.Contains(Permission.Inventories))
+        {
+            if (force || !_unlockedJadeBotSkins.TryGetValue(out _))
+            {
+                await _unlockedJadeBotSkins.CreateAsync(CacheUnlockedJadeBotSkins, cancellationToken)
+                    .ConfigureAwait(false);
+            }
+        }
+        else if (force)
+        {
+            ClearCache();
+        }
+    }
+
     public void ClearCache()
     {
         _unlockedJadeBotSkins.Clear();

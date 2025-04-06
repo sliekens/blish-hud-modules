@@ -34,6 +34,22 @@ public sealed class AccountBank(
         }
     }
 
+    public async Task Validate(bool force, CancellationToken cancellationToken)
+    {
+        if (tokenProvider.Grants.Contains(Permission.Inventories))
+        {
+            if (force || !_bank.TryGetValue(out _))
+            {
+                await _bank.CreateAsync(CacheBank, cancellationToken)
+                    .ConfigureAwait(false);
+            }
+        }
+        else if (force)
+        {
+            ClearCache();
+        }
+    }
+
     private async ValueTask CacheBank(ICacheEntry entry, CancellationToken cancellationToken)
     {
         string? token = await tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);

@@ -45,6 +45,22 @@ public sealed class UnlockedFinishers(
         entry.Value = values.Select(finisher => finisher.Id).ToImmutableArray();
     }
 
+    public async Task Validate(bool force, CancellationToken cancellationToken)
+    {
+        if (tokenProvider.Grants.Contains(Permission.Unlocks))
+        {
+            if (force || !_unlockedFinishers.TryGetValue(out _))
+            {
+                await _unlockedFinishers.CreateAsync(CacheUnlockedFinishers, cancellationToken)
+                    .ConfigureAwait(false);
+            }
+        }
+        else if (force)
+        {
+            ClearCache();
+        }
+    }
+
     public void ClearCache()
     {
         _unlockedFinishers.Clear();

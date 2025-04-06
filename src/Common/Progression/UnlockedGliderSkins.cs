@@ -34,6 +34,22 @@ public sealed class UnlockedGliderSkins(
         }
     }
 
+    public async Task Validate(bool force, CancellationToken cancellationToken)
+    {
+        if (tokenProvider.Grants.Contains(Permission.Unlocks))
+        {
+            if (force || !_unlockedGliderSkins.TryGetValue(out _))
+            {
+                await _unlockedGliderSkins.CreateAsync(CacheUnlockedGliderSkins, cancellationToken)
+                    .ConfigureAwait(false);
+            }
+        }
+        else if (force)
+        {
+            ClearCache();
+        }
+    }
+
     private async ValueTask CacheUnlockedGliderSkins(ICacheEntry entry, CancellationToken cancellationToken)
     {
         string? token = await tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);

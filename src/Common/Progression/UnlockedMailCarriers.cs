@@ -45,6 +45,22 @@ public sealed class UnlockedMailCarriers(
         entry.Value = values.ToImmutableArray();
     }
 
+    public async Task Validate(bool force, CancellationToken cancellationToken)
+    {
+        if (tokenProvider.Grants.Contains(Permission.Unlocks))
+        {
+            if (force || !_unlockedMailCarriers.TryGetValue(out _))
+            {
+                await _unlockedMailCarriers.CreateAsync(CacheUnlockedMailCarriers, cancellationToken)
+                    .ConfigureAwait(false);
+            }
+        }
+        else if (force)
+        {
+            ClearCache();
+        }
+    }
+
     public void ClearCache()
     {
         _unlockedMailCarriers.Clear();

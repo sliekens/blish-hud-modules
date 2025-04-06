@@ -45,6 +45,22 @@ public sealed class UnlockedMiniatures(
         entry.Value = values.ToImmutableArray();
     }
 
+    public async Task Validate(bool force, CancellationToken cancellationToken)
+    {
+        if (tokenProvider.Grants.Contains(Permission.Unlocks))
+        {
+            if (force || !_unlockedMiniatures.TryGetValue(out _))
+            {
+                await _unlockedMiniatures.CreateAsync(CacheUnlockedMiniatures, cancellationToken)
+                    .ConfigureAwait(false);
+            }
+        }
+        else if (force)
+        {
+            ClearCache();
+        }
+    }
+
     public void ClearCache()
     {
         _unlockedMiniatures.Clear();

@@ -181,6 +181,7 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
         ILogger<ChatLinksModule> logger = _serviceProvider.GetRequiredService<ILogger<ChatLinksModule>>();
         ILocale locale = _serviceProvider.GetRequiredService<ILocale>();
         DatabaseSeeder seeder = _serviceProvider.GetRequiredService<DatabaseSeeder>();
+        CurrentAccount account = _serviceProvider.GetRequiredService<CurrentAccount>();
 
         try
         {
@@ -202,6 +203,16 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
         catch (Exception reason)
         {
             logger.LogWarning(reason, "Database sync failed, starting with potentially stale data.");
+        }
+
+
+        try
+        {
+            await account.Validate(false, CancellationToken.None).ConfigureAwait(false);
+        }
+        catch (Exception reason)
+        {
+            logger.LogWarning(reason, "One or more account details could not be validated.");
         }
 
         _clock.HourStarted += OnHourStarted;

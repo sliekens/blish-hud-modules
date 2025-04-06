@@ -34,6 +34,22 @@ public sealed class UnlockedMistChampionSkins(
         }
     }
 
+    public async Task Validate(bool force, CancellationToken cancellationToken)
+    {
+        if (tokenProvider.Grants.Contains(Permission.Unlocks))
+        {
+            if (force || !_unlockedMistChampionSkins.TryGetValue(out _))
+            {
+                await _unlockedMistChampionSkins.CreateAsync(CacheUnlockedMistChampionSkins, cancellationToken)
+                    .ConfigureAwait(false);
+            }
+        }
+        else if (force)
+        {
+            ClearCache();
+        }
+    }
+
     private async ValueTask CacheUnlockedMistChampionSkins(ICacheEntry entry, CancellationToken cancellationToken)
     {
         string? token = await tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);

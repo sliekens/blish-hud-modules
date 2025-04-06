@@ -3,12 +3,15 @@ using GuildWars2.Hero.Achievements;
 using GuildWars2.Hero.Banking;
 using GuildWars2.Hero.Inventories;
 
+using Microsoft.Extensions.Logging;
+
 using SL.Common.Exploration;
 
 namespace SL.Common.Progression;
 
 public sealed class CurrentAccount : IDisposable
 {
+    private readonly ILogger<CurrentAccount> _logger;
     private readonly ITokenProvider _tokenProvider;
     private readonly IEventAggregator _eventAggregator;
 
@@ -28,6 +31,7 @@ public sealed class CurrentAccount : IDisposable
     private readonly UnlockedWardrobe _unlockedWardrobe;
 
     public CurrentAccount(
+        ILogger<CurrentAccount> logger,
         ITokenProvider tokenProvider,
         IEventAggregator eventAggregator,
         AchievementsProgress achievementsProgress,
@@ -46,6 +50,7 @@ public sealed class CurrentAccount : IDisposable
         UnlockedWardrobe unlockedWardrobe)
     {
         ThrowHelper.ThrowIfNull(eventAggregator);
+        _logger = logger;
         _tokenProvider = tokenProvider;
         _eventAggregator = eventAggregator;
 
@@ -68,6 +73,16 @@ public sealed class CurrentAccount : IDisposable
         eventAggregator.Subscribe<MapChanged>(OnMapChanged);
     }
 
+    private async Task OnAuthorizationInvalidated(AuthorizationInvalidated _)
+    {
+        await Validate(true, CancellationToken.None).ConfigureAwait(false);
+    }
+
+    private async Task OnMapChanged(MapChanged _)
+    {
+        await Validate(true, CancellationToken.None).ConfigureAwait(false);
+    }
+
     public bool IsAuthorized => _tokenProvider.IsAuthorized;
 
     public bool HasPermission(Permission permission)
@@ -82,101 +97,97 @@ public sealed class CurrentAccount : IDisposable
 
     public async ValueTask<IReadOnlyList<AccountAchievement>> GetAchievementProgress(CancellationToken cancellationToken)
     {
-        return await _achievementsProgress.GetAchievementProgress(cancellationToken);
+        return await _achievementsProgress.GetAchievementProgress(cancellationToken).ConfigureAwait(false);
     }
 
     public async ValueTask<IReadOnlyList<int>> GetUnlockedDyes(CancellationToken cancellationToken)
     {
-        return await _unlockedDyes.GetUnlockedDyes(cancellationToken);
+        return await _unlockedDyes.GetUnlockedDyes(cancellationToken).ConfigureAwait(false);
     }
 
     public async ValueTask<IReadOnlyList<int>> GetUnlockedFinishers(CancellationToken cancellationToken)
     {
-        return await _unlockedFinishers.GetUnlockedFinishers(cancellationToken);
+        return await _unlockedFinishers.GetUnlockedFinishers(cancellationToken).ConfigureAwait(false);
     }
 
     public async ValueTask<IReadOnlyList<int>> GetUnlockedGliderSkins(CancellationToken cancellationToken)
     {
-        return await _unlockedGliderSkins.GetUnlockedGliderSkins(cancellationToken);
+        return await _unlockedGliderSkins.GetUnlockedGliderSkins(cancellationToken).ConfigureAwait(false);
     }
 
     public async ValueTask<IReadOnlyList<int>> GetUnlockedJadeBotSkins(CancellationToken cancellationToken)
     {
-        return await _unlockedJadeBotSkins.GetUnlockedJadeBotSkins(cancellationToken);
+        return await _unlockedJadeBotSkins.GetUnlockedJadeBotSkins(cancellationToken).ConfigureAwait(false);
     }
 
     public async ValueTask<IReadOnlyList<int>> GetUnlockedMailCarriers(CancellationToken cancellationToken)
     {
-        return await _unlockedMailCarriers.GetUnlockedMailCarriers(cancellationToken);
+        return await _unlockedMailCarriers.GetUnlockedMailCarriers(cancellationToken).ConfigureAwait(false);
     }
 
     public async ValueTask<IReadOnlyList<int>> GetUnlockedMiniatures(CancellationToken cancellationToken)
     {
-        return await _unlockedMiniatures.GetUnlockedMiniatures(cancellationToken);
+        return await _unlockedMiniatures.GetUnlockedMiniatures(cancellationToken).ConfigureAwait(false);
     }
 
     public async ValueTask<IReadOnlyList<int>> GetUnlockedMistChampionSkins(CancellationToken cancellationToken)
     {
-        return await _unlockedMistChampionSkins.GetUnlockedMistChampionSkins(cancellationToken);
+        return await _unlockedMistChampionSkins.GetUnlockedMistChampionSkins(cancellationToken).ConfigureAwait(false);
     }
 
     public async ValueTask<IReadOnlyList<int>> GetUnlockedNovelties(CancellationToken cancellationToken)
     {
-        return await _unlockedNovelties.GetUnlockedNovelties(cancellationToken);
+        return await _unlockedNovelties.GetUnlockedNovelties(cancellationToken).ConfigureAwait(false);
     }
 
     public async ValueTask<IReadOnlyList<int>> GetUnlockedOutfits(CancellationToken cancellationToken)
     {
-        return await _unlockedOutfits.GetUnlockedOutfits(cancellationToken);
+        return await _unlockedOutfits.GetUnlockedOutfits(cancellationToken).ConfigureAwait(false);
     }
 
     public async ValueTask<IReadOnlyList<int>> GetUnlockedRecipes(CancellationToken cancellationToken)
     {
-        return await _unlockedRecipes.GetUnlockedRecipes(cancellationToken);
+        return await _unlockedRecipes.GetUnlockedRecipes(cancellationToken).ConfigureAwait(false);
     }
 
     public async ValueTask<IReadOnlyList<int>> GetUnlockedWardrobe(CancellationToken cancellationToken)
     {
-        return await _unlockedWardrobe.GetUnlockedWardrobe(cancellationToken);
+        return await _unlockedWardrobe.GetUnlockedWardrobe(cancellationToken).ConfigureAwait(false);
     }
 
     public async ValueTask<IReadOnlyList<ItemSlot?>> GetBank(CancellationToken cancellationToken)
     {
-        return await _bank.GetBank(cancellationToken);
+        return await _bank.GetBank(cancellationToken).ConfigureAwait(false);
     }
 
 
     public async ValueTask<IReadOnlyList<MaterialSlot>> GetMaterialStorage(CancellationToken cancellationToken)
     {
-        return await _materialStorage.GetMaterialStorage(cancellationToken);
+        return await _materialStorage.GetMaterialStorage(cancellationToken).ConfigureAwait(false);
     }
 
-    private void OnAuthorizationInvalidated(AuthorizationInvalidated _)
+    public async Task Validate(bool force, CancellationToken cancellationToken)
     {
-        ClearCache();
-    }
+        List<Task> validateTasks =
+        [
+            _bank.Validate(force, cancellationToken),
+            _achievementsProgress.Validate(force, cancellationToken),
+            _bank.Validate(force, cancellationToken),
+            _materialStorage.Validate(force, cancellationToken),
+            _unlockedDyes.Validate(force, cancellationToken),
+            _unlockedFinishers.Validate(force, cancellationToken),
+            _unlockedGliderSkins.Validate(force, cancellationToken),
+            _unlockedJadeBotSkins.Validate(force, cancellationToken),
+            _unlockedMailCarriers.Validate(force, cancellationToken),
+            _unlockedMiniatures.Validate(force, cancellationToken),
+            _unlockedMistChampionSkins.Validate(force, cancellationToken),
+            _unlockedNovelties.Validate(force, cancellationToken),
+            _unlockedOutfits.Validate(force, cancellationToken),
+            _unlockedRecipes.Validate(force, cancellationToken),
+            _unlockedWardrobe.Validate(force, cancellationToken)
+        ];
 
-    private void OnMapChanged(MapChanged _)
-    {
-        ClearCache();
-    }
-
-    private void ClearCache()
-    {
-        _achievementsProgress.ClearCache();
-        _bank.ClearCache();
-        _materialStorage.ClearCache();
-        _unlockedDyes.ClearCache();
-        _unlockedFinishers.ClearCache();
-        _unlockedGliderSkins.ClearCache();
-        _unlockedJadeBotSkins.ClearCache();
-        _unlockedMailCarriers.ClearCache();
-        _unlockedMiniatures.ClearCache();
-        _unlockedMistChampionSkins.ClearCache();
-        _unlockedNovelties.ClearCache();
-        _unlockedOutfits.ClearCache();
-        _unlockedRecipes.ClearCache();
-        _unlockedWardrobe.ClearCache();
+        await Task.WhenAll(validateTasks).ConfigureAwait(false);
     }
 
     public void Dispose()

@@ -35,6 +35,22 @@ public sealed class AchievementsProgress(
         }
     }
 
+    public async Task Validate(bool force, CancellationToken cancellationToken)
+    {
+        if (tokenProvider.Grants.Contains(Permission.Progression))
+        {
+            if (force || !_achievementsProgress.TryGetValue(out _))
+            {
+                await _achievementsProgress.CreateAsync(CacheAchievementProgress, cancellationToken)
+                    .ConfigureAwait(false);
+            }
+        }
+        else if (force)
+        {
+            ClearCache();
+        }
+    }
+
     private async ValueTask CacheAchievementProgress(ICacheEntry entry, CancellationToken cancellationToken)
     {
         string? token = await tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
