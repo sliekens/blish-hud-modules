@@ -9,6 +9,7 @@ public sealed class CacheMasseur<TItem>(IMemoryCache cache, string cacheKey) : I
     public async ValueTask<TItem> GetOrCreate(Func<ICacheEntry, CancellationToken, ValueTask> factory,
         CancellationToken cancellationToken)
     {
+        ThrowHelper.ThrowIfNull(factory);
         if (cache.TryGetValue(cacheKey, out TItem found))
         {
             return found;
@@ -17,24 +18,22 @@ public sealed class CacheMasseur<TItem>(IMemoryCache cache, string cacheKey) : I
         await _writeSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            if (cache.TryGetValue(cacheKey, out found))
-            {
-                return found;
-            }
-
-            return await CreateWithWriteLockAsync(factory, cancellationToken).ConfigureAwait(false);
+            return cache.TryGetValue(cacheKey, out found)
+                ? found
+                : await CreateWithWriteLockAsync(factory, cancellationToken).ConfigureAwait(false);
         }
         finally
         {
-            _writeSemaphore.Release();
+            _ = _writeSemaphore.Release();
         }
     }
 
     public async Task<TItem> CreateAsync(Func<ICacheEntry, CancellationToken, ValueTask> factory,
         CancellationToken cancellationToken)
     {
+        ThrowHelper.ThrowIfNull(factory);
         await _writeSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
-        return await CreateWithWriteLockAsync(factory, cancellationToken);
+        return await CreateWithWriteLockAsync(factory, cancellationToken).ConfigureAwait(false);
     }
 
     private async Task<TItem> CreateWithWriteLockAsync(Func<ICacheEntry, CancellationToken, ValueTask> factory, CancellationToken cancellationToken)
@@ -59,7 +58,7 @@ public sealed class CacheMasseur<TItem>(IMemoryCache cache, string cacheKey) : I
         }
         finally
         {
-            _writeSemaphore.Release();
+            _ = _writeSemaphore.Release();
         }
     }
 }

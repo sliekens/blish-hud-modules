@@ -335,7 +335,7 @@ public sealed class ChatLinkEditorViewModel : ViewModel, IDisposable
 
     public AsyncTexture2D? GetIcon()
     {
-        return _icons.GetIcon(Item.IconHref);
+        return _icons.GetIcon(Item.IconUrl());
     }
 
     private IEnumerable<UpgradeEditorViewModel> CreateUpgradeEditorViewModels()

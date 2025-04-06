@@ -98,7 +98,7 @@ public sealed class UpgradeSlotViewModel : ViewModel, IDisposable
 
     public AsyncTexture2D? GetIcon(UpgradeComponent item)
     {
-        return _icons.GetIcon(item.IconHref);
+        return _icons.GetIcon(item.IconUrl());
     }
 
     public ItemTooltipViewModel CreateTooltipViewModel(UpgradeComponent item)

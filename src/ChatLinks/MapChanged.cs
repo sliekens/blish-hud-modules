@@ -1,2 +1,3 @@
 ﻿namespace SL.ChatLinks;
-public record MapChanged(int mapId);
+
+public record MapChanged(int MapId);

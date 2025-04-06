@@ -136,18 +136,20 @@ public sealed class ItemTooltipViewModel(
 
     public AsyncTexture2D? GetIcon(Item item)
     {
-        return icons.GetIcon(item.IconHref);
+        return icons.GetIcon(item.IconUrl());
     }
 
-    public AsyncTexture2D? GetIcon(string? iconUrl)
+    public AsyncTexture2D? GetIcon(Uri? iconUrl)
     {
         return icons.GetIcon(iconUrl);
     }
 
+#pragma warning disable CA1822 // Mark members as static
     public AsyncTexture2D? GetIcon(int assetId)
     {
         return AsyncTexture2D.FromAssetId(assetId).Duplicate();
     }
+#pragma warning restore CA1822
 
     public async Task Load(IProgress<string> progress)
     {

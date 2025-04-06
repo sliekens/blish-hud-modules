@@ -40,8 +40,6 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
 
     private AchievementCategory? _category;
 
-    private AccountAchievement? _progress;
-
     private IReadOnlyList<AccountAchievement>? _progression;
 
     private AchievementGroup? _group;
@@ -91,17 +89,8 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
 
     public AsyncTexture2D? GetIcon()
     {
-        if (!string.IsNullOrEmpty(Achievement.IconHref))
-        {
-            return _icons.GetIcon(Achievement.IconHref);
-        }
-
-        if (!string.IsNullOrEmpty(_category?.IconHref))
-        {
-            return _icons.GetIcon(_category!.IconHref);
-        }
-
-        return null;
+        return _icons.GetIcon(Achievement.IconUrl())
+            ?? _icons.GetIcon(_category?.IconUrl());
     }
 
     public string CompletedLabel => _localizer["Completed"];

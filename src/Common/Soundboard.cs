@@ -10,6 +10,6 @@ public static class Soundboard
 
     public static void Click()
     {
-        ClickSound.Play(GameService.GameIntegration.Audio.Volume, 0, 0);
+        _ = ClickSound.Play(GameService.GameIntegration.Audio.Volume, 0, 0);
     }
 }

@@ -15,11 +15,13 @@ namespace SL.ChatLinks.UI.Tabs.Items;
 
 public abstract class ContentArea(ContentArea? previous = null)
 {
+    protected ContentArea? Previous { get; } = previous;
+
     public abstract string GetTitle();
 
     public virtual AsyncTexture2D? GetIcon()
     {
-        return previous is not null
+        return Previous is not null
             ? AsyncTexture2D.FromAssetId(784268)
             : null;
     }
@@ -28,7 +30,7 @@ public abstract class ContentArea(ContentArea? previous = null)
 
     public virtual ContentArea Back()
     {
-        return previous ?? this;
+        return Previous ?? this;
     }
 
     public virtual ItemContentArea SelectItem()
@@ -61,12 +63,9 @@ public class RecentlyAddedContentArea : ContentArea
 
     public override ContentArea Search(string text)
     {
-        if (string.IsNullOrWhiteSpace(text))
-        {
-            return this;
-        }
-
-        return new SearchEverywhereContentArea(text, this);
+        return string.IsNullOrWhiteSpace(text)
+            ? this
+            : new SearchEverywhereContentArea(text, this);
     }
 }
 
@@ -81,12 +80,9 @@ public class SearchEverywhereContentArea(string searchText, ContentArea previous
 
     public override ContentArea Search(string text)
     {
-        if (string.IsNullOrWhiteSpace(text))
-        {
-            return new RecentlyAddedContentArea();
-        }
-
-        return new SearchEverywhereContentArea(text, _previous);
+        return string.IsNullOrWhiteSpace(text)
+            ? new RecentlyAddedContentArea()
+            : new SearchEverywhereContentArea(text, _previous);
     }
 
     public override ContentArea Back()
@@ -104,12 +100,9 @@ public class CategoryContentArea(string label) : ContentArea(new RecentlyAddedCo
 
     public override ContentArea Search(string text)
     {
-        if (string.IsNullOrWhiteSpace(text))
-        {
-            return this;
-        }
-
-        return new SearchCategoryContentArea(label, text, this);
+        return string.IsNullOrWhiteSpace(text)
+            ? this
+            : new SearchCategoryContentArea(label, text, this);
     }
 }
 
@@ -122,17 +115,10 @@ public class SearchCategoryContentArea(string label, string searchText, ContentA
 
     public override ContentArea Search(string text)
     {
-        if (string.IsNullOrWhiteSpace(text))
-        {
-            return previous;
-        }
-
-        return new SearchCategoryContentArea(label, text, previous);
-    }
-
-    public override ContentArea Back()
-    {
-        return previous;
+        ThrowHelper.ThrowIfNull(Previous);
+        return string.IsNullOrWhiteSpace(text)
+            ? Previous
+            : new SearchCategoryContentArea(label, text, Previous);
     }
 }
 
@@ -453,7 +439,7 @@ public sealed class ItemsTabViewModel(
 
     public Task Load()
     {
-        MenuItems = new ObservableCollection<ItemCategoryMenuItem>(GetCategories());
+        MenuItems = [.. GetCategories()];
         eventAggregator.Subscribe<LocaleChanged>(OnLocaleChanged);
         eventAggregator.Subscribe<DatabaseDownloaded>(OnDatabaseDownloaded);
         eventAggregator.Subscribe<DatabaseSeeded>(OnDatabaseSeeded);
@@ -463,7 +449,7 @@ public sealed class ItemsTabViewModel(
     private async Task OnLocaleChanged(LocaleChanged args)
     {
         OnPropertyChanged(nameof(SearchPlaceholder));
-        MenuItems = new ObservableCollection<ItemCategoryMenuItem>(GetCategories());
+        MenuItems = [.. GetCategories()];
 
         await Task.Run(OnSearch).ConfigureAwait(false);
     }

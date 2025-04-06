@@ -30,7 +30,7 @@ public sealed class ItemsTabView(
 
     private Container? _selection;
 
-    private event EventHandler<EventArgs>? _menuItemExpanded;
+    private event EventHandler<EventArgs>? MenuItemExpanded;
 
     protected override async Task<bool> Load(IProgress<string> progress)
     {
@@ -118,8 +118,8 @@ public sealed class ItemsTabView(
             HeightSizingMode = SizingMode.Fill
         };
 
-        Binder.Bind(viewModel, vm => vm.ContentTitle, _contentPanel, ctl => ctl.Title);
-        Binder.Bind(viewModel, vm => vm.ContentIcon, _contentPanel, ctl => ctl.Icon);
+        _ = Binder.Bind(viewModel, vm => vm.ContentTitle, _contentPanel, ctl => ctl.Title);
+        _ = Binder.Bind(viewModel, vm => vm.ContentIcon, _contentPanel, ctl => ctl.Icon);
 
         _contentPanel.Click += (sender, args) =>
         {
@@ -177,9 +177,12 @@ public sealed class ItemsTabView(
 
     private void ReloadMenuItems()
     {
-        if (_sidebar is null) return;
+        if (_sidebar is null)
+        {
+            return;
+        }
 
-        _menuItemExpanded = null;
+        MenuItemExpanded = null;
         while (_sidebar.Children.Count > 0)
         {
             _sidebar.Children[0].Dispose();
@@ -225,12 +228,14 @@ public sealed class ItemsTabView(
                     switch (args.PropertyName)
                     {
                         case "Expand":
-                            _menuItemExpanded?.Invoke(sender, EventArgs.Empty);
+                            MenuItemExpanded?.Invoke(sender, EventArgs.Empty);
+                            break;
+                        default:
                             break;
                     }
                 };
 
-                _menuItemExpanded += (sender, args) =>
+                MenuItemExpanded += (sender, args) =>
                 {
                     if (sender != menuItem)
                     {
@@ -258,6 +263,8 @@ public sealed class ItemsTabView(
                             menuItem.Collapse();
                         }
 
+                        break;
+                    default:
                         break;
                 }
             };
@@ -304,7 +311,7 @@ public sealed class ItemsTabView(
 
     public void Dispose()
     {
-        _menuItemExpanded = null;
+        MenuItemExpanded = null;
         _sidePanel?.Dispose();
         _sidebar?.Dispose();
         _contentPanel?.Dispose();

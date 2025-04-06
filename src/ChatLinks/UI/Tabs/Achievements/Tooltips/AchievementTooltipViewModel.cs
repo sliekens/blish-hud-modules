@@ -1,18 +1,11 @@
 ﻿using GuildWars2.Hero.Achievements;
 
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
-
-using SL.ChatLinks.Storage;
 
 namespace SL.ChatLinks.UI.Tabs.Achievements.Tooltips;
 
 public sealed class AchievementTooltipViewModel(
-    ILogger<AchievementTooltipViewModel> logger,
     IStringLocalizer<AchievementTooltipView> localizer,
-    IDbContextFactory contextFactory,
-    ILocale locale,
-    AccountUnlocks hero,
     Achievement achievement
 ) : ViewModel
 {

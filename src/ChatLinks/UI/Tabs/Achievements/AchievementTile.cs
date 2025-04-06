@@ -42,18 +42,9 @@ public sealed class AchievementTile : Container
         };
 
         int chatLinkWidth = 170;
-        if (viewModel.Locked)
-        {
-            _detailsButton.Icon = AsyncTexture2D.FromAssetId(240704);
-        }
-        else if (viewModel.GetIcon() is { } icon)
-        {
-            _detailsButton.Icon = icon;
-        }
-        else
-        {
-            _detailsButton.Icon = AsyncTexture2D.FromAssetId(155865);
-        }
+        _detailsButton.Icon = viewModel.Locked
+            ? AsyncTexture2D.FromAssetId(240704)
+            : viewModel.GetIcon() ?? AsyncTexture2D.FromAssetId(155865);
 
         if (viewModel.Progression is null)
         {

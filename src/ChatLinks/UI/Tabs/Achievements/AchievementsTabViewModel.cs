@@ -325,10 +325,10 @@ public sealed class AchievementsTabViewModel(
         ];
     }
 
-    public AsyncTexture2D GetIcon(string iconUrl)
+    public AsyncTexture2D GetIcon(Uri? iconUrl)
     {
         return icons.GetIcon(iconUrl)
-               ?? AsyncTexture2D.FromAssetId(155865).Duplicate();
+            ?? AsyncTexture2D.FromAssetId(155865).Duplicate();
     }
 
     public void Dispose()

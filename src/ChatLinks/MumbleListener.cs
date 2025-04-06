@@ -5,7 +5,7 @@ using GuildWars2.Mumble;
 
 namespace SL.ChatLinks;
 
-internal sealed class MumbleListener(GameLink link, IEventAggregator eventAggregator) : IObserver<GameTick>, IDisposable
+public sealed class MumbleListener(GameLink link, IEventAggregator eventAggregator) : IObserver<GameTick>, IDisposable
 {
     private IDisposable? _subscription;
 

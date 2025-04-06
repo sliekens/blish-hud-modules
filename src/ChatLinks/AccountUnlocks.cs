@@ -89,15 +89,10 @@ public sealed class AccountUnlocks : IDisposable
     {
         try
         {
-            if (_tokenProvider.Grants.Contains(Permission.Progression))
-            {
-                return await _achievementsProgress.GetOrCreate(CacheAchievementProgress, cancellationToken)
-                    .ConfigureAwait(false);
-            }
-            else
-            {
-                return [];
-            }
+            return _tokenProvider.Grants.Contains(Permission.Progression)
+                ? await _achievementsProgress.GetOrCreate(CacheAchievementProgress, cancellationToken)
+                    .ConfigureAwait(false)
+                : [];
         }
         catch (Exception reason)
         {
@@ -121,14 +116,10 @@ public sealed class AccountUnlocks : IDisposable
     {
         try
         {
-            if (_tokenProvider.Grants.Contains(Permission.Unlocks))
-            {
-                return await _unlockedDyes.GetOrCreate(CacheUnlockedDyes, cancellationToken).ConfigureAwait(false);
-            }
-            else
-            {
-                return [];
-            }
+            return _tokenProvider.Grants.Contains(Permission.Unlocks)
+                ? await _unlockedDyes.GetOrCreate(CacheUnlockedDyes, cancellationToken)
+                    .ConfigureAwait(false)
+                : [];
         }
         catch (Exception reason)
         {
@@ -152,14 +143,11 @@ public sealed class AccountUnlocks : IDisposable
     {
         try
         {
-            if (_tokenProvider.Grants.Contains(Permission.Unlocks))
-            {
-                return await _unlockedFinishers.GetOrCreate(CacheUnlockedFinishers, cancellationToken).ConfigureAwait(false);
-            }
-            else
-            {
-                return [];
-            }
+            return _tokenProvider.Grants.Contains(Permission.Unlocks)
+                ? await _unlockedFinishers
+                    .GetOrCreate(CacheUnlockedFinishers, cancellationToken)
+                    .ConfigureAwait(false)
+                : [];
         }
         catch (Exception reason)
         {
@@ -184,14 +172,10 @@ public sealed class AccountUnlocks : IDisposable
     {
         try
         {
-            if (_tokenProvider.Grants.Contains(Permission.Unlocks))
-            {
-                return await _unlockedGliderSkins.GetOrCreate(CacheUnlockedGliderSkins, cancellationToken).ConfigureAwait(false);
-            }
-            else
-            {
-                return [];
-            }
+            return _tokenProvider.Grants.Contains(Permission.Unlocks)
+                ? await _unlockedGliderSkins.GetOrCreate(CacheUnlockedGliderSkins, cancellationToken)
+                    .ConfigureAwait(false)
+                : [];
         }
         catch (Exception reason)
         {
@@ -215,15 +199,11 @@ public sealed class AccountUnlocks : IDisposable
     {
         try
         {
-            if (_tokenProvider.Grants.Contains(Permission.Unlocks)
-                && _tokenProvider.Grants.Contains(Permission.Inventories))
-            {
-                return await _unlockedJadeBotSkins.GetOrCreate(CacheUnlockedJadeBotSkins, cancellationToken).ConfigureAwait(false);
-            }
-            else
-            {
-                return [];
-            }
+            return _tokenProvider.Grants.Contains(Permission.Unlocks)
+                   && _tokenProvider.Grants.Contains(Permission.Inventories)
+                ? await _unlockedJadeBotSkins.GetOrCreate(CacheUnlockedJadeBotSkins, cancellationToken)
+                    .ConfigureAwait(false)
+                : [];
         }
         catch (Exception reason)
         {
@@ -247,14 +227,10 @@ public sealed class AccountUnlocks : IDisposable
     {
         try
         {
-            if (_tokenProvider.Grants.Contains(Permission.Unlocks))
-            {
-                return await _unlockedMailCarriers.GetOrCreate(CacheUnlockedMailCarriers, cancellationToken).ConfigureAwait(false);
-            }
-            else
-            {
-                return [];
-            }
+            return _tokenProvider.Grants.Contains(Permission.Unlocks)
+                ? await _unlockedMailCarriers.GetOrCreate(CacheUnlockedMailCarriers, cancellationToken)
+                    .ConfigureAwait(false)
+                : [];
         }
         catch (Exception reason)
         {
@@ -278,14 +254,10 @@ public sealed class AccountUnlocks : IDisposable
     {
         try
         {
-            if (_tokenProvider.Grants.Contains(Permission.Unlocks))
-            {
-                return await _unlockedMiniatures.GetOrCreate(CacheUnlockedMiniatures, cancellationToken).ConfigureAwait(false);
-            }
-            else
-            {
-                return [];
-            }
+            return _tokenProvider.Grants.Contains(Permission.Unlocks)
+                ? await _unlockedMiniatures.GetOrCreate(CacheUnlockedMiniatures, cancellationToken)
+                    .ConfigureAwait(false)
+                : [];
         }
         catch (Exception reason)
         {
@@ -309,14 +281,10 @@ public sealed class AccountUnlocks : IDisposable
     {
         try
         {
-            if (_tokenProvider.Grants.Contains(Permission.Unlocks))
-            {
-                return await _unlockedMistChampionSkins.GetOrCreate(CacheUnlockedMistChampionSkins, cancellationToken).ConfigureAwait(false);
-            }
-            else
-            {
-                return [];
-            }
+            return _tokenProvider.Grants.Contains(Permission.Unlocks)
+                ? await _unlockedMistChampionSkins.GetOrCreate(CacheUnlockedMistChampionSkins, cancellationToken)
+                    .ConfigureAwait(false)
+                : [];
         }
         catch (Exception reason)
         {
@@ -340,14 +308,9 @@ public sealed class AccountUnlocks : IDisposable
     {
         try
         {
-            if (_tokenProvider.Grants.Contains(Permission.Unlocks))
-            {
-                return await _unlockedNovelties.GetOrCreate(CacheUnlockedNovelties, cancellationToken).ConfigureAwait(false);
-            }
-            else
-            {
-                return [];
-            }
+            return _tokenProvider.Grants.Contains(Permission.Unlocks)
+                ? await _unlockedNovelties.GetOrCreate(CacheUnlockedNovelties, cancellationToken).ConfigureAwait(false)
+                : [];
         }
         catch (Exception reason)
         {
@@ -371,14 +334,9 @@ public sealed class AccountUnlocks : IDisposable
     {
         try
         {
-            if (_tokenProvider.Grants.Contains(Permission.Unlocks))
-            {
-                return await _unlockedOutfits.GetOrCreate(CacheUnlockedOutfits, cancellationToken).ConfigureAwait(false);
-            }
-            else
-            {
-                return [];
-            }
+            return _tokenProvider.Grants.Contains(Permission.Unlocks)
+                ? await _unlockedOutfits.GetOrCreate(CacheUnlockedOutfits, cancellationToken).ConfigureAwait(false)
+                : [];
         }
         catch (Exception reason)
         {
@@ -402,14 +360,9 @@ public sealed class AccountUnlocks : IDisposable
     {
         try
         {
-            if (_tokenProvider.Grants.Contains(Permission.Unlocks))
-            {
-                return await _unlockedRecipes.GetOrCreate(CacheUnlockedRecipes, cancellationToken).ConfigureAwait(false);
-            }
-            else
-            {
-                return [];
-            }
+            return _tokenProvider.Grants.Contains(Permission.Unlocks)
+                ? await _unlockedRecipes.GetOrCreate(CacheUnlockedRecipes, cancellationToken).ConfigureAwait(false)
+                : [];
         }
         catch (Exception reason)
         {
@@ -433,14 +386,9 @@ public sealed class AccountUnlocks : IDisposable
     {
         try
         {
-            if (_tokenProvider.Grants.Contains(Permission.Unlocks))
-            {
-                return await _unlockedWardrobe.GetOrCreate(CacheUnlockedWardrobe, cancellationToken).ConfigureAwait(false);
-            }
-            else
-            {
-                return [];
-            }
+            return _tokenProvider.Grants.Contains(Permission.Unlocks)
+                ? await _unlockedWardrobe.GetOrCreate(CacheUnlockedWardrobe, cancellationToken).ConfigureAwait(false)
+                : [];
         }
         catch (Exception reason)
         {

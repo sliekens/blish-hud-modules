@@ -967,7 +967,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                             _ = part.SetPrefixImageSize(new Point(16));
                             _ = part.SetFontSize(ContentService.FontSize.Size16);
                         }),
-                    _ => builder
+                    UpgradeSlotType.Default or UpgradeSlotType.Banana or _ => builder
                          .CreatePart("\r\n", _ => { })
                          .CreatePart(" " + ViewModel.Localizer["Unused upgrade slot"], part =>
                          {
@@ -1189,12 +1189,12 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
             ControlPadding = new Vector2(5f)
         };
 
-        if (!string.IsNullOrEmpty(effect.IconHref))
+        if (effect.IconUrl() is { } iconUrl)
         {
             _ = new Image()
             {
                 Parent = panel,
-                Texture = ViewModel.GetIcon(effect.IconHref),
+                Texture = ViewModel.GetIcon(iconUrl),
                 Size = new Point(32)
             };
         }

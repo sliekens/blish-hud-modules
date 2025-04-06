@@ -20,7 +20,7 @@ public sealed class AchievementsTabView : View, IDisposable
 
     public AchievementsTabViewModel ViewModel { get; }
 
-    private event EventHandler<EventArgs>? _menuItemExpanded;
+    private event EventHandler<EventArgs>? MenuItemExpanded;
 
     public AchievementsTabView(AchievementsTabViewModel viewModel)
     {
@@ -103,7 +103,7 @@ public sealed class AchievementsTabView : View, IDisposable
 
     private void ReloadMenuItems()
     {
-        _menuItemExpanded = null;
+        MenuItemExpanded = null;
         while (_sidebar.Children.Count > 0)
         {
             _sidebar.Children[0].Dispose();
@@ -121,7 +121,7 @@ public sealed class AchievementsTabView : View, IDisposable
 
             foreach (AchievementCategory category in menuItem.Categories)
             {
-                AsyncTexture2D icon = ViewModel.GetIcon(category.IconHref);
+                AsyncTexture2D icon = ViewModel.GetIcon(category.IconUrl());
 
                 MenuItem categoryItem = new(category.Name, icon)
                 {
@@ -145,12 +145,14 @@ public sealed class AchievementsTabView : View, IDisposable
                 switch (args.PropertyName)
                 {
                     case "Expand":
-                        _menuItemExpanded?.Invoke(sender, EventArgs.Empty);
+                        MenuItemExpanded?.Invoke(sender, EventArgs.Empty);
+                        break;
+                    default:
                         break;
                 }
             };
 
-            _menuItemExpanded += (sender, args) =>
+            MenuItemExpanded += (sender, args) =>
             {
                 if (sender != groupMenuItem)
                 {

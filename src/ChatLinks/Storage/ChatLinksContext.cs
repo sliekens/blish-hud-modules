@@ -229,11 +229,11 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
             nameof(Levenshtein.LevenshteinDistance)
         )!;
 
-        modelBuilder.HasDbFunction(levenshteinMethod, b =>
+        _ = modelBuilder.HasDbFunction(levenshteinMethod, b =>
         {
-            b.HasName(nameof(Levenshtein.LevenshteinDistance));
-            b.HasParameter("a");
-            b.HasParameter("b");
+            _ = b.HasName(nameof(Levenshtein.LevenshteinDistance));
+            _ = b.HasParameter("a");
+            _ = b.HasParameter("b");
         });
     }
 }
