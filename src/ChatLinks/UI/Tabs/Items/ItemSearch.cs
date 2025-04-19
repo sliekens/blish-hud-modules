@@ -141,6 +141,7 @@ public sealed class ItemSearch(IDbContextFactory contextFactory, ILocale locale)
                 "bait" => context.Items.OfType<Bait>(),
                 "harvesting_sickle" => context.Items.OfType<HarvestingSickle>(),
                 "logging_axe" => context.Items.OfType<LoggingAxe>(),
+                "fishing_rod" => context.Items.OfType<FishingRod>(),
                 "lure" => context.Items.OfType<Lure>(),
                 "mining_pick" => context.Items.OfType<MiningPick>(),
                 "gizmo" => context.Items.OfType<Gizmo>(),

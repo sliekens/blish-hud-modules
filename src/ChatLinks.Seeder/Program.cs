@@ -1,18 +1,22 @@
 ﻿using System.Net;
 
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 using SL.ChatLinks;
 using SL.ChatLinks.Integrations;
 using SL.Common;
 
-using SQLitePCL;
-
 ServicePointManager.DefaultConnectionLimit = int.MaxValue;
-Batteries_V2.Init();
+Sqlite3Setup.Run();
 
 IHost host = Host.CreateDefaultBuilder(args)
+    .ConfigureLogging(logging =>
+    {
+        logging.AddFilter(DbLoggerCategory.Database.Command.Name, LogLevel.Warning);
+    })
     .ConfigureServices((hostContext, services) =>
     {
         services.AddGw2Client();

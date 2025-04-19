@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore.Design;
 
 using SL.ChatLinks.Storage;
 
-using SQLitePCL;
-
 namespace SL.ChatLinks.EF;
 
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812", Justification = "This class is used by Entity Framework tooling.")]
@@ -12,7 +10,7 @@ internal sealed class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<C
 {
     static DesignTimeDbContextFactory()
     {
-        Batteries_V2.Init();
+        Sqlite3Setup.Run();
     }
 
     public ChatLinksContext CreateDbContext(string[] args)

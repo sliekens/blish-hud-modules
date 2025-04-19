@@ -357,6 +357,7 @@ public sealed class ItemsTabViewModel(
 
                     new ItemCategoryMenuItem { Id = "logging_axe", Label = localizer["Logging Axes"] },
                     new ItemCategoryMenuItem { Id = "mining_pick", Label = localizer["Mining Picks"] },
+                    new ItemCategoryMenuItem { Id = "fishing_rod", Label = localizer["Fishing Rods"] },
                     new ItemCategoryMenuItem { Id = "bait", Label = localizer["Bait"] },
                     new ItemCategoryMenuItem { Id = "lure", Label = localizer["Lures"] }
                 ]

@@ -1818,6 +1818,13 @@ namespace SL.ChatLinks.Migrations
                     b.HasDiscriminator().HasValue("bait");
                 });
 
+            modelBuilder.Entity("GuildWars2.Items.FishingRod", b =>
+                {
+                    b.HasBaseType("GuildWars2.Items.GatheringTool");
+
+                    b.HasDiscriminator().HasValue("fishing_rod");
+                });
+
             modelBuilder.Entity("GuildWars2.Items.HarvestingSickle", b =>
                 {
                     b.HasBaseType("GuildWars2.Items.GatheringTool");

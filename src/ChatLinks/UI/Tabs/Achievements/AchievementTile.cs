@@ -68,7 +68,7 @@ public sealed class AchievementTile : Container
         }
         else if (viewModel.Progress is null)
         {
-            // Progress is always unavailable for daily, weekly and per-character achievements
+            // Progress is always unavailable for daily, weekly, monthly and per-character achievements
             if (ViewModel.IsDaily)
             {
                 Image info = new()
@@ -89,6 +89,18 @@ public sealed class AchievementTile : Container
                     Size = new(32),
                     Texture = AsyncTexture2D.FromAssetId(1508665),
                     BasicTooltipText = ViewModel.WeeklyAchievementProgressUnavailable
+                };
+
+                chatLinkWidth -= info.Width;
+            }
+            else if (viewModel.IsMonthly)
+            {
+                Image info = new()
+                {
+                    Parent = toolbar,
+                    Size = new(32),
+                    Texture = AsyncTexture2D.FromAssetId(1508665),
+                    BasicTooltipText = ViewModel.MonthlyAchievementProgressUnavailable
                 };
 
                 chatLinkWidth -= info.Width;

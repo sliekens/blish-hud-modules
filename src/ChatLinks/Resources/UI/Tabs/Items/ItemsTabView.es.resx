@@ -447,4 +447,7 @@
   <data name="Enrichments" xml:space="preserve">
     <value>Enriquecimientos</value>
   </data>
+  <data name="Fishing Rods" xml:space="preserve">
+    <value>Cañas de pescar</value>
+  </data>
 </root>

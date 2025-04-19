@@ -153,4 +153,7 @@
   <data name="Hidden achievement" xml:space="preserve">
     <value>Hidden achievement</value>
   </data>
+  <data name="Monthly achievement progress unavailable" xml:space="preserve">
+    <value>Monthly achievement progress unavailable</value>
+  </data>
 </root>

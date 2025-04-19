@@ -153,4 +153,7 @@
   <data name="Hidden achievement" xml:space="preserve">
     <value>Versteckte Erfolge</value>
   </data>
+  <data name="Monthly achievement progress unavailable" xml:space="preserve">
+    <value>Der Fortschritt der monatlichen Erfolge ist nicht verfügbar</value>
+  </data>
 </root>

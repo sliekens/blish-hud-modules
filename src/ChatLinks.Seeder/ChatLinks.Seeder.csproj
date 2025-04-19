@@ -13,7 +13,6 @@
             <IncludeAssets>compile</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.Extensions.Hosting" />
-        <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" />
     </ItemGroup>
 
     <ItemGroup>

@@ -22,8 +22,6 @@ using SL.ChatLinks.UI.Tabs.Items.Tooltips;
 using SL.ChatLinks.UI.Tabs.Items.Upgrades;
 using SL.Common.Progression;
 
-using SQLitePCL;
-
 namespace SL.ChatLinks;
 
 [Export(typeof(Module))]
@@ -173,7 +171,7 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
 
         _serviceProvider = services.BuildServiceProvider();
         _eventAggregator = _serviceProvider.GetRequiredService<IEventAggregator>();
-        SetupSqlite3();
+        Sqlite3Setup.Run();
     }
 
     protected override async Task LoadAsync()
@@ -224,12 +222,6 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
     private void OnHourStarted(object sender, EventArgs e)
     {
         _eventAggregator?.Publish(new HourStarted());
-    }
-
-    private static void SetupSqlite3()
-    {
-        SQLite3Provider_dynamic_cdecl.Setup("e_sqlite3", new ModuleGetFunctionPointer("sliekens.e_sqlite3"));
-        raw.SetProvider(new SQLite3Provider_dynamic_cdecl());
     }
 
     protected override void Unload()
