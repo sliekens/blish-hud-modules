@@ -142,7 +142,6 @@ public sealed class ItemsTabView(
         {
             if (args.AddedItems.Count == 1)
             {
-                // TODO: fix weird view model usage
                 ItemsListViewModel selected = args.AddedItems[0].Data;
                 viewModel.SelectItemCommand.Execute(selected.Item);
             }
