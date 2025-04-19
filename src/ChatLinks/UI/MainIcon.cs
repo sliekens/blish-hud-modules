@@ -42,4 +42,10 @@ public sealed class MainIcon : CornerIcon
         ViewModel.ClickCommand.Execute();
         base.OnClick(e);
     }
+
+    protected override void DisposeControl()
+    {
+        ViewModel.Dispose();
+        base.DisposeControl();
+    }
 }

@@ -57,5 +57,6 @@ public sealed class ListItem<TData> : Panel
     protected override void DisposeControl()
     {
         SelectionChanged = null;
+        base.DisposeControl();
     }
 }

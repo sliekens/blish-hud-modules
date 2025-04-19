@@ -21,7 +21,7 @@ public sealed class MainIconViewModel(
     ILocale locale,
     DatabaseSeeder seeder,
     ModuleSettings settings
-) : ViewModel
+) : ViewModel, IDisposable
 {
     private string? _loadingMessage;
 
@@ -38,22 +38,12 @@ public sealed class MainIconViewModel(
         eventAggregator.Subscribe<DatabaseSyncProgress>(OnDatabaseSyncProgress);
         eventAggregator.Subscribe<DatabaseSyncCompleted>(OnDatabaseSyncCompleted);
         eventAggregator.Subscribe<LocaleChanged>(OnLocaleChanged);
-        eventAggregator.Subscribe<ModuleUnloading>(OnModuleUnloading);
 
         _ = ChangeToken.OnChange(settings.GetChangeToken, moduleSettings =>
         {
             BananaMode = moduleSettings.BananaMode;
             RaiseStackSize = moduleSettings.RaiseStackSize;
         }, settings);
-    }
-
-    // TODO: implement IDisposable
-    private void OnModuleUnloading(ModuleUnloading unloading)
-    {
-        eventAggregator.Unsubscribe<DatabaseSyncProgress>(OnDatabaseSyncProgress);
-        eventAggregator.Unsubscribe<DatabaseSyncCompleted>(OnDatabaseSyncCompleted);
-        eventAggregator.Unsubscribe<LocaleChanged>(OnLocaleChanged);
-        eventAggregator.Unsubscribe<ModuleUnloading>(OnModuleUnloading);
     }
 
     public string Name => localizer["Name"];
@@ -207,5 +197,12 @@ public sealed class MainIconViewModel(
         yield return raiseStackSizeItem;
         yield return syncItem;
         yield return koFiItem;
+    }
+
+    public void Dispose()
+    {
+        eventAggregator.Unsubscribe<DatabaseSyncProgress>(OnDatabaseSyncProgress);
+        eventAggregator.Unsubscribe<DatabaseSyncCompleted>(OnDatabaseSyncCompleted);
+        eventAggregator.Unsubscribe<LocaleChanged>(OnLocaleChanged);
     }
 }

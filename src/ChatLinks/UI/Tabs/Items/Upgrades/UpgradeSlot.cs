@@ -131,7 +131,7 @@ public sealed class UpgradeSlot : Container
 
     protected override void DisposeControl()
     {
-        base.DisposeControl();
         ViewModel.Dispose();
+        base.DisposeControl();
     }
 }

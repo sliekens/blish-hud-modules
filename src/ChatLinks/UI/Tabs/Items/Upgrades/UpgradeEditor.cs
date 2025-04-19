@@ -113,7 +113,7 @@ public sealed class UpgradeEditor : FlowPanel
 
     protected override void DisposeControl()
     {
-        base.DisposeControl();
         ViewModel.Dispose();
+        base.DisposeControl();
     }
 }
