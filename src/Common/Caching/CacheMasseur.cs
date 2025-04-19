@@ -6,7 +6,10 @@ public sealed class CacheMasseur<TItem>(IMemoryCache cache, string cacheKey) : I
 {
     private readonly SemaphoreSlim _writeSemaphore = new(1, 1);
 
-    public bool TryGetValue(out TItem value) => cache.TryGetValue(cacheKey, out value);
+    public bool TryGetValue(out TItem value)
+    {
+        return cache.TryGetValue(cacheKey, out value);
+    }
 
     public async ValueTask<TItem> GetOrCreate(Func<ICacheEntry, CancellationToken, ValueTask> factory,
         CancellationToken cancellationToken)
