@@ -51,7 +51,7 @@ public sealed class UnlockedJadeBotSkins(
         {
             if (force || !_unlockedJadeBotSkins.TryGetValue(out _))
             {
-                await _unlockedJadeBotSkins.CreateAsync(CacheUnlockedJadeBotSkins, cancellationToken)
+                _ = await _unlockedJadeBotSkins.CreateAsync(CacheUnlockedJadeBotSkins, cancellationToken)
                     .ConfigureAwait(false);
             }
         }

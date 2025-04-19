@@ -41,7 +41,7 @@ public sealed class AchievementsProgress(
         {
             if (force || !_achievementsProgress.TryGetValue(out _))
             {
-                await _achievementsProgress.CreateAsync(CacheAchievementProgress, cancellationToken)
+                _ = await _achievementsProgress.CreateAsync(CacheAchievementProgress, cancellationToken)
                     .ConfigureAwait(false);
             }
         }

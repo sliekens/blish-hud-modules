@@ -40,7 +40,7 @@ public sealed class AccountBank(
         {
             if (force || !_bank.TryGetValue(out _))
             {
-                await _bank.CreateAsync(CacheBank, cancellationToken)
+                _ = await _bank.CreateAsync(CacheBank, cancellationToken)
                     .ConfigureAwait(false);
             }
         }

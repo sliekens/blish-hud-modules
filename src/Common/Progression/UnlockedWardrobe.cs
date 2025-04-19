@@ -51,7 +51,7 @@ public sealed class UnlockedWardrobe(
         {
             if (force || !_unlockedWardrobe.TryGetValue(out _))
             {
-                await _unlockedWardrobe.CreateAsync(CacheUnlockedWardrobe, cancellationToken)
+                _ = await _unlockedWardrobe.CreateAsync(CacheUnlockedWardrobe, cancellationToken)
                     .ConfigureAwait(false);
             }
         }

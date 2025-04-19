@@ -15,7 +15,7 @@ Sqlite3Setup.Run();
 IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureLogging(logging =>
     {
-        logging.AddFilter(DbLoggerCategory.Database.Command.Name, LogLevel.Warning);
+        _ = logging.AddFilter(DbLoggerCategory.Database.Command.Name, LogLevel.Warning);
     })
     .ConfigureServices((hostContext, services) =>
     {

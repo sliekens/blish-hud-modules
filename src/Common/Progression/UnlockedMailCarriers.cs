@@ -51,7 +51,7 @@ public sealed class UnlockedMailCarriers(
         {
             if (force || !_unlockedMailCarriers.TryGetValue(out _))
             {
-                await _unlockedMailCarriers.CreateAsync(CacheUnlockedMailCarriers, cancellationToken)
+                _ = await _unlockedMailCarriers.CreateAsync(CacheUnlockedMailCarriers, cancellationToken)
                     .ConfigureAwait(false);
             }
         }

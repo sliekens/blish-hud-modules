@@ -3,15 +3,12 @@ using GuildWars2.Hero.Achievements;
 using GuildWars2.Hero.Banking;
 using GuildWars2.Hero.Inventories;
 
-using Microsoft.Extensions.Logging;
-
 using SL.Common.Exploration;
 
 namespace SL.Common.Progression;
 
 public sealed class CurrentAccount : IDisposable
 {
-    private readonly ILogger<CurrentAccount> _logger;
     private readonly ITokenProvider _tokenProvider;
     private readonly IEventAggregator _eventAggregator;
 
@@ -31,7 +28,6 @@ public sealed class CurrentAccount : IDisposable
     private readonly UnlockedWardrobe _unlockedWardrobe;
 
     public CurrentAccount(
-        ILogger<CurrentAccount> logger,
         ITokenProvider tokenProvider,
         IEventAggregator eventAggregator,
         AchievementsProgress achievementsProgress,
@@ -50,7 +46,6 @@ public sealed class CurrentAccount : IDisposable
         UnlockedWardrobe unlockedWardrobe)
     {
         ThrowHelper.ThrowIfNull(eventAggregator);
-        _logger = logger;
         _tokenProvider = tokenProvider;
         _eventAggregator = eventAggregator;
 

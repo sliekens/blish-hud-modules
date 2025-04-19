@@ -40,7 +40,7 @@ public sealed class UnlockedMistChampionSkins(
         {
             if (force || !_unlockedMistChampionSkins.TryGetValue(out _))
             {
-                await _unlockedMistChampionSkins.CreateAsync(CacheUnlockedMistChampionSkins, cancellationToken)
+                _ = await _unlockedMistChampionSkins.CreateAsync(CacheUnlockedMistChampionSkins, cancellationToken)
                     .ConfigureAwait(false);
             }
         }

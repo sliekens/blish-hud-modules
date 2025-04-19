@@ -39,7 +39,7 @@ public sealed class AccountMaterialStorage(
         {
             if (force || !_materialStorage.TryGetValue(out _))
             {
-                await _materialStorage.CreateAsync(CacheMaterialStorage, cancellationToken)
+                _ = await _materialStorage.CreateAsync(CacheMaterialStorage, cancellationToken)
                     .ConfigureAwait(false);
             }
         }

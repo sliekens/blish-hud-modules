@@ -51,7 +51,7 @@ public sealed class UnlockedDyes(
         {
             if (force || !_unlockedDyes.TryGetValue(out _))
             {
-                await _unlockedDyes.CreateAsync(CacheUnlockedDyes, cancellationToken)
+                _ = await _unlockedDyes.CreateAsync(CacheUnlockedDyes, cancellationToken)
                     .ConfigureAwait(false);
             }
         }

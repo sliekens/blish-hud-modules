@@ -51,7 +51,7 @@ public sealed class UnlockedMiniatures(
         {
             if (force || !_unlockedMiniatures.TryGetValue(out _))
             {
-                await _unlockedMiniatures.CreateAsync(CacheUnlockedMiniatures, cancellationToken)
+                _ = await _unlockedMiniatures.CreateAsync(CacheUnlockedMiniatures, cancellationToken)
                     .ConfigureAwait(false);
             }
         }

@@ -1109,12 +1109,12 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         StringBuilder text = new("\r\n");
         if (ViewModel.InBank > 0)
         {
-            text.AppendLine(ViewModel.Localizer["Count in bank", ViewModel.InBank]);
+            text = text.AppendLine(ViewModel.Localizer["Count in bank", ViewModel.InBank]);
         }
 
         if (ViewModel.InMaterialStorage > 0)
         {
-            text.AppendLine(ViewModel.Localizer["Count in material storage", ViewModel.InMaterialStorage]);
+            text = text.AppendLine(ViewModel.Localizer["Count in material storage", ViewModel.InMaterialStorage]);
         }
 
         PrintPlainText(text.ToString(), Gray);

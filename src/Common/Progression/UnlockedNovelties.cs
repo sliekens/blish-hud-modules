@@ -51,7 +51,7 @@ public sealed class UnlockedNovelties(
         {
             if (force || !_unlockedNovelties.TryGetValue(out _))
             {
-                await _unlockedNovelties.CreateAsync(CacheUnlockedNovelties, cancellationToken)
+                _ = await _unlockedNovelties.CreateAsync(CacheUnlockedNovelties, cancellationToken)
                     .ConfigureAwait(false);
             }
         }

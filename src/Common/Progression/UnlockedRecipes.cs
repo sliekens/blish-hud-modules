@@ -51,7 +51,7 @@ public sealed class UnlockedRecipes(
         {
             if (force || !_unlockedRecipes.TryGetValue(out _))
             {
-                await _unlockedRecipes.CreateAsync(CacheUnlockedRecipes, cancellationToken)
+                _ = await _unlockedRecipes.CreateAsync(CacheUnlockedRecipes, cancellationToken)
                     .ConfigureAwait(false);
             }
         }

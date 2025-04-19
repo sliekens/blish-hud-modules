@@ -51,7 +51,7 @@ public sealed class UnlockedFinishers(
         {
             if (force || !_unlockedFinishers.TryGetValue(out _))
             {
-                await _unlockedFinishers.CreateAsync(CacheUnlockedFinishers, cancellationToken)
+                _ = await _unlockedFinishers.CreateAsync(CacheUnlockedFinishers, cancellationToken)
                     .ConfigureAwait(false);
             }
         }

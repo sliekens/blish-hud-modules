@@ -51,7 +51,7 @@ public sealed class UnlockedOutfits(
         {
             if (force || !_unlockedOutfits.TryGetValue(out _))
             {
-                await _unlockedOutfits.CreateAsync(CacheUnlockedOutfits, cancellationToken)
+                _ = await _unlockedOutfits.CreateAsync(CacheUnlockedOutfits, cancellationToken)
                     .ConfigureAwait(false);
             }
         }

@@ -40,7 +40,7 @@ public sealed class UnlockedGliderSkins(
         {
             if (force || !_unlockedGliderSkins.TryGetValue(out _))
             {
-                await _unlockedGliderSkins.CreateAsync(CacheUnlockedGliderSkins, cancellationToken)
+                _ = await _unlockedGliderSkins.CreateAsync(CacheUnlockedGliderSkins, cancellationToken)
                     .ConfigureAwait(false);
             }
         }

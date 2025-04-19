@@ -243,16 +243,11 @@ public sealed class ItemSearch(IDbContextFactory contextFactory, ILocale locale)
                 _ => context.Items
             };
 
-            if (!string.IsNullOrWhiteSpace(filter.Text))
-            {
-                query = query.Where(item => EF.Functions.Like(item.Name, $"%{filter.Text}%"))
-                    .OrderBy(item => Levenshtein.LevenshteinDistance(filter.Text!, item.Name));
-            }
-            else
-            {
-                query = query
+            query = !string.IsNullOrWhiteSpace(filter.Text)
+                ? query.Where(item => EF.Functions.Like(item.Name, $"%{filter.Text}%"))
+                    .OrderBy(item => Levenshtein.LevenshteinDistance(filter.Text!, item.Name))
+                : query
                     .OrderByDescending(item => item.Id);
-            }
 
             resultContext.ResultTotal = await query.CountAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
