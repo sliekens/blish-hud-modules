@@ -141,19 +141,10 @@
   <data name="Achievement progress unavailable" xml:space="preserve">
     <value>Der Erfolgsfortschritt ist nicht verfügbar; konfigurieren Sie einen API-Schlüssel mit dem Geltungsbereich „ progression“ und aktivieren Sie die API-Berechtigungen in den Moduleinstellungen.</value>
   </data>
-  <data name="Daily achievement progress unavailable" xml:space="preserve">
-    <value>Der Fortschritt der täglichen Erfolge ist nicht verfügbar</value>
-  </data>
   <data name="Per-character achievement progress unavailable" xml:space="preserve">
     <value>Der Fortschritt der Erfolge eines Charakters ist nicht verfügbar</value>
   </data>
-  <data name="Weekly achievement progress unavailable" xml:space="preserve">
-    <value>Wöchentlicher Fortschritt der Erfolge nicht verfügbar</value>
-  </data>
   <data name="Hidden achievement" xml:space="preserve">
     <value>Versteckte Erfolge</value>
-  </data>
-  <data name="Monthly achievement progress unavailable" xml:space="preserve">
-    <value>Der Fortschritt der monatlichen Erfolge ist nicht verfügbar</value>
   </data>
 </root>

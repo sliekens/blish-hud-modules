@@ -151,12 +151,6 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
 
     public string AchievementProgressUnavailable => _localizer["Achievement progress unavailable"];
 
-    public string DailyAchievementProgressUnavailable => _localizer["Daily achievement progress unavailable"];
-
-    public string WeeklyAchievementProgressUnavailable => _localizer["Weekly achievement progress unavailable"];
-
-    public string MonthlyAchievementProgressUnavailable => _localizer["Monthly achievement progress unavailable"];
-
     public string PerCharacterAchievementProgressUnavailable => _localizer["Per-character achievement progress unavailable"];
 
     public bool IsPerCharacter => Group?.IsPerCharacter() ?? false;

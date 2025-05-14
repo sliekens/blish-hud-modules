@@ -141,19 +141,10 @@
   <data name="Achievement progress unavailable" xml:space="preserve">
     <value>Achievement progress is unavailable; configure an API key with 'progression' scope and enable API permissions in the module settings.</value>
   </data>
-  <data name="Daily achievement progress unavailable" xml:space="preserve">
-    <value>Daily achievements progress is unavailable</value>
-  </data>
   <data name="Per-character achievement progress unavailable" xml:space="preserve">
     <value>Per-character achievements progress is unavailable</value>
   </data>
-  <data name="Weekly achievement progress unavailable" xml:space="preserve">
-    <value>Weekly achievements progress unavailable</value>
-  </data>
   <data name="Hidden achievement" xml:space="preserve">
     <value>Hidden achievement</value>
-  </data>
-  <data name="Monthly achievement progress unavailable" xml:space="preserve">
-    <value>Monthly achievement progress unavailable</value>
   </data>
 </root>
