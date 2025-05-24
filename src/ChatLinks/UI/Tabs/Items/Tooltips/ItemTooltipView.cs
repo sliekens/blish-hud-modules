@@ -907,7 +907,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     .CreatePart("\r\n", _ => { })
                     .CreatePart(" " + slot.UpgradeComponent.Name, part =>
                     {
-                        if (!string.IsNullOrEmpty(slot.UpgradeComponent.IconHref))
+                        if (slot.UpgradeComponent.IconUrl is not null)
                         {
                             _ = part.SetPrefixImage(ViewModel.GetIcon(slot.UpgradeComponent));
                             _ = part.SetPrefixImageSize(new Point(16));
@@ -1203,12 +1203,12 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
             ControlPadding = new Vector2(5f)
         };
 
-        if (effect.IconUrl() is { } iconUrl)
+        if (effect.IconUrl is not null)
         {
             _ = new Image()
             {
                 Parent = panel,
-                Texture = ViewModel.GetIcon(iconUrl),
+                Texture = ViewModel.GetIcon(effect.IconUrl),
                 Size = new Point(32)
             };
         }

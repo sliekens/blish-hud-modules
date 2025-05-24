@@ -16,11 +16,11 @@ public sealed class IconsService(HttpClient httpClient, IconsCache cache)
             return null;
         }
 
-        AsyncTexture2D cached = GameService.Content.GetRenderServiceTexture(iconUrl.ToString())
-            ?? cache.GetOrAdd(iconUrl.ToString(), url =>
+        AsyncTexture2D cached = GameService.Content.GetRenderServiceTexture(iconUrl)
+            ?? cache.GetOrAdd(iconUrl, url =>
             {
                 AsyncTexture2D newTexture = new();
-                _ = httpClient.GetStreamAsync(new Uri(url)).ContinueWith(task =>
+                _ = httpClient.GetStreamAsync(url).ContinueWith(task =>
                 {
                     if (task.Status != TaskStatus.RanToCompletion)
                     {

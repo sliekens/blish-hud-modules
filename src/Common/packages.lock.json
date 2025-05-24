@@ -21,9 +21,9 @@
       },
       "GW2SDK": {
         "type": "Direct",
-        "requested": "[2.3.2, )",
-        "resolved": "2.3.2",
-        "contentHash": "7CnY3SGm+8PMBoHbmJyiIMys6ggMHC2hXArbGwN5WYYRNYlc1Uy/E6PH4o2hT8tz6uzn742K1uMgDx5Zc7YSIQ==",
+        "requested": "[2.4.0, )",
+        "resolved": "2.4.0",
+        "contentHash": "muJ855Uwwqmk7W2L7ww/+t3juNnZoOwS+3Kp7MiAdjDhoqLabDDwpnEMFAMWwmH8BfRMU2SfMdA3l49xBbfHJw==",
         "dependencies": {
           "Microsoft.Bcl.HashCode": "6.0.0",
           "System.Runtime.InteropServices.RuntimeInformation": "4.3.0",

@@ -14,5 +14,9 @@ public sealed class MiniatureEntityTypeConfiguration : IEntityTypeConfiguration<
         _ = builder.HasKey(mini => mini.Id);
         _ = builder.HasIndex(mini => mini.Name);
         _ = builder.HasIndex(mini => mini.ItemId);
+
+#pragma warning disable CS0618 // Type or member is obsolete
+        _ = builder.Ignore(mini => mini.IconHref);
+#pragma warning restore CS0618 // Type or member is obsolete
     }
 }

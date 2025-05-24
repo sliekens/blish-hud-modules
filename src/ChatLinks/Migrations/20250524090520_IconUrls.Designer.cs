@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SL.ChatLinks.Storage;
 
 namespace SL.ChatLinks.Migrations
 {
     [DbContext(typeof(ChatLinksContext))]
-    partial class ChatLinksContextModelSnapshot : ModelSnapshot
+    [Migration("20250524090520_IconUrls")]
+    partial class IconUrls
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

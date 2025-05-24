@@ -101,7 +101,7 @@ public sealed class ItemsListViewModel : ViewModel, IDisposable
 
     public AsyncTexture2D? GetIcon()
     {
-        return _icons.GetIcon(Item.IconUrl());
+        return _icons.GetIcon(Item.IconUrl);
     }
 
     public ItemTooltipViewModel CreateTooltipViewModel()

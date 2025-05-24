@@ -25,6 +25,10 @@ public sealed class ItemEntityTypeConfiguration : IEntityTypeConfiguration<Item>
         _ = builder.Property(item => item.Flags).HasJsonValueConversion();
         _ = builder.Property(item => item.Restrictions).HasJsonValueConversion();
 
+#pragma warning disable CS0618 // Type or member is obsolete
+        _ = builder.Ignore(item => item.IconHref);
+#pragma warning restore CS0618 // Type or member is obsolete
+
         _ = builder.HasDiscriminator<string>("Type")
             .HasValue<Item>("item")
             .HasValue<CraftingMaterial>("crafting_material")

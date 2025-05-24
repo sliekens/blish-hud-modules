@@ -155,7 +155,8 @@ public sealed class ItemTooltipViewModel(
 
     public AsyncTexture2D? GetIcon(Item item)
     {
-        return icons.GetIcon(item.IconUrl());
+        ThrowHelper.ThrowIfNull(item);
+        return icons.GetIcon(item.IconUrl);
     }
 
     public AsyncTexture2D? GetIcon(Uri? iconUrl)

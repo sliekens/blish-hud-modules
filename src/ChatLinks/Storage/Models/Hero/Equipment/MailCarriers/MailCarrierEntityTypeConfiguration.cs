@@ -24,5 +24,9 @@ public sealed class MailCarrierEntityTypeConfiguration : IEntityTypeConfiguratio
 
         _ = builder.Property(mailCarrier => mailCarrier.Flags)
             .HasJsonValueConversion();
+
+#pragma warning disable CS0618 // Type or member is obsolete
+        _ = builder.Ignore(mailCarrier => mailCarrier.IconHref);
+#pragma warning restore CS0618 // Type or member is obsolete
     }
 }

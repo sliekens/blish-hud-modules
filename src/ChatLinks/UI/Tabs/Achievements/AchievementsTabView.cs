@@ -120,7 +120,7 @@ public sealed class AchievementsTabView : View, IDisposable
 
             foreach (AchievementCategory category in menuItem.Categories)
             {
-                AsyncTexture2D icon = ViewModel.GetIcon(category.IconUrl());
+                AsyncTexture2D icon = ViewModel.GetIcon(category.IconUrl);
 
                 MenuItem categoryItem = new(category.Name, icon)
                 {

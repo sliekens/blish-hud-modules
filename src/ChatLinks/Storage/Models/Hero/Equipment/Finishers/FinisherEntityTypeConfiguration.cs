@@ -21,5 +21,9 @@ public sealed class FinisherEntityTypeConfiguration : IEntityTypeConfiguration<F
         builder.Property(finisher => finisher.UnlockItemIds)
             .HasJsonValueConversion()
             .Metadata.SetValueComparer(new CollectionComparer<int>());
+
+#pragma warning disable CS0618 // Type or member is obsolete
+        _ = builder.Ignore(finisher => finisher.IconHref);
+#pragma warning restore CS0618 // Type or member is obsolete
     }
 }

@@ -18,12 +18,16 @@ public sealed class GliderSkinEntityTypeConfiguration : IEntityTypeConfiguration
         _ = builder.HasIndex(glider => glider.Name);
         _ = builder.HasIndex(glider => glider.Order);
 
-        builder.Property(finisher => finisher.UnlockItemIds)
+        builder.Property(glider => glider.UnlockItemIds)
             .HasJsonValueConversion()
             .Metadata.SetValueComparer(new CollectionComparer<int>());
 
-        builder.Property(finisher => finisher.DefaultDyeColorIds)
+        builder.Property(glider => glider.DefaultDyeColorIds)
             .HasJsonValueConversion()
             .Metadata.SetValueComparer(new ListComparer<int>());
+
+#pragma warning disable CS0618 // Type or member is obsolete
+        _ = builder.Ignore(glider => glider.IconHref);
+#pragma warning restore CS0618 // Type or member is obsolete
     }
 }

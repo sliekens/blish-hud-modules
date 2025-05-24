@@ -127,7 +127,10 @@ public sealed class AchievementsTabViewModel(
                 Id = -1,
                 Name = localizer["Uncategorized"],
                 Description = "",
+                IconUrl = null!,
+#pragma warning disable CS0618 // Type or member is obsolete
                 IconHref = "",
+#pragma warning restore CS0618 // Type or member is obsolete
                 Order = int.MaxValue,
                 Achievements = [.. achievements
                     .Where(a => !a.Flags.Daily)
@@ -301,7 +304,7 @@ public sealed class AchievementsTabViewModel(
 
             achievements = SortAchievements(achievements, [category], groups, progression);
             HeaderText = !string.IsNullOrEmpty(category.Name) ? category.Name : null;
-            HeaderIcon = !string.IsNullOrEmpty(category.IconHref) ? GameService.Content.GetRenderServiceTexture(category.IconHref) : null;
+            HeaderIcon = category.IconUrl is not null ? GameService.Content.GetRenderServiceTexture(category.IconUrl) : null;
             Achievements = [
                 .. achievements.Select(achievement => achievementTileViewModelFactory(
                         achievement,

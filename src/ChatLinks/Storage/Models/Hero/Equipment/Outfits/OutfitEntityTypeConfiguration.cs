@@ -17,6 +17,10 @@ public sealed class OutfitEntityTypeConfiguration : IEntityTypeConfiguration<Out
         _ = builder.HasKey(outfit => outfit.Id);
         _ = builder.HasIndex(outfit => outfit.Name);
 
+#pragma warning disable CS0618 // Type or member is obsolete
+        _ = builder.Ignore(outfit => outfit.IconHref);
+#pragma warning restore CS0618 // Type or member is obsolete
+
         builder.Property(outfit => outfit.UnlockItemIds)
             .HasJsonValueConversion()
             .Metadata.SetValueComparer(new CollectionComparer<int>());

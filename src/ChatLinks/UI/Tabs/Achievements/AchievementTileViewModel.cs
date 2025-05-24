@@ -89,8 +89,8 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
 
     public AsyncTexture2D? GetIcon()
     {
-        return _icons.GetIcon(Achievement.IconUrl())
-            ?? _icons.GetIcon(_category?.IconUrl());
+        return _icons.GetIcon(Achievement.IconUrl)
+            ?? _icons.GetIcon(_category?.IconUrl);
     }
 
     public string CompletedLabel => _localizer["Completed"];

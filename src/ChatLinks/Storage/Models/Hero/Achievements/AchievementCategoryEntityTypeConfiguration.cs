@@ -27,5 +27,9 @@ public sealed class AchievementCategoryEntityTypeConfiguration : IEntityTypeConf
 
         _ = builder.HasIndex(achievementCategory => achievementCategory.Order);
 
+#pragma warning disable CS0618 // Type or member is obsolete
+        _ = builder.Ignore(achievementCategory => achievementCategory.IconHref);
+#pragma warning restore CS0618 // Type or member is obsolete
+
     }
 }

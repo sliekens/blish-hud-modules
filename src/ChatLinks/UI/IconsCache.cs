@@ -6,17 +6,17 @@ namespace SL.ChatLinks.UI;
 
 public sealed class IconsCache : IDisposable
 {
-    private readonly ConcurrentDictionary<string, AsyncTexture2D> _webCache = [];
+    private readonly ConcurrentDictionary<Uri, AsyncTexture2D> _webCache = [];
 
-    public AsyncTexture2D GetOrAdd(string key, Func<string, AsyncTexture2D> valueFactory)
+    public AsyncTexture2D GetOrAdd(Uri key, Func<Uri, AsyncTexture2D> valueFactory)
     {
         return _webCache.GetOrAdd(key, valueFactory);
     }
 
     public void Dispose()
     {
-        List<KeyValuePair<string, AsyncTexture2D>> values = [.. _webCache];
-        foreach (KeyValuePair<string, AsyncTexture2D> pair in values)
+        List<KeyValuePair<Uri, AsyncTexture2D>> values = [.. _webCache];
+        foreach (KeyValuePair<Uri, AsyncTexture2D> pair in values)
         {
             pair.Value.Dispose();
         }
