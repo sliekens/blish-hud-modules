@@ -4,7 +4,7 @@ namespace SL.Common.Caching;
 
 public sealed class CacheMasseur<TItem>(IMemoryCache cache, string cacheKey) : IDisposable
 {
-    private bool _disposed = false;
+    private bool _disposed;
 
     private readonly SemaphoreSlim _writeSemaphore = new(1, 1);
 
