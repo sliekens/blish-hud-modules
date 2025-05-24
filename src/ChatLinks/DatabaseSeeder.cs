@@ -139,15 +139,13 @@ public sealed class DatabaseSeeder : IDisposable
 
         if (shouldDownload)
         {
-            Database? seedDatabase = await DownloadDatabase(language).ConfigureAwait(false);
+            Database? seedDatabase = await DownloadDatabase(language, currentDatabase).ConfigureAwait(false);
             if (seedDatabase is not null)
             {
                 currentDatabase = seedDatabase;
                 currentDataManifest.Databases[language.Alpha2Code] = seedDatabase;
 
                 await SaveManifest(currentDataManifest).ConfigureAwait(false);
-
-                await _eventAggregator.PublishAsync(new DatabaseDownloaded()).ConfigureAwait(false);
             }
         }
 
@@ -158,19 +156,34 @@ public sealed class DatabaseSeeder : IDisposable
         }
 
         ChatLinksContext context = _contextFactory.CreateDbContext(currentDatabase.Name);
-        await using (context.ConfigureAwait(false))
+        if (await HasPendingMigrations(context).ConfigureAwait(false))
         {
-            await context.Database.MigrateAsync().ConfigureAwait(false);
+            await using (context.ConfigureAwait(false))
+            {
+                await context.Database.MigrateAsync().ConfigureAwait(false);
+            }
+
+            currentDatabase.SchemaVersion = ChatLinksContext.SchemaVersion;
+            await SaveManifest(currentDataManifest).ConfigureAwait(false);
+            await _eventAggregator.PublishAsync(new DatabaseMigrated()).ConfigureAwait(false);
         }
     }
 
-    private async Task<Database?> DownloadDatabase(Language language)
+    private static async Task<bool> HasPendingMigrations(ChatLinksContext context)
+    {
+        IEnumerable<string> migrations = await context.Database.GetPendingMigrationsAsync().ConfigureAwait(false);
+        return migrations.Any();
+    }
+
+    private async Task<Database?> DownloadDatabase(Language language, Database? currentDatabase)
     {
         SeedIndex seedDataManifest = await _staticDataClient.GetSeedIndex(CancellationToken.None).ConfigureAwait(false);
         SeedDatabase? seedDatabase = seedDataManifest.Databases
-            .SingleOrDefault(seed => seed.SchemaVersion == ChatLinksContext.SchemaVersion && seed.Language == language.Alpha2Code);
+            .OrderByDescending(seed => seed.SchemaVersion)
+            .FirstOrDefault(seed => seed.SchemaVersion <= ChatLinksContext.SchemaVersion
+                && seed.Language == language.Alpha2Code);
 
-        if (seedDatabase is null)
+        if (seedDatabase is null || seedDatabase.SchemaVersion == currentDatabase?.SchemaVersion)
         {
             return null;
         }

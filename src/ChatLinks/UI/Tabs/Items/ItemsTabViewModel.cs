@@ -442,7 +442,7 @@ public sealed class ItemsTabViewModel(
     {
         MenuItems = [.. GetCategories()];
         eventAggregator.Subscribe<LocaleChanged>(OnLocaleChanged);
-        eventAggregator.Subscribe<DatabaseDownloaded>(OnDatabaseDownloaded);
+        eventAggregator.Subscribe<DatabaseMigrated>(OnDatabaseMigrated);
         eventAggregator.Subscribe<DatabaseSeeded>(OnDatabaseSeeded);
         return Task.CompletedTask;
     }
@@ -455,7 +455,7 @@ public sealed class ItemsTabViewModel(
         await Task.Run(OnSearch).ConfigureAwait(false);
     }
 
-    private async Task OnDatabaseDownloaded(DatabaseDownloaded downloaded)
+    private async Task OnDatabaseMigrated(DatabaseMigrated downloaded)
     {
         await Task.Run(OnSearch).ConfigureAwait(false);
     }
@@ -559,7 +559,7 @@ public sealed class ItemsTabViewModel(
     public void Dispose()
     {
         eventAggregator.Unsubscribe<LocaleChanged>(OnLocaleChanged);
-        eventAggregator.Unsubscribe<DatabaseDownloaded>(OnDatabaseDownloaded);
+        eventAggregator.Unsubscribe<DatabaseMigrated>(OnDatabaseMigrated);
         eventAggregator.Unsubscribe<DatabaseSeeded>(OnDatabaseSeeded);
     }
 }
