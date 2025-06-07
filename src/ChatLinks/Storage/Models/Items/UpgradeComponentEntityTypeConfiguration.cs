@@ -14,7 +14,8 @@ namespace SL.ChatLinks.Storage.Models.Items;
 public class UpgradeComponentEntityTypeConfiguration(
     ValueConverter<IDictionary<Extensible<AttributeName>, int>, string> attributesConverter,
     ValueComparer<IDictionary<Extensible<AttributeName>, int>> attributesComparer,
-    ValueComparer<Buff> buffComparer
+    ValueComparer<Buff> buffComparer,
+    ValueComparer<IReadOnlyCollection<InfusionSlotUpgradePath>> upgradePathComparer
 ) : IEntityTypeConfiguration<UpgradeComponent>
 {
     public void Configure(EntityTypeBuilder<UpgradeComponent> builder)
@@ -36,5 +37,9 @@ public class UpgradeComponentEntityTypeConfiguration(
             .HasColumnName("Buff")
             .HasJsonValueConversion()
             .Metadata.SetValueComparer(buffComparer);
+        builder.Property(upgradeComponent => upgradeComponent.UpgradesInto)
+            .HasColumnName("UpgradesInto")
+            .HasJsonValueConversion()
+            .Metadata.SetValueComparer(upgradePathComparer);
     }
 }

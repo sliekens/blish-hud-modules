@@ -1306,6 +1306,11 @@ namespace SL.ChatLinks.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("UpgradesInto")
+                        .IsRequired()
+                        .HasColumnName("UpgradesInto")
+                        .HasColumnType("TEXT");
+
                     b.HasDiscriminator().HasValue("upgrade_component");
                 });
 

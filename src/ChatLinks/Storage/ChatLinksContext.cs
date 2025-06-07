@@ -166,7 +166,8 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
         _ = modelBuilder.ApplyConfiguration(new UpgradeComponentEntityTypeConfiguration(
             attributesConverter,
             attributesComparer,
-            buffComparer
+            buffComparer,
+            upgradePathComparer
         ));
 
         _ = modelBuilder.ApplyConfiguration(new RuneEntityTypeConfiguration());
