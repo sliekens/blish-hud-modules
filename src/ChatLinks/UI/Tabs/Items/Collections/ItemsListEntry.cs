@@ -67,7 +67,7 @@ public sealed class ItemsListEntry(ItemsListViewModel viewModel) : Control
             {
                 spriteBatch.DrawStringOnCtrl(
                     this,
-                    viewModel.Item.Name,
+                    viewModel.ItemName,
                     Content.DefaultFont14,
                     _textBounds.OffsetBy(x, y),
                     new Color(Color.Black, .4f),
@@ -78,7 +78,7 @@ public sealed class ItemsListEntry(ItemsListViewModel viewModel) : Control
 
         spriteBatch.DrawStringOnCtrl(
             this,
-            viewModel.Item.Name,
+            viewModel.ItemName,
             Content.DefaultFont14,
             _textBounds,
             viewModel.Color,

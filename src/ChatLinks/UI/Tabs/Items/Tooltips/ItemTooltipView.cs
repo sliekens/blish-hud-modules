@@ -14,7 +14,6 @@ using GuildWars2.Items;
 using Microsoft.Xna.Framework;
 
 using SL.Common.Controls;
-using SL.Common.ModelBinding;
 
 using Color = Microsoft.Xna.Framework.Color;
 using Container = Blish_HUD.Controls.Container;
@@ -842,27 +841,25 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
             Height = 50
         };
 
-        Image icon = new()
+        _ = new Image()
         {
             Parent = header,
             Texture = ViewModel.GetIcon(ViewModel.Item),
             Size = new Point(50)
         };
 
-        Label name = new()
-        {
-            Parent = header,
-            TextColor = ViewModel.ItemNameColor,
-            Width = _layout.Width - 55,
-            Height = 50,
-            VerticalAlignment = VerticalAlignment.Middle,
-            Font = GameService.Content.DefaultFont18,
-            WrapText = true,
-        };
+        FormattedLabel name = new FormattedLabelBuilder()
+           .SetWidth(_layout.Width - 55)
+           .SetHeight(50)
+           .Wrap()
+           .SetVerticalAlignment(VerticalAlignment.Middle)
+           .AddMarkup(ViewModel.ItemName.Replace(" ", "  "), part =>
+           {
+               _ = part.SetFontSize(ContentService.FontSize.Size18);
+           }, ViewModel.ItemNameColor)
+           .Build();
 
-        _ = Binder.Bind(ViewModel, vm => vm.ItemName, name);
-
-        name.Text = name.Text.Replace(" ", "  ");
+        name.Parent = header;
     }
 
     private void PrintDefense(int defense)
