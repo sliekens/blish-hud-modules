@@ -1,6 +1,6 @@
 {
     "name": "Chat Links",
-    "version": "5.4.1",
+    "version": "5.4.2",
     "namespace": "sliekens.chat_links",
     "package": "SL.ChatLinks.dll",
     "manifest_version": 1,
