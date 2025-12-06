@@ -12,7 +12,7 @@
     <PackageVersion Include="GW2SDK" Version="2.5.1" />
     <PackageVersion Include="Gw2Sharp" Version="1.7.4" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="[3.1.32, 3.2.0)" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="[3.1.32, 3.2.0)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="[3.1.32, 3.2.0)" />
     <PackageVersion Include="Microsoft.Extensions.Caching.Abstractions" Version="[3.1.32, 3.2.0)" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="[3.1.32, 3.2.0)" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="[3.1.32, 3.2.0)" />
@@ -27,9 +27,8 @@
     <PackageVersion Include="Newtonsoft.Json" Version="[13.0.1]" />
     <PackageVersion Include="Polly" Version="8.5.2" />
     <PackageVersion Include="PolySharp" Version="1.15.0" />
-    <PackageVersion Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.11" />
-    <PackageVersion Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.11" />
-    <PackageVersion Include="SQLitePCLRaw.provider.dynamic_cdecl" Version="2.1.11" />
+    <PackageVersion Include="SourceGear.sqlite3" Version="3.50.4.2" />
+    <PackageVersion Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.2" />
     <PackageVersion Include="System.Collections.Immutable" Version="9.0.5" />
     <PackageVersion Include="System.ComponentModel.Composition" Version="[6.0.0]" />
     <PackageVersion Include="System.Text.Json" Version="9.0.5" />

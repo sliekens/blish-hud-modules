@@ -4,6 +4,7 @@
     <OutputType>Library</OutputType>
     <TargetFramework>net472</TargetFramework>
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Resources\**\*" />

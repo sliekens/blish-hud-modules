@@ -4,6 +4,7 @@
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
     <BlishHUDModuleFileName>sliekens.chat-links</BlishHUDModuleFileName>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="BlishHUD">
@@ -21,7 +22,7 @@
       <ExcludeAssets>all</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="GW2SDK" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
     <PackageReference Include="Microsoft.Extensions.Http" />
     <PackageReference Include="Microsoft.Extensions.Localization" />
     <PackageReference Include="Microsoft.Windows.CsWin32">
@@ -33,12 +34,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" />
+    <PackageReference Include="SourceGear.sqlite3" GeneratePathProperty="true" />
     <PackageReference Include="System.ComponentModel.Composition" />
     <PackageReference Include="System.Text.Json" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="SQLitePCLRaw.provider.dynamic_cdecl" />
-    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" GeneratePathProperty="true" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\..\forked\Microsoft.Data.Sqlite.dll">
@@ -72,16 +71,12 @@
   </Target>
   <Target Name="EmbedNativeSQLiteDllWithCostura" BeforeTargets="ResolveAssemblyReferences">
     <ItemGroup>
-      <EmbeddedResource Include="$(PkgSQLitePCLRaw_lib_e_sqlite3)\runtimes\win-x86\native\e_sqlite3.dll">
-        <Link>costura-win-x86\sliekens.e_sqlite3.dll</Link>
-        <Visible>false</Visible>
-      </EmbeddedResource>
-      <EmbeddedResource Include="$(PkgSQLitePCLRaw_lib_e_sqlite3)\runtimes\win-x64\native\e_sqlite3.dll">
-        <Link>costura-win-x64\sliekens.e_sqlite3.dll</Link>
+      <EmbeddedResource Include="$(PkgSourceGear_sqlite3)\runtimes\win-x64\native\e_sqlite3.dll">
+        <Link>costura-win-x64\e_sqlite3.dll</Link>
         <Visible>false</Visible>
       </EmbeddedResource>
       <Content Remove="@(Content)" Condition="'%(Filename)%(Extension)' == 'e_sqlite3.dll'" />
-      <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" Condition="'%(Filename)%(Extension)' == 'e_sqlite3.dll' OR '%(Filename)%(Extension)' == 'SQLitePCLRaw.batteries_v2.dll'" />
+      <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" Condition="'%(Filename)%(Extension)' == 'e_sqlite3.dll'" />
     </ItemGroup>
   </Target>
 </Project>
