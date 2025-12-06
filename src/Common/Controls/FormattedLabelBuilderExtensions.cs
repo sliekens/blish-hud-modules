@@ -11,15 +11,12 @@ namespace SL.Common.Controls;
 
 public static class FormattedLabelBuilderExtensions
 {
-    private static readonly MarkupLexer Lexer = new();
-    private static readonly MarkupParser Parser = new();
-
     public static FormattedLabelBuilder AddMarkup(this FormattedLabelBuilder builder, string markup, Color? primaryColor = null)
     {
         ThrowHelper.ThrowIfNull(builder);
         ThrowHelper.ThrowIfNull(markup);
-        IEnumerable<MarkupToken> tokens = Lexer.Tokenize(markup);
-        RootNode syntax = Parser.Parse(tokens);
+        IEnumerable<MarkupToken> tokens = MarkupLexer.Tokenize(markup);
+        RootNode syntax = MarkupParser.Parse(tokens);
         foreach (FormattedLabelPartBuilder? part in syntax.Children.SelectMany(node => builder.CreateParts(node, primaryColor ?? Color.White)))
         {
             _ = part.SetFontSize(ContentService.FontSize.Size16);
@@ -37,8 +34,8 @@ public static class FormattedLabelBuilderExtensions
         ThrowHelper.ThrowIfNull(builder);
         ThrowHelper.ThrowIfNull(markup);
         ThrowHelper.ThrowIfNull(creationFunc);
-        IEnumerable<MarkupToken> tokens = Lexer.Tokenize(markup);
-        RootNode syntax = Parser.Parse(tokens);
+        IEnumerable<MarkupToken> tokens = MarkupLexer.Tokenize(markup);
+        RootNode syntax = MarkupParser.Parse(tokens);
         foreach (FormattedLabelPartBuilder? part in syntax.Children.SelectMany(node => builder.CreateParts(node, primaryColor ?? Color.White)))
         {
             creationFunc(part);
