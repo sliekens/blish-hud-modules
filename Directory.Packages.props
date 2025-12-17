@@ -9,7 +9,7 @@
     <PackageVersion Include="Costura.Fody" Version="6.0.0" />
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
     <PackageVersion Include="Fody" Version="6.9.2" />
-    <PackageVersion Include="GW2SDK" Version="2.9.0" />
+    <PackageVersion Include="GW2SDK" Version="3.0.0-preview.1" />
     <PackageVersion Include="Gw2Sharp" Version="1.7.4" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="[3.1.32, 3.2.0)" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="[3.1.32, 3.2.0)" />
