@@ -123,7 +123,7 @@ public sealed class ItemEntityTypeConfiguration : IEntityTypeConfiguration<Item>
             .HasValue<SharedInventorySlot>("shared_inventory_slot")
             .HasValue<MistChampionSkinUnlocker>("mist_champion_skin_unlocker")
             .HasValue<JadeBotSkinUnlocker>("jade_bot_skin_unlocker")
-            .HasValue<MagicDoorSkinUnlocker>("magic_door_skin_unlocker")
+            .HasValue<ConjuredDoorwayUnlocker>("conjured_doorway_unlocker")
             ;
     }
 }

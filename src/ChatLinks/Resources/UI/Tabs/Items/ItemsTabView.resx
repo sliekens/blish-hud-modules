@@ -450,4 +450,7 @@
   <data name="Fishing Rods" xml:space="preserve">
     <value>Fishing Rods</value>
   </data>
+  <data name="Conjured Doorway Unlockers" xml:space="preserve">
+    <value>Conjured Doorway Unlockers</value>
+  </data>
 </root>

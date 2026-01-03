@@ -117,6 +117,7 @@ public sealed class ItemSearch(IDbContextFactory contextFactory, ILocale locale)
                 "bank_tab_expansion" => context.Items.OfType<BankTabExpansion>(),
                 "build_storage_expansion" => context.Items.OfType<BuildStorageExpansion>(),
                 "build_template_expansion" => context.Items.OfType<BuildTemplateExpansion>(),
+                "conjured_doorway_unlocker" => context.Items.OfType<ConjuredDoorwayUnlocker>(),
                 "content_unlocker" => context.Items.OfType<ContentUnlocker>(),
                 "dye" => context.Items.OfType<Dye>(),
                 "equipment_template_expansion" => context.Items.OfType<EquipmentTemplateExpansion>(),

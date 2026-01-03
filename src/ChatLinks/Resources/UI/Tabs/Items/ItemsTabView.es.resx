@@ -450,4 +450,7 @@
   <data name="Fishing Rods" xml:space="preserve">
     <value>Cañas de pescar</value>
   </data>
+  <data name="Conjured Doorway Unlockers" xml:space="preserve">
+    <value>Desbloqueadores de portal conjurado</value>
+  </data>
 </root>

@@ -312,7 +312,6 @@ public sealed class ItemsTabViewModel(
                     new ItemCategoryMenuItem { Id = "large_bundle", Label = localizer["Large Bundles"] }
                 ]
             },
-
             new ItemCategoryMenuItem
             {
                 Label = localizer["Upgrade Components"],
@@ -330,7 +329,6 @@ public sealed class ItemsTabViewModel(
                     new ItemCategoryMenuItem { Id = "universal_upgrade", Label = localizer["Universal Upgrades"] }
                 ]
             },
-
             new ItemCategoryMenuItem
             {
                 Label = localizer["Trinkets"],
@@ -352,9 +350,7 @@ public sealed class ItemsTabViewModel(
                 Subcategories =
                 [
                     new ItemCategoryMenuItem { Id = "gathering_tool", Label = localizer["All Gathering Tools"] },
-
                     new ItemCategoryMenuItem { Id = "harvesting_sickle", Label = localizer["Harvesting Sickles"] },
-
                     new ItemCategoryMenuItem { Id = "logging_axe", Label = localizer["Logging Axes"] },
                     new ItemCategoryMenuItem { Id = "mining_pick", Label = localizer["Mining Picks"] },
                     new ItemCategoryMenuItem { Id = "fishing_rod", Label = localizer["Fishing Rods"] },
@@ -362,7 +358,6 @@ public sealed class ItemsTabViewModel(
                     new ItemCategoryMenuItem { Id = "lure", Label = localizer["Lures"] }
                 ]
             },
-
             new ItemCategoryMenuItem
             {
                 Label = localizer["Consumables"],
@@ -382,22 +377,22 @@ public sealed class ItemsTabViewModel(
                     {
                         Id = "glider_skin_unlocker", Label = localizer["Glider Skin Unlockers"]
                     },
-
                     new ItemCategoryMenuItem
                     {
                         Id = "jade_bot_skin_unlocker", Label = localizer["Jade Bot Skin Unlockers"]
                     },
-
                     new ItemCategoryMenuItem { Id = "miniature_unlocker", Label = localizer["Miniature Unlockers"] },
-
                     new ItemCategoryMenuItem
                     {
                         Id = "mist_champion_skin_unlocker", Label = localizer["Mist Champion Skin Unlockers"]
                     },
-
                     new ItemCategoryMenuItem { Id = "dye", Label = localizer["Dyes"] },
                     new ItemCategoryMenuItem { Id = "recipe_sheet", Label = localizer["Recipe Sheets"] },
                     new ItemCategoryMenuItem { Id = "expansions", Label = localizer["Expansions"] },
+                    new ItemCategoryMenuItem
+                    {
+                        Id = "conjured_doorway_unlocker", Label = localizer["Conjured Doorway Unlockers"]
+                    },
                     new ItemCategoryMenuItem { Id = "content_unlocker", Label = localizer["Content Unlockers"] },
                     new ItemCategoryMenuItem { Id = "random_unlocker", Label = localizer["Random Unlocker"] },
                     new ItemCategoryMenuItem { Id = "appearance_changer", Label = localizer["Appearance Changers"] },
