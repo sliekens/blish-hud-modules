@@ -144,7 +144,7 @@ public sealed class AchievementTileViewModel : ViewModel, IDisposable
         }
     }
 
-    public AccountAchievement? Progress => Progression
+    public AccountAchievement? Progress => Progression?
         .SingleOrDefault(accountAchievement => accountAchievement.Id == Achievement.Id);
 
     public bool Locked => Achievement.IsLocked(Group, Progression);
