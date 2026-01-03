@@ -2122,6 +2122,13 @@ namespace SL.ChatLinks.Migrations
                     b.HasDiscriminator().HasValue("build_template_expansion");
                 });
 
+            modelBuilder.Entity("GuildWars2.Items.ConjuredDoorwayUnlocker", b =>
+                {
+                    b.HasBaseType("GuildWars2.Items.Unlocker");
+
+                    b.HasDiscriminator().HasValue("conjured_doorway_unlocker");
+                });
+
             modelBuilder.Entity("GuildWars2.Items.ContentUnlocker", b =>
                 {
                     b.HasBaseType("GuildWars2.Items.Unlocker");

@@ -1,6 +1,7 @@
 ﻿using GuildWars2.Hero.Achievements.Categories;
 
 namespace SL.ChatLinks.UI.Tabs.Achievements;
+
 internal static class AchievementCategoryExtensions
 {
     public static bool? IsParentOf(this AchievementCategory category, int achievementId)

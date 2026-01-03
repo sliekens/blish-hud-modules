@@ -24,10 +24,6 @@ public sealed class EquipmentSkinEntityTypeConfiguration : IEntityTypeConfigurat
             .Metadata.SetValueComparer(new ListComparer<Extensible<RaceName>>());
         _ = builder.Property(skin => skin.Rarity).HasConversion(new ExtensibleEnumConverter<Rarity>());
 
-#pragma warning disable CS0618 // Type or member is obsolete
-        _ = builder.Ignore(skin => skin.IconHref);
-#pragma warning restore CS0618 // Type or member is obsolete
-
         DiscriminatorBuilder<string> discriminatorBuilder = builder.HasDiscriminator<string>("Type");
         _ = discriminatorBuilder.HasValue<EquipmentSkin>("skin");
         _ = discriminatorBuilder.HasValue<ArmorSkin>("armor")

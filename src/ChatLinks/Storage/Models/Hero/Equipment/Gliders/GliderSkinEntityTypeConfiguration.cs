@@ -25,9 +25,5 @@ public sealed class GliderSkinEntityTypeConfiguration : IEntityTypeConfiguration
         builder.Property(glider => glider.DefaultDyeColorIds)
             .HasJsonValueConversion()
             .Metadata.SetValueComparer(new ListComparer<int>());
-
-#pragma warning disable CS0618 // Type or member is obsolete
-        _ = builder.Ignore(glider => glider.IconHref);
-#pragma warning restore CS0618 // Type or member is obsolete
     }
 }

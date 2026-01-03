@@ -2,6 +2,7 @@
 using Blish_HUD.Content;
 
 namespace SL.Common;
+
 public static class ContentServiceExtensions
 {
     public static AsyncTexture2D GetRenderServiceTexture(this ContentService instance, Uri url)

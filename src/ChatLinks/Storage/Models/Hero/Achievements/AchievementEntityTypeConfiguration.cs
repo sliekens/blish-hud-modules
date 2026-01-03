@@ -40,9 +40,5 @@ public sealed class AchievementEntityTypeConfiguration : IEntityTypeConfiguratio
         _ = builder.HasDiscriminator<string>("Type")
            .HasValue<Achievement>("achievement")
            .HasValue<CollectionAchievement>("collection_achievement");
-
-#pragma warning disable CS0618 // Type or member is obsolete
-        _ = builder.Ignore(achievement => achievement.IconHref);
-#pragma warning restore CS0618 // Type or member is obsolete
     }
 }

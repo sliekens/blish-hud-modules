@@ -4,6 +4,7 @@ using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace SL.ChatLinks;
+
 internal static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddFactoryDelegate<TDelegate>(this IServiceCollection serviceCollecton)

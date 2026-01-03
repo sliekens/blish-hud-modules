@@ -20,9 +20,5 @@ public sealed class MistChampionSkinEntityTypeConfiguration : IEntityTypeConfigu
         builder.Property(mistChampion => mistChampion.UnlockItemIds)
             .HasJsonValueConversion()
             .Metadata.SetValueComparer(new CollectionComparer<int>());
-
-#pragma warning disable CS0618 // Type or member is obsolete
-        _ = builder.Ignore(mistChampion => mistChampion.IconHref);
-#pragma warning restore CS0618 // Type or member is obsolete
     }
 }

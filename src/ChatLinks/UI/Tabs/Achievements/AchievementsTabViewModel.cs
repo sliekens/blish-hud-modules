@@ -128,9 +128,6 @@ public sealed class AchievementsTabViewModel(
                 Name = localizer["Uncategorized"],
                 Description = "",
                 IconUrl = null!,
-#pragma warning disable CS0618 // Type or member is obsolete
-                IconHref = "",
-#pragma warning restore CS0618 // Type or member is obsolete
                 Order = int.MaxValue,
                 Achievements = [.. achievements
                     .Where(a => !a.Flags.Daily)

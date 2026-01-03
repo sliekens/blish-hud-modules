@@ -136,6 +136,7 @@ public sealed class UpgradeSelectorViewModel : ViewModel, IDisposable
                     Rarity.Exotic => 5,
                     Rarity.Ascended => 6,
                     Rarity.Legendary => 7,
+                    Rarity.None => 99,
                     _ => 99
                 }
                 : 99

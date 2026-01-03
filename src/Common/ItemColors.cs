@@ -19,6 +19,7 @@ public static class ItemColors
             GuildWars2.Items.Rarity.Exotic => MapColor(RarityColor.Exotic),
             GuildWars2.Items.Rarity.Ascended => MapColor(RarityColor.Ascended),
             GuildWars2.Items.Rarity.Legendary => MapColor(RarityColor.Legendary),
+            GuildWars2.Items.Rarity.None => Color.White,
             _ => Color.White
         };
     }

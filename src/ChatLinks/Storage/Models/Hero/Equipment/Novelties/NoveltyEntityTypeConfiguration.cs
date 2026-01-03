@@ -22,9 +22,5 @@ public sealed class NoveltyEntityTypeConfiguration : IEntityTypeConfiguration<No
         builder.Property(novelty => novelty.UnlockItemIds)
             .HasJsonValueConversion()
             .Metadata.SetValueComparer(new CollectionComparer<int>());
-
-#pragma warning disable CS0618 // Type or member is obsolete
-        _ = builder.Ignore(novelty => novelty.IconHref);
-#pragma warning restore CS0618 // Type or member is obsolete
     }
 }
