@@ -1217,8 +1217,10 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         {
             _ = builder.AppendFormat(CultureInfo.CurrentCulture, " ({0})", effect.Duration switch
             {
-                { Hours: >= 1 } => $"{effect.Duration.TotalHours} h",
-                _ => $"{effect.Duration.TotalMinutes} m"
+                { TotalDays: >= 1 } => $"{effect.Duration.Days} d",
+                { TotalHours: >= 1 } => $"{effect.Duration.Hours} h",
+                { TotalMinutes: >= 1 } => $"{effect.Duration.Minutes} m",
+                _ => $"{effect.Duration.Seconds}s"
             });
         }
 
