@@ -411,4 +411,7 @@
   <data name="You have already unlocked this dye" xml:space="preserve">
     <value>You have already unlocked this dye!</value>
   </data>
+  <data name="You have already unlocked this glider" xml:space="preserve">
+    <value>You have already unlocked this glider!</value>
+  </data>
 </root>

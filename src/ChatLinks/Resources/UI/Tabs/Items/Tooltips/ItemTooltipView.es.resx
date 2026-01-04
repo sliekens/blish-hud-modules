@@ -409,4 +409,7 @@
   <data name="You have already unlocked this dye" xml:space="preserve">
     <value>¡Ya has desbloqueado este tinte!</value>
   </data>
+  <data name="You have already unlocked this glider" xml:space="preserve">
+    <value>¡Ya has desbloqueado este planeador!</value>
+  </data>
 </root>

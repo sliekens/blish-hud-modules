@@ -267,8 +267,8 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     {
                         if (ViewModel.Unlocked.Value)
                         {
-                            PrintPlainText("""
-                                           You have already unlocked this glider!
+                            PrintPlainText($"""
+                                           {ViewModel.Localizer["You have already unlocked this glider"]}
 
                                            """, Color.Red);
                         }
