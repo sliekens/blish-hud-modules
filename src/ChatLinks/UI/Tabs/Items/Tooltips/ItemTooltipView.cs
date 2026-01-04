@@ -425,20 +425,24 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
     {
         PrintHeader();
         PrintDescription(gizmo.Description, gizmo.Level > 0);
-        PrintLockedUnlocked(
-            $"""
-
-            {ViewModel.Localizer["Novelty Locked"]}
-            """,
-            $"""
-
-            {ViewModel.Localizer["Novelty Unlocked"]}
-            """,
-            null
-        );
 
         if (ViewModel.DefaultLocked)
         {
+            PrintLockedUnlocked(
+                $"""
+
+                {ViewModel.Localizer["Novelty Locked"]}
+                """,
+                $"""
+
+                {ViewModel.Localizer["Novelty Unlocked"]}
+                """,
+                $"""
+
+                {ViewModel.LockedOtherText}
+                """
+            );
+
             PrintPlainText($"""
 
                 {ViewModel.Localizer["Consumable"]}
