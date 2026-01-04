@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using System.Text;
-using System.Windows.Input;
 
 using Blish_HUD;
 using Blish_HUD.Controls;
@@ -11,7 +10,6 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.BitmapFonts;
 
-using Mouse = Microsoft.Xna.Framework.Input.Mouse;
 using MouseEventArgs = Blish_HUD.Input.MouseEventArgs;
 
 namespace SL.Common.Controls;
@@ -62,8 +60,6 @@ public class NumberInput : TextInputBase
         Height = SpinnerButtonHeight * 2;
         TextChanged += OnTextChanged;
         InputFocusChanged += OnInputFocusChanged;
-        Input.Mouse.MouseMoved += OnGlobalMouseMoved;
-        Input.Mouse.LeftMouseButtonReleased += OnGlobalLeftMouseButtonReleased;
         Input.Mouse.MouseWheelScrolled += OnGlobalMouseWheelScrolled;
     }
 
@@ -141,7 +137,6 @@ public class NumberInput : TextInputBase
                     _incrementInterval = TimeSpan.FromMilliseconds(100);
                 }
                 break;
-            case NumberInputAction.Drag:
             case NumberInputAction.None:
             default:
                 _incrementTimer = TimeSpan.Zero;
@@ -297,7 +292,6 @@ public class NumberInput : TextInputBase
         }
         else
         {
-            _action = NumberInputAction.Drag;
             base.OnLeftMouseButtonPressed(e);
         }
     }
@@ -313,9 +307,6 @@ public class NumberInput : TextInputBase
             case NumberInputAction.Decrement:
                 Value--;
                 UnsetFocus();
-                break;
-            case NumberInputAction.Drag:
-                base.OnLeftMouseButtonReleased(e);
                 break;
             case NumberInputAction.None:
                 break;
@@ -370,16 +361,13 @@ public class NumberInput : TextInputBase
                 _textBoxRectangle
             );
 
-            if (_action != NumberInputAction.Drag)
+            if (_highlightRectangle.IsEmpty)
             {
-                if (_highlightRectangle.IsEmpty)
-                {
-                    PaintCursor(spriteBatch, _cursorRectangle);
-                }
-                else
-                {
-                    PaintHighlight(spriteBatch, _highlightRectangle);
-                }
+                PaintCursor(spriteBatch, _cursorRectangle);
+            }
+            else
+            {
+                PaintHighlight(spriteBatch, _highlightRectangle);
             }
         }
 
@@ -453,8 +441,6 @@ public class NumberInput : TextInputBase
     protected override void DisposeControl()
     {
         ValueChanged = null;
-        Input.Mouse.MouseMoved -= OnGlobalMouseMoved;
-        Input.Mouse.LeftMouseButtonReleased -= OnGlobalLeftMouseButtonReleased;
         Input.Mouse.MouseWheelScrolled -= OnGlobalMouseWheelScrolled;
         base.DisposeControl();
     }
@@ -506,38 +492,6 @@ public class NumberInput : TextInputBase
         ValueChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    private void OnGlobalMouseMoved(object sender, MouseEventArgs e)
-    {
-        if (_action == NumberInputAction.Drag)
-        {
-            int center = AbsoluteBounds.Y + _textBoxRectangle.Center.Y;
-            switch (e.MousePosition.Y - center)
-            {
-                case < -1:
-                    Value++;
-                    HideMousePosition();
-                    break;
-                case > 1:
-                    Value--;
-                    HideMousePosition();
-                    break;
-                default:
-                    break;
-            }
-
-            CursorIndex = Text.Length;
-        }
-    }
-
-    private void OnGlobalLeftMouseButtonReleased(object sender, MouseEventArgs e)
-    {
-        if (!MouseOver)
-        {
-            _action = NumberInputAction.None;
-        }
-    }
-
-
     private void OnGlobalMouseWheelScrolled(object sender, MouseEventArgs e)
     {
         if (MouseOver)
@@ -551,16 +505,5 @@ public class NumberInput : TextInputBase
                 Value--;
             }
         }
-    }
-
-
-    private void HideMousePosition()
-    {
-        int x = AbsoluteBounds.X + Width - (SpinnerWidth / 2);
-        int y = AbsoluteBounds.Y + (Height / 2);
-        System.Windows.Input.Mouse.OverrideCursor = Cursors.None;
-        Mouse.SetPosition(
-            (int)(x * GameService.Graphics.UIScaleMultiplier),
-            (int)(y * GameService.Graphics.UIScaleMultiplier));
     }
 }

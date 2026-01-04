@@ -6,7 +6,5 @@ internal enum NumberInputAction
 
     Increment,
 
-    Decrement,
-
-    Drag
+    Decrement
 }
