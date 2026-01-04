@@ -1,19 +1,34 @@
 {
-    "profiles": {
-        "Blish HUD 1.2.0": {
-            "commandName": "Executable",
-            "executablePath": "$(SolutionDir)Blish.HUD/1.2.0/Blish HUD.exe",
-            "commandLineArgs": "--debug --module $(TargetDir)$(BlishHUDModuleFileName).bhm"
-        },
-        "Blish HUD 1.2.0 (optimized)": {
-            "commandName": "Executable",
-            "executablePath": "$(SolutionDir)Blish.HUD/1.2.0/Blish HUD.exe",
-            "commandLineArgs": "--module $(TargetDir)$(BlishHUDModuleFileName).bhm"
-        },
-        "Blish HUD 1.2.0 (powershell)": {
-            "commandName": "Executable",
-            "executablePath": "$(SolutionDir)Blish.HUD/1.2.0/Blish HUD.exe",
-            "commandLineArgs": "--debug --process WindowsTerminal --module $(TargetDir)$(BlishHUDModuleFileName).bhm"
-        }
+  "profiles": {
+    "Blish HUD 1.2.0 (debug)": {
+      "commandName": "Executable",
+      "executablePath": "$(SolutionDir)Blish.HUD/1.2.0/Blish HUD.exe",
+      "commandLineArgs": "--debug --module $(TargetDir)$(BlishHUDModuleFileName).bhm --settings $(SolutionDir)Blish.HUD/Settings"
+    },
+    "Blish HUD 1.2.0": {
+      "commandName": "Executable",
+      "executablePath": "$(SolutionDir)Blish.HUD/1.2.0/Blish HUD.exe",
+      "commandLineArgs": "--module $(TargetDir)$(BlishHUDModuleFileName).bhm --settings $(SolutionDir)Blish.HUD/Settings"
+    },
+    "Blish HUD 1.2.0 (powershell)": {
+      "commandName": "Executable",
+      "executablePath": "$(SolutionDir)Blish.HUD/1.2.0/Blish HUD.exe",
+      "commandLineArgs": "--debug --process WindowsTerminal --module $(TargetDir)$(BlishHUDModuleFileName).bhm --settings $(SolutionDir)Blish.HUD/Settings"
+    },
+    "Blish HUD 1.3.0 (debug)": {
+      "commandName": "Executable",
+      "executablePath": "$(SolutionDir)Blish.HUD/1.3.0/Blish HUD.exe",
+      "commandLineArgs": "--debug --module $(TargetDir)$(BlishHUDModuleFileName).bhm --settings $(SolutionDir)Blish.HUD/Settings"
+    },
+    "Blish HUD 1.3.0": {
+      "commandName": "Executable",
+      "executablePath": "$(SolutionDir)Blish.HUD/1.3.0/Blish HUD.exe",
+      "commandLineArgs": "--module $(TargetDir)$(BlishHUDModuleFileName).bhm --settings $(SolutionDir)Blish.HUD/Settings"
+    },
+    "Blish HUD 1.3.0 (powershell)": {
+      "commandName": "Executable",
+      "executablePath": "$(SolutionDir)Blish.HUD/1.3.0/Blish HUD.exe",
+      "commandLineArgs": "--debug --process WindowsTerminal --module $(TargetDir)$(BlishHUDModuleFileName).bhm --settings $(SolutionDir)Blish.HUD/Settings"
     }
+  }
 }
