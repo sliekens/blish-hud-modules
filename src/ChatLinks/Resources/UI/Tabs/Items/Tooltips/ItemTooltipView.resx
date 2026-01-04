@@ -414,4 +414,7 @@
   <data name="You have already unlocked this glider" xml:space="preserve">
     <value>You have already unlocked this glider!</value>
   </data>
+  <data name="You have already unlocked this Jade Bot" xml:space="preserve">
+    <value>You have already unlocked this Jade Bot!</value>
+  </data>
 </root>

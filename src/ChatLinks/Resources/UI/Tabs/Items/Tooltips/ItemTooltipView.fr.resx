@@ -415,4 +415,7 @@
   <data name="You have already unlocked this glider" xml:space="preserve">
     <value>Vous avez déjà débloqué ce deltaplane !</value>
   </data>
+  <data name="You have already unlocked this Jade Bot" xml:space="preserve">
+    <value>Vous avez déjà débloqué ce drone de jade !</value>
+  </data>
 </root>

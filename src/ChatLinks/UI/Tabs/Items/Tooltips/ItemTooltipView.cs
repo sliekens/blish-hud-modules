@@ -304,8 +304,8 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     {
                         if (ViewModel.Unlocked.Value)
                         {
-                            PrintPlainText("""
-                                           You have already unlocked this Jade Bot!
+                            PrintPlainText($"""
+                                           {ViewModel.Localizer["You have already unlocked this Jade Bot"]}
 
                                            """, Color.Red);
                         }
