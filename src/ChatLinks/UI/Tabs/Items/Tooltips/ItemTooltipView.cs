@@ -236,7 +236,6 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
                                            """, Color.Red);
                         }
-
                     }
                     else
                     {
@@ -405,6 +404,43 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                 PrintPlainText(ViewModel.Localizer["Consumable"]);
                 break;
             case RecipeSheet unlocker:
+                if (!string.IsNullOrEmpty(unlocker.Description))
+                {
+                    PrintPlainText(" ");
+                }
+
+                if (ViewModel.DefaultLocked)
+                {
+                    if (ViewModel.Unlocked.HasValue)
+                    {
+                        if (ViewModel.Unlocked.Value)
+                        {
+                            PrintPlainText($"""
+                                           {ViewModel.UnlockedText}
+
+                                           """, ViewModel.UnlockedTextColor);
+                        }
+
+                    }
+                    else
+                    {
+                        PrintPlainText($"""
+                                        {ViewModel.AuthorizationText}
+
+                                        """, Gray);
+                    }
+                }
+                else
+                {
+                    PrintPlainText($"""
+                                   {ViewModel.Localizer["Unlock status unknown"]}
+
+                                   """, Gray);
+                }
+
+                PrintPlainText(ViewModel.Localizer["Consumable"]);
+                break;
+            case ConjuredDoorwayUnlocker unlocker:
                 if (!string.IsNullOrEmpty(unlocker.Description))
                 {
                     PrintPlainText(" ");
