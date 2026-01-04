@@ -410,6 +410,6 @@
     <value>Vous avez déjà déverrouillé ce portail invoqué !</value>
   </data>
   <data name="You have already unlocked this dye" xml:space="preserve">
-    <value>Vous avez déjà déverrouillé cette teinture !</value>
+    <value>Vous avez déjà débloqué cette teinture !</value>
   </data>
 </root>
