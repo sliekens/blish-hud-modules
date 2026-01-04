@@ -231,8 +231,8 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     {
                         if (ViewModel.Unlocked.Value)
                         {
-                            PrintPlainText("""
-                                           You have already unlocked this dye!
+                            PrintPlainText($"""
+                                           {ViewModel.Localizer["You have already unlocked this dye"]}
 
                                            """, Color.Red);
                         }

@@ -406,4 +406,7 @@
   <data name="You have already unlocked this conjured doorway skin" xml:space="preserve">
     <value>Ya has desbloqueado este portal conjurado.</value>
   </data>
+  <data name="You have already unlocked this dye" xml:space="preserve">
+    <value>¡Ya has desbloqueado este tinte!</value>
+  </data>
 </root>

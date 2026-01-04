@@ -325,6 +325,9 @@
   <data name="Skin Locked" xml:space="preserve">
     <value>Apparence verrouillée</value>
   </data>
+  <data name="Junk" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
   <data name="Basic" xml:space="preserve">
     <value>Basique</value>
   </data>
@@ -405,5 +408,8 @@
   </data>
   <data name="You have already unlocked this conjured doorway skin" xml:space="preserve">
     <value>Vous avez déjà déverrouillé ce portail invoqué !</value>
+  </data>
+  <data name="You have already unlocked this dye" xml:space="preserve">
+    <value>Vous avez déjà déverrouillé cette teinture !</value>
   </data>
 </root>

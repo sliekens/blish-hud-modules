@@ -406,4 +406,7 @@
   <data name="You have already unlocked this conjured doorway skin" xml:space="preserve">
     <value>Ihr habt diesen herbeigerufenen Durchgang bereits freigeschaltet!</value>
   </data>
+  <data name="You have already unlocked this dye" xml:space="preserve">
+    <value>Ihr habt diese Farbe bereits freigeschaltet!</value>
+  </data>
 </root>
