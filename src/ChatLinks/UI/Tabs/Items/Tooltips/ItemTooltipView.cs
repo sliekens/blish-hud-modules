@@ -1018,6 +1018,12 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
     private void PrintItemSkin()
     {
+        // When skin has no name, game doesn't show unlock status either
+        if (string.IsNullOrEmpty(ViewModel.DefaultSkin?.Name))
+        {
+            return;
+        }
+
         if (ViewModel.DefaultLocked)
         {
             if (ViewModel.Unlocked.HasValue)
