@@ -484,6 +484,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
             $"""
 
             {ViewModel.LockedOtherText}
+
             """
         );
 
