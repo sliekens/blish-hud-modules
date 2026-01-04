@@ -453,9 +453,9 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                         if (ViewModel.Unlocked.Value)
                         {
                             PrintPlainText($"""
-                                           {ViewModel.UnlockedText}
+                                           {ViewModel.Localizer["You have already unlocked this conjured doorway skin"]}
 
-                                           """, ViewModel.UnlockedTextColor);
+                                           """, Color.Red);
                         }
 
                     }
