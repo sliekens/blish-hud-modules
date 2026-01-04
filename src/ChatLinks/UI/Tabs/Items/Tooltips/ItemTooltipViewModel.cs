@@ -151,7 +151,7 @@ public sealed class ItemTooltipViewModel(
 
     public Coin TotalVendorValue => Item.VendorValue * Quantity;
 
-    public string? AuthorizationText { get; private set; }
+    public string? LockedOtherText { get; private set; }
 
     public AsyncTexture2D? GetIcon(Item item)
     {
@@ -215,7 +215,7 @@ public sealed class ItemTooltipViewModel(
                             }
                             else
                             {
-                                AuthorizationText = Localizer["Grant unlocks permission"];
+                                LockedOtherText = Localizer["Grant unlocks permission"];
                             }
 
                             DefaultLocked = true;
@@ -238,7 +238,7 @@ public sealed class ItemTooltipViewModel(
                             }
                             else
                             {
-                                AuthorizationText = Localizer["Grant unlocks permission"];
+                                LockedOtherText = Localizer["Grant unlocks permission"];
 
                             }
 
@@ -270,7 +270,7 @@ public sealed class ItemTooltipViewModel(
                             }
                             else
                             {
-                                AuthorizationText = Localizer["Grant unlocks permission"];
+                                LockedOtherText = Localizer["Grant unlocks permission"];
                             }
 
                             DefaultLocked = true;
@@ -306,7 +306,7 @@ public sealed class ItemTooltipViewModel(
                             }
                             else
                             {
-                                AuthorizationText = Localizer["Grant unlocks permission"];
+                                LockedOtherText = Localizer["Grant unlocks permission"];
                             }
 
                             DefaultLocked = true;
@@ -337,7 +337,7 @@ public sealed class ItemTooltipViewModel(
                             }
                             else
                             {
-                                AuthorizationText = Localizer["Grant unlocks and inventories permission"];
+                                LockedOtherText = Localizer["Grant unlocks and inventories permission"];
                             }
 
                             DefaultLocked = true;
@@ -369,7 +369,7 @@ public sealed class ItemTooltipViewModel(
                             }
                             else
                             {
-                                AuthorizationText = Localizer["Grant unlocks permission"];
+                                LockedOtherText = Localizer["Grant unlocks permission"];
                             }
 
                             DefaultLocked = true;
@@ -406,7 +406,7 @@ public sealed class ItemTooltipViewModel(
                             }
                             else
                             {
-                                AuthorizationText = Localizer["Grant unlocks permission"];
+                                LockedOtherText = Localizer["Grant unlocks permission"];
                             }
 
                             DefaultLocked = true;
@@ -443,7 +443,7 @@ public sealed class ItemTooltipViewModel(
                             }
                             else
                             {
-                                AuthorizationText = Localizer["Grant unlocks permission"];
+                                LockedOtherText = Localizer["Grant unlocks permission"];
                             }
 
                             DefaultLocked = true;
@@ -486,7 +486,7 @@ public sealed class ItemTooltipViewModel(
                     }
                     else
                     {
-                        AuthorizationText = Localizer["Grant unlocks permission"];
+                        LockedOtherText = Localizer["Grant unlocks permission"];
                     }
 
                     DefaultLocked = true;
@@ -524,7 +524,7 @@ public sealed class ItemTooltipViewModel(
                             }
                             else
                             {
-                                AuthorizationText = Localizer["Grant unlocks permission"];
+                                LockedOtherText = Localizer["Grant unlocks permission"];
                             }
 
                             DefaultLocked = true;
@@ -540,6 +540,8 @@ public sealed class ItemTooltipViewModel(
             default:
                 break;
         }
+
+        LockedOtherText ??= Localizer["Unlock status unknown"];
 
         if (account.HasPermission(Permission.Inventories))
         {
@@ -568,7 +570,7 @@ public sealed class ItemTooltipViewModel(
                 }
                 else
                 {
-                    AuthorizationText = Localizer["Grant unlocks permission"];
+                    LockedOtherText = Localizer["Grant unlocks permission"];
                 }
             }
         }

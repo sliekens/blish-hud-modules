@@ -188,34 +188,15 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     PrintPlainText(" ");
                 }
 
-                if (ViewModel.DefaultLocked)
-                {
-                    if (ViewModel.Unlocked.HasValue)
-                    {
-                        if (ViewModel.Unlocked.Value)
-                        {
-                            PrintPlainText($"""
-                                           {ViewModel.Localizer["You already have that content unlocked"]}
+                PrintUnlocked($"""
+                    {ViewModel.Localizer["You already have that content unlocked"]}
 
-                                           """, Color.Red);
-                        }
+                    """,
+                    $"""
+                    {ViewModel.LockedOtherText}
 
-                    }
-                    else
-                    {
-                        PrintPlainText($"""
-                                        {ViewModel.AuthorizationText}
-
-                                        """, Gray);
-                    }
-                }
-                else
-                {
-                    PrintPlainText($"""
-                                   {ViewModel.Localizer["Unlock status unknown"]}
-
-                                   """, Gray);
-                }
+                    """
+                );
 
                 PrintPlainText(ViewModel.Localizer["Consumable"]);
                 break;
@@ -225,33 +206,15 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     PrintPlainText(" ");
                 }
 
-                if (ViewModel.DefaultLocked)
-                {
-                    if (ViewModel.Unlocked.HasValue)
-                    {
-                        if (ViewModel.Unlocked.Value)
-                        {
-                            PrintPlainText($"""
-                                           {ViewModel.Localizer["You have already unlocked this dye"]}
+                PrintUnlocked($"""
+                    {ViewModel.Localizer["You have already unlocked this dye"]}
 
-                                           """, Color.Red);
-                        }
-                    }
-                    else
-                    {
-                        PrintPlainText($"""
-                                        {ViewModel.AuthorizationText}
+                    """,
+                    $"""
+                    {ViewModel.LockedOtherText}
 
-                                        """, Gray);
-                    }
-                }
-                else
-                {
-                    PrintPlainText($"""
-                                   {ViewModel.Localizer["Unlock status unknown"]}
-
-                                   """, Gray);
-                }
+                    """
+                );
 
                 PrintPlainText(ViewModel.Localizer["Consumable"]);
                 break;
@@ -261,34 +224,16 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     PrintPlainText(" ");
                 }
 
-                if (ViewModel.DefaultLocked)
-                {
-                    if (ViewModel.Unlocked.HasValue)
-                    {
-                        if (ViewModel.Unlocked.Value)
-                        {
-                            PrintPlainText($"""
-                                           {ViewModel.Localizer["You have already unlocked this glider"]}
+                PrintUnlocked($"""
+                    {ViewModel.Localizer["You have already unlocked this glider"]}
 
-                                           """, Color.Red);
-                        }
+                    """,
+                    $"""
+                    {ViewModel.LockedOtherText}
 
-                    }
-                    else
-                    {
-                        PrintPlainText($"""
-                                        {ViewModel.AuthorizationText}
+                    """
+                );
 
-                                        """, Gray);
-                    }
-                }
-                else
-                {
-                    PrintPlainText($"""
-                                   {ViewModel.Localizer["Unlock status unknown"]}
-
-                                   """, Gray);
-                }
 
                 PrintPlainText(ViewModel.Localizer["Consumable"]);
                 break;
@@ -298,34 +243,15 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     PrintPlainText(" ");
                 }
 
-                if (ViewModel.DefaultLocked)
-                {
-                    if (ViewModel.Unlocked.HasValue)
-                    {
-                        if (ViewModel.Unlocked.Value)
-                        {
-                            PrintPlainText($"""
-                                           {ViewModel.Localizer["You have already unlocked this Jade Bot"]}
+                PrintUnlocked($"""
+                    {ViewModel.Localizer["You have already unlocked this Jade Bot"]}
 
-                                           """, Color.Red);
-                        }
+                    """,
+                    $"""
+                    {ViewModel.LockedOtherText}
 
-                    }
-                    else
-                    {
-                        PrintPlainText($"""
-                                        {ViewModel.AuthorizationText}
-
-                                        """, Gray);
-                    }
-                }
-                else
-                {
-                    PrintPlainText($"""
-                                   {ViewModel.Localizer["Unlock status unknown"]}
-
-                                   """, Gray);
-                }
+                    """
+                );
 
                 PrintPlainText(ViewModel.Localizer["Consumable"]);
                 break;
@@ -335,34 +261,15 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     PrintPlainText(" ");
                 }
 
-                if (ViewModel.DefaultLocked)
-                {
-                    if (ViewModel.Unlocked.HasValue)
-                    {
-                        if (ViewModel.Unlocked.Value)
-                        {
-                            PrintPlainText($"""
-                                           {ViewModel.Localizer["You have already unlocked this outfit"]}
+                PrintUnlocked($"""
+                    {ViewModel.Localizer["You have already unlocked this outfit"]}
 
-                                           """, Color.Red);
-                        }
+                    """,
+                    $"""
+                    {ViewModel.LockedOtherText}
 
-                    }
-                    else
-                    {
-                        PrintPlainText($"""
-                                        {ViewModel.AuthorizationText}
-
-                                        """, Gray);
-                    }
-                }
-                else
-                {
-                    PrintPlainText($"""
-                                   {ViewModel.Localizer["Unlock status unknown"]}
-
-                                   """, Gray);
-                }
+                    """
+                );
 
                 PrintPlainText(ViewModel.Localizer["Consumable"]);
                 break;
@@ -372,34 +279,15 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     PrintPlainText(" ");
                 }
 
-                if (ViewModel.DefaultLocked)
-                {
-                    if (ViewModel.Unlocked.HasValue)
-                    {
-                        if (ViewModel.Unlocked.Value)
-                        {
-                            PrintPlainText($"""
-                                           {ViewModel.Localizer["You have already unlocked this outfit"]}
+                PrintUnlocked($"""
+                    {ViewModel.Localizer["You have already unlocked this outfit"]}
 
-                                           """, Color.Red);
-                        }
+                    """,
+                    $"""
+                    {ViewModel.LockedOtherText}
 
-                    }
-                    else
-                    {
-                        PrintPlainText($"""
-                                        {ViewModel.AuthorizationText}
-
-                                        """, Gray);
-                    }
-                }
-                else
-                {
-                    PrintPlainText($"""
-                                   {ViewModel.Localizer["Unlock status unknown"]}
-
-                                   """, Gray);
-                }
+                    """
+                );
 
                 PrintPlainText(ViewModel.Localizer["Consumable"]);
                 break;
@@ -409,34 +297,17 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     PrintPlainText(" ");
                 }
 
-                if (ViewModel.DefaultLocked)
-                {
-                    if (ViewModel.Unlocked.HasValue)
-                    {
-                        if (ViewModel.Unlocked.Value)
-                        {
-                            PrintPlainText($"""
-                                           {ViewModel.UnlockedText}
+                PrintUnlocked($"""
+                    {ViewModel.UnlockedText}
 
-                                           """, ViewModel.UnlockedTextColor);
-                        }
+                    """,
+                    $"""
+                    {ViewModel.LockedOtherText}
 
-                    }
-                    else
-                    {
-                        PrintPlainText($"""
-                                        {ViewModel.AuthorizationText}
+                    """,
+                    ViewModel.UnlockedTextColor
+                );
 
-                                        """, Gray);
-                    }
-                }
-                else
-                {
-                    PrintPlainText($"""
-                                   {ViewModel.Localizer["Unlock status unknown"]}
-
-                                   """, Gray);
-                }
 
                 PrintPlainText(ViewModel.Localizer["Consumable"]);
                 break;
@@ -446,34 +317,15 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     PrintPlainText(" ");
                 }
 
-                if (ViewModel.DefaultLocked)
-                {
-                    if (ViewModel.Unlocked.HasValue)
-                    {
-                        if (ViewModel.Unlocked.Value)
-                        {
-                            PrintPlainText($"""
-                                           {ViewModel.Localizer["You have already unlocked this conjured doorway skin"]}
+                PrintUnlocked($"""
+                    {ViewModel.Localizer["You have already unlocked this conjured doorway skin"]}
 
-                                           """, Color.Red);
-                        }
+                    """,
+                    $"""
+                    {ViewModel.LockedOtherText}
 
-                    }
-                    else
-                    {
-                        PrintPlainText($"""
-                                        {ViewModel.AuthorizationText}
-
-                                        """, Gray);
-                    }
-                }
-                else
-                {
-                    PrintPlainText($"""
-                                   {ViewModel.Localizer["Unlock status unknown"]}
-
-                                   """, Gray);
-                }
+                    """
+                );
 
                 PrintPlainText(ViewModel.Localizer["Consumable"]);
                 break;
@@ -573,34 +425,20 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
     {
         PrintHeader();
         PrintDescription(gizmo.Description, gizmo.Level > 0);
+        PrintLockedUnlocked(
+            $"""
+
+            {ViewModel.Localizer["Novelty Locked"]}
+            """,
+            $"""
+
+            {ViewModel.Localizer["Novelty Unlocked"]}
+            """,
+            null
+        );
 
         if (ViewModel.DefaultLocked)
         {
-            if (ViewModel.Unlocked.HasValue)
-            {
-                if (ViewModel.Unlocked.Value)
-                {
-                    PrintPlainText($"""
-
-                        {ViewModel.Localizer["Novelty Unlocked"]}
-                        """);
-                }
-                else
-                {
-                    PrintPlainText($"""
-
-                        {ViewModel.Localizer["Novelty Locked"]}
-                        """, Gray);
-                }
-            }
-            else
-            {
-                PrintPlainText($"""
-
-                    {ViewModel.AuthorizationText}
-                    """, Gray);
-            }
-
             PrintPlainText($"""
 
                 {ViewModel.Localizer["Consumable"]}
@@ -632,36 +470,22 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
     {
         PrintHeader();
         PrintDescription(miniature.Description);
-        if (ViewModel.DefaultLocked)
-        {
-            if (ViewModel.Unlocked.HasValue)
-            {
-                if (ViewModel.Unlocked.Value)
-                {
-                    PrintPlainText($"""
+        PrintLockedUnlocked(
+            $"""
 
-                                    {ViewModel.Localizer["Mini Unlocked"]}
+            {ViewModel.Localizer["Mini Locked"]}
 
-                                    """);
-                }
-                else
-                {
-                    PrintPlainText($"""
+            """,
+            $"""
 
-                                    {ViewModel.Localizer["Mini Locked"]}
+            {ViewModel.Localizer["Mini Unlocked"]}
 
-                                    """, Gray);
-                }
-            }
-            else
-            {
-                PrintPlainText($"""
+            """,
+            $"""
 
-                                {ViewModel.AuthorizationText}
-
-                                """, Gray);
-            }
-        }
+            {ViewModel.LockedOtherText}
+            """
+        );
 
         PrintPlainText(ViewModel.Localizer["Mini"]);
         PrintInBank();
@@ -1019,44 +843,50 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
     private void PrintItemSkin()
     {
         // When skin has no name, game doesn't show unlock status either
-        if (string.IsNullOrEmpty(ViewModel.DefaultSkin?.Name))
+        string? skinName = ViewModel.DefaultSkin?.Name;
+        if (string.IsNullOrEmpty(skinName))
         {
             return;
         }
 
-        if (ViewModel.DefaultLocked)
-        {
-            if (ViewModel.Unlocked.HasValue)
-            {
-                if (ViewModel.Unlocked.Value)
-                {
-                    PrintPlainText($"""
+        PrintLockedUnlocked(
+            $"""
 
-                                    {ViewModel.Localizer["Skin Unlocked"]}
-                                    {ViewModel.DefaultSkin?.Name}
-                                    """);
-                }
-                else
-                {
-                    PrintPlainText($"""
+            {ViewModel.Localizer["Skin Locked"]}
+            {skinName}
+            """,
+            $"""
 
-                                    {ViewModel.Localizer["Skin Locked"]}
-                                    {ViewModel.DefaultSkin?.Name}
-                                    """, Gray);
-                }
-            }
-            else
-            {
-                PrintPlainText($"""
+            {ViewModel.Localizer["Skin Unlocked"]}
+            {skinName}
+            """,
+            $"""
 
-                                {ViewModel.AuthorizationText}
-                                {ViewModel.DefaultSkin?.Name}
-                                """, Gray);
-            }
-        }
+            {ViewModel.LockedOtherText}
+            {skinName}
+            """
+        );
     }
 
     private void PrintTransmutation()
+    {
+        PrintLockedUnlocked(
+            $"""
+
+            {ViewModel.Localizer["Skin Locked"]}
+            """,
+            $"""
+
+            {ViewModel.Localizer["Skin Unlocked"]}
+            """,
+            $"""
+
+            {ViewModel.LockedOtherText}
+            """
+        );
+    }
+
+    private void PrintUnlocked(string unlockedText, string? other = null, Color? unlockedTextColor = null)
     {
         if (ViewModel.DefaultLocked)
         {
@@ -1064,26 +894,43 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
             {
                 if (ViewModel.Unlocked.Value)
                 {
-                    PrintPlainText($"""
+                    PrintPlainText(unlockedText, unlockedTextColor ?? Color.Red);
+                }
+            }
+            else if (!string.IsNullOrEmpty(other))
+            {
+                PrintPlainText(other!, Gray);
+            }
+        }
+        else if (!string.IsNullOrEmpty(other))
+        {
+            PrintPlainText(other!, Gray);
+        }
+    }
 
-                                    {ViewModel.Localizer["Skin Unlocked"]}
-                                    """);
+    private void PrintLockedUnlocked(string lockedText, string unlockedText, string? other = null)
+    {
+        if (ViewModel.DefaultLocked)
+        {
+            if (ViewModel.Unlocked.HasValue)
+            {
+                if (ViewModel.Unlocked.Value)
+                {
+                    PrintPlainText(unlockedText);
                 }
                 else
                 {
-                    PrintPlainText($"""
-
-                                    {ViewModel.Localizer["Skin Locked"]}
-                                    """, Gray);
+                    PrintPlainText(lockedText, Gray);
                 }
             }
-            else
+            else if (!string.IsNullOrEmpty(other))
             {
-                PrintPlainText($"""
-
-                                {ViewModel.AuthorizationText}
-                                """, Gray);
+                PrintPlainText(other!, Gray);
             }
+        }
+        else if (!string.IsNullOrEmpty(other))
+        {
+            PrintPlainText(other!, Gray);
         }
     }
 
