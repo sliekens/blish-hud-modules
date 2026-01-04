@@ -405,4 +405,7 @@
   <data name="Count in material storage" xml:space="preserve">
     <value>{0:N0} in Material Storage</value>
   </data>
+  <data name="You have already unlocked this conjured doorway skin" xml:space="preserve">
+    <value>You have already unlocked this conjured doorway skin.</value>
+  </data>
 </root>

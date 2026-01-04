@@ -403,4 +403,7 @@
   <data name="Count in material storage" xml:space="preserve">
     <value>{0:N0} im Materialienlager</value>
   </data>
+  <data name="You have already unlocked this conjured doorway skin" xml:space="preserve">
+    <value>Ihr habt diesen herbeigerufenen Durchgang bereits freigeschaltet!</value>
+  </data>
 </root>
