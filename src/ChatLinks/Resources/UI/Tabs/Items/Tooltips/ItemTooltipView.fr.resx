@@ -249,7 +249,7 @@
   <data name="Shield" xml:space="preserve">
     <value>Bouclier</value>
   </data>
-  <data name="Shortbow" xml:space="preserve">
+  <data name="Short Bow" xml:space="preserve">
     <value>Arc court</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />

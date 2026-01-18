@@ -631,7 +631,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                 PrintPlainText(ViewModel.Localizer["Shield"]);
                 break;
             case Shortbow:
-                PrintPlainText(ViewModel.Localizer["Shortbow"]);
+                PrintPlainText(ViewModel.Localizer["Short Bow"]);
                 break;
             case SmallBundle:
                 PrintPlainText(ViewModel.Localizer["Small Bundle"]);
