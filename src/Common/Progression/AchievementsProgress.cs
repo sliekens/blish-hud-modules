@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 
 using GuildWars2;
 using GuildWars2.Authorization;
+using GuildWars2.Collections;
 using GuildWars2.Hero.Achievements;
 
 using Microsoft.Extensions.Caching.Memory;
@@ -54,7 +55,7 @@ public sealed class AchievementsProgress(
     private async ValueTask CacheAchievementProgress(ICacheEntry entry, CancellationToken cancellationToken)
     {
         string? token = await tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
-        (HashSet<AccountAchievement> value, MessageContext context) = await gw2Client.Hero.Achievements
+        (IImmutableValueSet<AccountAchievement> value, MessageContext context) = await gw2Client.Hero.Achievements
             .GetAccountAchievements(token, cancellationToken: cancellationToken)
             .ConfigureAwait(false);
 

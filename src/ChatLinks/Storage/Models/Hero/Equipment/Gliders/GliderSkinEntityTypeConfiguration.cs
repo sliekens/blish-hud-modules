@@ -3,7 +3,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-using SL.ChatLinks.Storage.Comparers;
 using SL.ChatLinks.Storage.Converters;
 
 namespace SL.ChatLinks.Storage.Models.Hero.Equipment.Gliders;
@@ -18,12 +17,10 @@ public sealed class GliderSkinEntityTypeConfiguration : IEntityTypeConfiguration
         _ = builder.HasIndex(glider => glider.Name);
         _ = builder.HasIndex(glider => glider.Order);
 
-        builder.Property(glider => glider.UnlockItemIds)
-            .HasJsonValueConversion()
-            .Metadata.SetValueComparer(new CollectionComparer<int>());
+        _ = builder.Property(glider => glider.UnlockItemIds)
+            .HasJsonValueConversion();
 
-        builder.Property(glider => glider.DefaultDyeColorIds)
-            .HasJsonValueConversion()
-            .Metadata.SetValueComparer(new ListComparer<int>());
+        _ = builder.Property(glider => glider.DefaultDyeColorIds)
+            .HasJsonValueConversion();
     }
 }

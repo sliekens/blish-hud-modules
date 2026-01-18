@@ -3,7 +3,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-using SL.ChatLinks.Storage.Comparers;
 using SL.ChatLinks.Storage.Converters;
 
 namespace SL.ChatLinks.Storage.Models.Hero.Equipment.Outfits;
@@ -17,8 +16,7 @@ public sealed class OutfitEntityTypeConfiguration : IEntityTypeConfiguration<Out
         _ = builder.HasKey(outfit => outfit.Id);
         _ = builder.HasIndex(outfit => outfit.Name);
 
-        builder.Property(outfit => outfit.UnlockItemIds)
-            .HasJsonValueConversion()
-            .Metadata.SetValueComparer(new CollectionComparer<int>());
+        _ = builder.Property(outfit => outfit.UnlockItemIds)
+            .HasJsonValueConversion();
     }
 }

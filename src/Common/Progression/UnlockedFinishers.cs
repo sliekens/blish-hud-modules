@@ -2,6 +2,8 @@ using System.Collections.Immutable;
 
 using GuildWars2;
 using GuildWars2.Authorization;
+using GuildWars2.Collections;
+using GuildWars2.Hero.Equipment.Finishers;
 
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -37,7 +39,7 @@ public sealed class UnlockedFinishers(
     private async ValueTask CacheUnlockedFinishers(ICacheEntry entry, CancellationToken cancellationToken)
     {
         string? token = await tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
-        (HashSet<GuildWars2.Hero.Equipment.Finishers.UnlockedFinisher> values, MessageContext context) = await gw2Client.Hero.Equipment.Finishers
+        (IImmutableValueSet<UnlockedFinisher> values, MessageContext context) = await gw2Client.Hero.Equipment.Finishers
             .GetUnlockedFinishers(token, cancellationToken: cancellationToken)
             .ConfigureAwait(false);
 

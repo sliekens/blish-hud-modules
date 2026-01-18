@@ -8,6 +8,7 @@ using GuildWars2.Hero.Equipment.Finishers;
 using GuildWars2.Hero.Equipment.Gliders;
 using GuildWars2.Hero.Equipment.JadeBots;
 using GuildWars2.Hero.Equipment.MailCarriers;
+using GuildWars2.Hero.Equipment.Miniatures;
 using GuildWars2.Hero.Equipment.Novelties;
 using GuildWars2.Hero.Equipment.Outfits;
 using GuildWars2.Hero.Equipment.Wardrobe;
@@ -22,9 +23,6 @@ using Microsoft.Xna.Framework;
 
 using SL.ChatLinks.Storage;
 using SL.Common.Progression;
-
-using Miniature = GuildWars2.Hero.Equipment.Miniatures.Miniature;
-using MiniatureItem = GuildWars2.Items.Miniature;
 
 namespace SL.ChatLinks.UI.Tabs.Items.Tooltips;
 
@@ -178,13 +176,13 @@ public sealed class ItemTooltipViewModel(
         {
             case Transmutation transmutation:
                 progress.Report("Checking unlock status...");
-                await GetSkin(transmutation.SkinIds.First()).ConfigureAwait(false);
+                await GetSkin(transmutation.SkinIds[0]).ConfigureAwait(false);
                 break;
             case Armor armor:
                 progress.Report("Checking unlock status...");
                 await GetSkin(armor.DefaultSkinId).ConfigureAwait(false);
                 break;
-            case Backpack back:
+            case BackItem back:
                 progress.Report("Checking unlock status...");
                 await GetSkin(back.DefaultSkinId).ConfigureAwait(false);
                 break;

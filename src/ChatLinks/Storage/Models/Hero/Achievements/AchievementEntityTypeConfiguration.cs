@@ -3,7 +3,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-using SL.ChatLinks.Storage.Comparers;
 using SL.ChatLinks.Storage.Converters;
 
 namespace SL.ChatLinks.Storage.Models.Hero.Achievements;
@@ -19,21 +18,17 @@ public sealed class AchievementEntityTypeConfiguration : IEntityTypeConfiguratio
         _ = builder.Property(achievement => achievement.Flags)
             .HasJsonValueConversion();
 
-        builder.Property(achievement => achievement.Tiers)
-             .HasJsonValueConversion()
-             .Metadata.SetValueComparer(new ListComparer<AchievementTier>());
+        _ = builder.Property(achievement => achievement.Tiers)
+             .HasJsonValueConversion();
 
-        builder.Property(achievement => achievement.Rewards)
-            .HasJsonValueConversion()
-            .Metadata.SetValueComparer(new ListComparer<AchievementReward>());
+        _ = builder.Property(achievement => achievement.Rewards)
+            .HasJsonValueConversion();
 
-        builder.Property(achievement => achievement.Bits)
-            .HasJsonValueConversion()
-            .Metadata.SetValueComparer(new ListComparer<AchievementBit>());
+        _ = builder.Property(achievement => achievement.Bits)
+            .HasJsonValueConversion();
 
-        builder.Property(achievement => achievement.Prerequisites)
-            .HasJsonValueConversion()
-            .Metadata.SetValueComparer(new ListComparer<int>());
+        _ = builder.Property(achievement => achievement.Prerequisites)
+            .HasJsonValueConversion();
 
         _ = builder.HasIndex(achievement => achievement.Name);
 

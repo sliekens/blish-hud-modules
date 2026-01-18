@@ -92,7 +92,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintVendorValue();
     }
 
-    private void PrintBackpack(Backpack back)
+    private void PrintBackItem(BackItem back)
     {
         PrintHeader();
         PrintAttributes(back.Attributes.ToDictionary(
@@ -470,7 +470,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
         PrintVendorValue();
     }
 
-    private void PrintMiniature(Miniature miniature)
+    private void PrintMiniature(MiniatureItem miniature)
     {
         PrintHeader();
         PrintDescription(miniature.Description);
@@ -630,7 +630,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
             case Shield:
                 PrintPlainText(ViewModel.Localizer["Shield"]);
                 break;
-            case Shortbow:
+            case ShortBow:
                 PrintPlainText(ViewModel.Localizer["Short Bow"]);
                 break;
             case SmallBundle:
@@ -1210,8 +1210,8 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
             case Armor armor:
                 PrintArmor(armor);
                 break;
-            case Backpack back:
-                PrintBackpack(back);
+            case BackItem back:
+                PrintBackItem(back);
                 break;
             case Bag bag:
                 PrintBag(bag);
@@ -1237,7 +1237,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
             case JadeTechModule jadeTechModule:
                 PrintJadeTechModule(jadeTechModule);
                 break;
-            case Miniature miniature:
+            case MiniatureItem miniature:
                 PrintMiniature(miniature);
                 break;
             case PowerCore powerCore:

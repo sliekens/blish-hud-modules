@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 
 using GuildWars2;
 using GuildWars2.Authorization;
+using GuildWars2.Collections;
 
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -37,7 +38,7 @@ public sealed class UnlockedMiniatures(
     private async ValueTask CacheUnlockedMiniatures(ICacheEntry entry, CancellationToken cancellationToken)
     {
         string? token = await tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
-        (HashSet<int> values, MessageContext context) = await gw2Client.Hero.Equipment.Miniatures
+        (IImmutableValueSet<int> values, MessageContext context) = await gw2Client.Hero.Equipment.Miniatures
             .GetUnlockedMiniatures(token, cancellationToken: cancellationToken)
             .ConfigureAwait(false);
 

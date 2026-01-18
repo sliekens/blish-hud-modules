@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 
 using GuildWars2;
+using GuildWars2.Collections;
 using GuildWars2.Hero.Achievements;
 using GuildWars2.Hero.Achievements.Categories;
 using GuildWars2.Hero.Achievements.Groups;
@@ -305,7 +306,7 @@ public sealed class DatabaseSeeder : IDisposable
     {
         _logger.LogInformation("Start seeding items.");
 
-        HashSet<int> index = await _gw2Client.Items
+        IImmutableValueSet<int> index = await _gw2Client.Items
             .GetItemsIndex(cancellationToken)
             .ValueOnly().ConfigureAwait(false);
 
@@ -313,7 +314,7 @@ public sealed class DatabaseSeeder : IDisposable
         List<int> existing = await context.Items.Select(item => item.Id)
             .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
-        index.ExceptWith(existing);
+        index = index.Except(existing);
         if (index.Count != 0)
         {
             _logger.LogDebug("Start seeding {Count} items.", index.Count);
@@ -353,7 +354,7 @@ public sealed class DatabaseSeeder : IDisposable
     {
         _logger.LogInformation("Start seeding skins.");
 
-        HashSet<int> index = await _gw2Client.Hero.Equipment.Wardrobe
+        IImmutableValueSet<int> index = await _gw2Client.Hero.Equipment.Wardrobe
             .GetSkinsIndex(cancellationToken)
             .ValueOnly().ConfigureAwait(false);
 
@@ -361,7 +362,7 @@ public sealed class DatabaseSeeder : IDisposable
         List<int> existing = await context.Skins.Select(skin => skin.Id)
             .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
-        index.ExceptWith(existing);
+        index = index.Except(existing);
         if (index.Count != 0)
         {
             _logger.LogDebug("Start seeding {Count} skins.", index.Count);
@@ -401,7 +402,7 @@ public sealed class DatabaseSeeder : IDisposable
     {
         _logger.LogInformation("Start seeding colors.");
 
-        HashSet<int> index = await _gw2Client.Hero.Equipment.Dyes
+        IImmutableValueSet<int> index = await _gw2Client.Hero.Equipment.Dyes
             .GetColorsIndex(cancellationToken)
             .ValueOnly().ConfigureAwait(false);
 
@@ -409,13 +410,13 @@ public sealed class DatabaseSeeder : IDisposable
         List<int> existing = await context.Colors.Select(color => color.Id)
             .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
-        index.ExceptWith(existing);
+        index = index.Except(existing);
         if (index.Count != 0)
         {
             _logger.LogDebug("Start seeding {Count} colors.", index.Count);
 
             // TODO: incremental query
-            HashSet<DyeColor> colors = await _gw2Client.Hero.Equipment.Dyes
+            IImmutableValueSet<DyeColor> colors = await _gw2Client.Hero.Equipment.Dyes
                 .GetColors(language, MissingMemberBehavior.Undefined, cancellationToken).ValueOnly().ConfigureAwait(false);
 
             await context.AddRangeAsync(colors.Where(color => index.Contains(color.Id)), cancellationToken).ConfigureAwait(false);
@@ -431,7 +432,7 @@ public sealed class DatabaseSeeder : IDisposable
     {
         _logger.LogInformation("Start seeding recipes.");
 
-        HashSet<int> index = await _gw2Client.Hero.Crafting.Recipes
+        IImmutableValueSet<int> index = await _gw2Client.Hero.Crafting.Recipes
             .GetRecipesIndex(cancellationToken)
             .ValueOnly().ConfigureAwait(false);
 
@@ -439,7 +440,7 @@ public sealed class DatabaseSeeder : IDisposable
         List<int> existing = await context.Recipes.Select(recipe => recipe.Id)
             .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
-        index.ExceptWith(existing);
+        index = index.Except(existing);
         if (index.Count != 0)
         {
             _logger.LogDebug("Start seeding {Count} recipes.", index.Count);
@@ -478,7 +479,7 @@ public sealed class DatabaseSeeder : IDisposable
     {
         _logger.LogInformation("Start seeding finishers.");
 
-        HashSet<int> index = await _gw2Client.Hero.Equipment.Finishers
+        IImmutableValueSet<int> index = await _gw2Client.Hero.Equipment.Finishers
             .GetFinishersIndex(cancellationToken)
             .ValueOnly().ConfigureAwait(false);
 
@@ -486,12 +487,12 @@ public sealed class DatabaseSeeder : IDisposable
         List<int> existing = await context.Finishers.Select(finisher => finisher.Id)
             .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
-        index.ExceptWith(existing);
+        index = index.Except(existing);
         if (index.Count != 0)
         {
             _logger.LogDebug("Start seeding {Count} finishers.", index.Count);
 
-            HashSet<Finisher> finishers = await _gw2Client.Hero.Equipment.Finishers
+            IImmutableValueSet<Finisher> finishers = await _gw2Client.Hero.Equipment.Finishers
                 .GetFinishersByIds(index, language, MissingMemberBehavior.Undefined, cancellationToken)
                 .ValueOnly().ConfigureAwait(false);
 
@@ -508,7 +509,7 @@ public sealed class DatabaseSeeder : IDisposable
     {
         _logger.LogInformation("Start seeding gliders.");
 
-        HashSet<int> index = await _gw2Client.Hero.Equipment.Gliders
+        IImmutableValueSet<int> index = await _gw2Client.Hero.Equipment.Gliders
             .GetGliderSkinsIndex(cancellationToken)
             .ValueOnly().ConfigureAwait(false);
 
@@ -516,12 +517,12 @@ public sealed class DatabaseSeeder : IDisposable
         List<int> existing = await context.Gliders.Select(glider => glider.Id)
             .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
-        index.ExceptWith(existing);
+        index = index.Except(existing);
         if (index.Count != 0)
         {
             _logger.LogDebug("Start seeding {Count} gliders.", index.Count);
 
-            HashSet<GliderSkin> gliders = await _gw2Client.Hero.Equipment.Gliders
+            IImmutableValueSet<GliderSkin> gliders = await _gw2Client.Hero.Equipment.Gliders
                 .GetGliderSkinsByIds(index, language, MissingMemberBehavior.Undefined, cancellationToken)
                 .ValueOnly().ConfigureAwait(false);
 
@@ -538,7 +539,7 @@ public sealed class DatabaseSeeder : IDisposable
     {
         _logger.LogInformation("Start seeding jade bots.");
 
-        HashSet<int> index = await _gw2Client.Hero.Equipment.JadeBots
+        IImmutableValueSet<int> index = await _gw2Client.Hero.Equipment.JadeBots
             .GetJadeBotSkinsIndex(cancellationToken)
             .ValueOnly().ConfigureAwait(false);
 
@@ -546,12 +547,12 @@ public sealed class DatabaseSeeder : IDisposable
         List<int> existing = await context.JadeBots.Select(jadeBot => jadeBot.Id)
             .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
-        index.ExceptWith(existing);
+        index = index.Except(existing);
         if (index.Count != 0)
         {
             _logger.LogDebug("Start seeding {Count} jade bots.", index.Count);
 
-            HashSet<JadeBotSkin> jadeBots = await _gw2Client.Hero.Equipment.JadeBots
+            IImmutableValueSet<JadeBotSkin> jadeBots = await _gw2Client.Hero.Equipment.JadeBots
                 .GetJadeBotSkinsByIds(index, language, MissingMemberBehavior.Undefined, cancellationToken)
                 .ValueOnly().ConfigureAwait(false);
 
@@ -569,7 +570,7 @@ public sealed class DatabaseSeeder : IDisposable
     {
         _logger.LogInformation("Start seeding mail carriers.");
 
-        HashSet<int> index = await _gw2Client.Hero.Equipment.MailCarriers
+        IImmutableValueSet<int> index = await _gw2Client.Hero.Equipment.MailCarriers
             .GetMailCarriersIndex(cancellationToken)
             .ValueOnly().ConfigureAwait(false);
 
@@ -577,12 +578,12 @@ public sealed class DatabaseSeeder : IDisposable
         List<int> existing = await context.MailCarrriers.Select(mailCarrier => mailCarrier.Id)
             .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
-        index.ExceptWith(existing);
+        index = index.Except(existing);
         if (index.Count != 0)
         {
             _logger.LogDebug("Start seeding {Count} mail carriers.", index.Count);
 
-            HashSet<MailCarrier> mailCarriers = await _gw2Client.Hero.Equipment.MailCarriers
+            IImmutableValueSet<MailCarrier> mailCarriers = await _gw2Client.Hero.Equipment.MailCarriers
                 .GetMailCarriersByIds(index, language, MissingMemberBehavior.Undefined, cancellationToken)
                 .ValueOnly().ConfigureAwait(false);
 
@@ -600,7 +601,7 @@ public sealed class DatabaseSeeder : IDisposable
     {
         _logger.LogInformation("Start seeding miniatures.");
 
-        HashSet<int> index = await _gw2Client.Hero.Equipment.Miniatures
+        IImmutableValueSet<int> index = await _gw2Client.Hero.Equipment.Miniatures
             .GetMiniaturesIndex(cancellationToken)
             .ValueOnly().ConfigureAwait(false);
 
@@ -608,13 +609,13 @@ public sealed class DatabaseSeeder : IDisposable
         List<int> existing = await context.Miniatures.Select(miniature => miniature.Id)
             .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
-        index.ExceptWith(existing);
+        index = index.Except(existing);
         if (index.Count != 0)
         {
             _logger.LogDebug("Start seeding {Count} miniatures.", index.Count);
 
             // TODO: incremental query
-            HashSet<GuildWars2.Hero.Equipment.Miniatures.Miniature> miniatures = await _gw2Client.Hero.Equipment.Miniatures
+            IImmutableValueSet<GuildWars2.Hero.Equipment.Miniatures.Miniature> miniatures = await _gw2Client.Hero.Equipment.Miniatures
                 .GetMiniatures(language, MissingMemberBehavior.Undefined, cancellationToken).ValueOnly().ConfigureAwait(false);
 
             await context.AddRangeAsync(miniatures.Where(miniature => index.Contains(miniature.Id)), cancellationToken).ConfigureAwait(false);
@@ -631,17 +632,17 @@ public sealed class DatabaseSeeder : IDisposable
     {
         _logger.LogInformation("Start seeding mist champions.");
 
-        HashSet<MistChampion> champions = await _gw2Client.Pvp
+        IImmutableValueSet<MistChampion> champions = await _gw2Client.Pvp
             .GetMistChampions(language, MissingMemberBehavior.Undefined, cancellationToken: cancellationToken)
             .ValueOnly().ConfigureAwait(false);
 
-        HashSet<int> index = [.. champions.SelectMany(champion => champion.Skins.Select(skin => skin.Id))];
+        IImmutableValueSet<int> index = [.. champions.SelectMany(champion => champion.Skins.Select(skin => skin.Id))];
 
         _logger.LogDebug("Found {Count} mist champions in the API.", index.Count);
         List<int> existing = await context.MistChampions.Select(mistChampion => mistChampion.Id)
             .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
-        index.ExceptWith(existing);
+        index = index.Except(existing);
         if (index.Count != 0)
         {
             _logger.LogDebug("Start seeding {Count} mist champions.", index.Count);
@@ -663,7 +664,7 @@ public sealed class DatabaseSeeder : IDisposable
     {
         _logger.LogInformation("Start seeding novelties.");
 
-        HashSet<int> index = await _gw2Client.Hero.Equipment.Novelties
+        IImmutableValueSet<int> index = await _gw2Client.Hero.Equipment.Novelties
             .GetNoveltiesIndex(cancellationToken)
             .ValueOnly().ConfigureAwait(false);
 
@@ -671,13 +672,13 @@ public sealed class DatabaseSeeder : IDisposable
         List<int> existing = await context.Novelties.Select(novelty => novelty.Id)
             .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
-        index.ExceptWith(existing);
+        index = index.Except(existing);
         if (index.Count != 0)
         {
             _logger.LogDebug("Start seeding {Count} novelties.", index.Count);
 
             // TODO: incremental query
-            HashSet<Novelty> novelties = await _gw2Client.Hero.Equipment.Novelties
+            IImmutableValueSet<Novelty> novelties = await _gw2Client.Hero.Equipment.Novelties
                 .GetNovelties(language, MissingMemberBehavior.Undefined, cancellationToken).ValueOnly().ConfigureAwait(false);
 
             await context.AddRangeAsync(novelties.Where(novelty => index.Contains(novelty.Id)), cancellationToken).ConfigureAwait(false);
@@ -694,7 +695,7 @@ public sealed class DatabaseSeeder : IDisposable
     {
         _logger.LogInformation("Start seeding outfits.");
 
-        HashSet<int> index = await _gw2Client.Hero.Equipment.Outfits
+        IImmutableValueSet<int> index = await _gw2Client.Hero.Equipment.Outfits
             .GetOutfitsIndex(cancellationToken)
             .ValueOnly().ConfigureAwait(false);
 
@@ -702,13 +703,13 @@ public sealed class DatabaseSeeder : IDisposable
         List<int> existing = await context.Outfits.Select(outfit => outfit.Id)
             .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
-        index.ExceptWith(existing);
+        index = index.Except(existing);
         if (index.Count != 0)
         {
             _logger.LogDebug("Start seeding {Count} outfits.", index.Count);
 
             // TODO: incremental query
-            HashSet<Outfit> outfits = await _gw2Client.Hero.Equipment.Outfits
+            IImmutableValueSet<Outfit> outfits = await _gw2Client.Hero.Equipment.Outfits
                 .GetOutfits(language, MissingMemberBehavior.Undefined, cancellationToken).ValueOnly().ConfigureAwait(false);
 
             await context.AddRangeAsync(outfits.Where(outfit => index.Contains(outfit.Id)), cancellationToken).ConfigureAwait(false);
@@ -725,7 +726,7 @@ public sealed class DatabaseSeeder : IDisposable
     {
         _logger.LogInformation("Start seeding achievements.");
 
-        HashSet<int> index = await _gw2Client.Hero.Achievements
+        IImmutableValueSet<int> index = await _gw2Client.Hero.Achievements
             .GetAchievementsIndex(cancellationToken)
             .ValueOnly().ConfigureAwait(false);
 
@@ -733,7 +734,7 @@ public sealed class DatabaseSeeder : IDisposable
         List<int> existing = await context.Achievements.Select(achievement => achievement.Id)
             .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
-        index.ExceptWith(existing);
+        index = index.Except(existing);
         if (index.Count != 0)
         {
             _logger.LogDebug("Start seeding {Count} achievements.", index.Count);
@@ -776,7 +777,7 @@ public sealed class DatabaseSeeder : IDisposable
     {
         _logger.LogInformation("Start seeding achievement categories.");
 
-        HashSet<int> index = await _gw2Client.Hero.Achievements
+        IImmutableValueSet<int> index = await _gw2Client.Hero.Achievements
             .GetAchievementCategoriesIndex(cancellationToken)
             .ValueOnly().ConfigureAwait(false);
 
@@ -785,7 +786,7 @@ public sealed class DatabaseSeeder : IDisposable
             .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
         _logger.LogDebug("Start seeding {Count} achievement categories.", index.Count);
-        HashSet<AchievementCategory> achievementCategories = await _gw2Client.Hero.Achievements
+        IImmutableValueSet<AchievementCategory> achievementCategories = await _gw2Client.Hero.Achievements
             .GetAchievementCategories(language, MissingMemberBehavior.Undefined, cancellationToken)
             .ValueOnly()
             .ConfigureAwait(false);
@@ -809,7 +810,7 @@ public sealed class DatabaseSeeder : IDisposable
     {
         _logger.LogInformation("Start seeding achievement groups.");
 
-        HashSet<string> index = await _gw2Client.Hero.Achievements
+        IImmutableValueSet<string> index = await _gw2Client.Hero.Achievements
             .GetAchievementGroupsIndex(cancellationToken)
             .ValueOnly()
             .ConfigureAwait(false);
@@ -820,7 +821,7 @@ public sealed class DatabaseSeeder : IDisposable
             .ConfigureAwait(false);
 
         _logger.LogDebug("Start seeding {Count} achievement groups.", index.Count);
-        HashSet<AchievementGroup> achievementGroups = await _gw2Client.Hero.Achievements
+        IImmutableValueSet<AchievementGroup> achievementGroups = await _gw2Client.Hero.Achievements
             .GetAchievementGroups(language, MissingMemberBehavior.Undefined, cancellationToken)
             .ValueOnly()
             .ConfigureAwait(false);

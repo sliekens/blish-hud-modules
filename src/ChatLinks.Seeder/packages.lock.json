@@ -534,7 +534,7 @@
       "SL.Adapters": {
         "type": "Project",
         "dependencies": {
-          "GW2SDK": "[3.0.0-preview.3, )",
+          "GW2SDK": "[3.0.0-rc.4, )",
           "Gw2Sharp": "[1.7.4, )",
           "Microsoft.Extensions.Logging": "[3.1.32, 3.2.0)",
           "Microsoft.Extensions.Options": "[3.1.32, 3.2.0)",
@@ -546,7 +546,7 @@
       "SL.ChatLinks": {
         "type": "Project",
         "dependencies": {
-          "GW2SDK": "[3.0.0-preview.3, )",
+          "GW2SDK": "[3.0.0-rc.4, )",
           "Gw2Sharp": "[1.7.4, )",
           "Microsoft.EntityFrameworkCore.Sqlite.Core": "[3.1.32, 3.2.0)",
           "Microsoft.Extensions.Http": "[3.1.32, 3.2.0)",
@@ -564,7 +564,7 @@
       "SL.Common": {
         "type": "Project",
         "dependencies": {
-          "GW2SDK": "[3.0.0-preview.3, )",
+          "GW2SDK": "[3.0.0-rc.4, )",
           "Gw2Sharp": "[1.7.4, )",
           "Microsoft.Extensions.Caching.Abstractions": "[3.1.32, 3.2.0)",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[3.1.32, 3.2.0)",
@@ -576,11 +576,13 @@
       },
       "GW2SDK": {
         "type": "CentralTransitive",
-        "requested": "[3.0.0-preview.3, )",
-        "resolved": "3.0.0-preview.3",
-        "contentHash": "u4641tqDoFLf2YR2U3LfaQgJYHcYYZ7GOQtcMtKSigvfN+CbrizX5MycMnCgDbhhCHHR+dHO/AN97nQfLvvtgA==",
+        "requested": "[3.0.0-rc.4, )",
+        "resolved": "3.0.0-rc.4",
+        "contentHash": "w1bRF7WrBdSN1YdEsXcOzSvQFxgMaz5/LaM23KR893W2+KLdKGbIlFd/iqF+HwSYYZcoq3wOCQofHNfNeXqoHA==",
         "dependencies": {
           "Microsoft.Bcl.HashCode": "6.0.0",
+          "System.Collections.Immutable": "6.0.0",
+          "System.Memory": "4.5.5",
           "System.Runtime.InteropServices.RuntimeInformation": "4.3.0",
           "System.Text.Json": "6.0.11"
         }

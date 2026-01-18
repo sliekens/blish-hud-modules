@@ -1,12 +1,8 @@
-﻿using GuildWars2;
-using GuildWars2.Hero.Crafting;
-using GuildWars2.Hero.Crafting.Disciplines;
-using GuildWars2.Hero.Crafting.Recipes;
+﻿using GuildWars2.Hero.Crafting.Recipes;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-using SL.ChatLinks.Storage.Comparers;
 using SL.ChatLinks.Storage.Converters;
 
 namespace SL.ChatLinks.Storage.Models.Hero.Crafting;
@@ -20,17 +16,15 @@ public sealed class RecipeEntityTypeConfiguration : IEntityTypeConfiguration<Rec
         _ = builder.HasKey(recipe => recipe.Id);
         _ = builder.HasIndex(recipe => recipe.ChatLink);
         _ = builder.HasIndex(recipe => recipe.OutputItemId);
-        builder.Property(recipe => recipe.Disciplines).HasJsonValueConversion()
-            .Metadata.SetValueComparer(new CollectionComparer<Extensible<CraftingDisciplineName>>());
+        _ = builder.Property(recipe => recipe.Disciplines).HasJsonValueConversion();
         _ = builder.Property(recipe => recipe.Flags).HasJsonValueConversion();
-        builder.Property(recipe => recipe.Ingredients).HasJsonValueConversion()
-            .Metadata.SetValueComparer(new ListComparer<Ingredient>());
+        _ = builder.Property(recipe => recipe.Ingredients).HasJsonValueConversion();
 
         DiscriminatorBuilder<string> discriminatorBuilder = builder.HasDiscriminator<string>("Type");
         _ = discriminatorBuilder.HasValue<Recipe>("recipe")
             .HasValue<AmuletRecipe>("amulet")
             .HasValue<AxeRecipe>("axe")
-            .HasValue<BackpackRecipe>("backpack")
+            .HasValue<BackItemRecipe>("back")
             .HasValue<BagRecipe>("bag")
             .HasValue<BootsRecipe>("boots")
             .HasValue<BulkRecipe>("bulk")
@@ -69,7 +63,7 @@ public sealed class RecipeEntityTypeConfiguration : IEntityTypeConfiguration<Rec
             .HasValue<ScepterRecipe>("scepter")
             .HasValue<SeasoningRecipe>("seasoning")
             .HasValue<ShieldRecipe>("shield")
-            .HasValue<ShortbowRecipe>("shortbow")
+            .HasValue<ShortBowRecipe>("short_bow")
             .HasValue<ShouldersRecipe>("shoulders")
             .HasValue<SnackRecipe>("snack")
             .HasValue<SoupRecipe>("soup")

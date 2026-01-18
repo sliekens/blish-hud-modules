@@ -3,7 +3,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-using SL.ChatLinks.Storage.Comparers;
 using SL.ChatLinks.Storage.Converters;
 
 namespace SL.ChatLinks.Storage.Models.Hero.Achievements;
@@ -16,9 +15,8 @@ public sealed class AchievementGroupEntityTypeConfiguration : IEntityTypeConfigu
         _ = builder.Property(achievementGroup => achievementGroup.Id)
             .ValueGeneratedNever();
 
-        builder.Property(achievementGroup => achievementGroup.Categories)
-            .HasJsonValueConversion()
-            .Metadata.SetValueComparer(new ListComparer<int>());
+        _ = builder.Property(achievementGroup => achievementGroup.Categories)
+            .HasJsonValueConversion();
 
         _ = builder.HasIndex(achievementGroup => achievementGroup.Name);
 

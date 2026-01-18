@@ -1,12 +1,9 @@
-﻿using GuildWars2;
-using GuildWars2.Hero;
-using GuildWars2.Hero.Equipment.Wardrobe;
+﻿using GuildWars2.Hero.Equipment.Wardrobe;
 using GuildWars2.Items;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-using SL.ChatLinks.Storage.Comparers;
 using SL.ChatLinks.Storage.Converters;
 
 namespace SL.ChatLinks.Storage.Models.Hero.Equipment.Wardrobe;
@@ -20,8 +17,7 @@ public sealed class EquipmentSkinEntityTypeConfiguration : IEntityTypeConfigurat
         _ = builder.HasKey(skin => skin.Id);
         _ = builder.HasIndex(skin => skin.Name);
         _ = builder.Property(skin => skin.Flags).HasJsonValueConversion();
-        builder.Property(skin => skin.Races).HasJsonValueConversion()
-            .Metadata.SetValueComparer(new ListComparer<Extensible<RaceName>>());
+        _ = builder.Property(skin => skin.Races).HasJsonValueConversion();
         _ = builder.Property(skin => skin.Rarity).HasConversion(new ExtensibleEnumConverter<Rarity>());
 
         DiscriminatorBuilder<string> discriminatorBuilder = builder.HasDiscriminator<string>("Type");
@@ -35,7 +31,7 @@ public sealed class EquipmentSkinEntityTypeConfiguration : IEntityTypeConfigurat
             .HasValue<LeggingsSkin>("leggings")
             .HasValue<ShouldersSkin>("shoulders")
             ;
-        _ = discriminatorBuilder.HasValue<BackpackSkin>("back");
+        _ = discriminatorBuilder.HasValue<BackItemSkin>("back");
         _ = discriminatorBuilder.HasValue<GatheringToolSkin>("gathering_tool")
             .HasValue<FishingToolSkin>("fishing_tool")
             .HasValue<ForagingToolSkin>("foraging_tool")
@@ -56,7 +52,7 @@ public sealed class EquipmentSkinEntityTypeConfiguration : IEntityTypeConfigurat
             .HasValue<RifleSkin>("rifle")
             .HasValue<ScepterSkin>("scepter")
             .HasValue<ShieldSkin>("shield")
-            .HasValue<ShortbowSkin>("shortbow")
+            .HasValue<ShortBowSkin>("short_bow")
             .HasValue<SmallBundleSkin>("small_bundle")
             .HasValue<SpearSkin>("spear")
             .HasValue<StaffSkin>("staff")

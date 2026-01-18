@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 
 using GuildWars2;
 using GuildWars2.Authorization;
+using GuildWars2.Collections;
 
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -37,7 +38,7 @@ public sealed class UnlockedWardrobe(
     private async ValueTask CacheUnlockedWardrobe(ICacheEntry entry, CancellationToken cancellationToken)
     {
         string? token = await tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
-        (HashSet<int> values, MessageContext context) = await gw2Client.Hero.Equipment.Wardrobe
+        (IImmutableValueSet<int> values, MessageContext context) = await gw2Client.Hero.Equipment.Wardrobe
             .GetUnlockedSkins(token, cancellationToken: cancellationToken)
             .ConfigureAwait(false);
 

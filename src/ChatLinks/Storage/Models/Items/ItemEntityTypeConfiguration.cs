@@ -1,10 +1,8 @@
-﻿using GuildWars2;
-using GuildWars2.Items;
+﻿using GuildWars2.Items;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-using SL.ChatLinks.Storage.Comparers;
 using SL.ChatLinks.Storage.Converters;
 
 namespace SL.ChatLinks.Storage.Models.Items;
@@ -19,9 +17,8 @@ public sealed class ItemEntityTypeConfiguration : IEntityTypeConfiguration<Item>
         _ = builder.Property(item => item.Id).ValueGeneratedNever();
         _ = builder.Property(item => item.Rarity).HasConversion(new ExtensibleEnumConverter<Rarity>());
         _ = builder.Property(item => item.VendorValue).HasConversion(new CoinConverter());
-        builder.Property(item => item.GameTypes)
-            .HasJsonValueConversion()
-            .Metadata.SetValueComparer(new CollectionComparer<Extensible<GameType>>());
+        _ = builder.Property(item => item.GameTypes)
+            .HasJsonValueConversion();
         _ = builder.Property(item => item.Flags).HasJsonValueConversion();
         _ = builder.Property(item => item.Restrictions).HasJsonValueConversion();
 
@@ -32,9 +29,9 @@ public sealed class ItemEntityTypeConfiguration : IEntityTypeConfiguration<Item>
             .HasValue<PowerCore>("power_core")
             .HasValue<Bag>("bag")
             .HasValue<Relic>("relic")
-            .HasValue<Miniature>("miniature")
+            .HasValue<MiniatureItem>("miniature")
             .HasValue<Trophy>("trophy")
-            .HasValue<Backpack>("back")
+            .HasValue<BackItem>("back")
             .HasValue<SalvageTool>("salvage_tool")
             .HasValue<Container>("container")
             .HasValue<ImmediateContainer>("immediate_container")
@@ -62,7 +59,7 @@ public sealed class ItemEntityTypeConfiguration : IEntityTypeConfiguration<Item>
             .HasValue<Staff>("staff")
             .HasValue<HarpoonGun>("harpoon_gun")
             .HasValue<Longbow>("longbow")
-            .HasValue<Shortbow>("shortbow")
+            .HasValue<ShortBow>("short_bow")
             .HasValue<SmallBundle>("small_bundle")
             .HasValue<LargeBundle>("large_bundle")
             .HasValue<Pistol>("pistol")

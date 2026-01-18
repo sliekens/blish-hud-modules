@@ -3,7 +3,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-using SL.ChatLinks.Storage.Comparers;
 using SL.ChatLinks.Storage.Converters;
 
 namespace SL.ChatLinks.Storage.Models.Hero.Equipment.Finishers;
@@ -18,8 +17,7 @@ public sealed class FinisherEntityTypeConfiguration : IEntityTypeConfiguration<F
         _ = builder.HasIndex(finisher => finisher.Name);
         _ = builder.HasIndex(finisher => finisher.Order);
 
-        builder.Property(finisher => finisher.UnlockItemIds)
-            .HasJsonValueConversion()
-            .Metadata.SetValueComparer(new CollectionComparer<int>());
+        _ = builder.Property(finisher => finisher.UnlockItemIds)
+            .HasJsonValueConversion();
     }
 }

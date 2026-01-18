@@ -1,10 +1,8 @@
-﻿using GuildWars2.Hero.Crafting;
-using GuildWars2.Hero.Crafting.Recipes;
+﻿using GuildWars2.Hero.Crafting.Recipes;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-using SL.ChatLinks.Storage.Comparers;
 using SL.ChatLinks.Storage.Converters;
 
 namespace SL.ChatLinks.Storage.Models.Hero.Crafting;
@@ -14,10 +12,9 @@ public sealed class GuildConsumableRecipeEntityTypeConfiguration : IEntityTypeCo
     public void Configure(EntityTypeBuilder<GuildConsumableRecipe> builder)
     {
         ThrowHelper.ThrowIfNull(builder);
-        builder.Property(recipe => recipe.GuildIngredients)
+        _ = builder.Property(recipe => recipe.GuildIngredients)
             .HasColumnName(nameof(GuildConsumableRecipe.GuildIngredients))
-            .HasJsonValueConversion()
-            .Metadata.SetValueComparer(new ListComparer<GuildIngredient>());
+            .HasJsonValueConversion();
 
         _ = builder.Property(recipe => recipe.OutputUpgradeId)
             .HasColumnName(nameof(GuildConsumableRecipe.OutputUpgradeId));

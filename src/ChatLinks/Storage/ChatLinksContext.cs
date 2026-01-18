@@ -1,8 +1,6 @@
 ﻿using System.Reflection;
 using System.Text.Json;
 
-using GuildWars2;
-using GuildWars2.Hero;
 using GuildWars2.Hero.Achievements;
 using GuildWars2.Hero.Achievements.Categories;
 using GuildWars2.Hero.Achievements.Groups;
@@ -12,6 +10,7 @@ using GuildWars2.Hero.Equipment.Finishers;
 using GuildWars2.Hero.Equipment.Gliders;
 using GuildWars2.Hero.Equipment.JadeBots;
 using GuildWars2.Hero.Equipment.MailCarriers;
+using GuildWars2.Hero.Equipment.Miniatures;
 using GuildWars2.Hero.Equipment.Novelties;
 using GuildWars2.Hero.Equipment.Outfits;
 using GuildWars2.Hero.Equipment.Wardrobe;
@@ -20,7 +19,6 @@ using GuildWars2.Pvp.MistChampions;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 using SL.ChatLinks.Storage.Comparers;
 using SL.ChatLinks.Storage.Models.Hero.Achievements;
@@ -63,7 +61,7 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
 
     public DbSet<Novelty> Novelties => Set<Novelty>();
 
-    public DbSet<GuildWars2.Hero.Equipment.Miniatures.Miniature> Miniatures => Set<GuildWars2.Hero.Equipment.Miniatures.Miniature>();
+    public DbSet<Miniature> Miniatures => Set<Miniature>();
 
     public DbSet<Outfit> Outfits => Set<Outfit>();
 
@@ -99,80 +97,23 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
         ThrowHelper.ThrowIfNull(modelBuilder);
         _ = modelBuilder.ApplyConfiguration(new ItemEntityTypeConfiguration());
 
-        ValueConverter<IDictionary<Extensible<AttributeName>, int>, string> attributesConverter = new(
-            static attr => Serialize(attr.ToDictionary(pair => pair.Key.ToString(), pair => pair.Value)),
-            static json => Deserialize<Dictionary<string, int>>(json)
-                .ToDictionary(pair => new Extensible<AttributeName>(pair.Key), pair => pair.Value));
+        _ = modelBuilder.ApplyConfiguration(new ArmorEntityTypeConfiguration());
 
-        ValueComparer<IDictionary<Extensible<AttributeName>, int>> attributesComparer =
-            new DictionaryComparer<Extensible<AttributeName>, int>();
+        _ = modelBuilder.ApplyConfiguration(new TrinketEntityTypeConfiguration());
 
-        ValueComparer<Buff> buffComparer = new ValueObjectComparer<Buff>(buff => new Buff
-        {
-            Description = buff.Description,
-            SkillId = buff.SkillId
-        });
+        _ = modelBuilder.ApplyConfiguration(new RingEntityTypeConfiguration());
 
-        ValueComparer<IReadOnlyList<InfusionSlot>> infusionSlotsComparer = new ListComparer<InfusionSlot>();
+        _ = modelBuilder.ApplyConfiguration(new WeaponEntityTypeConfiguration());
 
-        ValueComparer<IReadOnlyCollection<InfusionSlotUpgradeSource>> upgradeSourceComparer =
-            new CollectionComparer<InfusionSlotUpgradeSource>();
+        _ = modelBuilder.ApplyConfiguration(new WeaponEntityTypeConfiguration());
 
-        ValueComparer<IReadOnlyCollection<InfusionSlotUpgradePath>> upgradePathComparer =
-            new CollectionComparer<InfusionSlotUpgradePath>();
+        _ = modelBuilder.ApplyConfiguration(new BackItemEntityTypeConfiguration());
 
-        _ = modelBuilder.ApplyConfiguration(new ArmorEntityTypeConfiguration(
-            attributesConverter,
-            attributesComparer,
-            buffComparer,
-            infusionSlotsComparer
-        ));
-
-        _ = modelBuilder.ApplyConfiguration(new TrinketEntityTypeConfiguration(
-            attributesConverter,
-            attributesComparer,
-            buffComparer,
-            infusionSlotsComparer
-        ));
-
-        _ = modelBuilder.ApplyConfiguration(new RingEntityTypeConfiguration(
-            upgradeSourceComparer,
-            upgradePathComparer
-        ));
-
-        _ = modelBuilder.ApplyConfiguration(new WeaponEntityTypeConfiguration(
-            attributesConverter,
-            attributesComparer,
-            buffComparer,
-            infusionSlotsComparer
-        ));
-
-        _ = modelBuilder.ApplyConfiguration(new WeaponEntityTypeConfiguration(
-            attributesConverter,
-            attributesComparer,
-            buffComparer,
-            infusionSlotsComparer
-        ));
-
-        _ = modelBuilder.ApplyConfiguration(new BackItemEntityTypeConfiguration(
-            attributesConverter,
-            attributesComparer,
-            buffComparer,
-            infusionSlotsComparer,
-            upgradeSourceComparer,
-            upgradePathComparer
-        ));
-
-        _ = modelBuilder.ApplyConfiguration(new UpgradeComponentEntityTypeConfiguration(
-            attributesConverter,
-            attributesComparer,
-            buffComparer,
-            upgradePathComparer
-        ));
+        _ = modelBuilder.ApplyConfiguration(new UpgradeComponentEntityTypeConfiguration());
 
         _ = modelBuilder.ApplyConfiguration(new RuneEntityTypeConfiguration());
 
-        _ = modelBuilder.ApplyConfiguration(new CraftingMaterialEntityTypeConfiguration(upgradePathComparer));
+        _ = modelBuilder.ApplyConfiguration(new CraftingMaterialEntityTypeConfiguration());
 
         _ = modelBuilder.ApplyConfiguration(new RecipeSheetEntityTypeConfiguration());
 

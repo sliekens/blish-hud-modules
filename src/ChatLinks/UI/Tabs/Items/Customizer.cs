@@ -81,7 +81,7 @@ public sealed class Customizer(
                     	AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
                     """
             ),
-            UpgradeSlotType.Default when targetItem is Backpack => context.Set<UpgradeComponent>()
+            UpgradeSlotType.Default when targetItem is BackItem => context.Set<UpgradeComponent>()
                 .FromSqlRaw(
                     """
                     SELECT *
@@ -196,7 +196,7 @@ public sealed class Customizer(
                     SELECT *
                     FROM Items
                     WHERE Type in ('upgrade_component', 'gem', 'sigil')
-                    	AND UpgradeComponentFlags -> '$.LongBow' = 'true'
+                    	AND UpgradeComponentFlags -> '$.Longbow' = 'true'
                     	AND InfusionUpgradeFlags -> '$.infusion' = 'false'
                     	AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
                     """
@@ -256,7 +256,7 @@ public sealed class Customizer(
                     	AND InfusionUpgradeFlags -> '$.enrichment' = 'false'
                     """
             ),
-            UpgradeSlotType.Default when targetItem is Shortbow => context.Set<UpgradeComponent>()
+            UpgradeSlotType.Default when targetItem is ShortBow => context.Set<UpgradeComponent>()
                 .FromSqlRaw(
                     """
                     SELECT *

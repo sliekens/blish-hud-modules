@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 
 using GuildWars2;
 using GuildWars2.Authorization;
+using GuildWars2.Collections;
 
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -53,7 +54,7 @@ public sealed class UnlockedMistChampionSkins(
     private async ValueTask CacheUnlockedMistChampionSkins(ICacheEntry entry, CancellationToken cancellationToken)
     {
         string? token = await tokenProvider.GetTokenAsync(cancellationToken).ConfigureAwait(false);
-        (HashSet<int> values, MessageContext context) = await gw2Client.Pvp
+        (IImmutableValueSet<int> values, MessageContext context) = await gw2Client.Pvp
             .GetUnlockedMistChampions(token, cancellationToken: cancellationToken)
             .ConfigureAwait(false);
 
