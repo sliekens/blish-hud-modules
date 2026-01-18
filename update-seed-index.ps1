@@ -1,4 +1,4 @@
-$schemas = @(3, 4, 5)
+$schemas = @(3, 4, 5, 6, 7)
 
 # Preprocessing: Compress all .db files to .db.gz with highest compression
 foreach ($schema in $schemas) {

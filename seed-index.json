@@ -1,88 +1,116 @@
-{
-  "databases": [
-    {
-      "schema_version": 3,
-      "lang": "en",
-      "name": "data.db",
-      "url": "v3/data.db.gz",
-      "sha256": "E4AD87E74A00CFD88AEC1FFFA84382C21595582F6BD13CDA36B103F72D16C02A"
-    },
-    {
-      "schema_version": 3,
-      "lang": "de",
-      "name": "data_de.db",
-      "url": "v3/data_de.db.gz",
-      "sha256": "24E330BE46F4DC314A8525BAC0CF0D039A3891B1316F2F4AF14AA77ECBF83A62"
-    },
-    {
-      "schema_version": 3,
-      "lang": "es",
-      "name": "data_es.db",
-      "url": "v3/data_es.db.gz",
-      "sha256": "A610F749745799275DC2E86526DB7C0EAE6359F9FEF58AA4EE0CC3807CE70EB9"
-    },
-    {
-      "schema_version": 3,
-      "lang": "fr",
-      "name": "data_fr.db",
-      "url": "v3/data_fr.db.gz",
-      "sha256": "7891AF540A2EC5E51862239E7249C72A9825ACE94B59DBAC9B73D8F9AB9B1801"
-    },
-    {
-      "schema_version": 4,
-      "lang": "en",
-      "name": "data.db",
-      "url": "v4/data.db.gz",
-      "sha256": "AD66686FE9230D41AFAAEDDC959151D9CC5CCA69339CF002DB5884764E0223F4"
-    },
-    {
-      "schema_version": 4,
-      "lang": "de",
-      "name": "data_de.db",
-      "url": "v4/data_de.db.gz",
-      "sha256": "AE5CDF8D8F752405BD1A06ACC82F30667F8339306020ED1AA83F6572AF2D23D0"
-    },
-    {
-      "schema_version": 4,
-      "lang": "es",
-      "name": "data_es.db",
-      "url": "v4/data_es.db.gz",
-      "sha256": "3CF99EA2DEDE47BFE56179361501ACEE4ABA018F278D8D784B791FA5D09D46BB"
-    },
-    {
-      "schema_version": 4,
-      "lang": "fr",
-      "name": "data_fr.db",
-      "url": "v4/data_fr.db.gz",
-      "sha256": "C355877D9C7D9AA33B2595B16586745E396A45AC677AAAF7DC4B9CB5418B6EF6"
-    },
-    {
-      "schema_version": 5,
-      "lang": "en",
-      "name": "data.db",
-      "url": "v5/data.db.gz",
-      "sha256": "6528DF48AB86CC52D958E85A64CF6CBBF9C1A2BAD885F64D53EEDCD43D7CF07F"
-    },
-    {
-      "schema_version": 5,
-      "lang": "de",
-      "name": "data_de.db",
-      "url": "v5/data_de.db.gz",
-      "sha256": "1A3DE9B901A3516B742772343B85173E7EAC5A9FEB2D1C51A1E66653E0F97B48"
-    },
-    {
-      "schema_version": 5,
-      "lang": "es",
-      "name": "data_es.db",
-      "url": "v5/data_es.db.gz",
-      "sha256": "D04090CB761D152D1AF3E5B9AA9DB2227DA2F92FCD35B98B506A9FCA64AA7E7A"
-    },
-    {
-      "schema_version": 5,
-      "lang": "fr",
-      "name": "data_fr.db",
-      "url": "v5/data_fr.db.gz",
-      "sha256": "1505B2A785A04A7615905BEBA84B0CDE09D0747B1FFD64BA1F288F702BA6D61E"
-    }
-  ]
+﻿{
+    "databases":  [
+                      {
+                          "schema_version":  3,
+                          "lang":  "en",
+                          "name":  "data.db",
+                          "url":  "v3/data.db.gz",
+                          "sha256":  "E4AD87E74A00CFD88AEC1FFFA84382C21595582F6BD13CDA36B103F72D16C02A"
+                      },
+                      {
+                          "schema_version":  3,
+                          "lang":  "fr",
+                          "name":  "data_fr.db",
+                          "url":  "v3/data_fr.db.gz",
+                          "sha256":  "7891AF540A2EC5E51862239E7249C72A9825ACE94B59DBAC9B73D8F9AB9B1801"
+                      },
+                      {
+                          "schema_version":  3,
+                          "lang":  "es",
+                          "name":  "data_es.db",
+                          "url":  "v3/data_es.db.gz",
+                          "sha256":  "A610F749745799275DC2E86526DB7C0EAE6359F9FEF58AA4EE0CC3807CE70EB9"
+                      },
+                      {
+                          "schema_version":  3,
+                          "lang":  "de",
+                          "name":  "data_de.db",
+                          "url":  "v3/data_de.db.gz",
+                          "sha256":  "24E330BE46F4DC314A8525BAC0CF0D039A3891B1316F2F4AF14AA77ECBF83A62"
+                      },
+                      {
+                          "schema_version":  4,
+                          "lang":  "en",
+                          "name":  "data.db",
+                          "url":  "v4/data.db.gz",
+                          "sha256":  "AD66686FE9230D41AFAAEDDC959151D9CC5CCA69339CF002DB5884764E0223F4"
+                      },
+                      {
+                          "schema_version":  4,
+                          "lang":  "fr",
+                          "name":  "data_fr.db",
+                          "url":  "v4/data_fr.db.gz",
+                          "sha256":  "C355877D9C7D9AA33B2595B16586745E396A45AC677AAAF7DC4B9CB5418B6EF6"
+                      },
+                      {
+                          "schema_version":  4,
+                          "lang":  "es",
+                          "name":  "data_es.db",
+                          "url":  "v4/data_es.db.gz",
+                          "sha256":  "3CF99EA2DEDE47BFE56179361501ACEE4ABA018F278D8D784B791FA5D09D46BB"
+                      },
+                      {
+                          "schema_version":  4,
+                          "lang":  "de",
+                          "name":  "data_de.db",
+                          "url":  "v4/data_de.db.gz",
+                          "sha256":  "AE5CDF8D8F752405BD1A06ACC82F30667F8339306020ED1AA83F6572AF2D23D0"
+                      },
+                      {
+                          "schema_version":  5,
+                          "lang":  "en",
+                          "name":  "data.db",
+                          "url":  "v5/data.db.gz",
+                          "sha256":  "6528DF48AB86CC52D958E85A64CF6CBBF9C1A2BAD885F64D53EEDCD43D7CF07F"
+                      },
+                      {
+                          "schema_version":  5,
+                          "lang":  "fr",
+                          "name":  "data_fr.db",
+                          "url":  "v5/data_fr.db.gz",
+                          "sha256":  "1505B2A785A04A7615905BEBA84B0CDE09D0747B1FFD64BA1F288F702BA6D61E"
+                      },
+                      {
+                          "schema_version":  5,
+                          "lang":  "es",
+                          "name":  "data_es.db",
+                          "url":  "v5/data_es.db.gz",
+                          "sha256":  "D04090CB761D152D1AF3E5B9AA9DB2227DA2F92FCD35B98B506A9FCA64AA7E7A"
+                      },
+                      {
+                          "schema_version":  5,
+                          "lang":  "de",
+                          "name":  "data_de.db",
+                          "url":  "v5/data_de.db.gz",
+                          "sha256":  "1A3DE9B901A3516B742772343B85173E7EAC5A9FEB2D1C51A1E66653E0F97B48"
+                      },
+                      {
+                          "schema_version":  7,
+                          "lang":  "en",
+                          "name":  "data.db",
+                          "url":  "v7/data.db.gz",
+                          "sha256":  "AD4758C0EBF3CCA102D14C9922FC82839BEA25ACFE1353A8357A3068689EFA95"
+                      },
+                      {
+                          "schema_version":  7,
+                          "lang":  "fr",
+                          "name":  "data_fr.db",
+                          "url":  "v7/data_fr.db.gz",
+                          "sha256":  "F1B9F7A2C3C6979D48C248ECD5EB32B48C5EA8AFE0EFB81DCABF9009AF0DC2E0"
+                      },
+                      {
+                          "schema_version":  7,
+                          "lang":  "es",
+                          "name":  "data_es.db",
+                          "url":  "v7/data_es.db.gz",
+                          "sha256":  "94E6AF4553797143A46D6D2EC788F6402BD6BD5F121E5E770BEE98895827BD0B"
+                      },
+                      {
+                          "schema_version":  7,
+                          "lang":  "de",
+                          "name":  "data_de.db",
+                          "url":  "v7/data_de.db.gz",
+                          "sha256":  "F0C924CD2C3846D51520B845DF95726166A6BB2A435B6CA33B21302780E368D1"
+                      }
+                  ]
 }
