@@ -294,7 +294,7 @@ public sealed class ItemsTabViewModel(
                     new ItemCategoryMenuItem { Id = "hammer", Label = localizer["Hammers"] },
                     new ItemCategoryMenuItem { Id = "longbow", Label = localizer["Longbows"] },
                     new ItemCategoryMenuItem { Id = "sword", Label = localizer["Swords"] },
-                    new ItemCategoryMenuItem { Id = "shortbow", Label = localizer["Short Bows"] },
+                    new ItemCategoryMenuItem { Id = "short_bow", Label = localizer["Short Bows"] },
                     new ItemCategoryMenuItem { Id = "mace", Label = localizer["Maces"] },
                     new ItemCategoryMenuItem { Id = "pistol", Label = localizer["Pistols"] },
                     new ItemCategoryMenuItem { Id = "rifle", Label = localizer["Rifles"] },
