@@ -270,6 +270,8 @@ public sealed class DatabaseSeeder : IDisposable
             {
                 await context.Database.MigrateAsync().ConfigureAwait(false);
                 await Seed(context, language, CancellationToken.None).ConfigureAwait(false);
+                await Vacuum(language, CancellationToken.None).ConfigureAwait(false);
+                await Optimize(language, CancellationToken.None).ConfigureAwait(false);
             }
 
             manifest.Databases[language.Alpha2Code] = database;
