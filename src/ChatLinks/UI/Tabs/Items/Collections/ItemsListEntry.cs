@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 using SL.ChatLinks.UI.Tabs.Items.Tooltips;
+using SL.Common.ModelBinding;
 
 namespace SL.ChatLinks.UI.Tabs.Items.Collections;
 
@@ -27,18 +28,18 @@ public sealed class ItemsListEntry : Control
         _icon = viewModel.GetIcon();
         _highlightEffect = new(this);
         EffectBehind = _highlightEffect;
+        _ = Binder.Bind(viewModel, viewModel => viewModel.IsSelected, _highlightEffect);
+
     }
 
     public override void DoUpdate(GameTime gameTime)
     {
-
         if (MouseOver)
         {
             Tooltip ??= new Tooltip(new ItemTooltipView(_viewModel.CreateTooltipViewModel()));
         }
         else
         {
-            _highlightEffect.ForceActive = _viewModel.IsSelected;
             Tooltip?.Dispose();
             Tooltip = null;
         }

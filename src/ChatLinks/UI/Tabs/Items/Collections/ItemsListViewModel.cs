@@ -76,7 +76,13 @@ public sealed class ItemsListViewModel : ViewModel, IDisposable
     public bool IsSelected
     {
         get => _isSelected;
-        set => SetField(ref _isSelected, value);
+        set
+        {
+            if (SetField(ref _isSelected, value))
+            {
+                OnPropertyChanged(nameof(IsSelected));
+            }
+        }
     }
 
     public string SelectLabel => _localizer["Select"];

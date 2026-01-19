@@ -153,7 +153,13 @@ public sealed class ItemsTabViewModel(
     public Item? SelectedItem
     {
         get => _selectedItem;
-        set => SetField(ref _selectedItem, value);
+        set
+        {
+            if (SetField(ref _selectedItem, value))
+            {
+                OnPropertyChanged(nameof(SelectedItem));
+            }
+        }
     }
     public ObservableCollection<ItemsListViewModel> SearchResults { get; } = [];
 
@@ -213,10 +219,16 @@ public sealed class ItemsTabViewModel(
 
     public string ContentTitle => _area.GetTitle();
 
-    public RelayCommand BackCommand => new(() =>
+    public RelayCommand BackCommand => new(async () =>
     {
         if (SelectedItem is not null)
         {
+            ItemsListViewModel selected = SearchResults.FirstOrDefault(vm => vm.Item.Id == SelectedItem.Id);
+            if (selected is not null)
+            {
+                selected.IsSelected = false;
+            }
+
             SelectedItem = null;
             Area = Area.Back();
         }

@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 
 using Blish_HUD.Controls;
+using Blish_HUD.Controls.Effects;
 
 using SL.Common.Controls;
 
@@ -66,5 +67,14 @@ public sealed class Binder
     ) where TViewModel : ViewModel
     {
         return new ListItemBinding<TViewModel, TData>(viewModel, propertySelector, listItem, bindingMode);
+    }
+
+    public static ViewModelBinding<TViewModel, bool> Bind<TViewModel>(
+        TViewModel viewModel,
+        Expression<Func<TViewModel, bool>> propertySelector,
+        ScrollingHighlightEffect highlightEffect
+    ) where TViewModel : ViewModel
+    {
+        return new ScrollingHighlightEffectBinding<TViewModel>(viewModel, propertySelector, highlightEffect);
     }
 }
