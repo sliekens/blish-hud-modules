@@ -17,11 +17,9 @@ public class LoggingAdapter<T>(string categoryName, IOptionsMonitor<LoggerFilter
             return;
         }
 
-        DateTimeOffset queued = DateTimeOffset.Now;
         LogProcessor.Enqueue(() =>
         {
-            DateTimeOffset processed = DateTimeOffset.Now;
-            string logMessage = $"(-{(processed - queued).TotalSeconds:0.00}s) {categoryName}: {formatter(state, exception)}";
+            string logMessage = $"{categoryName}: {formatter(state, exception)}";
             switch (logLevel)
             {
                 case LogLevel.Trace:
