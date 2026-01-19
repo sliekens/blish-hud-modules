@@ -3,6 +3,7 @@
 using GuildWars2.Items;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 using SL.ChatLinks.Storage;
 
@@ -22,7 +23,7 @@ public sealed record ResultContext
     public int ResultTotal { get; set; }
 }
 
-public sealed class ItemSearch(IDbContextFactory contextFactory, ILocale locale)
+public sealed class ItemSearch(IDbContextFactory contextFactory, ILocale locale, ILogger<ItemSearch> logger)
 {
     public async ValueTask<int> CountItems()
     {
@@ -243,6 +244,11 @@ public sealed class ItemSearch(IDbContextFactory contextFactory, ILocale locale)
                     ),
                 _ => context.Items
             };
+
+            if (query == context.Items)
+            {
+                logger.LogError("Invalid category: {Category}", filter.Category);
+            }
 
             query = !string.IsNullOrWhiteSpace(filter.Text)
                 ? query.Where(item => EF.Functions.Like(item.Name, $"%{filter.Text}%"))
