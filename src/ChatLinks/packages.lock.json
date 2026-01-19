@@ -4,9 +4,9 @@
     ".NETFramework,Version=v4.7.2": {
       "BlishHUD": {
         "type": "Direct",
-        "requested": "[1.2.0, )",
-        "resolved": "1.2.0",
-        "contentHash": "i7uV4JX3B9o2BEM8g8V78Z2mTxSqBTdoXhXsRak5DHaAOdrfc02OM2ne8nyvx7kJRUZg2q2U7TRvgVcpXNakug==",
+        "requested": "[1.3.0, )",
+        "resolved": "1.3.0",
+        "contentHash": "/nR7xnPA/yGJUvy3Rkd31jaYmzXKpI7Nyz7ATWEijicuHkkBnCEBzsHxmejN1tsIfxUklvuP4bCcgYvVF7NUJA==",
         "dependencies": {
           "AsyncClipboardService": "[1.7.1]",
           "Gw2Sharp": "1.7.4",
