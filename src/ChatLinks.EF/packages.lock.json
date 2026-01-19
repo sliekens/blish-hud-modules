@@ -21,9 +21,9 @@
       },
       "GW2SDK": {
         "type": "Direct",
-        "requested": "[3.0.0-rc.4, )",
-        "resolved": "3.0.0-rc.4",
-        "contentHash": "w1bRF7WrBdSN1YdEsXcOzSvQFxgMaz5/LaM23KR893W2+KLdKGbIlFd/iqF+HwSYYZcoq3wOCQofHNfNeXqoHA==",
+        "requested": "[3.0.0, )",
+        "resolved": "3.0.0",
+        "contentHash": "SD1Zh4j3JzN/AlA5fV1wdhVLfGgBWV1YUHhOQNb/qNLkfyB2jgvx9qPzm+0IUBluWL42Yn4YNJRco+dMCDTFJA==",
         "dependencies": {
           "Microsoft.Bcl.HashCode": "6.0.0",
           "System.Collections.Immutable": "6.0.0",
@@ -415,7 +415,7 @@
       "SL.Adapters": {
         "type": "Project",
         "dependencies": {
-          "GW2SDK": "[3.0.0-rc.4, )",
+          "GW2SDK": "[3.0.0, )",
           "Gw2Sharp": "[1.7.4, )",
           "Microsoft.Extensions.Logging": "[3.1.32, 3.2.0)",
           "Microsoft.Extensions.Options": "[3.1.32, 3.2.0)",
@@ -427,7 +427,7 @@
       "SL.ChatLinks": {
         "type": "Project",
         "dependencies": {
-          "GW2SDK": "[3.0.0-rc.4, )",
+          "GW2SDK": "[3.0.0, )",
           "Gw2Sharp": "[1.7.4, )",
           "Microsoft.EntityFrameworkCore.Sqlite.Core": "[3.1.32, 3.2.0)",
           "Microsoft.Extensions.Http": "[3.1.32, 3.2.0)",
@@ -445,7 +445,7 @@
       "SL.Common": {
         "type": "Project",
         "dependencies": {
-          "GW2SDK": "[3.0.0-rc.4, )",
+          "GW2SDK": "[3.0.0, )",
           "Gw2Sharp": "[1.7.4, )",
           "Microsoft.Extensions.Caching.Abstractions": "[3.1.32, 3.2.0)",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[3.1.32, 3.2.0)",
