@@ -245,7 +245,7 @@ public sealed class ItemSearch(IDbContextFactory contextFactory, ILocale locale,
                 _ => context.Items
             };
 
-            if (query == context.Items)
+            if (query == context.Items && !string.IsNullOrWhiteSpace(filter.Category))
             {
                 logger.LogError("Invalid category: {Category}", filter.Category);
             }
