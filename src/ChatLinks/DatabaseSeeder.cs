@@ -17,6 +17,7 @@ using GuildWars2.Hero.Equipment.Wardrobe;
 using GuildWars2.Items;
 using GuildWars2.Pvp.MistChampions;
 
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Logging;
@@ -136,11 +137,12 @@ public sealed class DatabaseSeeder : IDisposable
 
         bool shouldDownload = !currentDataManifest.Databases.TryGetValue(language.Alpha2Code, out Database? currentDatabase)
             || currentDatabase.SchemaVersion != ChatLinksContext.SchemaVersion
-            || IsEmpty(currentDatabase);
+            || IsEmpty(currentDatabase)
+            || !await IsReady(currentDatabase).ConfigureAwait(false);
 
         if (shouldDownload)
         {
-            Database? seedDatabase = await DownloadDatabase(language, currentDatabase).ConfigureAwait(false);
+            Database? seedDatabase = await DownloadDatabase(language).ConfigureAwait(false);
             if (seedDatabase is not null)
             {
                 currentDatabase = seedDatabase;
@@ -176,7 +178,23 @@ public sealed class DatabaseSeeder : IDisposable
         return migrations.Any();
     }
 
-    private async Task<Database?> DownloadDatabase(Language language, Database? currentDatabase)
+    private async Task<bool> IsReady(Database database)
+    {
+        try
+        {
+            ChatLinksContext context = _contextFactory.CreateDbContext(database.Name);
+            await using (context.ConfigureAwait(false))
+            {
+                return !await HasPendingMigrations(context).ConfigureAwait(false);
+            }
+        }
+        catch (SqliteException)
+        {
+            return false;
+        }
+    }
+
+    private async Task<Database?> DownloadDatabase(Language language)
     {
         SeedIndex seedDataManifest = await _staticDataClient.GetSeedIndex(CancellationToken.None).ConfigureAwait(false);
         SeedDatabase? seedDatabase = seedDataManifest.Databases
@@ -184,7 +202,7 @@ public sealed class DatabaseSeeder : IDisposable
             .FirstOrDefault(seed => seed.SchemaVersion <= ChatLinksContext.SchemaVersion
                 && seed.Language == language.Alpha2Code);
 
-        if (seedDatabase is null || seedDatabase.SchemaVersion == currentDatabase?.SchemaVersion)
+        if (seedDatabase is null)
         {
             return null;
         }
