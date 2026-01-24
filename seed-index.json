@@ -111,6 +111,34 @@
                           "name":  "data_de.db",
                           "url":  "v7/data_de.db.gz",
                           "sha256":  "F0C924CD2C3846D51520B845DF95726166A6BB2A435B6CA33B21302780E368D1"
+                      },
+                      {
+                          "schema_version":  8,
+                          "lang":  "en",
+                          "name":  "data.db",
+                          "url":  "v8/data.db.gz",
+                          "sha256":  "FA7E948547E6E3135DCE786E6F1E4D7F729BD76A5B35F091DB4EFB900FF77BB5"
+                      },
+                      {
+                          "schema_version":  8,
+                          "lang":  "fr",
+                          "name":  "data_fr.db",
+                          "url":  "v8/data_fr.db.gz",
+                          "sha256":  "93D67A5D71D9A1F169A3B8E6BE3F4EA276A67B6F53F12AEB8A2DCB023AD28BF7"
+                      },
+                      {
+                          "schema_version":  8,
+                          "lang":  "es",
+                          "name":  "data_es.db",
+                          "url":  "v8/data_es.db.gz",
+                          "sha256":  "92D745F4401210F643554A7ED587D1F07138A08DB4794E968980C93E0F05B2E4"
+                      },
+                      {
+                          "schema_version":  8,
+                          "lang":  "de",
+                          "name":  "data_de.db",
+                          "url":  "v8/data_de.db.gz",
+                          "sha256":  "662A6BBE7FFB8028F713F8776A4C82200EA4C59082B3357A17A658FB8697D0FC"
                       }
                   ]
 }
