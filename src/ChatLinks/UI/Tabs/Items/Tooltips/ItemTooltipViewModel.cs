@@ -9,6 +9,7 @@ using GuildWars2.Hero.Equipment.Gliders;
 using GuildWars2.Hero.Equipment.JadeBots;
 using GuildWars2.Hero.Equipment.MailCarriers;
 using GuildWars2.Hero.Equipment.Miniatures;
+using GuildWars2.Hero.Equipment.Mounts;
 using GuildWars2.Hero.Equipment.Novelties;
 using GuildWars2.Hero.Equipment.Outfits;
 using GuildWars2.Hero.Equipment.Wardrobe;
@@ -495,6 +496,41 @@ public sealed class ItemTooltipViewModel(
                     logger.LogWarning(reason, "Couldn't get unlocks.");
                 }
 
+                break;
+            case MountSkinUnlocker mountSkinUnlocker:
+                try
+                {
+                    ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
+                    await using (context.ConfigureAwait(false))
+                    {
+                        MountSkin? mountSkin = await context.MountSkins
+                            .FromSqlInterpolated($"""
+                                              SELECT *
+                                              FROM MountSkins ms
+                                              JOIN MountSkinUnlocks msu ON ms.Id = msu.MountSkinId
+                                              WHERE msu.ItemId = {mountSkinUnlocker.Id}
+                                              """)
+                            .FirstOrDefaultAsync().ConfigureAwait(false);
+                        if (mountSkin is not null)
+                        {
+                            if (account.HasPermission(Permission.Unlocks))
+                            {
+                                IReadOnlyList<int> unlocked = await account.GetUnlockedMountSkins(CancellationToken.None).ConfigureAwait(false);
+                                Unlocked = unlocked.Contains(mountSkin.Id);
+                            }
+                            else
+                            {
+                                LockedOtherText = Localizer["Grant unlocks permission"];
+                            }
+
+                            DefaultLocked = true;
+                        }
+                    }
+                }
+                catch (Exception reason)
+                {
+                    logger.LogWarning(reason, "Couldn't get unlocks.");
+                }
                 break;
             case Unlocker other:
                 logger.LogInformation("No handling for: {@Other}", other);

@@ -329,6 +329,24 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
 
                 PrintPlainText(ViewModel.Localizer["Consumable"]);
                 break;
+            case MountSkinUnlocker unlocker:
+                if (!string.IsNullOrEmpty(unlocker.Description))
+                {
+                    PrintPlainText(" ");
+                }
+
+                PrintUnlocked($"""
+                    {ViewModel.Localizer["You have already unlocked this mount"]}
+
+                    """,
+                    $"""
+                    {ViewModel.LockedOtherText}
+
+                    """
+                );
+
+                PrintPlainText(ViewModel.Localizer["Consumable"]);
+                break;
             default:
                 if (string.IsNullOrEmpty(consumable.Description))
                 {

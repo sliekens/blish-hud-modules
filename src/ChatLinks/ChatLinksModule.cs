@@ -104,6 +104,7 @@ public class ChatLinksModule([Import("ModuleParameters")] ModuleParameters param
         _ = services.AddSingleton<UnlockedJadeBotSkins>();
         _ = services.AddSingleton<UnlockedMailCarriers>();
         _ = services.AddSingleton<UnlockedMiniatures>();
+        _ = services.AddSingleton<UnlockedMountSkins>();
         _ = services.AddSingleton<UnlockedMistChampionSkins>();
         _ = services.AddSingleton<UnlockedNovelties>();
         _ = services.AddSingleton<UnlockedOutfits>();

@@ -11,6 +11,7 @@ using GuildWars2.Hero.Equipment.Gliders;
 using GuildWars2.Hero.Equipment.JadeBots;
 using GuildWars2.Hero.Equipment.MailCarriers;
 using GuildWars2.Hero.Equipment.Miniatures;
+using GuildWars2.Hero.Equipment.Mounts;
 using GuildWars2.Hero.Equipment.Novelties;
 using GuildWars2.Hero.Equipment.Outfits;
 using GuildWars2.Hero.Equipment.Wardrobe;
@@ -18,9 +19,7 @@ using GuildWars2.Items;
 using GuildWars2.Pvp.MistChampions;
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-using SL.ChatLinks.Storage.Comparers;
 using SL.ChatLinks.Storage.Models.Hero.Achievements;
 using SL.ChatLinks.Storage.Models.Hero.Crafting;
 using SL.ChatLinks.Storage.Models.Hero.Equipment.Dyes;
@@ -29,6 +28,7 @@ using SL.ChatLinks.Storage.Models.Hero.Equipment.Gliders;
 using SL.ChatLinks.Storage.Models.Hero.Equipment.JadeBots;
 using SL.ChatLinks.Storage.Models.Hero.Equipment.MailCarriers;
 using SL.ChatLinks.Storage.Models.Hero.Equipment.Miniatures;
+using SL.ChatLinks.Storage.Models.Hero.Equipment.Mounts;
 using SL.ChatLinks.Storage.Models.Hero.Equipment.Novelties;
 using SL.ChatLinks.Storage.Models.Hero.Equipment.Outfits;
 using SL.ChatLinks.Storage.Models.Hero.Equipment.Wardrobe;
@@ -39,7 +39,7 @@ namespace SL.ChatLinks.Storage;
 
 public class ChatLinksContext(DbContextOptions options) : DbContext(options)
 {
-    public static int SchemaVersion => 7;
+    public static int SchemaVersion => 8;
 
     public DbSet<Item> Items => Set<Item>();
 
@@ -64,6 +64,10 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
     public DbSet<Miniature> Miniatures => Set<Miniature>();
 
     public DbSet<Outfit> Outfits => Set<Outfit>();
+
+    public DbSet<MountSkin> MountSkins => Set<MountSkin>();
+
+    public DbSet<MountSkinUnlock> MountSkinUnlocks => Set<MountSkinUnlock>();
 
     public DbSet<Achievement> Achievements => Set<Achievement>();
 
@@ -154,6 +158,10 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
         _ = modelBuilder.ApplyConfiguration(new MailCarrierEntityTypeConfiguration());
 
         _ = modelBuilder.ApplyConfiguration(new MiniatureEntityTypeConfiguration());
+
+        _ = modelBuilder.ApplyConfiguration(new MountSkinEntityTypeConfiguration());
+
+        _ = modelBuilder.ApplyConfiguration(new MountSkinUnlockEntityTypeConfiguration());
 
         _ = modelBuilder.ApplyConfiguration(new MistChampionSkinEntityTypeConfiguration());
 

@@ -418,4 +418,7 @@
   <data name="You have already unlocked this Jade Bot" xml:space="preserve">
     <value>Vous avez déjà débloqué ce drone de jade !</value>
   </data>
+  <data name="You have already unlocked this mount" xml:space="preserve">
+    <value>Vous avez déjà déverrouillé cette monture !</value>
+  </data>
 </root>

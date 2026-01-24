@@ -11,6 +11,7 @@ using GuildWars2.Hero.Equipment.Finishers;
 using GuildWars2.Hero.Equipment.Gliders;
 using GuildWars2.Hero.Equipment.JadeBots;
 using GuildWars2.Hero.Equipment.MailCarriers;
+using GuildWars2.Hero.Equipment.Mounts;
 using GuildWars2.Hero.Equipment.Novelties;
 using GuildWars2.Hero.Equipment.Outfits;
 using GuildWars2.Hero.Equipment.Wardrobe;
@@ -26,6 +27,7 @@ using Microsoft.Extensions.Options;
 using SL.ChatLinks.StaticFiles;
 using SL.ChatLinks.Storage;
 using SL.ChatLinks.Storage.Metadata;
+using SL.ChatLinks.Storage.Models.Hero.Equipment.Mounts;
 
 using Language = GuildWars2.Language;
 
@@ -311,6 +313,7 @@ public sealed class DatabaseSeeder : IDisposable
             ["jade_bots"] = await SeedJadeBots(context, language, cancellationToken).ConfigureAwait(false),
             ["mail_carriers"] = await SeedMailCarriers(context, language, cancellationToken).ConfigureAwait(false),
             ["miniatures"] = await SeedMiniatures(context, language, cancellationToken).ConfigureAwait(false),
+            ["mount_skins"] = await SeedMountSkins(context, language, cancellationToken).ConfigureAwait(false),
             ["mist_champions"] = await SeedMistChampions(context, language, cancellationToken).ConfigureAwait(false),
             ["novelties"] = await SeedNovelties(context, language, cancellationToken).ConfigureAwait(false),
             ["outfits"] = await SeedOutfits(context, language, cancellationToken).ConfigureAwait(false),
@@ -644,6 +647,63 @@ public sealed class DatabaseSeeder : IDisposable
         }
 
         _logger.LogInformation("Finished seeding {Count} miniatures.", index.Count);
+        return index.Count;
+    }
+
+    private async Task<int> SeedMountSkins(ChatLinksContext context, Language language,
+        CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Start seeding mount skins.");
+        IImmutableValueSet<int> index = await _gw2Client.Hero.Equipment.Mounts
+            .GetMountSkinsIndex(cancellationToken)
+            .ValueOnly().ConfigureAwait(false);
+        _logger.LogDebug("Found {Count} mount skins in the API.", index.Count);
+        List<int> existing = await context.MountSkins.Select(mountSkin => mountSkin.Id)
+            .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
+        index = index.Except(existing);
+        if (index.Count != 0)
+        {
+            _logger.LogDebug("Start seeding {Count} mount skins.", index.Count);
+            foreach (int[]? chunk in index.Chunk(200))
+            {
+                IImmutableValueSet<MountSkin> mountSkins = await _gw2Client.Hero.Equipment.Mounts
+                    .GetMountSkinsByIds(chunk, language, MissingMemberBehavior.Undefined, cancellationToken)
+                    .ValueOnly().ConfigureAwait(false);
+                await context.AddRangeAsync(mountSkins, cancellationToken).ConfigureAwait(false);
+                _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+                DetachAllEntities(context);
+            }
+        }
+
+        // Reminder: this code assumes items were seeded first
+        // Now seed the unlocks by matching MountSkinUnlocker icons to MountSkin icons
+        List<MountSkinUnlock> unlockItems = await context.Items.OfType<MountSkinUnlocker>()
+            .Join(context.MountSkins,
+                unlocker => unlocker.IconUrl,
+                mountSkin => mountSkin.IconUrl,
+                (unlocker, mountSkin) => new MountSkinUnlock
+                {
+                    MountSkinId = mountSkin.Id,
+                    ItemId = unlocker.Id
+                })
+            .ToListAsync(cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        List<MountSkinUnlock> existingUnlocks = await context.MountSkinUnlocks
+            .ToListAsync(cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        List<MountSkinUnlock> newUnlocks = [.. unlockItems.Where(unlock => !existingUnlocks.Contains(unlock))];
+
+        if (newUnlocks.Count != 0)
+        {
+            await context.MountSkinUnlocks.AddRangeAsync(newUnlocks, cancellationToken).ConfigureAwait(false);
+            _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            DetachAllEntities(context);
+        }
+
+        _logger.LogInformation("Finished seeding {Count} mount skins.", index.Count);
+
         return index.Count;
     }
 

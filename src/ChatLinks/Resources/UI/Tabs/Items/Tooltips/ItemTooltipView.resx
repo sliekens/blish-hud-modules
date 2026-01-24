@@ -417,4 +417,7 @@
   <data name="You have already unlocked this Jade Bot" xml:space="preserve">
     <value>You have already unlocked this Jade Bot!</value>
   </data>
+  <data name="You have already unlocked this mount" xml:space="preserve">
+    <value>You have already unlocked this mount!</value>
+  </data>
 </root>

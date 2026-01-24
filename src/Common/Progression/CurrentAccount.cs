@@ -21,6 +21,7 @@ public sealed class CurrentAccount : IDisposable
     private readonly UnlockedJadeBotSkins _unlockedJadeBotSkins;
     private readonly UnlockedMailCarriers _unlockedMailCarriers;
     private readonly UnlockedMiniatures _unlockedMiniatures;
+    private readonly UnlockedMountSkins _unlockedMountSkins;
     private readonly UnlockedMistChampionSkins _unlockedMistChampionSkins;
     private readonly UnlockedNovelties _unlockedNovelties;
     private readonly UnlockedOutfits _unlockedOutfits;
@@ -39,6 +40,7 @@ public sealed class CurrentAccount : IDisposable
         UnlockedJadeBotSkins unlockedJadeBotSkins,
         UnlockedMailCarriers unlockedMailCarriers,
         UnlockedMiniatures unlockedMiniatures,
+        UnlockedMountSkins unlockedMountSkins,
         UnlockedMistChampionSkins unlockedMistChampionSkins,
         UnlockedNovelties unlockedNovelties,
         UnlockedOutfits unlockedOutfits,
@@ -58,6 +60,7 @@ public sealed class CurrentAccount : IDisposable
         _unlockedJadeBotSkins = unlockedJadeBotSkins;
         _unlockedMailCarriers = unlockedMailCarriers;
         _unlockedMiniatures = unlockedMiniatures;
+        _unlockedMountSkins = unlockedMountSkins;
         _unlockedMistChampionSkins = unlockedMistChampionSkins;
         _unlockedNovelties = unlockedNovelties;
         _unlockedOutfits = unlockedOutfits;
@@ -125,6 +128,11 @@ public sealed class CurrentAccount : IDisposable
         return await _unlockedMiniatures.GetUnlockedMiniatures(cancellationToken).ConfigureAwait(false);
     }
 
+    public async ValueTask<IReadOnlyList<int>> GetUnlockedMountSkins(CancellationToken cancellationToken)
+    {
+        return await _unlockedMountSkins.GetUnlockedMountSkins(cancellationToken).ConfigureAwait(false);
+    }
+
     public async ValueTask<IReadOnlyList<int>> GetUnlockedMistChampionSkins(CancellationToken cancellationToken)
     {
         return await _unlockedMistChampionSkins.GetUnlockedMistChampionSkins(cancellationToken).ConfigureAwait(false);
@@ -154,7 +162,6 @@ public sealed class CurrentAccount : IDisposable
     {
         return await _bank.GetBank(cancellationToken).ConfigureAwait(false);
     }
-
 
     public async ValueTask<IReadOnlyList<MaterialSlot>> GetMaterialStorage(CancellationToken cancellationToken)
     {
