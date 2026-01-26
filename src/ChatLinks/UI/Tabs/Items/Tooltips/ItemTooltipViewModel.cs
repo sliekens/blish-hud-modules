@@ -1,4 +1,6 @@
-﻿using Blish_HUD.Content;
+﻿using Blish_HUD;
+using Blish_HUD.Content;
+using Blish_HUD.Graphics;
 
 using GuildWars2;
 using GuildWars2.Authorization;
@@ -22,6 +24,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 using SL.ChatLinks.Storage;
 using SL.Common.Progression;
@@ -60,6 +63,8 @@ public sealed class ItemTooltipViewModel(
     public IReadOnlyList<UpgradeSlot> UpgradesSlots { get; } = [.. upgrades];
 
     public Item Item { get; } = item;
+
+    public DyeColor? DyeColor { get; private set; }
 
     public EquipmentSkin? DefaultSkin
     {
@@ -277,6 +282,8 @@ public sealed class ItemTooltipViewModel(
 
                             DefaultLocked = true;
                         }
+
+                        DyeColor = dye;
                     }
                 }
                 catch (Exception reason)

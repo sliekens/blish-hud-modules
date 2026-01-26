@@ -3,6 +3,7 @@ using System.Text;
 
 using Blish_HUD;
 using Blish_HUD.Common.UI.Views;
+using Blish_HUD.Content;
 using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
 
@@ -650,12 +651,30 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
             Height = 50
         };
 
-        _ = new Image()
+        if (ViewModel.DyeColor is not null)
         {
-            Parent = header,
-            Texture = ViewModel.GetIcon(ViewModel.Item),
-            Size = new Point(50)
-        };
+            Color rgb = new(
+                ViewModel.DyeColor.Metal.Rgb.R,
+                ViewModel.DyeColor.Metal.Rgb.G,
+                ViewModel.DyeColor.Metal.Rgb.B);
+
+            StackedImage itemIcon = new()
+            {
+                Parent = header,
+                Size = new Point(50)
+            };
+
+            itemIcon.Textures.Add((AsyncTexture2D.FromAssetId(156885), rgb));
+        }
+        else
+        {
+            _ = new Image()
+            {
+                Parent = header,
+                Texture = ViewModel.GetIcon(ViewModel.Item),
+                Size = new Point(50)
+            };
+        }
 
         FormattedLabel name = new FormattedLabelBuilder()
            .SetWidth(_layout.Width - 55)
