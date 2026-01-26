@@ -12,7 +12,9 @@ using GuildWars2.Hero.Equipment.JadeBots;
 using GuildWars2.Hero.Equipment.MailCarriers;
 using GuildWars2.Hero.Equipment.Miniatures;
 using GuildWars2.Hero.Equipment.Mounts;
+using GuildWars2.Hero.Equipment.Skiffs;
 using GuildWars2.Hero.Equipment.Novelties;
+
 using GuildWars2.Hero.Equipment.Outfits;
 using GuildWars2.Hero.Equipment.Wardrobe;
 using GuildWars2.Items;
@@ -29,7 +31,9 @@ using SL.ChatLinks.Storage.Models.Hero.Equipment.JadeBots;
 using SL.ChatLinks.Storage.Models.Hero.Equipment.MailCarriers;
 using SL.ChatLinks.Storage.Models.Hero.Equipment.Miniatures;
 using SL.ChatLinks.Storage.Models.Hero.Equipment.Mounts;
+using SL.ChatLinks.Storage.Models.Hero.Equipment.Skiffs;
 using SL.ChatLinks.Storage.Models.Hero.Equipment.Novelties;
+
 using SL.ChatLinks.Storage.Models.Hero.Equipment.Outfits;
 using SL.ChatLinks.Storage.Models.Hero.Equipment.Wardrobe;
 using SL.ChatLinks.Storage.Models.Items;
@@ -39,9 +43,10 @@ namespace SL.ChatLinks.Storage;
 
 public class ChatLinksContext(DbContextOptions options) : DbContext(options)
 {
-    public static int SchemaVersion => 8;
+    public static int SchemaVersion => 9;
 
     public DbSet<Item> Items => Set<Item>();
+
 
     public DbSet<EquipmentSkin> Skins => Set<EquipmentSkin>();
 
@@ -69,7 +74,12 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
 
     public DbSet<MountSkinUnlock> MountSkinUnlocks => Set<MountSkinUnlock>();
 
+    public DbSet<SkiffSkin> SkiffSkins => Set<SkiffSkin>();
+
+    public DbSet<SkiffSkinUnlock> SkiffSkinUnlocks => Set<SkiffSkinUnlock>();
+
     public DbSet<Achievement> Achievements => Set<Achievement>();
+
 
     public DbSet<AchievementCategory> AchievementCategories => Set<AchievementCategory>();
 
@@ -162,6 +172,10 @@ public class ChatLinksContext(DbContextOptions options) : DbContext(options)
         _ = modelBuilder.ApplyConfiguration(new MountSkinEntityTypeConfiguration());
 
         _ = modelBuilder.ApplyConfiguration(new MountSkinUnlockEntityTypeConfiguration());
+
+        _ = modelBuilder.ApplyConfiguration(new SkiffSkinEntityTypeConfiguration());
+
+        _ = modelBuilder.ApplyConfiguration(new SkiffSkinUnlockEntityTypeConfiguration());
 
         _ = modelBuilder.ApplyConfiguration(new MistChampionSkinEntityTypeConfiguration());
 

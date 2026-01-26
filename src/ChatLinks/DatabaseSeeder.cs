@@ -12,6 +12,7 @@ using GuildWars2.Hero.Equipment.Gliders;
 using GuildWars2.Hero.Equipment.JadeBots;
 using GuildWars2.Hero.Equipment.MailCarriers;
 using GuildWars2.Hero.Equipment.Mounts;
+using GuildWars2.Hero.Equipment.Skiffs;
 using GuildWars2.Hero.Equipment.Novelties;
 using GuildWars2.Hero.Equipment.Outfits;
 using GuildWars2.Hero.Equipment.Wardrobe;
@@ -28,6 +29,7 @@ using SL.ChatLinks.StaticFiles;
 using SL.ChatLinks.Storage;
 using SL.ChatLinks.Storage.Metadata;
 using SL.ChatLinks.Storage.Models.Hero.Equipment.Mounts;
+using SL.ChatLinks.Storage.Models.Hero.Equipment.Skiffs;
 
 using Language = GuildWars2.Language;
 
@@ -314,6 +316,7 @@ public sealed class DatabaseSeeder : IDisposable
             ["mail_carriers"] = await SeedMailCarriers(context, language, cancellationToken).ConfigureAwait(false),
             ["miniatures"] = await SeedMiniatures(context, language, cancellationToken).ConfigureAwait(false),
             ["mount_skins"] = await SeedMountSkins(context, language, cancellationToken).ConfigureAwait(false),
+            ["skiff_skins"] = await SeedSkiffSkins(context, language, cancellationToken).ConfigureAwait(false),
             ["mist_champions"] = await SeedMistChampions(context, language, cancellationToken).ConfigureAwait(false),
             ["novelties"] = await SeedNovelties(context, language, cancellationToken).ConfigureAwait(false),
             ["outfits"] = await SeedOutfits(context, language, cancellationToken).ConfigureAwait(false),
@@ -801,7 +804,65 @@ public sealed class DatabaseSeeder : IDisposable
         return index.Count;
     }
 
+    private async Task<int> SeedSkiffSkins(ChatLinksContext context, Language language,
+        CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Start seeding skiff skins.");
+        IImmutableValueSet<int> index = await _gw2Client.Hero.Equipment.Skiffs
+            .GetSkiffSkinsIndex(cancellationToken)
+            .ValueOnly().ConfigureAwait(false);
+        _logger.LogDebug("Found {Count} skiff skins in the API.", index.Count);
+        List<int> existing = await context.SkiffSkins.Select(skiffSkin => skiffSkin.Id)
+            .ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
+        index = index.Except(existing);
+        if (index.Count != 0)
+        {
+            _logger.LogDebug("Start seeding {Count} skiff skins.", index.Count);
+            foreach (int[]? chunk in index.Chunk(200))
+            {
+                IImmutableValueSet<SkiffSkin> skiffSkins = await _gw2Client.Hero.Equipment.Skiffs
+                    .GetSkiffSkinsByIds(chunk, language, MissingMemberBehavior.Undefined, cancellationToken)
+                    .ValueOnly().ConfigureAwait(false);
+                await context.AddRangeAsync(skiffSkins, cancellationToken).ConfigureAwait(false);
+                _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+                DetachAllEntities(context);
+            }
+        }
+
+        // Reminder: this code assumes items were seeded first
+        // Now seed the unlocks by matching MountSkinUnlocker icons to SkiffSkin icons
+        List<SkiffSkinUnlock> unlockItems = await context.Items.OfType<MountSkinUnlocker>()
+            .Join(context.SkiffSkins,
+                unlocker => unlocker.IconUrl,
+                skiffSkin => skiffSkin.IconUrl,
+                (unlocker, skiffSkin) => new SkiffSkinUnlock
+                {
+                    SkiffSkinId = skiffSkin.Id,
+                    ItemId = unlocker.Id
+                })
+            .ToListAsync(cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        List<SkiffSkinUnlock> existingUnlocks = await context.SkiffSkinUnlocks
+            .ToListAsync(cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        List<SkiffSkinUnlock> newUnlocks = [.. unlockItems.Where(unlock => !existingUnlocks.Contains(unlock))];
+
+        if (newUnlocks.Count != 0)
+        {
+            await context.SkiffSkinUnlocks.AddRangeAsync(newUnlocks, cancellationToken).ConfigureAwait(false);
+            _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            DetachAllEntities(context);
+        }
+
+        _logger.LogInformation("Finished seeding {Count} skiff skins.", index.Count);
+
+        return index.Count;
+    }
+
     private async Task<int> SeedAchievements(ChatLinksContext context, Language language,
+
         CancellationToken cancellationToken)
     {
         _logger.LogInformation("Start seeding achievements.");

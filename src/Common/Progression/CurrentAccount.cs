@@ -22,6 +22,7 @@ public sealed class CurrentAccount : IDisposable
     private readonly UnlockedMailCarriers _unlockedMailCarriers;
     private readonly UnlockedMiniatures _unlockedMiniatures;
     private readonly UnlockedMountSkins _unlockedMountSkins;
+    private readonly UnlockedSkiffSkins _unlockedSkiffSkins;
     private readonly UnlockedMistChampionSkins _unlockedMistChampionSkins;
     private readonly UnlockedNovelties _unlockedNovelties;
     private readonly UnlockedOutfits _unlockedOutfits;
@@ -41,6 +42,7 @@ public sealed class CurrentAccount : IDisposable
         UnlockedMailCarriers unlockedMailCarriers,
         UnlockedMiniatures unlockedMiniatures,
         UnlockedMountSkins unlockedMountSkins,
+        UnlockedSkiffSkins unlockedSkiffSkins,
         UnlockedMistChampionSkins unlockedMistChampionSkins,
         UnlockedNovelties unlockedNovelties,
         UnlockedOutfits unlockedOutfits,
@@ -61,6 +63,7 @@ public sealed class CurrentAccount : IDisposable
         _unlockedMailCarriers = unlockedMailCarriers;
         _unlockedMiniatures = unlockedMiniatures;
         _unlockedMountSkins = unlockedMountSkins;
+        _unlockedSkiffSkins = unlockedSkiffSkins;
         _unlockedMistChampionSkins = unlockedMistChampionSkins;
         _unlockedNovelties = unlockedNovelties;
         _unlockedOutfits = unlockedOutfits;
@@ -133,6 +136,11 @@ public sealed class CurrentAccount : IDisposable
         return await _unlockedMountSkins.GetUnlockedMountSkins(cancellationToken).ConfigureAwait(false);
     }
 
+    public async ValueTask<IReadOnlyList<int>> GetUnlockedSkiffSkins(CancellationToken cancellationToken)
+    {
+        return await _unlockedSkiffSkins.GetUnlockedSkiffSkins(cancellationToken).ConfigureAwait(false);
+    }
+
     public async ValueTask<IReadOnlyList<int>> GetUnlockedMistChampionSkins(CancellationToken cancellationToken)
     {
         return await _unlockedMistChampionSkins.GetUnlockedMistChampionSkins(cancellationToken).ConfigureAwait(false);
@@ -182,6 +190,8 @@ public sealed class CurrentAccount : IDisposable
             _unlockedJadeBotSkins.Validate(force, cancellationToken),
             _unlockedMailCarriers.Validate(force, cancellationToken),
             _unlockedMiniatures.Validate(force, cancellationToken),
+            _unlockedMountSkins.Validate(force, cancellationToken),
+            _unlockedSkiffSkins.Validate(force, cancellationToken),
             _unlockedMistChampionSkins.Validate(force, cancellationToken),
             _unlockedNovelties.Validate(force, cancellationToken),
             _unlockedOutfits.Validate(force, cancellationToken),
@@ -205,6 +215,8 @@ public sealed class CurrentAccount : IDisposable
         _unlockedJadeBotSkins.Dispose();
         _unlockedMailCarriers.Dispose();
         _unlockedMiniatures.Dispose();
+        _unlockedMountSkins.Dispose();
+        _unlockedSkiffSkins.Dispose();
         _unlockedMistChampionSkins.Dispose();
         _unlockedNovelties.Dispose();
         _unlockedOutfits.Dispose();

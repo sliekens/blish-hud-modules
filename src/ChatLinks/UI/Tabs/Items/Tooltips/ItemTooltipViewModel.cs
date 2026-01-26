@@ -12,6 +12,7 @@ using GuildWars2.Hero.Equipment.Miniatures;
 using GuildWars2.Hero.Equipment.Mounts;
 using GuildWars2.Hero.Equipment.Novelties;
 using GuildWars2.Hero.Equipment.Outfits;
+using GuildWars2.Hero.Equipment.Skiffs;
 using GuildWars2.Hero.Equipment.Wardrobe;
 using GuildWars2.Hero.Inventories;
 using GuildWars2.Items;
@@ -498,6 +499,7 @@ public sealed class ItemTooltipViewModel(
 
                 break;
             case MountSkinUnlocker mountSkinUnlocker:
+                UnlockedText = Localizer["You have already unlocked this mount"];
                 try
                 {
                     ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
@@ -505,11 +507,11 @@ public sealed class ItemTooltipViewModel(
                     {
                         MountSkin? mountSkin = await context.MountSkins
                             .FromSqlInterpolated($"""
-                                              SELECT *
-                                              FROM MountSkins ms
-                                              JOIN MountSkinUnlocks msu ON ms.Id = msu.MountSkinId
-                                              WHERE msu.ItemId = {mountSkinUnlocker.Id}
-                                              """)
+                                SELECT *
+                                FROM MountSkins ms
+                                JOIN MountSkinUnlocks msu ON ms.Id = msu.MountSkinId
+                                WHERE msu.ItemId = {mountSkinUnlocker.Id}
+                                """)
                             .FirstOrDefaultAsync().ConfigureAwait(false);
                         if (mountSkin is not null)
                         {
@@ -525,6 +527,32 @@ public sealed class ItemTooltipViewModel(
 
                             DefaultLocked = true;
                         }
+                        else
+                        {
+                            // Kinda weird but skiffs are also in here
+                            SkiffSkin? skiffSkin = await context.SkiffSkins
+                                .FromSqlInterpolated($"""
+                                    SELECT *
+                                    FROM SkiffSkins ss
+                                    JOIN SkiffSkinUnlocks ssu ON ss.Id = ssu.SkiffSkinId
+                                    WHERE ssu.ItemId = {mountSkinUnlocker.Id}
+                                    """)
+                                .FirstOrDefaultAsync().ConfigureAwait(false);
+                            if (skiffSkin is not null)
+                            {
+                                if (account.HasPermission(Permission.Unlocks))
+                                {
+                                    IReadOnlyList<int> unlocked = await account.GetUnlockedSkiffSkins(CancellationToken.None).ConfigureAwait(false);
+                                    Unlocked = unlocked.Contains(skiffSkin.Id);
+                                }
+                                else
+                                {
+                                    LockedOtherText = Localizer["Grant unlocks permission"];
+                                }
+
+                                DefaultLocked = true;
+                            }
+                        }
                     }
                 }
                 catch (Exception reason)
@@ -533,6 +561,7 @@ public sealed class ItemTooltipViewModel(
                 }
                 break;
             case Unlocker other:
+
                 logger.LogInformation("No handling for: {@Other}", other);
                 break;
             case Gizmo gizmo:

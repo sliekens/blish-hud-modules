@@ -3,7 +3,6 @@ using GuildWars2.Hero;
 using GuildWars2.Items;
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 using SL.ChatLinks.Storage.Converters;
