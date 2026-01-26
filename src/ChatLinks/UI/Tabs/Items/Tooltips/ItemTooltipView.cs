@@ -188,15 +188,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     PrintPlainText(" ");
                 }
 
-                PrintUnlocked($"""
-                    {ViewModel.Localizer["You already have that content unlocked"]}
-
-                    """,
-                    $"""
-                    {ViewModel.LockedOtherText}
-
-                    """
-                );
+                PrintUnlocked();
 
                 PrintPlainText(ViewModel.Localizer["Consumable"]);
                 break;
@@ -206,15 +198,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     PrintPlainText(" ");
                 }
 
-                PrintUnlocked($"""
-                    {ViewModel.Localizer["You have already unlocked this dye"]}
-
-                    """,
-                    $"""
-                    {ViewModel.LockedOtherText}
-
-                    """
-                );
+                PrintUnlocked();
 
                 PrintPlainText(ViewModel.Localizer["Consumable"]);
                 break;
@@ -224,16 +208,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     PrintPlainText(" ");
                 }
 
-                PrintUnlocked($"""
-                    {ViewModel.Localizer["You have already unlocked this glider"]}
-
-                    """,
-                    $"""
-                    {ViewModel.LockedOtherText}
-
-                    """
-                );
-
+                PrintUnlocked();
 
                 PrintPlainText(ViewModel.Localizer["Consumable"]);
                 break;
@@ -243,15 +218,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     PrintPlainText(" ");
                 }
 
-                PrintUnlocked($"""
-                    {ViewModel.Localizer["You have already unlocked this Jade Bot"]}
-
-                    """,
-                    $"""
-                    {ViewModel.LockedOtherText}
-
-                    """
-                );
+                PrintUnlocked();
 
                 PrintPlainText(ViewModel.Localizer["Consumable"]);
                 break;
@@ -261,15 +228,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     PrintPlainText(" ");
                 }
 
-                PrintUnlocked($"""
-                    {ViewModel.Localizer["You have already unlocked this outfit"]}
-
-                    """,
-                    $"""
-                    {ViewModel.LockedOtherText}
-
-                    """
-                );
+                PrintUnlocked();
 
                 PrintPlainText(ViewModel.Localizer["Consumable"]);
                 break;
@@ -279,15 +238,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     PrintPlainText(" ");
                 }
 
-                PrintUnlocked($"""
-                    {ViewModel.Localizer["You have already unlocked this outfit"]}
-
-                    """,
-                    $"""
-                    {ViewModel.LockedOtherText}
-
-                    """
-                );
+                PrintUnlocked();
 
                 PrintPlainText(ViewModel.Localizer["Consumable"]);
                 break;
@@ -297,17 +248,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     PrintPlainText(" ");
                 }
 
-                PrintUnlocked($"""
-                    {ViewModel.UnlockedText}
-
-                    """,
-                    $"""
-                    {ViewModel.LockedOtherText}
-
-                    """,
-                    ViewModel.UnlockedTextColor
-                );
-
+                PrintUnlocked(ViewModel.UnlockedTextColor);
 
                 PrintPlainText(ViewModel.Localizer["Consumable"]);
                 break;
@@ -317,15 +258,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     PrintPlainText(" ");
                 }
 
-                PrintUnlocked($"""
-                    {ViewModel.Localizer["You have already unlocked this conjured doorway skin"]}
-
-                    """,
-                    $"""
-                    {ViewModel.LockedOtherText}
-
-                    """
-                );
+                PrintUnlocked();
 
                 PrintPlainText(ViewModel.Localizer["Consumable"]);
                 break;
@@ -336,15 +269,7 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
                     PrintPlainText(" ");
                 }
 
-                PrintUnlocked($"""
-                    {ViewModel.UnlockedText}
-
-                    """,
-                    $"""
-                    {ViewModel.LockedOtherText}
-
-                    """
-                );
+                PrintUnlocked();
 
                 PrintPlainText(ViewModel.Localizer["Consumable"]);
                 break;
@@ -909,6 +834,20 @@ public sealed class ItemTooltipView(ItemTooltipViewModel viewModel) : View, IToo
             """
         );
     }
+
+    private void PrintUnlocked(Color? unlockedTextColor = null)
+    {
+        PrintUnlocked($"""
+            {ViewModel.UnlockedText}
+
+            """,
+            $"""
+            {ViewModel.LockedOtherText}
+
+            """,
+            unlockedTextColor);
+    }
+
 
     private void PrintUnlocked(string unlockedText, string? other = null, Color? unlockedTextColor = null)
     {

@@ -194,6 +194,7 @@ public sealed class ItemTooltipViewModel(
                 break;
             case ContentUnlocker unlocker:
                 progress.Report("Checking unlock status...");
+                UnlockedText = Localizer["You already have that content unlocked"];
                 try
                 {
                     ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
@@ -255,6 +256,7 @@ public sealed class ItemTooltipViewModel(
                 break;
             case Dye unlocker:
                 progress.Report("Checking unlock status...");
+                UnlockedText = Localizer["You have already unlocked this dye"];
                 try
                 {
                     ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
@@ -285,6 +287,7 @@ public sealed class ItemTooltipViewModel(
                 break;
             case GliderSkinUnlocker unlocker:
                 progress.Report("Checking unlock status...");
+                UnlockedText = Localizer["You have already unlocked this glider"];
                 try
                 {
                     ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
@@ -321,6 +324,7 @@ public sealed class ItemTooltipViewModel(
                 break;
             case JadeBotSkinUnlocker unlocker:
                 progress.Report("Checking unlock status...");
+                UnlockedText = Localizer["You have already unlocked this Jade Bot"];
                 try
                 {
                     ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
@@ -385,6 +389,7 @@ public sealed class ItemTooltipViewModel(
                 break;
             case OutfitUnlocker unlocker:
                 progress.Report("Checking unlock status...");
+                UnlockedText = Localizer["You have already unlocked this outfit"];
                 try
                 {
                     ChatLinksContext context = contextFactory.CreateDbContext(locale.Current);
@@ -559,6 +564,9 @@ public sealed class ItemTooltipViewModel(
                 {
                     logger.LogWarning(reason, "Couldn't get unlocks.");
                 }
+                break;
+            case ConjuredDoorwayUnlocker conjuredDoorwayUnlocker:
+                UnlockedText = Localizer["You have already unlocked this conjured doorway skin"];
                 break;
             case Unlocker other:
 
